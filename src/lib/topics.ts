@@ -19,6 +19,11 @@ export const topics: Topic[] = [
             name: 'Context Rot',
             path: '/ai/llm/context-rot',
           },
+          {
+            id: 'temperature',
+            name: 'Temperature',
+            path: '/ai/llm/temperature',
+          },
           // Add more LLM topics here
         ],
       },

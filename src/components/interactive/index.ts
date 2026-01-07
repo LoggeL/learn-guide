@@ -1,3 +1,5 @@
 export { TokenCounter } from './TokenCounter'
 export { MemoryFadeVisualizer } from './MemoryFadeVisualizer'
 export { ContextRotSimulator } from './ContextRotSimulator'
+export { TemperatureDemo } from './TemperatureDemo'
+export { TemperatureVisualizer } from './TemperatureVisualizer'
