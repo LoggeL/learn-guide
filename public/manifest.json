@@ -1,0 +1,9 @@
+{
+  "name": "Learn AI Concepts",
+  "short_name": "LearnAI",
+  "description": "Interactive guide to AI and LLM concepts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#00ff88"
+}
