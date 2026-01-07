@@ -107,6 +107,26 @@ None - fully self-contained.
 
 ---
 
+## AttentionVisualizer
+
+Visualizes attention weights across words in a sentence on hover.
+
+### Import
+```tsx
+import { AttentionVisualizer } from '@/components/interactive'
+```
+
+### Props
+None - self-contained with demo sentences.
+
+### Behavior
+- Displays a sentence split into words.
+- On hover, calculates and displays simulated attention weights for other words.
+- Changes word color and background opacity based on weight.
+- Includes a dropdown to switch between demo sentences.
+
+---
+
 ## Creating New Components
 
 ### Template

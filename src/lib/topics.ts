@@ -24,6 +24,11 @@ export const topics: Topic[] = [
             name: 'Temperature',
             path: '/ai/llm/temperature',
           },
+          {
+            id: 'attention',
+            name: 'Attention Mechanism',
+            path: '/ai/llm/attention',
+          },
           // Add more LLM topics here
         ],
       },
