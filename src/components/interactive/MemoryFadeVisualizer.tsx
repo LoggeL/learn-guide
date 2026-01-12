@@ -1,30 +1,37 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import clsx from 'clsx'
-import { Ghost, Crown, User, Bot, Sparkles } from 'lucide-react'
+import { Ghost, Crown, User, Bot, Sparkles, X } from 'lucide-react'
 
 interface Message {
   id: string
   role: 'system' | 'user' | 'assistant'
   content: string
   tokens: number
+  truncated?: boolean
 }
 
 interface MemoryFadeVisualizerProps {
   messages: Message[]
   maxTokens: number
   highlightFirst?: boolean
+  showTruncated?: boolean
 }
 
 export function MemoryFadeVisualizer({
   messages,
   maxTokens,
   highlightFirst = false,
+  showTruncated = false,
 }: MemoryFadeVisualizerProps) {
   const totalTokens = messages.reduce((sum, m) => sum + m.tokens, 0)
 
   const getMessageStyle = (index: number, message: Message) => {
+    // If message is truncated (outside window), show it differently
+    if (message.truncated) {
+      return { opacity: 0.3, scale: 0.95, blur: 2 }
+    }
+    
     const position = index / messages.length
     const contextUsage = totalTokens / maxTokens
 
@@ -75,7 +82,8 @@ export function MemoryFadeVisualizer({
           const isFirst = index === 0 && highlightFirst
           const config = roleConfig[message.role]
           const Icon = config.icon
-          const isFading = style.opacity < 0.5
+          const isFading = style.opacity < 0.5 && !message.truncated
+          const isTruncated = message.truncated
 
           return (
             <motion.div
@@ -89,24 +97,33 @@ export function MemoryFadeVisualizer({
               }}
               exit={{ opacity: 0, x: 30, scale: 0.9 }}
               transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-              className={clsx(
-                'relative rounded-xl p-4 border',
-                config.bg,
-                config.border,
-                isFirst && 'ring-2 ring-purple-500/50 ring-offset-2 ring-offset-surface'
-              )}
+              className={`relative rounded-xl p-4 border ${
+                isTruncated 
+                  ? 'bg-red-500/5 border-red-500/20' 
+                  : `${config.bg} ${config.border}`
+              } ${
+                isFirst && !isTruncated && 'ring-2 ring-purple-500/50 ring-offset-2 ring-offset-surface'
+              }`}
             >
               {/* Gradient accent bar */}
-              <div className={clsx(
-                'absolute left-0 top-0 bottom-0 w-1 rounded-l-xl bg-gradient-to-b',
-                config.color
-              )} />
+              <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl bg-gradient-to-b ${
+                isTruncated ? 'from-red-500 to-red-700' : config.color
+              }`} />
               
-              <div className="flex items-start gap-3 pl-2">
-                <div className={clsx(
-                  'w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br',
-                  config.color + '/20'
-                )}>
+              {/* Truncated X overlay */}
+              {isTruncated && showTruncated && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-red-500/5">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/20 border border-red-500/30">
+                    <X size={14} className="text-red-400" />
+                    <span className="text-xs font-medium text-red-400">Outside context window</span>
+                  </div>
+                </div>
+              )}
+              
+              <div className={`flex items-start gap-3 pl-2 ${isTruncated ? 'opacity-30' : ''}`}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br ${
+                  isTruncated ? 'from-red-500/20 to-red-500/10' : config.color + '/20'
+                }`}>
                   <Icon size={14} className="text-text" />
                 </div>
                 
@@ -116,10 +133,16 @@ export function MemoryFadeVisualizer({
                       <span className="text-xs font-bold text-muted uppercase tracking-wider">
                         {config.label}
                       </span>
-                      {isFirst && (
+                      {isFirst && !isTruncated && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-medium">
                           <Sparkles size={10} />
                           Your instruction
+                        </span>
+                      )}
+                      {isTruncated && isFirst && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 text-[10px] font-medium">
+                          <X size={10} />
+                          LOST!
                         </span>
                       )}
                     </div>
@@ -133,7 +156,7 @@ export function MemoryFadeVisualizer({
 
               {/* Fade overlay for "forgotten" messages */}
               <AnimatePresence>
-                {isFading && (
+                {isFading && !isTruncated && (
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -142,7 +165,7 @@ export function MemoryFadeVisualizer({
                   >
                     <div className="flex items-center gap-2 px-4 text-muted/60">
                       <Ghost size={16} className="animate-pulse" />
-                      <span className="text-xs italic">Fading from memory...</span>
+                      <span className="text-xs italic">Fading from attention...</span>
                     </div>
                   </motion.div>
                 )}

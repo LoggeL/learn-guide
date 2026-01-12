@@ -3,23 +3,26 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
-import { Eye, ChevronDown, Sparkles } from 'lucide-react'
-
-interface WordWeight {
-  word: string
-  weight: number
-}
+import { Eye, Sparkles } from 'lucide-react'
 
 const SENTENCES = [
-  { text: "The cat sat on the mat because it was warm.", focus: "pronoun resolution" },
-  { text: "The robot picked up the ball and put it in the box.", focus: "object tracking" },
-  { text: "She gave him the book because he needed it for class.", focus: "multi-reference" },
+  { 
+    text: "The cat sat on the mat because it was warm.",
+    focus: "pronoun 'it' → cat or mat?" 
+  },
+  { 
+    text: "The robot picked up the ball and put it in the box.",
+    focus: "tracking 'it' → ball" 
+  },
+  { 
+    text: "She gave him the book because he needed it.",
+    focus: "multiple references" 
+  },
 ]
 
 export function AttentionVisualizer() {
   const [selectedWordIndex, setSelectedWordIndex] = useState<number | null>(null)
   const [sentenceIndex, setSentenceIndex] = useState(0)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   
   const currentSentence = SENTENCES[sentenceIndex]
   const words = currentSentence.text.split(' ')
@@ -73,125 +76,121 @@ export function AttentionVisualizer() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">Attention Map Simulator</h3>
-            <p className="text-xs text-muted">Hover to see attention patterns</p>
+            <p className="text-xs text-muted">Hover over words to see attention patterns</p>
           </div>
-        </div>
-        
-        {/* Sentence Selector */}
-        <div className="relative">
-          <button 
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-background border border-border hover:border-primary/40 transition-colors"
-          >
-            <span className="text-sm text-text">Sentence {sentenceIndex + 1}</span>
-            <ChevronDown size={14} className={clsx("text-muted transition-transform", isDropdownOpen && "rotate-180")} />
-          </button>
-          
-          <AnimatePresence>
-            {isDropdownOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute right-0 top-full mt-2 w-64 bg-surface-elevated border border-border rounded-xl shadow-xl overflow-hidden z-10"
-              >
-                {SENTENCES.map((s, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setSentenceIndex(i)
-                      setSelectedWordIndex(null)
-                      setIsDropdownOpen(false)
-                    }}
-                    className={clsx(
-                      "w-full px-4 py-3 text-left hover:bg-surface transition-colors border-b border-border last:border-0",
-                      i === sentenceIndex && "bg-primary/10"
-                    )}
-                  >
-                    <span className={clsx("text-sm", i === sentenceIndex ? "text-primary-light" : "text-text")}>
-                      Sentence {i + 1}
-                    </span>
-                    <span className="block text-xs text-subtle mt-0.5">{s.focus}</span>
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
 
-      {/* Sentence Display */}
-      <div className="p-8">
-        <div className="flex flex-wrap gap-3 leading-loose justify-center">
+      {/* Sentence Tabs */}
+      <div className="px-6 py-3 border-b border-border bg-background/50 flex gap-2">
+        {SENTENCES.map((s, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              setSentenceIndex(i)
+              setSelectedWordIndex(null)
+            }}
+            className={clsx(
+              "px-4 py-2 rounded-lg text-sm font-medium transition-all",
+              i === sentenceIndex
+                ? "bg-primary/20 text-primary-light border border-primary/30"
+                : "bg-surface text-muted border border-border hover:border-primary/30 hover:text-text"
+            )}
+          >
+            Example {i + 1}
+          </button>
+        ))}
+      </div>
+
+      {/* Words Display - Spread Out */}
+      <div className="p-8 md:p-12">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
           {words.map((word, i) => {
             const weight = selectedWordIndex !== null ? getAttentionWeight(selectedWordIndex, i) : 0.05
             const isSelected = selectedWordIndex === i
             const isHighAttention = weight > 0.5
             
             return (
-              <motion.span
+              <motion.div
                 key={i}
+                className="relative"
                 onMouseEnter={() => setSelectedWordIndex(i)}
                 onMouseLeave={() => setSelectedWordIndex(null)}
-                className={clsx(
-                  "relative px-3 py-2 rounded-xl cursor-default transition-all duration-200",
-                  "text-lg font-medium",
-                  isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-surface"
-                )}
-                animate={{
-                  scale: isHighAttention ? 1.05 : 1,
-                }}
               >
-                {/* Attention glow background */}
-                <motion.div 
+                <motion.span
                   className={clsx(
-                    "absolute inset-0 rounded-xl bg-gradient-to-r opacity-0",
-                    getWeightColor(weight)
+                    "relative block px-5 py-3 rounded-xl cursor-default transition-all duration-200",
+                    "text-xl md:text-2xl font-medium",
+                    isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-surface"
                   )}
-                  animate={{ opacity: weight * 0.6 }}
-                  transition={{ duration: 0.2 }}
-                />
-                
-                <span className={clsx(
-                  "relative z-10 transition-colors duration-200",
-                  isHighAttention ? "text-white" : "text-text"
-                )}>
-                  {word}
-                </span>
+                  animate={{
+                    scale: isHighAttention ? 1.1 : 1,
+                  }}
+                >
+                  {/* Attention glow background */}
+                  <motion.div 
+                    className={clsx(
+                      "absolute inset-0 rounded-xl bg-gradient-to-r",
+                      getWeightColor(weight)
+                    )}
+                    animate={{ opacity: weight * 0.7 }}
+                    transition={{ duration: 0.2 }}
+                  />
+                  
+                  <span className={clsx(
+                    "relative z-10 transition-colors duration-200",
+                    isHighAttention ? "text-white font-semibold" : "text-text"
+                  )}>
+                    {word}
+                  </span>
+                </motion.span>
                 
                 {/* Attention score badge */}
                 <AnimatePresence>
-                  {selectedWordIndex !== null && weight > 0.1 && (
+                  {selectedWordIndex !== null && weight > 0.15 && (
                     <motion.span
                       initial={{ opacity: 0, scale: 0.8, y: 5 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.8, y: 5 }}
-                      className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-mono text-primary-light whitespace-nowrap"
+                      className={clsx(
+                        "absolute -bottom-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-xs font-mono whitespace-nowrap",
+                        weight >= 0.8 ? "bg-purple-500/20 text-purple-300" :
+                        weight >= 0.5 ? "bg-cyan-500/20 text-cyan-300" :
+                        "bg-surface-elevated text-muted"
+                      )}
                     >
                       {(weight * 100).toFixed(0)}%
                     </motion.span>
                   )}
                 </AnimatePresence>
-              </motion.span>
+              </motion.div>
             )
           })}
+        </div>
+        
+        {/* Focus hint */}
+        <div className="mt-10 text-center">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border text-sm text-muted">
+            <span className="text-primary">Focus:</span>
+            {currentSentence.focus}
+          </span>
         </div>
       </div>
 
       {/* Legend and Info */}
       <div className="px-6 py-4 border-t border-border bg-background/50">
-        <div className="flex flex-wrap items-center gap-6 mb-4">
+        <div className="flex flex-wrap items-center justify-center gap-6 mb-4">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gradient-to-r from-purple-500 to-pink-500" />
-            <span className="text-xs text-muted">High Attention</span>
+            <span className="text-xs text-muted">High (80%+)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gradient-to-r from-cyan-500 to-blue-500" />
-            <span className="text-xs text-muted">Medium Attention</span>
+            <span className="text-xs text-muted">Medium (50%+)</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-surface-elevated border border-border" />
-            <span className="text-xs text-muted">Low Attention</span>
+            <div className="w-4 h-4 rounded bg-gradient-to-r from-emerald-500/50 to-teal-500/50" />
+            <span className="text-xs text-muted">Low (20%+)</span>
           </div>
         </div>
         
@@ -204,8 +203,8 @@ export function AttentionVisualizer() {
           <Sparkles size={16} className="text-primary mt-0.5 shrink-0" />
           <p className="text-sm text-muted">
             {selectedWordIndex === null 
-              ? <>Hover over any word to see which other words the model <span className="text-primary-light">attends to</span> when processing it. Watch how pronouns link back to their referents!</>
-              : <>When processing "<span className="text-primary-light font-medium">{words[selectedWordIndex]}</span>", the model focuses on highlighted words to understand context—resolving pronouns, linking actions to subjects, and maintaining coherence.</>
+              ? <>Hover over any word to see which other words the model <span className="text-primary-light">attends to</span> when processing it.</>
+              : <>When processing "<span className="text-primary-light font-medium">{words[selectedWordIndex]}</span>", the model focuses attention on highlighted words to resolve references and understand context.</>
             }
           </p>
         </motion.div>

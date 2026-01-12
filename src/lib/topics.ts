@@ -11,6 +11,17 @@ export const topics: Topic[] = [
     name: 'Artificial Intelligence',
     children: [
       {
+        id: 'agents',
+        name: 'AI Agents',
+        children: [
+          {
+            id: 'agent-basics',
+            name: 'Agent Basics',
+            path: '/ai/agents/basics',
+          },
+        ],
+      },
+      {
         id: 'llm',
         name: 'Large Language Models',
         children: [
@@ -29,13 +40,10 @@ export const topics: Topic[] = [
             name: 'Attention Mechanism',
             path: '/ai/llm/attention',
           },
-          // Add more LLM topics here
         ],
       },
-      // Add more AI subcategories here
     ],
   },
-  // Add more top-level categories here
 ]
 
 export function flattenTopics(topicList: Topic[] = topics): Topic[] {
