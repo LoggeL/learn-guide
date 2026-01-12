@@ -1,7 +1,8 @@
 'use client'
 
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import { Ghost, Crown, User, Bot, Sparkles } from 'lucide-react'
 
 interface Message {
   id: string
@@ -23,80 +24,139 @@ export function MemoryFadeVisualizer({
 }: MemoryFadeVisualizerProps) {
   const totalTokens = messages.reduce((sum, m) => sum + m.tokens, 0)
 
-  // Calculate visibility/opacity based on position and total context usage
   const getMessageStyle = (index: number, message: Message) => {
     const position = index / messages.length
     const contextUsage = totalTokens / maxTokens
 
-    // Earlier messages fade more as context fills up
     let opacity = 1
     let scale = 1
+    let blur = 0
 
     if (contextUsage > 0.5) {
-      // Start fading early messages when context is half full
       const fadeStart = contextUsage - 0.5
-      const fadeAmount = position < 0.3 ? (0.3 - position) * fadeStart * 2 : 0
-      opacity = Math.max(0.2, 1 - fadeAmount)
-      scale = Math.max(0.95, 1 - fadeAmount * 0.1)
+      const fadeAmount = position < 0.3 ? (0.3 - position) * fadeStart * 2.5 : 0
+      opacity = Math.max(0.15, 1 - fadeAmount)
+      scale = Math.max(0.96, 1 - fadeAmount * 0.08)
+      blur = fadeAmount * 3
     }
 
-    return { opacity, scale }
+    return { opacity, scale, blur }
   }
 
-  const roleColors = {
-    system: 'border-l-purple-500 bg-purple-500/10',
-    user: 'border-l-secondary bg-secondary/10',
-    assistant: 'border-l-primary bg-primary/10',
-  }
-
-  const roleLabels = {
-    system: 'SYSTEM',
-    user: 'USER',
-    assistant: 'ASSISTANT',
+  const roleConfig = {
+    system: { 
+      color: 'from-purple-500 to-pink-500', 
+      bg: 'bg-purple-500/10', 
+      border: 'border-purple-500/30',
+      icon: Crown,
+      label: 'SYSTEM'
+    },
+    user: { 
+      color: 'from-cyan-500 to-blue-500', 
+      bg: 'bg-cyan-500/10', 
+      border: 'border-cyan-500/30',
+      icon: User,
+      label: 'USER'
+    },
+    assistant: { 
+      color: 'from-emerald-500 to-teal-500', 
+      bg: 'bg-emerald-500/10', 
+      border: 'border-emerald-500/30',
+      icon: Bot,
+      label: 'ASSISTANT'
+    },
   }
 
   return (
-    <div className="space-y-2">
-      {messages.map((message, index) => {
-        const style = getMessageStyle(index, message)
-        const isFirst = index === 0 && highlightFirst
+    <div className="space-y-3">
+      <AnimatePresence>
+        {messages.map((message, index) => {
+          const style = getMessageStyle(index, message)
+          const isFirst = index === 0 && highlightFirst
+          const config = roleConfig[message.role]
+          const Icon = config.icon
+          const isFading = style.opacity < 0.5
 
-        return (
-          <motion.div
-            key={message.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{
-              opacity: style.opacity,
-              scale: style.scale,
-              x: 0,
-            }}
-            transition={{ duration: 0.3 }}
-            className={clsx(
-              'border-l-4 rounded-r-lg p-3 relative',
-              roleColors[message.role],
-              isFirst && 'ring-2 ring-purple-500/50'
-            )}
-          >
-            <div className="flex justify-between items-start mb-1">
-              <span className="text-xs font-bold text-muted">
-                {roleLabels[message.role]}
-                {isFirst && (
-                  <span className="ml-2 text-purple-400">← Your instruction</span>
-                )}
-              </span>
-              <span className="text-xs text-muted font-mono">{message.tokens} tokens</span>
-            </div>
-            <p className="text-sm text-text line-clamp-2">{message.content}</p>
-
-            {/* Fade overlay for "forgotten" messages */}
-            {style.opacity < 0.5 && (
-              <div className="absolute inset-0 bg-gradient-to-r from-background/60 to-transparent rounded-r-lg flex items-center justify-center">
-                <span className="text-xs text-muted/50 italic">fading from context...</span>
+          return (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, x: -30, scale: 0.95 }}
+              animate={{
+                opacity: style.opacity,
+                scale: style.scale,
+                x: 0,
+                filter: `blur(${style.blur}px)`,
+              }}
+              exit={{ opacity: 0, x: 30, scale: 0.9 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              className={clsx(
+                'relative rounded-xl p-4 border',
+                config.bg,
+                config.border,
+                isFirst && 'ring-2 ring-purple-500/50 ring-offset-2 ring-offset-surface'
+              )}
+            >
+              {/* Gradient accent bar */}
+              <div className={clsx(
+                'absolute left-0 top-0 bottom-0 w-1 rounded-l-xl bg-gradient-to-b',
+                config.color
+              )} />
+              
+              <div className="flex items-start gap-3 pl-2">
+                <div className={clsx(
+                  'w-8 h-8 rounded-lg flex items-center justify-center shrink-0 bg-gradient-to-br',
+                  config.color + '/20'
+                )}>
+                  <Icon size={14} className="text-text" />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-muted uppercase tracking-wider">
+                        {config.label}
+                      </span>
+                      {isFirst && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-medium">
+                          <Sparkles size={10} />
+                          Your instruction
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-subtle font-mono">{message.tokens} tok</span>
+                  </div>
+                  <p className="text-sm text-text leading-relaxed line-clamp-2">
+                    {message.content}
+                  </p>
+                </div>
               </div>
-            )}
-          </motion.div>
-        )
-      })}
+
+              {/* Fade overlay for "forgotten" messages */}
+              <AnimatePresence>
+                {isFading && (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/60 to-transparent rounded-xl flex items-center"
+                  >
+                    <div className="flex items-center gap-2 px-4 text-muted/60">
+                      <Ghost size={16} className="animate-pulse" />
+                      <span className="text-xs italic">Fading from memory...</span>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )
+        })}
+      </AnimatePresence>
+      
+      {messages.length === 0 && (
+        <div className="text-center py-8 text-muted">
+          <p className="text-sm">No messages yet. Start the conversation!</p>
+        </div>
+      )}
     </div>
   )
 }

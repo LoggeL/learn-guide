@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, BookOpen, X } from 'lucide-react'
+import { ChevronRight, Search, Sparkles, X, Command } from 'lucide-react'
 import { topics, searchTopics, type Topic } from '@/lib/topics'
 import clsx from 'clsx'
 
@@ -18,29 +18,30 @@ function TopicNode({ topic, level = 0 }: { topic: Topic; level?: number }) {
     <div>
       <div
         className={clsx(
-          'flex items-center gap-2 py-1.5 px-2 rounded cursor-pointer transition-colors',
+          'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
           isActive
-            ? 'bg-primary/20 text-primary'
-            : 'hover:bg-surface text-muted hover:text-text'
+            ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
+            : 'hover:bg-surface-elevated text-muted hover:text-text'
         )}
-        style={{ paddingLeft: `${level * 12 + 8}px` }}
+        style={{ paddingLeft: `${level * 12 + 12}px` }}
         onClick={() => hasChildren && setExpanded(!expanded)}
       >
         {hasChildren && (
           <motion.div
             animate={{ rotate: expanded ? 90 : 0 }}
             transition={{ duration: 0.15 }}
+            className="text-subtle"
           >
-            <ChevronRight size={14} />
+            <ChevronRight size={12} />
           </motion.div>
         )}
-        {!hasChildren && <span className="w-3.5" />}
+        {!hasChildren && <span className="w-3" />}
         {topic.path ? (
-          <Link href={topic.path} className="flex-1 text-sm">
+          <Link href={topic.path} className="flex-1 text-sm font-medium">
             {topic.name}
           </Link>
         ) : (
-          <span className="flex-1 text-sm font-medium">{topic.name}</span>
+          <span className="flex-1 text-sm font-semibold">{topic.name}</span>
         )}
       </div>
       <AnimatePresence>
@@ -64,6 +65,15 @@ function TopicNode({ topic, level = 0 }: { topic: Topic; level?: number }) {
 export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  useEffect(() => {
+    if (isCollapsed) {
+      document.body.classList.add('sidebar-collapsed')
+    } else {
+      document.body.classList.remove('sidebar-collapsed')
+    }
+  }, [isCollapsed])
 
   const searchResults = useMemo(
     () => (searchQuery ? searchTopics(searchQuery) : []),
@@ -87,31 +97,109 @@ export function Sidebar() {
 
   return (
     <>
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-surface border-r border-border flex flex-col z-40">
-        <div className="p-4 border-b border-border">
-          <Link href="/" className="flex items-center gap-2 text-primary">
-            <BookOpen size={20} />
-            <span className="font-bold">Learn AI</span>
-          </Link>
+      <aside
+        className={clsx(
+          'fixed left-0 top-0 h-screen flex flex-col z-40 transition-all duration-300',
+          'bg-surface/80 backdrop-blur-xl border-r border-border',
+          isCollapsed ? 'w-16' : 'w-72'
+        )}
+      >
+        {/* Header */}
+        <div className="p-4 border-b border-border flex items-center justify-between">
+          {!isCollapsed && (
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
+                <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
+                  <Sparkles size={16} className="text-primary-light" />
+                </div>
+              </div>
+              <div>
+                <span className="font-bold text-text font-heading group-hover:text-primary-light transition-colors">
+                  Learn AI
+                </span>
+                <p className="text-[10px] text-subtle">Interactive Guide</p>
+              </div>
+            </Link>
+          )}
+          {isCollapsed && (
+            <Link href="/" className="mx-auto">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
+                <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
+                  <Sparkles size={16} className="text-primary-light" />
+                </div>
+              </div>
+            </Link>
+          )}
+          {!isCollapsed && (
+            <button
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              className="p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
+            >
+              <ChevronRight size={16} className="rotate-180" />
+            </button>
+          )}
         </div>
 
-        <button
-          onClick={() => setSearchOpen(true)}
-          className="mx-3 mt-3 flex items-center gap-2 px-3 py-2 text-sm text-muted bg-background rounded border border-border hover:border-primary/50 transition-colors"
-        >
-          <Search size={14} />
-          <span className="flex-1 text-left">Search...</span>
-          <kbd className="text-xs bg-surface px-1.5 py-0.5 rounded">⌘K</kbd>
-        </button>
+        {/* Search Button */}
+        <div className={clsx('p-3', isCollapsed && 'flex justify-center')}>
+          <button
+            onClick={() => setSearchOpen(true)}
+            className={clsx(
+              'flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-200',
+              'bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated',
+              isCollapsed ? 'w-10 h-10 justify-center p-0' : 'w-full'
+            )}
+          >
+            <Search size={15} className="text-subtle" />
+            {!isCollapsed && (
+              <>
+                <span className="flex-1 text-left text-muted">Search...</span>
+                <div className="flex items-center gap-1 text-subtle">
+                  <Command size={11} />
+                  <span className="text-[10px]">K</span>
+                </div>
+              </>
+            )}
+          </button>
+        </div>
 
-        <nav className="flex-1 overflow-auto p-3">
+        {/* Collapse button when collapsed */}
+        {isCollapsed && (
+          <div className="px-3 mb-2">
+            <button
+              onClick={() => setIsCollapsed(false)}
+              className="w-full p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all flex justify-center"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && 'hidden')}>
+          <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
+            Topics
+          </div>
           {topics.map((topic) => (
             <TopicNode key={topic.id} topic={topic} />
           ))}
         </nav>
 
-        <div className="p-3 border-t border-border text-xs text-muted">
-          <span className="text-primary">v0.1.0</span> • Interactive Guide
+        {/* Footer */}
+        <div
+          className={clsx(
+            'p-4 border-t border-border text-xs',
+            isCollapsed ? 'text-center' : ''
+          )}
+        >
+          {!isCollapsed ? (
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
+              <span className="text-subtle">v0.1.0</span>
+            </div>
+          ) : (
+            <div className="w-2 h-2 rounded-full bg-success animate-pulse mx-auto" />
+          )}
         </div>
       </aside>
 
@@ -122,44 +210,50 @@ export function Sidebar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-24"
+            className="fixed inset-0 bg-background/80 backdrop-blur-md z-50 flex items-start justify-center pt-24"
             onClick={() => {
               setSearchOpen(false)
               setSearchQuery('')
             }}
           >
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="w-full max-w-lg bg-surface border border-border rounded-lg shadow-2xl"
+              initial={{ scale: 0.95, opacity: 0, y: -20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: -20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-full max-w-xl bg-surface border border-border rounded-2xl shadow-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center gap-3 p-4 border-b border-border">
-                <Search size={18} className="text-muted" />
+              <div className="flex items-center gap-4 p-5 border-b border-border">
+                <Search size={20} className="text-muted shrink-0" />
                 <input
                   autoFocus
                   type="text"
                   placeholder="Search topics..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-transparent outline-none text-text placeholder:text-muted"
+                  className="flex-1 bg-transparent outline-none text-text text-lg placeholder:text-subtle"
                 />
                 <button
                   onClick={() => {
                     setSearchOpen(false)
                     setSearchQuery('')
                   }}
-                  className="p-1 hover:bg-background rounded"
+                  className="p-2 hover:bg-surface-elevated rounded-lg transition-colors"
                 >
-                  <X size={16} className="text-muted" />
+                  <X size={18} className="text-muted" />
                 </button>
               </div>
               <div className="max-h-80 overflow-auto p-2">
                 {searchQuery === '' ? (
-                  <p className="text-muted text-sm p-3">Start typing to search...</p>
+                  <div className="p-6 text-center">
+                    <p className="text-muted text-sm">Start typing to search topics...</p>
+                    <p className="text-subtle text-xs mt-2">Try "temperature" or "attention"</p>
+                  </div>
                 ) : searchResults.length === 0 ? (
-                  <p className="text-muted text-sm p-3">No results found</p>
+                  <div className="p-6 text-center">
+                    <p className="text-muted text-sm">No results found for "{searchQuery}"</p>
+                  </div>
                 ) : (
                   searchResults.map((topic) => (
                     <Link
@@ -169,12 +263,19 @@ export function Sidebar() {
                         setSearchOpen(false)
                         setSearchQuery('')
                       }}
-                      className="block px-3 py-2 rounded hover:bg-background text-text"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-elevated text-text transition-colors"
                     >
-                      {topic.name}
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                        <Sparkles size={14} className="text-primary-light" />
+                      </div>
+                      <span className="font-medium">{topic.name}</span>
                     </Link>
                   ))
                 )}
+              </div>
+              <div className="p-3 border-t border-border flex items-center justify-between text-xs text-subtle">
+                <span>Press ESC to close</span>
+                <span>Enter to select</span>
               </div>
             </motion.div>
           </motion.div>

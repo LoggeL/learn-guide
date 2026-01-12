@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { Database, AlertTriangle, CheckCircle } from 'lucide-react'
 
 interface TokenCounterProps {
   current: number
@@ -15,37 +16,85 @@ export function TokenCounter({ current, max, label = 'Context Window' }: TokenCo
   const isCritical = percentage > 90
 
   return (
-    <div className="bg-surface border border-border rounded-lg p-4">
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-sm text-muted">{label}</span>
-        <span
-          className={clsx(
-            'text-sm font-mono',
-            isCritical ? 'text-red-400' : isWarning ? 'text-yellow-400' : 'text-primary'
-          )}
-        >
-          {current.toLocaleString()} / {max.toLocaleString()}
-        </span>
+    <div className="rounded-2xl bg-surface border border-border p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className={clsx(
+            "w-10 h-10 rounded-xl flex items-center justify-center",
+            isCritical 
+              ? "bg-gradient-to-br from-red-500/20 to-rose-500/20"
+              : isWarning
+              ? "bg-gradient-to-br from-yellow-500/20 to-orange-500/20"
+              : "bg-gradient-to-br from-primary/20 to-secondary/20"
+          )}>
+            <Database size={18} className={clsx(
+              isCritical ? "text-red-400" : isWarning ? "text-yellow-400" : "text-primary-light"
+            )} />
+          </div>
+          <div>
+            <h3 className="font-semibold text-text font-heading">{label}</h3>
+            <p className="text-xs text-muted">Token usage</p>
+          </div>
+        </div>
+        
+        <div className="text-right">
+          <motion.span
+            key={current}
+            initial={{ scale: 1.1 }}
+            animate={{ scale: 1 }}
+            className={clsx(
+              'text-2xl font-mono font-bold',
+              isCritical ? 'text-red-400' : isWarning ? 'text-yellow-400' : 'text-gradient'
+            )}
+          >
+            {percentage.toFixed(0)}%
+          </motion.span>
+          <p className="text-xs text-muted font-mono">
+            {current.toLocaleString()} / {max.toLocaleString()}
+          </p>
+        </div>
       </div>
-      <div className="h-3 bg-background rounded-full overflow-hidden">
+      
+      <div className="h-4 bg-background rounded-full overflow-hidden border border-border">
         <motion.div
           className={clsx(
-            'h-full rounded-full',
+            'h-full rounded-full relative',
             isCritical
-              ? 'bg-gradient-to-r from-red-500 to-red-400'
+              ? 'bg-gradient-to-r from-red-600 to-red-400'
               : isWarning
-              ? 'bg-gradient-to-r from-yellow-500 to-yellow-400'
+              ? 'bg-gradient-to-r from-yellow-600 to-yellow-400'
               : 'bg-gradient-to-r from-primary to-secondary'
           )}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-        />
+        >
+          {/* Shimmer effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" 
+               style={{ backgroundSize: '200% 100%' }} />
+        </motion.div>
       </div>
-      <div className="flex justify-between mt-1 text-xs text-muted">
-        <span>0</span>
-        <span>{isCritical ? '⚠️ Context nearly full!' : isWarning ? 'Getting full...' : ''}</span>
-        <span>{max.toLocaleString()}</span>
+      
+      <div className="flex justify-between items-center mt-3">
+        <div className="flex items-center gap-2">
+          {isCritical ? (
+            <>
+              <AlertTriangle size={14} className="text-red-400" />
+              <span className="text-xs text-red-400 font-medium">Context nearly full!</span>
+            </>
+          ) : isWarning ? (
+            <>
+              <AlertTriangle size={14} className="text-yellow-400" />
+              <span className="text-xs text-yellow-400">Getting crowded...</span>
+            </>
+          ) : (
+            <>
+              <CheckCircle size={14} className="text-success" />
+              <span className="text-xs text-muted">Healthy capacity</span>
+            </>
+          )}
+        </div>
+        <span className="text-xs text-subtle font-mono">{max.toLocaleString()} max</span>
       </div>
     </div>
   )
