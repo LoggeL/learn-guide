@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   description: 'Master artificial intelligence and large language model concepts through beautiful, interactive demonstrations.',
   keywords: ['AI', 'Machine Learning', 'LLM', 'Temperature', 'Attention', 'Transformer', 'Interactive Learning'],
   authors: [{ name: 'Learn AI' }],
+  icons: {
+    icon: '/favicon.svg',
+  },
   openGraph: {
     title: 'Learn AI Concepts',
     description: 'Interactive explorations of AI and LLM concepts',
