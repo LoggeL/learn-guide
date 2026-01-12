@@ -15,9 +15,24 @@ export const topics: Topic[] = [
         name: 'AI Agents',
         children: [
           {
-            id: 'agent-basics',
-            name: 'Agent Basics',
-            path: '/ai/agents/basics',
+            id: 'agent-loop',
+            name: 'The Agent Loop',
+            path: '/ai/agents/loop',
+          },
+          {
+            id: 'agent-context',
+            name: 'Context Anatomy',
+            path: '/ai/agents/context',
+          },
+          {
+            id: 'agent-problems',
+            name: 'Agent Problems',
+            path: '/ai/agents/problems',
+          },
+          {
+            id: 'agent-security',
+            name: 'Agent Security',
+            path: '/ai/agents/security',
           },
         ],
       },
