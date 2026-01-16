@@ -34,6 +34,11 @@ export const topics: Topic[] = [
             name: 'Agent Security',
             path: '/ai/agents/security',
           },
+          {
+            id: 'agentic-patterns',
+            name: 'Agentic Patterns',
+            path: '/ai/agents/patterns',
+          },
         ],
       },
       {

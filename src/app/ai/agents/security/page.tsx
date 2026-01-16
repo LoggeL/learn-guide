@@ -14,6 +14,7 @@ export default function AgentSecurityPage() {
         { label: 'Security' },
       ]}
       prevTopic={{ label: 'Agent Problems', href: '/ai/agents/problems' }}
+      nextTopic={{ label: 'Agentic Patterns', href: '/ai/agents/patterns' }}
     >
       {/* Intro */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
