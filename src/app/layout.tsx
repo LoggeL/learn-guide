@@ -32,7 +32,7 @@ export default function RootLayout({
         </div>
         
         <Sidebar />
-        <main className="p-6 md:p-10 overflow-auto transition-all duration-300 ml-72 min-h-screen relative">
+        <main className="main-content p-6 md:p-10 overflow-auto min-h-screen relative">
           {children}
         </main>
       </body>

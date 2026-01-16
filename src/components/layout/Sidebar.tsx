@@ -8,7 +8,7 @@ import { ChevronRight, Search, Sparkles, X, Command } from 'lucide-react'
 import { topics, searchTopics, type Topic } from '@/lib/topics'
 import clsx from 'clsx'
 
-function TopicNode({ topic, level = 0 }: { topic: Topic; level?: number }) {
+function TopicNode({ topic, level = 0, onNavigate }: { topic: Topic; level?: number; onNavigate?: () => void }) {
   const pathname = usePathname()
   const [expanded, setExpanded] = useState(true)
   const hasChildren = topic.children && topic.children.length > 0
@@ -37,7 +37,7 @@ function TopicNode({ topic, level = 0 }: { topic: Topic; level?: number }) {
         )}
         {!hasChildren && <span className="w-3" />}
         {topic.path ? (
-          <Link href={topic.path} className="flex-1 text-sm font-medium">
+          <Link href={topic.path} className="flex-1 text-sm font-medium" onClick={onNavigate}>
             {topic.name}
           </Link>
         ) : (
@@ -53,7 +53,7 @@ function TopicNode({ topic, level = 0 }: { topic: Topic; level?: number }) {
             transition={{ duration: 0.15 }}
           >
             {topic.children!.map((child) => (
-              <TopicNode key={child.id} topic={child} level={level + 1} />
+              <TopicNode key={child.id} topic={child} level={level + 1} onNavigate={onNavigate} />
             ))}
           </motion.div>
         )}
@@ -66,6 +66,19 @@ export function Sidebar() {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      if (window.innerWidth < 768) {
+        setIsCollapsed(true)
+      }
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     if (isCollapsed) {
@@ -97,11 +110,31 @@ export function Sidebar() {
 
   return (
     <>
+      {/* Mobile menu button */}
+      <button
+        onClick={() => setIsMobileOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-surface border border-border text-muted hover:text-text transition-colors"
+      >
+        <ChevronRight size={20} />
+      </button>
+
+      {/* Mobile overlay */}
+      {isMobileOpen && (
+        <div
+          className="md:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
       <aside
         className={clsx(
           'fixed left-0 top-0 h-screen flex flex-col z-40 transition-all duration-300',
           'bg-surface/80 backdrop-blur-xl border-r border-border',
-          isCollapsed ? 'w-16' : 'w-72'
+          // Desktop behavior
+          'hidden md:flex',
+          isCollapsed ? 'md:w-16' : 'md:w-72',
+          // Mobile behavior - show when open
+          isMobileOpen && '!flex w-72'
         )}
       >
         {/* Header */}
@@ -176,29 +209,62 @@ export function Sidebar() {
         )}
 
         {/* Navigation */}
-        <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && 'hidden')}>
+        <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && !isMobileOpen && 'hidden')}>
           <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
             Topics
           </div>
           {topics.map((topic) => (
-            <TopicNode key={topic.id} topic={topic} />
+            <TopicNode key={topic.id} topic={topic} onNavigate={() => setIsMobileOpen(false)} />
           ))}
         </nav>
 
-        {/* Footer */}
+        {/* Footer with LMF branding */}
         <div
           className={clsx(
-            'p-4 border-t border-border text-xs',
+            'p-4 border-t border-border',
             isCollapsed ? 'text-center' : ''
           )}
         >
           {!isCollapsed ? (
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-success animate-pulse" />
-              <span className="text-subtle">v0.1.0</span>
-            </div>
+            <a 
+              href="https://lmf.logge.top" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 group"
+            >
+              <svg 
+                viewBox="0 0 2510 1500" 
+                className="w-8 h-5 text-[#d90429] group-hover:text-primary-light transition-colors"
+                fill="currentColor"
+              >
+                <path d="M60 1387c0-4 174-779 210-932l51-222 21-93h129c71 0 129 1 129 3l-49 218c-144 634-172 756-177 772l-5 17h121v13c0 6-12 60-27 120l-28 107H248c-104 0-188-1-188-3zM622 858l139-625 21-93h288l2 238 3 237 141-235 140-235 163-3 163-3-4 13c-3 7-49 212-103 456l-98 442h-275l4-17c38-164 74-327 72-329-2-1-43 76-93 172l-90 174H900l-2-166-3-166-74 336-74 336H503l119-532z"/>
+                <path d="M810 1381c0-16 48-210 55-221l6-10h1280l-5 18-27 120-22 102H810v-9zM1550 1048l69-308 68-305 328-3 327-2-5 13c-2 7-15 59-27 115l-23 102h-414l-37 173-43 195-5 22h-119c-65 0-119-1-119-2zM1714 318l22-105 16-73h650l-5 23-23 105-17 82h-649l6-32z"/>
+              </svg>
+              <div className="flex flex-col">
+                <span className="text-xs text-subtle group-hover:text-muted transition-colors">
+                  A project by
+                </span>
+                <span className="text-sm font-semibold text-muted group-hover:text-text transition-colors">
+                  LMF
+                </span>
+              </div>
+            </a>
           ) : (
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse mx-auto" />
+            <a 
+              href="https://lmf.logge.top" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <svg 
+                viewBox="0 0 2510 1500" 
+                className="w-8 h-5 mx-auto text-[#d90429] hover:text-primary-light transition-colors"
+                fill="currentColor"
+              >
+                <path d="M60 1387c0-4 174-779 210-932l51-222 21-93h129c71 0 129 1 129 3l-49 218c-144 634-172 756-177 772l-5 17h121v13c0 6-12 60-27 120l-28 107H248c-104 0-188-1-188-3zM622 858l139-625 21-93h288l2 238 3 237 141-235 140-235 163-3 163-3-4 13c-3 7-49 212-103 456l-98 442h-275l4-17c38-164 74-327 72-329-2-1-43 76-93 172l-90 174H900l-2-166-3-166-74 336-74 336H503l119-532z"/>
+                <path d="M810 1381c0-16 48-210 55-221l6-10h1280l-5 18-27 120-22 102H810v-9zM1550 1048l69-308 68-305 328-3 327-2-5 13c-2 7-15 59-27 115l-23 102h-414l-37 173-43 195-5 22h-119c-65 0-119-1-119-2zM1714 318l22-105 16-73h650l-5 23-23 105-17 82h-649l6-32z"/>
+              </svg>
+            </a>
           )}
         </div>
       </aside>

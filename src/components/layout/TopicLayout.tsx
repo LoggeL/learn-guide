@@ -20,7 +20,7 @@ export function TopicLayout({
   children,
 }: TopicLayoutProps) {
   return (
-    <div className="max-w-4xl relative">
+    <div className="max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto relative">
       {/* Ambient background glow */}
       <div className="absolute -top-40 right-0 w-[500px] h-[500px] bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none" />
       
