@@ -139,7 +139,7 @@ export function Sidebar() {
       >
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">
-          {!isCollapsed && (
+          {(!isCollapsed || isMobileOpen) && (
             <Link href="/" className="flex items-center gap-3 group">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
@@ -154,7 +154,7 @@ export function Sidebar() {
               </div>
             </Link>
           )}
-          {isCollapsed && (
+          {isCollapsed && !isMobileOpen && (
             <Link href="/" className="mx-auto">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
@@ -163,28 +163,36 @@ export function Sidebar() {
               </div>
             </Link>
           )}
-          {!isCollapsed && (
+          {/* Collapse/Expand toggle - desktop only */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden md:flex p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
+          >
+            <ChevronRight size={16} className={clsx('transition-transform', !isCollapsed && 'rotate-180')} />
+          </button>
+          {/* Close button - mobile only */}
+          {isMobileOpen && (
             <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
+              onClick={() => setIsMobileOpen(false)}
+              className="md:hidden p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
             >
-              <ChevronRight size={16} className="rotate-180" />
+              <X size={16} />
             </button>
           )}
         </div>
 
         {/* Search Button */}
-        <div className={clsx('p-3', isCollapsed && 'flex justify-center')}>
+        <div className={clsx('p-3', isCollapsed && !isMobileOpen && 'flex justify-center')}>
           <button
             onClick={() => setSearchOpen(true)}
             className={clsx(
               'flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-200',
               'bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated',
-              isCollapsed ? 'w-10 h-10 justify-center p-0' : 'w-full'
+              isCollapsed && !isMobileOpen ? 'w-10 h-10 justify-center p-0' : 'w-full'
             )}
           >
             <Search size={15} className="text-subtle" />
-            {!isCollapsed && (
+            {(!isCollapsed || isMobileOpen) && (
               <>
                 <span className="flex-1 text-left text-muted">Search...</span>
                 <div className="flex items-center gap-1 text-subtle">
@@ -195,18 +203,6 @@ export function Sidebar() {
             )}
           </button>
         </div>
-
-        {/* Collapse button when collapsed */}
-        {isCollapsed && (
-          <div className="px-3 mb-2">
-            <button
-              onClick={() => setIsCollapsed(false)}
-              className="w-full p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all flex justify-center"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        )}
 
         {/* Navigation */}
         <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && !isMobileOpen && 'hidden')}>
@@ -222,10 +218,10 @@ export function Sidebar() {
         <div
           className={clsx(
             'p-4 border-t border-border',
-            isCollapsed ? 'text-center' : ''
+            isCollapsed && !isMobileOpen ? 'text-center' : ''
           )}
         >
-          {!isCollapsed ? (
+          {(!isCollapsed || isMobileOpen) ? (
             <a 
               href="https://lmf.logge.top" 
               target="_blank" 
