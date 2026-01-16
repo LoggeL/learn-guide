@@ -60,6 +60,16 @@ export const topics: Topic[] = [
             name: 'Attention Mechanism',
             path: '/ai/llm/attention',
           },
+          {
+            id: 'vision',
+            name: 'Vision & Images',
+            path: '/ai/llm/vision',
+          },
+          {
+            id: 'visual-challenges',
+            name: 'Visual Challenges',
+            path: '/ai/llm/visual-challenges',
+          },
         ],
       },
     ],

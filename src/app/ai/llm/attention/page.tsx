@@ -17,6 +17,7 @@ export default function AttentionPage() {
         { label: 'Attention Mechanism' },
       ]}
       prevTopic={{ label: 'Temperature', href: '/ai/llm/temperature' }}
+      nextTopic={{ label: 'Vision & Images', href: '/ai/llm/vision' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
