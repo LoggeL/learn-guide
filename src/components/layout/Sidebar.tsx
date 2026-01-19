@@ -5,14 +5,80 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Search, Sparkles, X, Command } from 'lucide-react'
-import { topics, searchTopics, type Topic } from '@/lib/topics'
 import clsx from 'clsx'
+import { useTranslation, useLocale } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
-function TopicNode({ topic, level = 0, onNavigate }: { topic: Topic; level?: number; onNavigate?: () => void }) {
+interface Topic {
+  id: string
+  nameKey: string
+  path?: string
+  children?: Topic[]
+}
+
+// Topic structure with translation keys
+const topicTree: Topic[] = [
+  {
+    id: 'ai',
+    nameKey: 'ai',
+    children: [
+      {
+        id: 'agents',
+        nameKey: 'agents',
+        children: [
+          { id: 'agent-loop', nameKey: 'agent-loop', path: '/ai/agents/loop' },
+          { id: 'agent-context', nameKey: 'agent-context', path: '/ai/agents/context' },
+          { id: 'agent-problems', nameKey: 'agent-problems', path: '/ai/agents/problems' },
+          { id: 'agent-security', nameKey: 'agent-security', path: '/ai/agents/security' },
+          { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
+        ],
+      },
+      {
+        id: 'llm',
+        nameKey: 'llm',
+        children: [
+          { id: 'context-rot', nameKey: 'context-rot', path: '/ai/llm/context-rot' },
+          { id: 'temperature', nameKey: 'temperature', path: '/ai/llm/temperature' },
+          { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention' },
+          { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
+          { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+        ],
+      },
+    ],
+  },
+]
+
+function flattenTopics(topicList: Topic[]): Topic[] {
+  const result: Topic[] = []
+  for (const topic of topicList) {
+    if (topic.path) {
+      result.push(topic)
+    }
+    if (topic.children) {
+      result.push(...flattenTopics(topic.children))
+    }
+  }
+  return result
+}
+
+function TopicNode({ 
+  topic, 
+  level = 0, 
+  onNavigate,
+  getTopicName,
+  locale,
+}: { 
+  topic: Topic
+  level?: number
+  onNavigate?: () => void
+  getTopicName: (key: string) => string
+  locale: string
+}) {
   const pathname = usePathname()
   const [expanded, setExpanded] = useState(true)
   const hasChildren = topic.children && topic.children.length > 0
-  const isActive = topic.path === pathname
+  const localePath = topic.path ? `/${locale}${topic.path}` : undefined
+  const isActive = localePath === pathname
 
   return (
     <div>
@@ -36,12 +102,12 @@ function TopicNode({ topic, level = 0, onNavigate }: { topic: Topic; level?: num
           </motion.div>
         )}
         {!hasChildren && <span className="w-3" />}
-        {topic.path ? (
-          <Link href={topic.path} className="flex-1 text-sm font-medium" onClick={onNavigate}>
-            {topic.name}
+        {localePath ? (
+          <Link href={localePath} className="flex-1 text-sm font-medium" onClick={onNavigate}>
+            {getTopicName(topic.nameKey)}
           </Link>
         ) : (
-          <span className="flex-1 text-sm font-semibold">{topic.name}</span>
+          <span className="flex-1 text-sm font-semibold">{getTopicName(topic.nameKey)}</span>
         )}
       </div>
       <AnimatePresence>
@@ -53,7 +119,14 @@ function TopicNode({ topic, level = 0, onNavigate }: { topic: Topic; level?: num
             transition={{ duration: 0.15 }}
           >
             {topic.children!.map((child) => (
-              <TopicNode key={child.id} topic={child} level={level + 1} onNavigate={onNavigate} />
+              <TopicNode 
+                key={child.id} 
+                topic={child} 
+                level={level + 1} 
+                onNavigate={onNavigate}
+                getTopicName={getTopicName}
+                locale={locale}
+              />
             ))}
           </motion.div>
         )}
@@ -63,10 +136,23 @@ function TopicNode({ topic, level = 0, onNavigate }: { topic: Topic; level?: num
 }
 
 export function Sidebar() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+
+  const getTopicName = (key: string): string => {
+    // First check topicNames, then categories
+    if (key in t.topicNames) {
+      return t.topicNames[key as keyof typeof t.topicNames]
+    }
+    if (key in t.categories) {
+      return t.categories[key as keyof typeof t.categories]
+    }
+    return key
+  }
 
   // Check if mobile on mount and resize
   useEffect(() => {
@@ -88,10 +174,16 @@ export function Sidebar() {
     }
   }, [isCollapsed])
 
-  const searchResults = useMemo(
-    () => (searchQuery ? searchTopics(searchQuery) : []),
-    [searchQuery]
-  )
+  const allTopics = useMemo(() => flattenTopics(topicTree), [])
+  
+  const searchResults = useMemo(() => {
+    if (!searchQuery) return []
+    const q = searchQuery.toLowerCase()
+    return allTopics.filter((topic) => {
+      const name = getTopicName(topic.nameKey).toLowerCase()
+      return name.includes(q) || topic.id.includes(q)
+    })
+  }, [searchQuery, allTopics, t])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -140,7 +232,7 @@ export function Sidebar() {
         {/* Header */}
         <div className="p-4 border-b border-border flex items-center justify-between">
           {(!isCollapsed || isMobileOpen) && (
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link href={`/${locale}`} className="flex items-center gap-3 group">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
@@ -148,14 +240,14 @@ export function Sidebar() {
               </div>
               <div>
                 <span className="font-bold text-text font-heading group-hover:text-primary-light transition-colors">
-                  Learn AI
+                  {t.common.learnAi}
                 </span>
-                <p className="text-[10px] text-subtle">Interactive Guide</p>
+                <p className="text-[10px] text-subtle">{t.common.interactiveGuide}</p>
               </div>
             </Link>
           )}
           {isCollapsed && !isMobileOpen && (
-            <Link href="/" className="mx-auto">
+            <Link href={`/${locale}`} className="mx-auto">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
@@ -181,6 +273,13 @@ export function Sidebar() {
           )}
         </div>
 
+        {/* Language Switcher */}
+        {(!isCollapsed || isMobileOpen) && (
+          <div className="px-3 pt-3">
+            <LanguageSwitcher />
+          </div>
+        )}
+
         {/* Search Button */}
         <div className={clsx('p-3', isCollapsed && !isMobileOpen && 'flex justify-center')}>
           <button
@@ -194,7 +293,7 @@ export function Sidebar() {
             <Search size={15} className="text-subtle" />
             {(!isCollapsed || isMobileOpen) && (
               <>
-                <span className="flex-1 text-left text-muted">Search...</span>
+                <span className="flex-1 text-left text-muted">{t.common.search}</span>
                 <div className="flex items-center gap-1 text-subtle">
                   <Command size={11} />
                   <span className="text-[10px]">K</span>
@@ -207,10 +306,16 @@ export function Sidebar() {
         {/* Navigation */}
         <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && !isMobileOpen && 'hidden')}>
           <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
-            Topics
+            {t.common.topics}
           </div>
-          {topics.map((topic) => (
-            <TopicNode key={topic.id} topic={topic} onNavigate={() => setIsMobileOpen(false)} />
+          {topicTree.map((topic) => (
+            <TopicNode 
+              key={topic.id} 
+              topic={topic} 
+              onNavigate={() => setIsMobileOpen(false)}
+              getTopicName={getTopicName}
+              locale={locale}
+            />
           ))}
         </nav>
 
@@ -238,7 +343,7 @@ export function Sidebar() {
               </svg>
               <div className="flex flex-col">
                 <span className="text-xs text-subtle group-hover:text-muted transition-colors">
-                  A project by
+                  {t.common.projectBy}
                 </span>
                 <span className="text-sm font-semibold text-muted group-hover:text-text transition-colors">
                   LMF
@@ -291,7 +396,7 @@ export function Sidebar() {
                 <input
                   autoFocus
                   type="text"
-                  placeholder="Search topics..."
+                  placeholder={t.common.searchTopics}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="flex-1 bg-transparent outline-none text-text text-lg placeholder:text-subtle"
@@ -309,18 +414,18 @@ export function Sidebar() {
               <div className="max-h-80 overflow-auto p-2">
                 {searchQuery === '' ? (
                   <div className="p-6 text-center">
-                    <p className="text-muted text-sm">Start typing to search topics...</p>
-                    <p className="text-subtle text-xs mt-2">Try "temperature" or "attention"</p>
+                    <p className="text-muted text-sm">{t.common.startTyping}</p>
+                    <p className="text-subtle text-xs mt-2">{t.common.trySearching}</p>
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="p-6 text-center">
-                    <p className="text-muted text-sm">No results found for "{searchQuery}"</p>
+                    <p className="text-muted text-sm">{t.common.noResults} "{searchQuery}"</p>
                   </div>
                 ) : (
                   searchResults.map((topic) => (
                     <Link
                       key={topic.id}
-                      href={topic.path!}
+                      href={`/${locale}${topic.path}`}
                       onClick={() => {
                         setSearchOpen(false)
                         setSearchQuery('')
@@ -330,14 +435,14 @@ export function Sidebar() {
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
                         <Sparkles size={14} className="text-primary-light" />
                       </div>
-                      <span className="font-medium">{topic.name}</span>
+                      <span className="font-medium">{getTopicName(topic.nameKey)}</span>
                     </Link>
                   ))
                 )}
               </div>
               <div className="p-3 border-t border-border flex items-center justify-between text-xs text-subtle">
-                <span>Press ESC to close</span>
-                <span>Enter to select</span>
+                <span>{t.common.pressEsc}</span>
+                <span>{t.common.enterToSelect}</span>
               </div>
             </motion.div>
           </motion.div>

@@ -3,28 +3,8 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers } from 'lucide-react'
-import { topics } from '@/lib/topics'
-
-const features = [
-  {
-    icon: Brain,
-    title: 'Interactive Demos',
-    description: 'Hands-on explorations that make abstract concepts tangible and intuitive.',
-    gradient: 'from-purple-500 to-pink-500',
-  },
-  {
-    icon: Layers,
-    title: 'Visual Learning',
-    description: 'Beautiful visualizations that reveal how AI systems actually work under the hood.',
-    gradient: 'from-cyan-500 to-blue-500',
-  },
-  {
-    icon: Zap,
-    title: 'Build Intuition',
-    description: 'Go beyond memorization—develop deep understanding through experimentation.',
-    gradient: 'from-orange-500 to-red-500',
-  },
-]
+import { useTranslation, useLocale } from '@/lib/i18n/context'
+import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -46,11 +26,72 @@ const itemVariants = {
   },
 }
 
+// Topic structure with paths
+const topicData = [
+  {
+    id: 'ai',
+    categoryKey: 'ai',
+    children: [
+      {
+        id: 'agents',
+        nameKey: 'agents',
+        children: [
+          { id: 'agent-loop', path: '/ai/agents/loop' },
+          { id: 'agent-context', path: '/ai/agents/context' },
+          { id: 'agent-problems', path: '/ai/agents/problems' },
+          { id: 'agent-security', path: '/ai/agents/security' },
+          { id: 'agentic-patterns', path: '/ai/agents/patterns' },
+        ],
+      },
+      {
+        id: 'llm',
+        nameKey: 'llm',
+        children: [
+          { id: 'context-rot', path: '/ai/llm/context-rot' },
+          { id: 'temperature', path: '/ai/llm/temperature' },
+          { id: 'attention', path: '/ai/llm/attention' },
+          { id: 'vision', path: '/ai/llm/vision' },
+          { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+        ],
+      },
+    ],
+  },
+]
+
 export default function Home() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  const features = [
+    {
+      icon: Brain,
+      titleKey: 'interactiveDemos' as const,
+      descKey: 'interactiveDemosDesc' as const,
+      gradient: 'from-purple-500 to-pink-500',
+    },
+    {
+      icon: Layers,
+      titleKey: 'visualLearning' as const,
+      descKey: 'visualLearningDesc' as const,
+      gradient: 'from-cyan-500 to-blue-500',
+    },
+    {
+      icon: Zap,
+      titleKey: 'buildIntuition' as const,
+      descKey: 'buildIntuitionDesc' as const,
+      gradient: 'from-orange-500 to-red-500',
+    },
+  ]
+
   return (
     <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto relative px-4 md:px-0">
       {/* Ambient background glow */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl pointer-events-none overflow-hidden" />
+      
+      {/* Language Switcher */}
+      <div className="absolute top-0 right-0">
+        <LanguageSwitcher />
+      </div>
       
       <motion.div
         initial="hidden"
@@ -62,33 +103,32 @@ export default function Home() {
         <motion.header variants={itemVariants} className="text-center mb-20">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border mb-8">
             <Sparkles size={14} className="text-primary" />
-            <span className="text-sm text-muted">Interactive AI Learning</span>
+            <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
           </div>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 leading-[1.1] tracking-tight">
-            <span className="text-gradient">Master AI Concepts</span>
+            <span className="text-gradient">{t.home.heroTitle1}</span>
             <br />
-            <span className="text-text">Through Experience</span>
+            <span className="text-text">{t.home.heroTitle2}</span>
           </h1>
           
           <p className="text-xl text-muted max-w-2xl mx-auto leading-relaxed mb-10">
-            Explore artificial intelligence and large language models through 
-            beautiful, interactive demonstrations. Learn by doing, not just reading.
+            {t.home.heroDescription}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
-              href="/ai/llm/temperature" 
+              href={`/${locale}/ai/llm/temperature`}
               className="btn-primary inline-flex items-center gap-2 text-lg"
             >
-              Start Learning
+              {t.home.startLearning}
               <ArrowRight size={18} />
             </Link>
             <Link 
               href="#topics" 
               className="btn-secondary inline-flex items-center gap-2"
             >
-              Browse Topics
+              {t.home.browseTopics}
             </Link>
           </div>
         </motion.header>
@@ -96,9 +136,9 @@ export default function Home() {
         {/* Feature Cards */}
         <motion.section variants={itemVariants} className="mb-24">
           <div className="grid md:grid-cols-3 gap-6">
-            {features.map((feature, index) => (
+            {features.map((feature) => (
               <motion.div
-                key={feature.title}
+                key={feature.titleKey}
                 whileHover={{ scale: 1.02, y: -4 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                 className="group relative p-6 rounded-2xl bg-surface border border-border hover:border-primary/30 transition-all duration-300"
@@ -108,8 +148,8 @@ export default function Home() {
                     <feature.icon size={22} className="text-text" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-text mb-2 font-heading">{feature.title}</h3>
-                <p className="text-sm text-muted leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg font-semibold text-text mb-2 font-heading">{t.features[feature.titleKey]}</h3>
+                <p className="text-sm text-muted leading-relaxed">{t.features[feature.descKey]}</p>
                 
                 {/* Hover glow effect */}
                 <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
@@ -127,13 +167,13 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <h2 className="text-2xl font-bold font-heading text-text">Explore Topics</h2>
-              <p className="text-sm text-muted">Dive into interactive lessons</p>
+              <h2 className="text-2xl font-bold font-heading text-text">{t.home.exploreTopics}</h2>
+              <p className="text-sm text-muted">{t.home.diveIntoLessons}</p>
             </div>
           </div>
 
           <div className="space-y-6">
-            {topics.map((category, categoryIndex) => (
+            {topicData.map((category, categoryIndex) => (
               <motion.div
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -144,7 +184,7 @@ export default function Home() {
                 {/* Category Header */}
                 <div className="px-6 py-4 bg-surface-elevated border-b border-border flex items-center gap-3">
                   <Cpu size={18} className="text-primary" />
-                  <h3 className="font-semibold text-text font-heading">{category.name}</h3>
+                  <h3 className="font-semibold text-text font-heading">{t.categories[category.categoryKey as keyof typeof t.categories]}</h3>
                 </div>
                 
                 {/* Topics Grid */}
@@ -153,13 +193,13 @@ export default function Home() {
                     <div key={topic.id} className="mb-4 last:mb-0">
                       <div className="flex items-center gap-2 px-3 py-2 text-muted text-sm">
                         <MessageSquare size={14} />
-                        <span>{topic.name}</span>
+                        <span>{t.categories[topic.nameKey as keyof typeof t.categories]}</span>
                       </div>
                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
                         {topic.children?.map((subtopic, idx) => (
                           <Link
                             key={subtopic.id}
-                            href={subtopic.path || '#'}
+                            href={`/${locale}${subtopic.path}`}
                             className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
                           >
                             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
@@ -169,7 +209,7 @@ export default function Home() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
-                                {subtopic.name}
+                                {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
                               </span>
                             </div>
                             <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
@@ -190,11 +230,11 @@ export default function Home() {
           className="mt-16 text-center"
         >
           <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-surface border border-border text-sm text-muted">
-            <span>Pro tip: Press</span>
+            <span>{t.common.proTip}</span>
             <kbd className="px-2 py-1 bg-background rounded-md text-xs font-mono text-text border border-border">
               Ctrl+K
             </kbd>
-            <span>to search topics</span>
+            <span>{t.common.toSearchTopics}</span>
           </div>
         </motion.div>
 
@@ -220,7 +260,7 @@ export default function Home() {
               </svg>
               <div className="flex flex-col">
                 <span className="text-xs text-subtle group-hover:text-muted transition-colors">
-                  A project by
+                  {t.common.projectBy}
                 </span>
                 <span className="text-sm font-semibold text-muted group-hover:text-text transition-colors">
                   LMF
@@ -228,7 +268,7 @@ export default function Home() {
               </div>
             </a>
             <p className="text-xs text-subtle">
-              Interactive guides to understand AI concepts
+              {t.common.guidesDescription}
             </p>
           </div>
         </motion.footer>

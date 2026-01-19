@@ -1,6 +1,9 @@
+'use client'
+
 import { ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
+import { useTranslation, useLocale } from '@/lib/i18n/context'
 
 interface TopicLayoutProps {
   title: string
@@ -19,6 +22,12 @@ export function TopicLayout({
   nextTopic,
   children,
 }: TopicLayoutProps) {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
+
+  // Helper to add locale prefix to href
+  const localizeHref = (href: string) => `/${locale}${href}`
+
   return (
     <div className="max-w-4xl xl:max-w-5xl 2xl:max-w-6xl mx-auto relative">
       {/* Ambient background glow */}
@@ -32,7 +41,7 @@ export function TopicLayout({
             {i > 0 && <ChevronRight size={12} className="text-subtle" />}
             {crumb.href ? (
               <Link 
-                href={crumb.href} 
+                href={localizeHref(crumb.href)} 
                 className="hover:text-primary-light transition-colors"
               >
                 {crumb.label}
@@ -64,12 +73,12 @@ export function TopicLayout({
         <div className="flex justify-between items-center">
           {prevTopic ? (
             <Link
-              href={prevTopic.href}
+              href={localizeHref(prevTopic.href)}
               className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
             >
               <ChevronLeft size={18} className="text-muted group-hover:text-primary transition-colors" />
               <div className="text-left">
-                <span className="text-xs text-subtle block">Previous</span>
+                <span className="text-xs text-subtle block">{t.common.previous}</span>
                 <span className="text-text font-medium group-hover:text-primary-light transition-colors">
                   {prevTopic.label}
                 </span>
@@ -80,11 +89,11 @@ export function TopicLayout({
           )}
           {nextTopic && (
             <Link
-              href={nextTopic.href}
+              href={localizeHref(nextTopic.href)}
               className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
             >
               <div className="text-right">
-                <span className="text-xs text-subtle block">Next</span>
+                <span className="text-xs text-subtle block">{t.common.next}</span>
                 <span className="text-text font-medium group-hover:text-primary-light transition-colors">
                   {nextTopic.label}
                 </span>

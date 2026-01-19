@@ -1,31 +1,43 @@
+'use client'
+
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { ContextRotSimulator } from '@/components/interactive'
-
-export const metadata = {
-  title: 'Context Rot | Learn AI',
-  description: 'Understanding how LLM agents lose track of instructions over long conversations',
-}
+import { useTranslation } from '@/lib/i18n/context'
 
 export default function ContextRotPage() {
+  const { t } = useTranslation()
+
+  const reasons = [
+    { num: 1, title: 'Finite Context Windows', desc: t.contextRot.whyHappensDesc, color: 'purple' },
+    { num: 2, title: 'Attention Dilution', desc: 'The model\'s attention mechanism spreads across all tokens. More content means each token gets proportionally less attention.', color: 'cyan' },
+    { num: 3, title: 'Recency Bias', desc: 'Transformers tend to weight recent tokens more heavily. Instructions at the start naturally become less influential.', color: 'orange' },
+  ]
+
+  const mitigations = [
+    { title: 'Periodic Instruction Reinforcement', desc: t.contextRot.mitigation1, icon: '🔄' },
+    { title: 'Conversation Summarization', desc: t.contextRot.mitigation2, icon: '📝' },
+    { title: 'Hierarchical Memory', desc: 'Use external memory systems to store and retrieve relevant context on-demand.', icon: '🗄️' },
+    { title: 'Instruction Anchoring', desc: t.contextRot.mitigation2, icon: '⚓' },
+    { title: 'Shorter Task Chains', desc: t.contextRot.mitigation4, icon: '🔗' },
+  ]
+
   return (
     <TopicLayout
-      title="Context Rot"
-      description="How LLM agents gradually 'forget' their instructions as conversations grow longer, and why it matters for agent reliability."
+      title={t.contextRot.title}
+      description={t.contextRot.description}
       breadcrumbs={[
-        { label: 'AI', href: '/' },
-        { label: 'LLM', href: '/' },
-        { label: 'Context Rot' },
+        { label: t.categories.ai, href: '/' },
+        { label: t.categories.llm, href: '/' },
+        { label: t.contextRot.title },
       ]}
-      nextTopic={{ label: 'Temperature', href: '/ai/llm/temperature' }}
+      nextTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}
     >
       {/* What is Context Rot */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">What is Context Rot?</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.whatIs}</h2>
         <div className="prose prose-invert max-w-none">
           <p className="text-muted leading-relaxed text-lg">
-            <span className="text-primary-light font-semibold">Context rot</span> refers to the gradual
-            degradation of an LLM's adherence to its initial instructions as a conversation
-            grows longer. It's a critical failure mode in LLM-based agents.
+            <span className="text-primary-light font-semibold">Context rot</span> {t.contextRot.whatIsDesc}
           </p>
           <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
             <p className="text-text text-lg leading-relaxed">
@@ -39,28 +51,9 @@ export default function ContextRotPage() {
 
       {/* Why it happens */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Why Does It Happen?</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.whyHappens}</h2>
         <div className="grid gap-4">
-          {[
-            {
-              num: 1,
-              title: 'Finite Context Windows',
-              desc: 'LLMs can only "see" a limited number of tokens at once (e.g., 4K, 8K, 128K). As conversations grow, earlier messages—including system prompts—get pushed toward the edge or truncated entirely.',
-              color: 'purple',
-            },
-            {
-              num: 2,
-              title: 'Attention Dilution',
-              desc: "Even within the context window, the model's attention mechanism spreads across all tokens. More content means each token (including your instructions) gets proportionally less attention.",
-              color: 'cyan',
-            },
-            {
-              num: 3,
-              title: 'Recency Bias',
-              desc: 'Transformers tend to weight recent tokens more heavily. Instructions at the start of a conversation naturally become less influential over time.',
-              color: 'orange',
-            },
-          ].map((item) => (
+          {reasons.map((item) => (
             <div
               key={item.num}
               className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20 hover:border-${item.color}-500/40 transition-colors`}
@@ -86,8 +79,8 @@ export default function ContextRotPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Try It Yourself</h2>
-            <p className="text-sm text-muted">Experience context rot firsthand</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.contextRot.interactiveDemo}</h2>
+            <p className="text-sm text-muted">{t.contextRot.demoDesc}</p>
           </div>
         </div>
         <p className="text-muted mb-8 leading-relaxed">
@@ -100,35 +93,9 @@ export default function ContextRotPage() {
 
       {/* Mitigation strategies */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Mitigation Strategies</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.mitigation}</h2>
         <div className="space-y-4">
-          {[
-            {
-              title: 'Periodic Instruction Reinforcement',
-              desc: 'Re-inject system prompts at regular intervals throughout the conversation.',
-              icon: '🔄',
-            },
-            {
-              title: 'Conversation Summarization',
-              desc: 'Periodically summarize older messages to compress context while preserving key information.',
-              icon: '📝',
-            },
-            {
-              title: 'Hierarchical Memory',
-              desc: 'Use external memory systems to store and retrieve relevant context on-demand.',
-              icon: '🗄️',
-            },
-            {
-              title: 'Instruction Anchoring',
-              desc: 'Place critical instructions at both the beginning AND end of the context.',
-              icon: '⚓',
-            },
-            {
-              title: 'Shorter Task Chains',
-              desc: 'Break long tasks into shorter, independent sub-tasks with fresh contexts.',
-              icon: '🔗',
-            },
-          ].map((item, i) => (
+          {mitigations.map((item, i) => (
             <div
               key={i}
               className="flex gap-5 p-5 rounded-xl bg-surface border border-border hover:border-primary/40 transition-all group"
@@ -147,14 +114,14 @@ export default function ContextRotPage() {
 
       {/* Key takeaways */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Key Takeaways</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
             {[
-              'Context rot is inevitable in long conversations with LLMs',
-              "It's caused by finite windows, attention dilution, and recency bias",
-              'Design your agents with context management strategies from the start',
-              "Longer context windows help but don't eliminate the problem",
+              t.contextRot.takeaway1,
+              t.contextRot.takeaway2,
+              t.contextRot.takeaway3,
+              t.contextRot.takeaway4,
             ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">

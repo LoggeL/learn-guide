@@ -1,33 +1,44 @@
+'use client'
+
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { AttentionVisualizer } from '@/components/interactive'
-
-export const metadata = {
-  title: 'Attention Mechanism | Learn AI',
-  description: 'How Transformers use attention to weigh the importance of different words in context',
-}
+import { useTranslation } from '@/lib/i18n/context'
 
 export default function AttentionPage() {
+  const { t } = useTranslation()
+
+  const qkvCards = [
+    { letter: 'Q', title: 'Query', desc: '"What am I looking for?" - Represents the current word seeking context.', color: 'purple' },
+    { letter: 'K', title: 'Key', desc: '"What do I contain?" - A label for every word in the sequence to check against the query.', color: 'cyan' },
+    { letter: 'V', title: 'Value', desc: '"What information do I offer?" - The actual content that gets passed forward if the Query and Key match.', color: 'emerald' },
+  ]
+
+  const benefits = [
+    { num: 1, title: 'Parallel Processing', desc: 'Unlike older models (RNNs), Transformers can process all words in a sentence at the same time, making training much faster.', color: 'purple' },
+    { num: 2, title: 'Long-Range Dependencies', desc: 'Attention can link two words even if they are thousands of tokens apart, as long as they are within the same context window.', color: 'cyan' },
+    { num: 3, title: 'Dynamic Context', desc: "The model doesn't just look at words; it learns which words are important *for each other* based on the specific sentence.", color: 'emerald' },
+  ]
+
   return (
     <TopicLayout
-      title="Attention Mechanism"
-      description="The breakthrough that enabled modern LLMs. Learn how models focus on specific parts of an input to understand meaning and context."
+      title={t.attention.title}
+      description={t.attention.description}
       breadcrumbs={[
-        { label: 'AI', href: '/' },
-        { label: 'LLM', href: '/' },
-        { label: 'Attention Mechanism' },
+        { label: t.categories.ai, href: '/' },
+        { label: t.categories.llm, href: '/' },
+        { label: t.attention.title },
       ]}
-      prevTopic={{ label: 'Temperature', href: '/ai/llm/temperature' }}
-      nextTopic={{ label: 'Vision & Images', href: '/ai/llm/vision' }}
+      prevTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}
+      nextTopic={{ label: t.topicNames.vision, href: '/ai/llm/vision' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">What is Attention?</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.attention.whatIs}</h2>
         <div className="prose prose-invert max-w-none">
           <p className="text-muted leading-relaxed text-lg">
             In the context of Neural Networks, <span className="text-primary-light font-semibold">Attention</span> is a 
             mechanism that allows a model to focus on specific parts of its input when producing an output. 
-            Before attention, models processed text sequentially and often "forgot" the beginning of a long sentence 
-            by the time they reached the end.
+            {t.attention.whatIsDesc}
           </p>
           <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
             <p className="text-lg text-text italic font-heading">
@@ -55,7 +66,7 @@ export default function AttentionPage() {
         </div>
         <p className="text-muted mb-8 leading-relaxed">
           Hover over different words in the sentences below. The highlighting shows where the model is 
-          "looking" to understand that specific word. Pay close attention to how pronouns like <strong className="text-primary-light">"it"</strong> link back to the nouns they refer to.
+          "looking" to understand that specific word.
         </p>
         <AttentionVisualizer />
       </section>
@@ -64,27 +75,15 @@ export default function AttentionPage() {
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The Three Keys: Query, Key, and Value</h2>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
-            <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold text-purple-400">Q</span>
+          {qkvCards.map((card) => (
+            <div key={card.letter} className={`p-6 rounded-xl bg-gradient-to-br from-${card.color}-500/10 to-${card.color}-500/5 border border-${card.color}-500/20`}>
+              <div className={`w-12 h-12 rounded-xl bg-${card.color}-500/20 flex items-center justify-center mb-4`}>
+                <span className={`text-2xl font-bold text-${card.color}-400`}>{card.letter}</span>
+              </div>
+              <h3 className={`text-lg font-bold font-heading text-${card.color}-400 mb-2`}>{card.title}</h3>
+              <p className="text-sm text-muted">{card.desc}</p>
             </div>
-            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">Query</h3>
-            <p className="text-sm text-muted">"What am I looking for?" - Represents the current word seeking context.</p>
-          </div>
-          <div className="p-6 rounded-xl bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 border border-cyan-500/20">
-            <div className="w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold text-cyan-400">K</span>
-            </div>
-            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">Key</h3>
-            <p className="text-sm text-muted">"What do I contain?" - A label for every word in the sequence to check against the query.</p>
-          </div>
-          <div className="p-6 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
-            <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center mb-4">
-              <span className="text-2xl font-bold text-emerald-400">V</span>
-            </div>
-            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">Value</h3>
-            <p className="text-sm text-muted">"What information do I offer?" - The actual content that gets passed forward if the Query and Key match.</p>
-          </div>
+          ))}
         </div>
         <div className="mt-6 p-5 rounded-xl bg-surface border border-border text-center">
           <p className="text-muted">
@@ -98,11 +97,7 @@ export default function AttentionPage() {
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Why it Changed Everything</h2>
         <div className="space-y-4">
-          {[
-            { num: 1, title: 'Parallel Processing', desc: 'Unlike older models (RNNs), Transformers can process all words in a sentence at the same time, making training much faster.', color: 'purple' },
-            { num: 2, title: 'Long-Range Dependencies', desc: 'Attention can link two words even if they are thousands of tokens apart, as long as they are within the same context window.', color: 'cyan' },
-            { num: 3, title: 'Dynamic Context', desc: "The model doesn't just look at words; it learns which words are important *for each other* based on the specific sentence.", color: 'emerald' },
-          ].map((item) => (
+          {benefits.map((item) => (
             <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
               <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/20 flex items-center justify-center shrink-0`}>
                 <span className={`text-xl font-bold text-${item.color}-400`}>{item.num}</span>
@@ -118,14 +113,14 @@ export default function AttentionPage() {
 
       {/* Key Takeaways */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Key Takeaways</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.attention.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
             {[
-              'Self-Attention allows models to relate different positions of a single sequence',
-              'It solves the "vanishing gradient" problem of older sequential models',
-              'Query, Key, and Value work like a retrieval system (Database query)',
-              'Attention is the "engine" inside the Transformer architecture',
+              t.attention.takeaway1,
+              t.attention.takeaway2,
+              t.attention.takeaway3,
+              t.attention.takeaway4,
             ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
