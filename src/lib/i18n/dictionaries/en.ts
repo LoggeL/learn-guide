@@ -246,6 +246,21 @@ export const en = {
     problem3Desc: 'Agents may gradually shift focus away from the original task objective.',
     problem4: 'Over-confidence',
     problem4Desc: 'Agents may proceed with actions despite uncertainty or incomplete information.',
+    
+    // Expanded Content
+    hallucination: 'Tool Hallucination',
+    hallucinationDesc: 'Agents sometimes "invent" tool parameters or even entire tools that don\'t exist. This usually happens when the tool definition is ambiguous or when the model tries to force a solution.',
+    hallucinationExample: 'Example: Calling `get_weather(location="Tokyo", date="tomorrow")` when the function only accepts `location`.',
+    
+    loops: 'Looping Issues',
+    loopsDesc: 'Agents can get trapped in repetitive cycles where they perform the same action, receive the same error, and try again without changing strategy.',
+    loopsMitigation: 'Mitigation: Implement loop detection logic that stops execution if the same tool call sequence occurs multiple times.',
+    
+    costLatency: 'Cost & Latency',
+    costLatencyDesc: 'Every step in the agent loop requires a full LLM inference call. Multi-step tasks can quickly become expensive and slow.',
+    costFactor: 'The Cost Factor',
+    costFactorDesc: 'A simple task requiring 5 steps means 5x the cost and 5x the latency of a standard chat response.',
+    
     keyTakeaways: 'Key Takeaways',
     takeaway1: 'Implement safeguards like iteration limits and cost controls',
     takeaway2: 'Add human-in-the-loop checkpoints for critical actions',

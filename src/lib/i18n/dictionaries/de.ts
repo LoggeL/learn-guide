@@ -248,6 +248,21 @@ export const de: Dictionary = {
     problem3Desc: 'Agenten können den Fokus allmählich vom ursprünglichen Aufgabenziel weg verschieben.',
     problem4: 'Übermäßiges Selbstvertrauen',
     problem4Desc: 'Agenten können trotz Unsicherheit oder unvollständiger Informationen mit Aktionen fortfahren.',
+    
+    // Expanded Content
+    hallucination: 'Tool-Halluzination',
+    hallucinationDesc: 'Agenten "erfinden" manchmal Tool-Parameter oder sogar ganze Tools, die nicht existieren. Dies passiert meistens, wenn die Tool-Definition mehrdeutig ist oder das Modell versucht, eine Lösung zu erzwingen.',
+    hallucinationExample: 'Beispiel: Aufruf von `get_weather(location="Tokyo", date="tomorrow")`, wenn die Funktion nur `location` akzeptiert.',
+    
+    loops: 'Schleifen-Probleme',
+    loopsDesc: 'Agenten können in repetitiven Zyklen gefangen sein, in denen sie dieselbe Aktion ausführen, denselben Fehler erhalten und es ohne Strategieänderung erneut versuchen.',
+    loopsMitigation: 'Abhilfe: Implementiere Schleifenerkennungslogik, die die Ausführung stoppt, wenn dieselbe Tool-Aufrufsequenz mehrmals auftritt.',
+    
+    costLatency: 'Kosten & Latenz',
+    costLatencyDesc: 'Jeder Schritt im Agentenzyklus erfordert einen vollständigen LLM-Inferenzaufruf. Mehrstufige Aufgaben können schnell teuer und langsam werden.',
+    costFactor: 'Der Kostenfaktor',
+    costFactorDesc: 'Eine einfache Aufgabe, die 5 Schritte erfordert, bedeutet 5-fache Kosten und 5-fache Latenz im Vergleich zu einer Standard-Chat-Antwort.',
+    
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'Implementiere Sicherheitsvorkehrungen wie Iterationslimits und Kostenkontrollen',
     takeaway2: 'Füge Human-in-the-Loop-Kontrollpunkte für kritische Aktionen hinzu',
