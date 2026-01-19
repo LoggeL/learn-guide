@@ -4,25 +4,27 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Eye, Sparkles } from 'lucide-react'
-
-const SENTENCES = [
-  { 
-    text: "The cat sat on the mat because it was warm.",
-    focus: "pronoun 'it' → cat or mat?" 
-  },
-  { 
-    text: "The robot picked up the ball and put it in the box.",
-    focus: "tracking 'it' → ball" 
-  },
-  { 
-    text: "She gave him the book because he needed it.",
-    focus: "multiple references" 
-  },
-]
+import { useTranslation } from '@/lib/i18n/context'
 
 export function AttentionVisualizer() {
+  const { t } = useTranslation()
   const [selectedWordIndex, setSelectedWordIndex] = useState<number | null>(null)
   const [sentenceIndex, setSentenceIndex] = useState(0)
+  
+  const SENTENCES = [
+    { 
+      text: "The cat sat on the mat because it was warm.",
+      focus: "pronoun 'it' → cat or mat?" 
+    },
+    { 
+      text: "The robot picked up the ball and put it in the box.",
+      focus: "tracking 'it' → ball" 
+    },
+    { 
+      text: "She gave him the book because he needed it.",
+      focus: "multiple references" 
+    },
+  ]
   
   const currentSentence = SENTENCES[sentenceIndex]
   const words = currentSentence.text.split(' ')
@@ -76,7 +78,7 @@ export function AttentionVisualizer() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">Attention Map Simulator</h3>
-            <p className="text-xs text-muted">Hover over words to see attention patterns</p>
+            <p className="text-xs text-muted">{t.interactive.hoverToSee}</p>
           </div>
         </div>
       </div>
@@ -182,7 +184,7 @@ export function AttentionVisualizer() {
         <div className="flex flex-wrap items-center justify-center gap-6 mb-4">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gradient-to-r from-purple-500 to-pink-500" />
-            <span className="text-xs text-muted">High (80%+)</span>
+            <span className="text-xs text-muted">{t.interactive.strongConnection} (80%+)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gradient-to-r from-cyan-500 to-blue-500" />
@@ -190,7 +192,7 @@ export function AttentionVisualizer() {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gradient-to-r from-emerald-500/50 to-teal-500/50" />
-            <span className="text-xs text-muted">Low (20%+)</span>
+            <span className="text-xs text-muted">{t.interactive.weakConnection} (20%+)</span>
           </div>
         </div>
         
@@ -203,8 +205,8 @@ export function AttentionVisualizer() {
           <Sparkles size={16} className="text-primary mt-0.5 shrink-0" />
           <p className="text-sm text-muted">
             {selectedWordIndex === null 
-              ? <>Hover over any word to see which other words the model <span className="text-primary-light">attends to</span> when processing it.</>
-              : <>When processing "<span className="text-primary-light font-medium">{words[selectedWordIndex]}</span>", the model focuses attention on highlighted words to resolve references and understand context.</>
+              ? <>{t.interactive.hoverToSee}</>
+              : <>{t.interactive.token} "<span className="text-primary-light font-medium">{words[selectedWordIndex]}</span>"</>
             }
           </p>
         </motion.div>

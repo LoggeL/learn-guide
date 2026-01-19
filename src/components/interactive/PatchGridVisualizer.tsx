@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, ZoomIn, Grid3X3 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/context'
 
 interface Patch {
   id: number
@@ -41,6 +42,7 @@ function generateImagePatches(gridSize: number): Patch[] {
 }
 
 export function PatchGridVisualizer() {
+  const { t } = useTranslation()
   const [gridSize, setGridSize] = useState<GridSize>(8)
   const [patches, setPatches] = useState<Patch[]>([])
   const [highlightedPatch, setHighlightedPatch] = useState<number | null>(null)
@@ -133,7 +135,7 @@ export function PatchGridVisualizer() {
           <div>
             <h3 className="text-sm font-semibold text-text mb-3 flex items-center gap-2">
               <ZoomIn size={16} className="text-cyan-400" />
-              Image Patches ({gridSize}x{gridSize} = {totalTokens} tokens)
+              {t.interactive.patchGrid} ({gridSize}x{gridSize} = {totalTokens} tokens)
             </h3>
             <div
               className="relative mx-auto border border-border rounded-lg overflow-hidden"
@@ -191,7 +193,7 @@ export function PatchGridVisualizer() {
 
           {/* Token Sequence */}
           <div>
-            <h3 className="text-sm font-semibold text-text mb-3">Linearized Token Sequence</h3>
+            <h3 className="text-sm font-semibold text-text mb-3">{t.interactive.flattenedPatches}</h3>
             <div className="p-4 rounded-xl bg-surface border border-border max-h-80 overflow-y-auto">
               <div className="flex flex-wrap gap-1">
                 {patches.slice(0, animationIndex + 1).map((patch) => (

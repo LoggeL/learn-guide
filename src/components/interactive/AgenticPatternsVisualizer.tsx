@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/context'
 
 type PatternId = 'react' | 'reflection' | 'plan-execute' | 'multi-agent' | 'router'
 
@@ -22,113 +23,6 @@ interface Pattern {
   pseudocode: string
 }
 
-const patterns: Pattern[] = [
-  {
-    id: 'react',
-    name: 'ReAct',
-    tagline: 'Reasoning + Acting',
-    color: 'emerald',
-    steps: [
-      { id: 'observe', label: 'Observe', description: 'Receive input or tool result', color: 'cyan' },
-      { id: 'think', label: 'Think', description: 'Reason about current state', color: 'purple' },
-      { id: 'act', label: 'Act', description: 'Choose and execute action', color: 'emerald' },
-      { id: 'loop', label: 'Loop', description: 'Repeat until task complete', color: 'orange' },
-    ],
-    pseudocode: `while not done:
-  observation = get_current_state()
-  thought = llm.reason(observation)
-  action = llm.decide_action(thought)
-  result = execute(action)
-  if is_final_answer(result):
-    return result`,
-  },
-  {
-    id: 'reflection',
-    name: 'Reflection',
-    tagline: 'Self-Critique Loop',
-    color: 'purple',
-    steps: [
-      { id: 'generate', label: 'Generate', description: 'Produce initial output', color: 'cyan' },
-      { id: 'critique', label: 'Critique', description: 'Analyze output for issues', color: 'red' },
-      { id: 'refine', label: 'Refine', description: 'Improve based on feedback', color: 'purple' },
-      { id: 'check', label: 'Check', description: 'Verify quality threshold met', color: 'emerald' },
-    ],
-    pseudocode: `output = llm.generate(task)
-
-for i in range(max_iterations):
-  critique = llm.analyze(output)
-  if critique.is_satisfactory:
-    return output
-  output = llm.refine(output, critique)
-
-return output`,
-  },
-  {
-    id: 'plan-execute',
-    name: 'Plan-and-Execute',
-    tagline: 'Think First, Act Later',
-    color: 'cyan',
-    steps: [
-      { id: 'analyze', label: 'Analyze', description: 'Understand the full task', color: 'purple' },
-      { id: 'plan', label: 'Plan', description: 'Create step-by-step plan', color: 'cyan' },
-      { id: 'execute', label: 'Execute', description: 'Run each step in order', color: 'emerald' },
-      { id: 'adapt', label: 'Adapt', description: 'Replan if needed', color: 'orange' },
-    ],
-    pseudocode: `plan = llm.create_plan(task)
-
-for step in plan.steps:
-  result = execute(step)
-  if result.requires_replan:
-    plan = llm.revise_plan(plan, result)
-  if result.is_complete:
-    return result.output
-
-return synthesize(results)`,
-  },
-  {
-    id: 'multi-agent',
-    name: 'Multi-Agent',
-    tagline: 'Specialized Collaboration',
-    color: 'orange',
-    steps: [
-      { id: 'decompose', label: 'Decompose', description: 'Split task into subtasks', color: 'purple' },
-      { id: 'delegate', label: 'Delegate', description: 'Assign to specialist agents', color: 'cyan' },
-      { id: 'collaborate', label: 'Collaborate', description: 'Agents work and communicate', color: 'orange' },
-      { id: 'synthesize', label: 'Synthesize', description: 'Combine all results', color: 'emerald' },
-    ],
-    pseudocode: `subtasks = orchestrator.decompose(task)
-
-results = []
-for subtask in subtasks:
-  agent = select_specialist(subtask)
-  result = agent.execute(subtask)
-  results.append(result)
-
-return orchestrator.synthesize(results)`,
-  },
-  {
-    id: 'router',
-    name: 'Router',
-    tagline: 'Classify and Delegate',
-    color: 'pink',
-    steps: [
-      { id: 'classify', label: 'Classify', description: 'Analyze request type', color: 'purple' },
-      { id: 'route', label: 'Route', description: 'Select appropriate handler', color: 'pink' },
-      { id: 'process', label: 'Process', description: 'Specialist handles request', color: 'emerald' },
-      { id: 'respond', label: 'Respond', description: 'Return formatted result', color: 'cyan' },
-    ],
-    pseudocode: `category = classifier.analyze(request)
-
-handler = routes[category]
-if handler is None:
-  handler = default_handler
-
-result = handler.process(request)
-
-return format_response(result)`,
-  },
-]
-
 const colorClasses: Record<string, { bg: string; border: string; text: string; glow: string }> = {
   emerald: { bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
   purple: { bg: 'bg-purple-500/20', border: 'border-purple-500/40', text: 'text-purple-400', glow: 'shadow-purple-500/20' },
@@ -139,9 +33,96 @@ const colorClasses: Record<string, { bg: string; border: string; text: string; g
 }
 
 export function AgenticPatternsVisualizer() {
+  const { t } = useTranslation()
   const [activePattern, setActivePattern] = useState<PatternId>('react')
   const [activeStep, setActiveStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+
+  const patterns: Pattern[] = [
+    {
+      id: 'react',
+      name: t.interactive.react,
+      tagline: 'Reasoning + Acting',
+      color: 'emerald',
+      steps: [
+        { id: 'observe', label: t.agentLoop.observe, description: 'Receive input or tool result', color: 'cyan' },
+        { id: 'think', label: t.agentLoop.think, description: 'Reason about current state', color: 'purple' },
+        { id: 'act', label: t.agentLoop.act, description: 'Choose and execute action', color: 'emerald' },
+        { id: 'loop', label: 'Loop', description: 'Repeat until task complete', color: 'orange' },
+      ],
+      pseudocode: `while not done:
+  observation = get_current_state()
+  thought = llm.reason(observation)
+  action = llm.decide_action(thought)
+  result = execute(action)
+  if is_final_answer(result):
+    return result`,
+    },
+    {
+      id: 'reflection',
+      name: t.interactive.reflection,
+      tagline: 'Self-Critique Loop',
+      color: 'purple',
+      steps: [
+        { id: 'generate', label: 'Generate', description: 'Produce initial output', color: 'cyan' },
+        { id: 'critique', label: 'Critique', description: 'Analyze output for issues', color: 'red' },
+        { id: 'refine', label: 'Refine', description: 'Improve based on feedback', color: 'purple' },
+        { id: 'check', label: 'Check', description: 'Verify quality threshold met', color: 'emerald' },
+      ],
+      pseudocode: `output = llm.generate(task)
+
+for i in range(max_iterations):
+  critique = llm.analyze(output)
+  if critique.is_satisfactory:
+    return output
+  output = llm.refine(output, critique)
+
+return output`,
+    },
+    {
+      id: 'plan-execute',
+      name: t.interactive.planExecute,
+      tagline: 'Think First, Act Later',
+      color: 'cyan',
+      steps: [
+        { id: 'analyze', label: 'Analyze', description: 'Understand the full task', color: 'purple' },
+        { id: 'plan', label: 'Plan', description: 'Create step-by-step plan', color: 'cyan' },
+        { id: 'execute', label: 'Execute', description: 'Run each step in order', color: 'emerald' },
+        { id: 'adapt', label: 'Adapt', description: 'Replan if needed', color: 'orange' },
+      ],
+      pseudocode: `plan = llm.create_plan(task)
+
+for step in plan.steps:
+  result = execute(step)
+  if result.requires_replan:
+    plan = llm.revise_plan(plan, result)
+  if result.is_complete:
+    return result.output
+
+return synthesize(results)`,
+    },
+    {
+      id: 'multi-agent',
+      name: t.interactive.multiAgent,
+      tagline: 'Specialized Collaboration',
+      color: 'orange',
+      steps: [
+        { id: 'decompose', label: 'Decompose', description: 'Split task into subtasks', color: 'purple' },
+        { id: 'delegate', label: 'Delegate', description: 'Assign to specialist agents', color: 'cyan' },
+        { id: 'collaborate', label: 'Collaborate', description: 'Agents work and communicate', color: 'orange' },
+        { id: 'synthesize', label: 'Synthesize', description: 'Combine all results', color: 'emerald' },
+      ],
+      pseudocode: `subtasks = orchestrator.decompose(task)
+
+results = []
+for subtask in subtasks:
+  agent = select_specialist(subtask)
+  result = agent.execute(subtask)
+  results.append(result)
+
+return orchestrator.synthesize(results)`,
+    },
+  ]
 
   const pattern = patterns.find((p) => p.id === activePattern)!
   const colors = colorClasses[pattern.color]

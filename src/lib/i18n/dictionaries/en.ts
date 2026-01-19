@@ -300,6 +300,87 @@ export const en = {
     title: 'Learn AI Concepts | Interactive Guide',
     description: 'Master artificial intelligence and large language model concepts through beautiful, interactive demonstrations.',
   },
+
+  // Interactive Components
+  interactive: {
+    // Temperature Demo
+    controlPanel: 'Control Panel',
+    adjustTemperature: 'Adjust the temperature',
+    temperature: 'Temperature',
+    samplePrompt: 'Sample Prompt',
+    onceUponATime: '"Once upon a time, there was..."',
+    liveCompletion: 'Live Completion',
+    regenerate: 'Regenerate',
+    deterministic: 'Deterministic',
+    balanced: 'Balanced',
+    creative: 'Creative',
+    chaotic: 'Chaotic',
+    frozen: 'Frozen',
+    focused: 'Focused',
+    wild: 'Wild',
+    greedyMode: 'Greedy mode: Always picks the single most probable token.',
+    lowTemp: 'Low temperature: Focused on high-probability continuations.',
+    balancedTemp: 'Balanced: Natural mix of predictability and variety.',
+    highTemp: 'High temperature: Exploring creative, less common word choices.',
+    veryHighTemp: 'Very high: Probability distribution is nearly uniform—expect chaos!',
+    
+    // Context Rot Simulator
+    setInstruction: 'Set Your System Instruction',
+    persistInstruction: 'This should persist throughout the conversation',
+    systemPrompt: 'System Prompt',
+    quickExamples: 'Quick Examples',
+    startSimulation: 'Start Simulation',
+    contextOverflow: 'Context Overflow!',
+    conversation: 'Conversation',
+    messagesPushed: 'messages pushed out of window',
+    messages: 'messages',
+    overflowIt: 'Overflow It!',
+    reset: 'Reset',
+    typeMessage: 'Type a message...',
+    systemInstructionLost: 'System Instruction Lost!',
+    systemLostDesc: 'Your system instruction has been pushed completely out of the context window. The model can no longer see it at all—it\'s as if you never gave the instruction. This is the worst case of context rot: total amnesia.',
+    contextFilling: 'Context Filling Up',
+    contextFillingDesc: 'Your system instruction is losing influence as newer messages take priority. Notice how it\'s fading visually—this represents the model\'s waning attention to it.',
+    exampleFrench: 'Always respond in French.',
+    examplePirate: 'You are a pirate. Say \'Arrr\' a lot.',
+    exampleHaiku: 'End every response with a haiku.',
+    labelFrench: 'Speak French',
+    labelPirate: 'Be a Pirate',
+    labelHaiku: 'End with Haiku',
+
+    // Attention Visualizer
+    hoverToSee: 'Hover to see attention weights',
+    token: 'Token',
+    attentionScore: 'Attention Score',
+    strongConnection: 'Strong Connection',
+    weakConnection: 'Weak Connection',
+
+    // Patch Grid Visualizer
+    originalImage: 'Original Image',
+    patchGrid: 'Patch Grid',
+    flattenedPatches: 'Flattened Patches',
+    transformerInput: 'Transformer Input',
+    processDesc: 'The image is split into a fixed grid of patches (e.g., 16x16 pixels). Each patch is then flattened into a vector and linearly projected into an embedding space.',
+
+    // Agent Loop Visualizer
+    startLoop: 'Start Loop',
+    step: 'Step',
+    context: 'Context',
+    llmResponse: 'LLM Response',
+    toolExecution: 'Tool Execution',
+    finalAnswer: 'Final Answer',
+    system: 'System',
+    user: 'User',
+    assistant: 'Assistant',
+    tool: 'Tool',
+    
+    // Agentic Patterns Visualizer
+    react: 'ReAct',
+    planExecute: 'Plan & Execute',
+    multiAgent: 'Multi-Agent',
+    reflection: 'Reflection',
+    patternDesc: 'Select a pattern to see how it structures the agent\'s workflow.',
+  },
 }
 
 // Create a recursive string type for the dictionary

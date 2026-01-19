@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Send, RotateCcw, Zap, Play, MessageSquare, AlertTriangle, Skull, Sparkles } from 'lucide-react'
 import { TokenCounter } from './TokenCounter'
 import { MemoryFadeVisualizer } from './MemoryFadeVisualizer'
+import { useTranslation } from '@/lib/i18n/context'
 
 interface Message {
   id: string
@@ -24,13 +25,15 @@ const SAMPLE_RESPONSES = [
 
 const estimateTokens = (text: string): number => Math.ceil(text.length / 4)
 
-const EXAMPLE_PROMPTS = [
-  { label: "Speak French", prompt: "Always respond in French." },
-  { label: "Be a Pirate", prompt: "You are a pirate. Say 'Arrr' a lot." },
-  { label: "End with Haiku", prompt: "End every response with a haiku." },
-]
-
 export function ContextRotSimulator() {
+  const { t } = useTranslation()
+  
+  const EXAMPLE_PROMPTS = [
+    { label: t.interactive.labelFrench, prompt: t.interactive.exampleFrench },
+    { label: t.interactive.labelPirate, prompt: t.interactive.examplePirate },
+    { label: t.interactive.labelHaiku, prompt: t.interactive.exampleHaiku },
+  ]
+
   const [systemPrompt, setSystemPrompt] = useState(EXAMPLE_PROMPTS[0].prompt)
   const [userInput, setUserInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
@@ -151,24 +154,24 @@ export function ContextRotSimulator() {
                 <Sparkles size={18} className="text-purple-400" />
               </div>
               <div>
-                <h3 className="font-semibold text-text font-heading">Set Your System Instruction</h3>
-                <p className="text-xs text-muted">This should persist throughout the conversation</p>
+                <h3 className="font-semibold text-text font-heading">{t.interactive.setInstruction}</h3>
+                <p className="text-xs text-muted">{t.interactive.persistInstruction}</p>
               </div>
             </div>
             
             <div className="p-6 space-y-6">
               <div>
-                <label className="block text-sm text-muted mb-3">System Prompt</label>
+                <label className="block text-sm text-muted mb-3">{t.interactive.systemPrompt}</label>
                 <textarea
                   value={systemPrompt}
                   onChange={(e) => setSystemPrompt(e.target.value)}
-                  placeholder="e.g., Always respond in French."
+                  placeholder={`e.g., ${t.interactive.exampleFrench}`}
                   className="w-full h-24 bg-background border border-border rounded-xl p-4 text-text placeholder:text-subtle focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 resize-none transition-all"
                 />
               </div>
               
               <div>
-                <label className="block text-xs text-subtle mb-2 uppercase tracking-wider">Quick Examples</label>
+                <label className="block text-xs text-subtle mb-2 uppercase tracking-wider">{t.interactive.quickExamples}</label>
                 <div className="flex flex-wrap gap-2">
                   {EXAMPLE_PROMPTS.map((example, i) => (
                     <button
@@ -192,7 +195,7 @@ export function ContextRotSimulator() {
                 className="w-full btn-primary flex items-center justify-center gap-2 py-4"
               >
                 <Play size={18} />
-                Start Simulation
+                {t.interactive.startSimulation}
               </button>
             </div>
           </motion.div>
@@ -225,12 +228,12 @@ export function ContextRotSimulator() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-text font-heading">
-                      {isOverflowing ? "Context Overflow!" : "Conversation"}
+                      {isOverflowing ? t.interactive.contextOverflow : t.interactive.conversation}
                     </h3>
                     <p className="text-xs text-muted">
                       {isOverflowing 
-                        ? `${truncatedCount} messages pushed out of window`
-                        : `${messages.length} messages`
+                        ? `${truncatedCount} ${t.interactive.messagesPushed}`
+                        : `${messages.length} ${t.interactive.messages}`
                       }
                     </p>
                   </div>
@@ -241,14 +244,14 @@ export function ContextRotSimulator() {
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-secondary border border-secondary/30 hover:border-secondary/50 transition-all text-sm font-medium"
                   >
                     <Zap size={14} />
-                    Overflow It!
+                    {t.interactive.overflowIt}
                   </button>
                   <button
                     onClick={reset}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-elevated text-muted border border-border hover:border-primary/30 hover:text-text transition-all text-sm"
                   >
                     <RotateCcw size={14} />
-                    Reset
+                    {t.interactive.reset}
                   </button>
                 </div>
               </div>
@@ -271,7 +274,7 @@ export function ContextRotSimulator() {
                     value={userInput}
                     onChange={(e) => setUserInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                    placeholder="Type a message..."
+                    placeholder={t.interactive.typeMessage}
                     className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-text placeholder:text-subtle focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                   <button
@@ -300,12 +303,10 @@ export function ContextRotSimulator() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1 text-red-400">
-                        System Instruction Lost!
+                        {t.interactive.systemInstructionLost}
                       </h4>
                       <p className="text-sm text-muted leading-relaxed">
-                        Your system instruction has been <strong className="text-red-300">pushed completely out</strong> of the context window. 
-                        The model can no longer see it at all—it's as if you never gave the instruction. 
-                        This is the worst case of context rot: total amnesia.
+                        {t.interactive.systemLostDesc}
                       </p>
                     </div>
                   </div>
@@ -324,11 +325,10 @@ export function ContextRotSimulator() {
                     </div>
                     <div>
                       <h4 className="font-semibold mb-1 text-yellow-400">
-                        Context Filling Up
+                        {t.interactive.contextFilling}
                       </h4>
                       <p className="text-sm text-muted leading-relaxed">
-                        Your system instruction is losing influence as newer messages take priority. 
-                        Notice how it's fading visually—this represents the model's waning attention to it.
+                        {t.interactive.contextFillingDesc}
                       </p>
                     </div>
                   </div>

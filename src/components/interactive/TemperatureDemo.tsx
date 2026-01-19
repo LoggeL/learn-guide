@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Shuffle, Thermometer, Flame, Snowflake, Wind } from 'lucide-react'
 import { TemperatureVisualizer } from './TemperatureVisualizer'
+import { useTranslation } from '@/lib/i18n/context'
 
 const COMPLETION_SAMPLES = {
   0: [
@@ -47,19 +48,20 @@ function getCompletion(temperature: number) {
   return samples[Math.floor(Math.random() * samples.length)]
 }
 
-function getTemperatureState(temp: number) {
-  if (temp === 0) return { label: 'Frozen', icon: Snowflake, color: 'text-cyan-400', bg: 'from-cyan-500/20 to-blue-500/20' }
-  if (temp <= 0.5) return { label: 'Focused', icon: Snowflake, color: 'text-blue-400', bg: 'from-blue-500/20 to-indigo-500/20' }
-  if (temp <= 1.0) return { label: 'Balanced', icon: Wind, color: 'text-purple-400', bg: 'from-purple-500/20 to-pink-500/20' }
-  if (temp <= 1.5) return { label: 'Creative', icon: Flame, color: 'text-orange-400', bg: 'from-orange-500/20 to-red-500/20' }
-  return { label: 'Chaotic', icon: Flame, color: 'text-red-400', bg: 'from-red-500/20 to-rose-500/20' }
-}
-
 export function TemperatureDemo() {
+  const { t } = useTranslation()
   const [temperature, setTemperature] = useState(0.7)
   const [completion, setCompletion] = useState(getCompletion(0.7))
   const [isGenerating, setIsGenerating] = useState(false)
   
+  const getTemperatureState = (temp: number) => {
+    if (temp === 0) return { label: t.interactive.frozen, icon: Snowflake, color: 'text-cyan-400', bg: 'from-cyan-500/20 to-blue-500/20' }
+    if (temp <= 0.5) return { label: t.interactive.focused, icon: Snowflake, color: 'text-blue-400', bg: 'from-blue-500/20 to-indigo-500/20' }
+    if (temp <= 1.0) return { label: t.interactive.balanced, icon: Wind, color: 'text-purple-400', bg: 'from-purple-500/20 to-pink-500/20' }
+    if (temp <= 1.5) return { label: t.interactive.creative, icon: Flame, color: 'text-orange-400', bg: 'from-orange-500/20 to-red-500/20' }
+    return { label: t.interactive.chaotic, icon: Flame, color: 'text-red-400', bg: 'from-red-500/20 to-rose-500/20' }
+  }
+
   const state = getTemperatureState(temperature)
   const StateIcon = state.icon
   
@@ -86,8 +88,8 @@ export function TemperatureDemo() {
                 <Thermometer size={18} className={state.color} />
               </div>
               <div>
-                <h3 className="font-semibold text-text font-heading">Control Panel</h3>
-                <p className="text-xs text-muted">Adjust the temperature</p>
+                <h3 className="font-semibold text-text font-heading">{t.interactive.controlPanel}</h3>
+                <p className="text-xs text-muted">{t.interactive.adjustTemperature}</p>
               </div>
             </div>
             <div className={`px-3 py-1.5 rounded-full bg-gradient-to-r ${state.bg} border border-border flex items-center gap-2`}>
@@ -99,7 +101,7 @@ export function TemperatureDemo() {
           {/* Temperature Slider */}
           <div className="space-y-4">
             <div className="flex justify-between items-center">
-              <label className="text-sm text-muted">Temperature</label>
+              <label className="text-sm text-muted">{t.interactive.temperature}</label>
               <motion.span 
                 key={temperature}
                 initial={{ scale: 1.2, opacity: 0 }}
@@ -124,20 +126,20 @@ export function TemperatureDemo() {
             </div>
             
             <div className="flex justify-between text-[10px] text-subtle font-mono uppercase">
-              <span>Deterministic</span>
-              <span>Balanced</span>
-              <span>Creative</span>
-              <span>Chaotic</span>
+              <span>{t.interactive.deterministic}</span>
+              <span>{t.interactive.balanced}</span>
+              <span>{t.interactive.creative}</span>
+              <span>{t.interactive.chaotic}</span>
             </div>
           </div>
 
           {/* Quick Presets */}
           <div className="grid grid-cols-4 gap-2">
             {[
-              { value: 0, label: 'T=0', desc: 'Greedy' },
-              { value: 0.7, label: '0.7', desc: 'Default' },
-              { value: 1.0, label: '1.0', desc: 'Creative' },
-              { value: 1.5, label: '1.5', desc: 'Wild' },
+              { value: 0, label: 'T=0', desc: t.interactive.greedyMode.split(':')[0] },
+              { value: 0.7, label: '0.7', desc: t.interactive.balanced },
+              { value: 1.0, label: '1.0', desc: t.interactive.creative },
+              { value: 1.5, label: '1.5', desc: t.interactive.wild },
             ].map((preset) => (
               <button
                 key={preset.value}
@@ -149,16 +151,16 @@ export function TemperatureDemo() {
                 }`}
               >
                 <span className="block text-sm font-mono font-medium">{preset.label}</span>
-                <span className="block text-[10px] text-subtle">{preset.desc}</span>
+                <span className="block text-[10px] text-subtle truncate px-1">{preset.desc}</span>
               </button>
             ))}
           </div>
 
           {/* Prompt Display */}
           <div className="p-4 rounded-xl bg-background border border-border">
-            <p className="text-xs text-subtle mb-2">Sample Prompt</p>
+            <p className="text-xs text-subtle mb-2">{t.interactive.samplePrompt}</p>
             <p className="text-text font-medium italic">
-              "Once upon a time, there was..."
+              {t.interactive.onceUponATime}
             </p>
           </div>
         </div>
@@ -180,7 +182,7 @@ export function TemperatureDemo() {
             >
               <Sparkles size={16} className="text-primary" />
             </motion.div>
-            <h4 className="text-sm font-semibold text-text">Live Completion</h4>
+            <h4 className="text-sm font-semibold text-text">{t.interactive.liveCompletion}</h4>
           </div>
           <button
             onClick={regenerate}
@@ -188,7 +190,7 @@ export function TemperatureDemo() {
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface border border-border hover:border-primary/40 text-sm text-muted hover:text-text transition-all disabled:opacity-50"
           >
             <Shuffle size={14} />
-            <span>Regenerate</span>
+            <span>{t.interactive.regenerate}</span>
           </button>
         </div>
         
@@ -201,7 +203,7 @@ export function TemperatureDemo() {
               exit={{ opacity: 0, y: -10 }}
               className="text-lg text-text leading-relaxed"
             >
-              <span className="text-muted">"Once upon a time, there was </span>
+              <span className="text-muted">{t.interactive.onceUponATime.replace('...', '')} </span>
               <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary-light font-semibold">
                 {completion.bold}
               </span>
@@ -215,11 +217,11 @@ export function TemperatureDemo() {
             animate={{ opacity: 1 }}
             className={`mt-4 text-sm ${state.color} italic`}
           >
-            {temperature === 0 && "Greedy mode: Always picks the single most probable token."}
-            {temperature > 0 && temperature <= 0.5 && "Low temperature: Focused on high-probability continuations."}
-            {temperature > 0.5 && temperature <= 1.0 && "Balanced: Natural mix of predictability and variety."}
-            {temperature > 1.0 && temperature <= 1.5 && "High temperature: Exploring creative, less common word choices."}
-            {temperature > 1.5 && "Very high: Probability distribution is nearly uniform—expect chaos!"}
+            {temperature === 0 && t.interactive.greedyMode}
+            {temperature > 0 && temperature <= 0.5 && t.interactive.lowTemp}
+            {temperature > 0.5 && temperature <= 1.0 && t.interactive.balancedTemp}
+            {temperature > 1.0 && temperature <= 1.5 && t.interactive.highTemp}
+            {temperature > 1.5 && t.interactive.veryHighTemp}
           </motion.p>
         </div>
       </motion.div>

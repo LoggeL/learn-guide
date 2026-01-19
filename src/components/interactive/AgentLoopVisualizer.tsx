@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, ChevronRight, Settings, Wrench, MessageSquare, Terminal, CheckCircle, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/context'
 
 type MessageType = 'system' | 'tools' | 'user' | 'assistant' | 'tool_call' | 'tool_result'
 
@@ -14,15 +15,6 @@ interface ContextMessage {
   tokens: number
 }
 
-const DEMO_FLOW: ContextMessage[] = [
-  { id: 'sys', type: 'system', label: 'System Prompt', content: 'You are a helpful assistant with access to tools.', tokens: 15 },
-  { id: 'tools', type: 'tools', label: 'Tool Definitions', content: 'get_weather(city: string), search_web(query: string)', tokens: 45 },
-  { id: 'user1', type: 'user', label: 'User Message', content: 'What\'s the weather in Tokyo?', tokens: 8 },
-  { id: 'asst1', type: 'tool_call', label: 'Tool Call', content: 'get_weather("Tokyo")', tokens: 12 },
-  { id: 'tool1', type: 'tool_result', label: 'Tool Result', content: '{"temp": 22, "condition": "Sunny"}', tokens: 18 },
-  { id: 'asst2', type: 'assistant', label: 'Assistant', content: 'The weather in Tokyo is 22°C and sunny!', tokens: 14 },
-]
-
 const typeConfig: Record<MessageType, { color: string, bg: string, icon: typeof Settings }> = {
   system: { color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/30', icon: Settings },
   tools: { color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/30', icon: Wrench },
@@ -33,9 +25,19 @@ const typeConfig: Record<MessageType, { color: string, bg: string, icon: typeof 
 }
 
 export function AgentLoopVisualizer() {
+  const { t } = useTranslation()
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [loopCount, setLoopCount] = useState(1)
+
+  const DEMO_FLOW: ContextMessage[] = [
+    { id: 'sys', type: 'system', label: t.interactive.system, content: 'You are a helpful assistant with access to tools.', tokens: 15 },
+    { id: 'tools', type: 'tools', label: t.interactive.tool, content: 'get_weather(city: string), search_web(query: string)', tokens: 45 },
+    { id: 'user1', type: 'user', label: t.interactive.user, content: 'What\'s the weather in Tokyo?', tokens: 8 },
+    { id: 'asst1', type: 'tool_call', label: t.interactive.toolExecution, content: 'get_weather("Tokyo")', tokens: 12 },
+    { id: 'tool1', type: 'tool_result', label: t.interactive.tool, content: '{"temp": 22, "condition": "Sunny"}', tokens: 18 },
+    { id: 'asst2', type: 'assistant', label: t.interactive.assistant, content: 'The weather in Tokyo is 22°C and sunny!', tokens: 14 },
+  ]
 
   const visibleMessages = DEMO_FLOW.slice(0, currentStep)
   const isComplete = currentStep >= DEMO_FLOW.length
@@ -50,7 +52,7 @@ export function AgentLoopVisualizer() {
     } else if (isPlaying && isComplete) {
       setIsPlaying(false)
     }
-  }, [isPlaying, currentStep, isComplete])
+  }, [isPlaying, currentStep, isComplete, DEMO_FLOW.length])
 
   const reset = () => {
     setCurrentStep(0)
@@ -74,8 +76,8 @@ export function AgentLoopVisualizer() {
               <Terminal size={18} className="text-primary-light" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">The Agent Loop</h3>
-              <p className="text-xs text-muted">Agents are just a while loop</p>
+              <h3 className="font-semibold text-text font-heading">{t.interactive.startLoop}</h3>
+              <p className="text-xs text-muted">{t.interactive.step} #{currentStep}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -128,7 +130,7 @@ export function AgentLoopVisualizer() {
       <div className="rounded-2xl bg-surface border border-border overflow-hidden">
         <div className="px-6 py-4 bg-surface-elevated border-b border-border flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-text font-heading">Context Window (what the LLM sees)</h3>
+            <h3 className="font-semibold text-text font-heading">{t.interactive.context}</h3>
             <p className="text-xs text-muted">{visibleMessages.reduce((s, m) => s + m.tokens, 0)} tokens</p>
           </div>
           <div className="flex gap-2">
@@ -183,7 +185,7 @@ export function AgentLoopVisualizer() {
 
           {visibleMessages.length === 0 && (
             <div className="flex items-center justify-center h-[200px] text-muted">
-              <p>Press Play to see the agent loop in action</p>
+              <p>{t.interactive.startLoop}</p>
             </div>
           )}
         </div>
@@ -192,13 +194,13 @@ export function AgentLoopVisualizer() {
           <div className="px-6 py-4 border-t border-border bg-emerald-500/5 flex items-center justify-between">
             <div className="flex items-center gap-2 text-emerald-400">
               <CheckCircle size={16} />
-              <span className="text-sm font-medium">Loop complete! Response returned to user.</span>
+              <span className="text-sm font-medium">{t.interactive.finalAnswer}</span>
             </div>
             <button
               onClick={nextLoop}
               className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/20 text-primary-light border border-primary/30 hover:bg-primary/30 transition-all text-sm font-medium"
             >
-              Next Query
+              {t.common.next}
               <ChevronRight size={14} />
             </button>
           </div>
