@@ -300,6 +300,11 @@ export const en = {
     title: 'Learn AI Concepts | Interactive Guide',
     description: 'Master artificial intelligence and large language model concepts through beautiful, interactive demonstrations.',
   },
-} as const
+}
 
-export type Dictionary = typeof en
+// Create a recursive string type for the dictionary
+type DeepStringify<T> = {
+  [K in keyof T]: T[K] extends Record<string, unknown> ? DeepStringify<T[K]> : string
+}
+
+export type Dictionary = DeepStringify<typeof en>
