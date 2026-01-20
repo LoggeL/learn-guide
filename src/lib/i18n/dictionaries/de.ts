@@ -57,6 +57,7 @@ export const de: Dictionary = {
     'agent-problems': 'Agenten-Probleme',
     'agent-security': 'Agenten-Sicherheit',
     'agentic-patterns': 'Agentische Muster',
+    'mcp': 'MCP (Model Context Protocol)',
     'context-rot': 'Kontextverfall',
     'temperature': 'Temperatur',
     'attention': 'Aufmerksamkeits-Mechanismus',
@@ -310,6 +311,72 @@ export const de: Dictionary = {
     takeaway2: 'ReAct ist großartig für Transparenz, kann aber langsamer sein',
     takeaway3: 'Multi-Agenten-Systeme erhöhen die Komplexität, ermöglichen aber Spezialisierung',
     takeaway4: 'Reflexionsmuster können die Ausgabequalität erheblich verbessern',
+  },
+
+  // MCP page
+  mcp: {
+    title: 'MCP (Model Context Protocol)',
+    description: 'MCP verstehen: wann externe Tool-Server sinnvoll sind und wann sie übertrieben sind.',
+    whatIs: 'Was ist MCP?',
+    whatIsDesc: 'Das Model Context Protocol (MCP) ist ein standardisierter Weg, um KI-Agenten mit externen Tools und Datenquellen über dedizierte Server-Prozesse zu verbinden. Anstatt Tools inline im Agenten-Code zu definieren, führt MCP einen separaten Server aus, der Tools über ein strukturiertes Protokoll bereitstellt.',
+    vsToolCalls: 'MCP vs. Reguläre Tool-Aufrufe',
+    vsToolCallsDesc: 'Reguläre Tool-Aufrufe sind Funktionen, die direkt in der Codebasis deines Agenten definiert sind. Der Agent ruft sie auf, sie werden ausgeführt und die Ergebnisse kehren im selben Prozess zurück. MCP trennt dies: Tools leben in externen Servern, mit denen der Agent über ein Protokoll kommuniziert.',
+    
+    // Comparison
+    regularTools: 'Reguläre Tool-Aufrufe',
+    regularToolsDesc: 'Tools, die inline in deinem Agenten-Code definiert sind. Einfach, schnell und für die meisten Anwendungsfälle ausreichend.',
+    mcpTools: 'MCP-Server',
+    mcpToolsDesc: 'Tools, die von externen Server-Prozessen bereitgestellt werden. Fügt Netzwerk-Overhead hinzu, ermöglicht aber sprachübergreifendes Tooling und gemeinsame Tool-Ökosysteme.',
+    
+    // When to use
+    whenToUse: 'Wann MCP sinnvoll ist',
+    whenToUseDesc: 'MCP glänzt in spezifischen Szenarien, in denen sich seine zusätzliche Komplexität auszahlt.',
+    useCase1: 'Multi-Sprachen-Teams',
+    useCase1Desc: 'Deine Tools sind in Python geschrieben, aber dein Agent ist in TypeScript, oder umgekehrt.',
+    useCase2: 'Gemeinsames Tool-Ökosystem',
+    useCase2Desc: 'Mehrere Agenten in verschiedenen Projekten müssen auf dieselben Tools zugreifen.',
+    useCase3: 'Enterprise-Integration',
+    useCase3Desc: 'Du musst bestehende interne Dienste als Agenten-Tools bereitstellen, ohne sie zu modifizieren.',
+    useCase4: 'Tool-Marktplatz',
+    useCase4Desc: 'Du möchtest von der Community gepflegte Tools nutzen, ohne Code in dein Projekt zu kopieren.',
+    
+    // When it's overkill
+    overkill: 'Wann MCP übertrieben ist',
+    overkillDesc: 'Für viele Anwendungsfälle fügt MCP unnötige Komplexität hinzu.',
+    overkillCase1: 'Einsprachige Projekte',
+    overkillCase1Desc: 'Wenn deine Tools und dein Agent in derselben Sprache sind, sind Inline-Funktionen einfacher und schneller.',
+    overkillCase2: 'Einfache Agenten',
+    overkillCase2Desc: 'Ein Chatbot mit wenigen Tools braucht nicht den Overhead, separate Server-Prozesse auszuführen.',
+    overkillCase3: 'Schnelles Prototyping',
+    overkillCase3Desc: 'Bei schneller Iteration verlangsamt die Indirektion von MCP die Entwicklung.',
+    overkillCase4: 'Latenz-kritische Apps',
+    overkillCase4Desc: 'Netzwerkaufrufe zu Tool-Servern fügen Latenz hinzu, die Inline-Funktionen nicht haben.',
+    
+    // Architecture
+    architecture: 'Wie MCP funktioniert',
+    architectureDesc: 'MCP definiert eine Client-Server-Architektur, bei der der Agent der Client ist und Tools von Servern bereitgestellt werden.',
+    step1: 'Entdeckung',
+    step1Desc: 'Der Agent verbindet sich mit einem MCP-Server und erhält eine Liste der verfügbaren Tools mit ihren Schemas.',
+    step2: 'Aufruf',
+    step2Desc: 'Wenn das LLM entscheidet, ein Tool zu verwenden, sendet der Agent eine Anfrage an den MCP-Server.',
+    step3: 'Ausführung',
+    step3Desc: 'Der MCP-Server führt das Tool aus und gibt Ergebnisse in einem standardisierten Format zurück.',
+    step4: 'Integration',
+    step4Desc: 'Ergebnisse fließen zurück zum Agenten und in den LLM-Kontext, genau wie reguläre Tool-Ergebnisse.',
+    
+    // Practical advice
+    practicalAdvice: 'Praktische Ratschläge',
+    adviceDesc: 'Richtlinien für die Entscheidung, ob du MCP in deinem Projekt verwenden solltest.',
+    advice1: 'Beginne einfach: verwende Inline-Tool-Definitionen, bis du auf eine spezifische Einschränkung stößt.',
+    advice2: 'Erwäge MCP, wenn du dich dabei ertappst, Tool-Code zwischen Projekten zu kopieren.',
+    advice3: 'Der Overhead, MCP-Server auszuführen, macht nur in großem Maßstab oder in Enterprise-Umgebungen Sinn.',
+    advice4: 'Community-MCP-Server können die Entwicklung beschleunigen, fügen aber Abhängigkeitsrisiken hinzu.',
+    
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'MCP ist ein Protokoll zur Bereitstellung von Tools über externe Server, kein Ersatz für reguläre Tool-Aufrufe',
+    takeaway2: 'Für die meisten Einzelprojekt-Agenten sind Inline-Tools einfacher und haben geringere Latenz',
+    takeaway3: 'MCP glänzt in polyglotten Umgebungen und gemeinsamen Tool-Ökosystemen',
+    takeaway4: 'Greife nicht standardmäßig zu MCP—es ist eine Lösung für spezifische Skalierungs- und Interoperabilitäts-Herausforderungen',
   },
 
   // Metadata

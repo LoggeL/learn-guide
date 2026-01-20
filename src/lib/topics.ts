@@ -39,6 +39,11 @@ export const topics: Topic[] = [
             name: 'Agentic Patterns',
             path: '/ai/agents/patterns',
           },
+          {
+            id: 'mcp',
+            name: 'MCP (Model Context Protocol)',
+            path: '/ai/agents/mcp',
+          },
         ],
       },
       {

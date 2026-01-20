@@ -55,6 +55,7 @@ export const en = {
     'agent-problems': 'Agent Problems',
     'agent-security': 'Agent Security',
     'agentic-patterns': 'Agentic Patterns',
+    'mcp': 'MCP (Model Context Protocol)',
     'context-rot': 'Context Rot',
     'temperature': 'Temperature',
     'attention': 'Attention Mechanism',
@@ -308,6 +309,72 @@ export const en = {
     takeaway2: 'ReAct is great for transparency but may be slower',
     takeaway3: 'Multi-agent systems add complexity but enable specialization',
     takeaway4: 'Reflection patterns can significantly improve output quality',
+  },
+
+  // MCP page
+  mcp: {
+    title: 'MCP (Model Context Protocol)',
+    description: 'Understanding MCP: when external tool servers make sense, and when they are overkill.',
+    whatIs: 'What is MCP?',
+    whatIsDesc: 'The Model Context Protocol (MCP) is a standardized way to connect AI agents to external tools and data sources via dedicated server processes. Instead of defining tools inline in your agent code, MCP runs a separate server that exposes tools over a structured protocol.',
+    vsToolCalls: 'MCP vs. Regular Tool Calls',
+    vsToolCallsDesc: 'Regular tool calls are functions defined directly in your agent\'s codebase. The agent calls them, they execute, and results return in the same process. MCP separates this: tools live in external servers that the agent communicates with over a protocol.',
+    
+    // Comparison
+    regularTools: 'Regular Tool Calls',
+    regularToolsDesc: 'Tools defined inline in your agent code. Simple, fast, and sufficient for most use cases.',
+    mcpTools: 'MCP Servers',
+    mcpToolsDesc: 'Tools exposed by external server processes. Adds network overhead but enables cross-language tooling and shared tool ecosystems.',
+    
+    // When to use
+    whenToUse: 'When MCP Makes Sense',
+    whenToUseDesc: 'MCP shines in specific scenarios where its additional complexity pays off.',
+    useCase1: 'Multi-Language Teams',
+    useCase1Desc: 'Your tools are written in Python but your agent is in TypeScript, or vice versa.',
+    useCase2: 'Shared Tool Ecosystem',
+    useCase2Desc: 'Multiple agents across different projects need to access the same tools.',
+    useCase3: 'Enterprise Integration',
+    useCase3Desc: 'You need to expose existing internal services as agent tools without modifying them.',
+    useCase4: 'Tool Marketplace',
+    useCase4Desc: 'You want to use community-maintained tools without copying code into your project.',
+    
+    // When it's overkill
+    overkill: 'When MCP is Overkill',
+    overkillDesc: 'For many use cases, MCP adds unnecessary complexity.',
+    overkillCase1: 'Single-Language Projects',
+    overkillCase1Desc: 'If your tools and agent are in the same language, inline functions are simpler and faster.',
+    overkillCase2: 'Simple Agents',
+    overkillCase2Desc: 'A chatbot with a few tools doesn\'t need the overhead of running separate server processes.',
+    overkillCase3: 'Rapid Prototyping',
+    overkillCase3Desc: 'When iterating quickly, the indirection of MCP slows down development.',
+    overkillCase4: 'Latency-Sensitive Apps',
+    overkillCase4Desc: 'Network calls to tool servers add latency that inline functions don\'t have.',
+    
+    // Architecture
+    architecture: 'How MCP Works',
+    architectureDesc: 'MCP defines a client-server architecture where the agent is the client and tools are exposed by servers.',
+    step1: 'Discovery',
+    step1Desc: 'The agent connects to an MCP server and receives a list of available tools with their schemas.',
+    step2: 'Invocation',
+    step2Desc: 'When the LLM decides to use a tool, the agent sends a request to the MCP server.',
+    step3: 'Execution',
+    step3Desc: 'The MCP server runs the tool and returns results in a standardized format.',
+    step4: 'Integration',
+    step4Desc: 'Results flow back to the agent and into the LLM context, just like regular tool results.',
+    
+    // Practical advice
+    practicalAdvice: 'Practical Advice',
+    adviceDesc: 'Guidelines for deciding whether to use MCP in your project.',
+    advice1: 'Start simple: use inline tool definitions until you hit a specific limitation.',
+    advice2: 'Consider MCP when you find yourself copy-pasting tool code between projects.',
+    advice3: 'The overhead of running MCP servers only makes sense at scale or in enterprise settings.',
+    advice4: 'Community MCP servers can accelerate development but add dependency risks.',
+    
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'MCP is a protocol for exposing tools via external servers, not a replacement for regular tool calls',
+    takeaway2: 'For most single-project agents, inline tools are simpler and have lower latency',
+    takeaway3: 'MCP shines in polyglot environments and shared tool ecosystems',
+    takeaway4: 'Don\'t reach for MCP by default—it\'s a solution for specific scaling and interoperability challenges',
   },
 
   // Metadata
