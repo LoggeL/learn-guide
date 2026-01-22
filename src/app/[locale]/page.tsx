@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
-import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -87,11 +86,6 @@ export default function Home() {
     <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto relative px-4 md:px-0">
       {/* Ambient background glow */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl pointer-events-none overflow-hidden" />
-      
-      {/* Language Switcher */}
-      <div className="absolute top-0 right-0">
-        <LanguageSwitcher />
-      </div>
       
       <motion.div
         initial="hidden"
