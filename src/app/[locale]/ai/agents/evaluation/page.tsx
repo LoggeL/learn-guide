@@ -1,0 +1,126 @@
+'use client'
+
+import { TopicLayout } from '@/components/layout/TopicLayout'
+import { useTranslation } from '@/lib/i18n/context'
+
+export default function EvaluationPage() {
+  const { t } = useTranslation()
+
+  return (
+    <TopicLayout
+      title={t.evaluation.title}
+      description={t.evaluation.description}
+      breadcrumbs={[
+        { label: t.categories.ai, href: '/' },
+        { label: t.categories.agents, href: '/' },
+        { label: t.evaluation.title },
+      ]}
+      prevTopic={{ label: t.topicNames.orchestration, href: '/ai/agents/orchestration' }}
+    >
+      {/* Why Evaluate */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.whatIs}</h2>
+        <p className="text-muted leading-relaxed text-lg">
+          {t.evaluation.whatIsDesc}
+        </p>
+      </section>
+
+      {/* Key Metrics */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.metrics}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.evaluation.metricsDesc}
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">{t.evaluation.taskSuccess}</h3>
+            <p className="text-sm text-muted">{t.evaluation.taskSuccessDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">{t.evaluation.efficiency}</h3>
+            <p className="text-sm text-muted">{t.evaluation.efficiencyDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.evaluation.accuracy}</h3>
+            <p className="text-sm text-muted">{t.evaluation.accuracyDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-orange-400 mb-2">{t.evaluation.reliability}</h3>
+            <p className="text-sm text-muted">{t.evaluation.reliabilityDesc}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Evaluation Approaches */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.approaches}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.evaluation.approachesDesc}
+        </p>
+        <div className="space-y-4">
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-text mb-2">{t.evaluation.unitTests}</h4>
+            <p className="text-sm text-muted">{t.evaluation.unitTestsDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-text mb-2">{t.evaluation.integration}</h4>
+            <p className="text-sm text-muted">{t.evaluation.integrationDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-text mb-2">{t.evaluation.benchmarks}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarksDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-text mb-2">{t.evaluation.humanEval}</h4>
+            <p className="text-sm text-muted">{t.evaluation.humanEvalDesc}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Best Practices */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.bestPractices}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.evaluation.bestPracticesDesc}
+        </p>
+        <ul className="space-y-3">
+          {[
+            t.evaluation.practice1,
+            t.evaluation.practice2,
+            t.evaluation.practice3,
+            t.evaluation.practice4,
+          ].map((practice, i) => (
+            <li key={i} className="flex gap-3 items-start">
+              <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-primary-light text-sm">✓</span>
+              </span>
+              <span className="text-muted leading-relaxed">{practice}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Key Takeaways */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.keyTakeaways}</h2>
+        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
+          <ul className="space-y-4 text-text">
+            {[
+              t.evaluation.takeaway1,
+              t.evaluation.takeaway2,
+              t.evaluation.takeaway3,
+              t.evaluation.takeaway4,
+            ].map((item, i) => (
+              <li key={i} className="flex gap-3 items-start">
+                <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-primary-light text-sm font-bold">{i + 1}</span>
+                </span>
+                <span className="leading-relaxed">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </TopicLayout>
+  )
+}

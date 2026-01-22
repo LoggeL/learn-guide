@@ -44,12 +44,47 @@ export const topics: Topic[] = [
             name: 'MCP (Model Context Protocol)',
             path: '/ai/agents/mcp',
           },
+          {
+            id: 'tool-design',
+            name: 'Tool Design',
+            path: '/ai/agents/tool-design',
+          },
+          {
+            id: 'memory',
+            name: 'Memory Systems',
+            path: '/ai/agents/memory',
+          },
+          {
+            id: 'orchestration',
+            name: 'Orchestration',
+            path: '/ai/agents/orchestration',
+          },
+          {
+            id: 'evaluation',
+            name: 'Evaluation',
+            path: '/ai/agents/evaluation',
+          },
         ],
       },
       {
         id: 'llm',
         name: 'Large Language Models',
         children: [
+          {
+            id: 'tokenization',
+            name: 'Tokenization',
+            path: '/ai/llm/tokenization',
+          },
+          {
+            id: 'embeddings',
+            name: 'Embeddings',
+            path: '/ai/llm/embeddings',
+          },
+          {
+            id: 'rag',
+            name: 'RAG',
+            path: '/ai/llm/rag',
+          },
           {
             id: 'context-rot',
             name: 'Context Rot',
@@ -74,6 +109,69 @@ export const topics: Topic[] = [
             id: 'visual-challenges',
             name: 'Visual Challenges',
             path: '/ai/llm/visual-challenges',
+          },
+        ],
+      },
+      {
+        id: 'ml-fundamentals',
+        name: 'ML Fundamentals',
+        children: [
+          {
+            id: 'neural-networks',
+            name: 'Neural Networks',
+            path: '/ai/ml-fundamentals/neural-networks',
+          },
+          {
+            id: 'gradient-descent',
+            name: 'Gradient Descent',
+            path: '/ai/ml-fundamentals/gradient-descent',
+          },
+          {
+            id: 'training',
+            name: 'Training Process',
+            path: '/ai/ml-fundamentals/training',
+          },
+        ],
+      },
+      {
+        id: 'prompting',
+        name: 'Prompting',
+        children: [
+          {
+            id: 'prompt-basics',
+            name: 'Prompt Basics',
+            path: '/ai/prompting/basics',
+          },
+          {
+            id: 'advanced-prompting',
+            name: 'Advanced Techniques',
+            path: '/ai/prompting/advanced',
+          },
+          {
+            id: 'system-prompts',
+            name: 'System Prompts',
+            path: '/ai/prompting/system-prompts',
+          },
+        ],
+      },
+      {
+        id: 'safety',
+        name: 'AI Safety & Ethics',
+        children: [
+          {
+            id: 'alignment',
+            name: 'Alignment',
+            path: '/ai/safety/alignment',
+          },
+          {
+            id: 'bias',
+            name: 'Bias & Fairness',
+            path: '/ai/safety/bias',
+          },
+          {
+            id: 'responsible-ai',
+            name: 'Responsible AI',
+            path: '/ai/safety/responsible-ai',
           },
         ],
       },
