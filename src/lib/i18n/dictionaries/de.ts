@@ -83,9 +83,8 @@ export const de: Dictionary = {
     'prompt-basics': 'Prompt-Grundlagen',
     'advanced-prompting': 'Fortgeschrittenes Prompting',
     'system-prompts': 'System-Prompts',
-    // Phase 3: LLM (moved from safety)
-    'llm-training': 'LLM-Training',
     // Phase 3: AI Safety
+    'alignment': 'Alignment',
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
   },
@@ -714,6 +713,35 @@ export const de: Dictionary = {
     vectorDbsDesc: 'Spezialisierte Datenbanken wie Pinecone, Weaviate oder pgvector ermöglichen schnelle Ähnlichkeitssuche über Millionen von Einbettungen.',
     interactiveDemo: 'Interaktive RAG-Pipeline',
     demoDesc: 'Sieh, wie Anfragen durch ein RAG-System fließen',
+
+    // Agentic RAG
+    agenticRag: 'Agentic RAG',
+    agenticRagDesc: 'Bei agentic RAG empfängt das LLM nicht nur abgerufene Dokumente—es steuert aktiv den Abrufprozess. Das Modell entscheidet, wann gesucht wird, wonach gesucht wird und welche Abrufwerkzeuge verwendet werden.',
+    agenticHow: 'Funktionsweise',
+    agenticHowDesc: 'Statt einer festen Pipeline erhält das LLM Abrufwerkzeuge, die es nach Bedarf aufrufen kann. Es kann Anfragen umformulieren, mehrfach suchen oder verschiedene Suchstrategien je nach Aufgabe kombinieren.',
+    agenticAdvantages: 'Vorteile',
+    agenticAdv1: 'Anfrageverfeinerung: Das LLM kann komplexe Fragen umformulieren oder zerlegen',
+    agenticAdv2: 'Multi-Hop-Reasoning: Mehrere Abrufe verketten, um komplexe Fragen zu beantworten',
+    agenticAdv3: 'Adaptive Suche: Das richtige Werkzeug für jede Teilfrage wählen',
+    agenticAdv4: 'Selbstkorrektur: Erneut abrufen, wenn erste Ergebnisse unzureichend sind',
+    agenticDisadvantages: 'Nachteile',
+    agenticDisadv1: 'Höhere Latenz: Mehrere LLM-Aufrufe und Abrufe summieren sich',
+    agenticDisadv2: 'Erhöhte Kosten: Jeder Reasoning-Schritt kostet Tokens',
+    agenticDisadv3: 'Komplexität: Schwerer zu debuggen und Verhalten vorherzusagen',
+    agenticDisadv4: 'Fehlermodi: LLM könnte in Schleifen geraten, zu viel abrufen oder offensichtliche Anfragen übersehen',
+    multiTool: 'Multi-Tool-Abruf',
+    multiToolDesc: 'Gib dem LLM mehrere Abrufwerkzeuge für verschiedene Anwendungsfälle. Diese Flexibilität lässt das Modell den besten Ansatz für jede Anfrage wählen.',
+    toolSemantic: 'Semantische Suche',
+    toolSemanticDesc: 'Vektorähnlichkeit für konzeptuelle Übereinstimmung. Ideal für: "Dokumente über X", verwandte Inhalte finden.',
+    toolFulltext: 'Volltextsuche',
+    toolFulltextDesc: 'Keyword/BM25-Suche für exakte Treffer. Ideal für: spezifische Begriffe, Namen, Codes, Fehlermeldungen.',
+    toolSql: 'SQL/Strukturierte Abfrage',
+    toolSqlDesc: 'Strukturierte Daten direkt abfragen. Ideal für: Zählungen, Aggregationen, Filterung nach Attributen.',
+    toolKg: 'Wissensgraph',
+    toolKgDesc: 'Entitätsbeziehungen traversieren. Ideal für: "Wie hängt X mit Y zusammen", Multi-Hop-Fakten.',
+    whenToUse: 'Wann Agentic RAG einsetzen',
+    whenToUseDesc: 'Standard-RAG ist einfacher und schneller für unkomplizierte Frage-Antwort-Szenarien. Verwende Agentic RAG, wenn Anfragen komplex sind, mehrere Quellen erfordern oder von Anfrageverfeinerung profitieren.',
+
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'RAG ruft relevante Dokumente ab und fügt sie in den Prompt ein',
     takeaway2: 'Es reduziert Halluzinationen, indem Antworten in echten Quellen verankert werden',
@@ -839,60 +867,6 @@ export const de: Dictionary = {
     benchmarksDesc: 'Standard-Aufgabensammlungen zum Vergleich von Agenten.',
     humanEval: 'Menschliche Bewertung',
     humanEvalDesc: 'Expertenüberprüfung für nuancierte Qualitätsbewertung.',
-
-    // Benchmarks Section
-    benchmarksSection: 'Gängige Benchmarks',
-    benchmarksSectionDesc: 'Standardisierte Benchmarks helfen, Modelle zu vergleichen und Fortschritte zu verfolgen. Verschiedene Benchmarks messen verschiedene Fähigkeiten.',
-    benchmarkMmlu: 'MMLU (Massive Multitask Language Understanding)',
-    benchmarkMmluDesc: '57 Fächer von MINT bis Geisteswissenschaften. Testet breites Wissen und Denkvermögen. Ergebnisse reichen von 25% (Zufall) bis 90%+ für Spitzenmodelle.',
-    benchmarkHellaswag: 'HellaSwag',
-    benchmarkHellaswagDesc: 'Common-Sense-Reasoning über Alltagssituationen. Testet, ob Modelle verstehen, wie sich Szenarien typischerweise entwickeln.',
-    benchmarkHumaneval: 'HumanEval',
-    benchmarkHumanevalDesc: 'Code-Generierungs-Benchmark mit 164 Python-Programmieraufgaben. Misst die funktionale Korrektheit von generiertem Code.',
-    benchmarkGsm8k: 'GSM8K',
-    benchmarkGsm8kDesc: 'Mathematik-Textaufgaben auf Grundschulniveau. Testet mehrstufiges mathematisches Denken. Wichtiger Benchmark für Denkfähigkeiten.',
-    benchmarkArc: 'ARC (AI2 Reasoning Challenge)',
-    benchmarkArcDesc: 'Naturwissenschaftliche Fragen aus standardisierten Tests. ARC-Easy und ARC-Challenge Varianten testen verschiedene Schwierigkeitsstufen.',
-    benchmarkMath: 'MATH',
-    benchmarkMathDesc: 'Mathematik-Wettbewerbsaufgaben. Deutlich schwieriger als GSM8K, erfordert fortgeschrittenes mathematisches Denken.',
-    benchmarkCaveats: 'Benchmark-Einschränkungen',
-    benchmarkCaveat1: 'Datenkontamination: Trainingsdaten können Benchmark-Fragen enthalten',
-    benchmarkCaveat2: 'Überanpassung an Benchmarks: Für spezifische Tests optimierte Modelle generalisieren möglicherweise nicht',
-    benchmarkCaveat3: 'Begrenzter Umfang: Benchmarks testen enge Fähigkeiten, nicht die Nützlichkeit in der realen Welt',
-    benchmarkCaveat4: 'Statische Natur: Benchmarks entwickeln sich nicht weiter, wenn sich Fähigkeiten verbessern',
-
-    // LLM as a Judge Section
-    llmJudge: 'LLM als Bewerter',
-    llmJudgeDesc: 'Die Verwendung von LLMs zur Bewertung anderer LLM-Ausgaben wird immer häufiger. Eine leistungsstarke Technik, aber mit wichtigen Einschränkungen.',
-    llmJudgeWhat: 'Wie es funktioniert',
-    llmJudgeWhatDesc: 'Ein separates LLM (der "Bewerter") wird aufgefordert, Ausgaben des getesteten Modells zu bewerten. Der Bewerter bewertet Antworten nach Kriterien wie Hilfsbereitschaft, Genauigkeit oder Sicherheit.',
-    llmJudgeAdvantages: 'Vorteile',
-    llmJudgeAdv1: 'Skalierbarkeit',
-    llmJudgeAdv1Desc: 'Kann Tausende von Ausgaben automatisch bewerten, viel schneller als menschliche Überprüfung.',
-    llmJudgeAdv2: 'Konsistenz',
-    llmJudgeAdv2Desc: 'Dasselbe Bewerter-Modell wendet konsistente Kriterien auf alle Bewertungen an (keine Bewerterermüdung).',
-    llmJudgeAdv3: 'Kosteneffektiv',
-    llmJudgeAdv3Desc: 'Viel günstiger als die Einstellung menschlicher Bewerter für Tests im großen Maßstab.',
-    llmJudgeAdv4: 'Nuancierte Bewertung',
-    llmJudgeAdv4Desc: 'Kann subjektive Qualitäten wie Ton, Stil und Hilfsbereitschaft bewerten, die mit Metriken schwer zu erfassen sind.',
-    llmJudgeProblems: 'Probleme & Einschränkungen',
-    llmJudgeProb1: 'Selbstpräferenz-Bias',
-    llmJudgeProb1Desc: 'LLMs neigen dazu, Ausgaben zu bevorzugen, die ihrem eigenen Stil ähneln. GPT-4 als Bewerter bevorzugt GPT-4-Ausgaben.',
-    llmJudgeProb2: 'Positions-Bias',
-    llmJudgeProb2Desc: 'Bewerter bevorzugen oft die erste oder letzte Antwort in einem Vergleich, unabhängig von der Qualität.',
-    llmJudgeProb3: 'Ausführlichkeits-Bias',
-    llmJudgeProb3Desc: 'Längere Antworten werden oft höher bewertet, auch wenn Kürze besser wäre.',
-    llmJudgeProb4: 'Schmeichelei',
-    llmJudgeProb4Desc: 'Bewertermodelle können selbstbewusst klingende Antworten höher bewerten, auch wenn sie falsch sind.',
-    llmJudgeProb5: 'Deckeneffekt',
-    llmJudgeProb5Desc: 'Ein Bewerter kann Ausgaben, die seine eigenen Fähigkeiten übersteigen, nicht zuverlässig bewerten.',
-    llmJudgeBestPractices: 'Best Practices für LLM-Bewerter',
-    llmJudgePractice1: 'Verwende ein stärkeres Modell als Bewerter als das bewertete Modell',
-    llmJudgePractice2: 'Randomisiere die Antwortreihenfolge, um Positions-Bias zu mindern',
-    llmJudgePractice3: 'Kalibriere mit menschlichen Bewertungen auf einer Teilmenge der Daten',
-    llmJudgePractice4: 'Verwende mehrere Bewerter und aggregiere die Ergebnisse',
-    llmJudgePractice5: 'Sei explizit über die Bewertungskriterien im Bewerter-Prompt',
-
     bestPractices: 'Best Practices',
     bestPracticesDesc: 'Richtlinien für effektive Agenten-Evaluierung.',
     practice1: 'Teste Randfälle und Fehlermodi, nicht nur Happy Paths.',
@@ -903,8 +877,7 @@ export const de: Dictionary = {
     takeaway1: 'Evaluierung ist essentiell – ungemessene Systeme können nicht verbessert werden',
     takeaway2: 'Kombiniere automatisierte Tests mit menschlicher Bewertung',
     takeaway3: 'Verfolge mehrere Metriken: Erfolg, Effizienz, Kosten',
-    takeaway4: 'LLM-als-Bewerter skaliert gut, hat aber systematische Biases – kalibriere mit Menschen',
-    takeaway5: 'Benchmarks sind nützlich zum Vergleichen, erfassen aber nicht die reale Leistung',
+    takeaway4: 'Integriere Evaluierung in deinen Entwicklungsworkflow',
   },
 
   // Phase 3: ML Fundamentals
@@ -1116,14 +1089,14 @@ export const de: Dictionary = {
     takeaway4: 'System-Prompts können überschrieben werden – verlasse dich nicht allein auf sie für Sicherheit',
   },
 
-  // LLM Training page (formerly Alignment)
-  llmTraining: {
-    title: 'LLM-Training',
-    description: 'Wie große Sprachmodelle trainiert werden: von Pretraining bis RLHF und das neue RL-Paradigma.',
-    whatIs: 'Wie LLMs trainiert werden',
-    whatIsDesc: 'Große Sprachmodelle durchlaufen mehrere Trainingsstufen, jede mit unterschiedlichen Zielen und Techniken. Das Verständnis dieser Pipeline ist entscheidend für das Verständnis von Modellfähigkeiten und -einschränkungen.',
-    whyMatters: 'Warum Training wichtig ist',
-    whyMattersDesc: 'Der Trainingsprozess prägt fundamental, was LLMs können und was nicht. Verschiedene Trainingsansätze produzieren Modelle mit unterschiedlichen Stärken, Schwächen und Verhaltensweisen.',
+  // Phase 3: AI Safety
+  alignment: {
+    title: 'Alignment',
+    description: 'Sicherstellen, dass KI-Systeme im Einklang mit menschlichen Werten und Absichten handeln.',
+    whatIs: 'Was ist KI-Alignment?',
+    whatIsDesc: 'KI-Alignment ist die Herausforderung sicherzustellen, dass KI-Systeme das tun, was wir wirklich wollen. Es geht darum, Systeme zu bauen, die hilfreich, harmlos und ehrlich sind.',
+    whyMatters: 'Warum Alignment wichtig ist',
+    whyMattersDesc: 'Da KI-Systeme immer leistungsfähiger werden, wird es zunehmend kritisch sicherzustellen, dass sie mit menschlichen Werten aligned bleiben. Nicht-aligned KI könnte unbeabsichtigte Ziele verfolgen, im großen Maßstab Schaden anrichten oder von böswilligen Akteuren ausgenutzt werden.',
 
     // LLM Training Pipeline
     trainingPipeline: 'Die LLM-Trainingspipeline',
@@ -1149,34 +1122,6 @@ export const de: Dictionary = {
 
     continuedTraining: 'Stufe 4: Fortgesetztes Training & Spezialisiertes Alignment',
     continuedTrainingDesc: 'Modelle können zusätzliches Training für spezifische Fähigkeiten (Coding, Mathematik, Tool-Nutzung) oder Sicherheitsverfeinerungen (Red Teaming, Constitutional AI) durchlaufen. Diese Stufe ist während der Bereitstellung fortlaufend.',
-
-    // RL Paradigm
-    rlParadigm: 'Das RL-Paradigma: Lernen ohne menschliche Labels',
-    rlParadigmDesc: 'Ein revolutionärer Ansatz, bei dem Modelle durch reines Reinforcement Learning auf verifizierbaren Aufgaben Denken lernen, ohne menschliche Demonstrationen oder Präferenz-Labels.',
-
-    rlParadigmWhat: 'Was ist das RL-Paradigma?',
-    rlParadigmWhatDesc: 'Anstatt aus menschlich geschriebenen Beispielen (SFT) oder menschlichen Präferenzen (RLHF) zu lernen, lernen Modelle direkt aus ergebnisbasierten Belohnungen. Wenn die Antwort korrekt ist, wird das Modell belohnt. Wenn falsch, wird es bestraft. Keine menschliche Kennzeichnung erforderlich.',
-
-    deepseekR1: 'DeepSeek R1-Zero: Eine Fallstudie',
-    deepseekR1Desc: 'DeepSeek R1-Zero hat gezeigt, dass leistungsfähiges Denken aus reinem RL entstehen kann, ohne jegliches Supervised Fine-Tuning. Das Modell entwickelte Chain-of-Thought-Denken, Selbstverifikation und sogar "Aha-Momente" vollständig durch Reinforcement Learning.',
-
-    rlKey1: 'Kein SFT erforderlich',
-    rlKey1Desc: 'R1-Zero wurde direkt von einem Basismodell nur mit RL trainiert und übersprang die SFT-Stufe vollständig. Denkverhalten entstand natürlich.',
-    rlKey2: 'Verifizierbare Belohnungen',
-    rlKey2Desc: 'Das Training konzentrierte sich auf Aufgaben mit objektiv verifizierbaren Antworten: Mathematikaufgaben, Coding-Herausforderungen, logische Rätsel. Keine subjektive menschliche Beurteilung nötig.',
-    rlKey3: 'Emergente Verhaltensweisen',
-    rlKey3Desc: 'Das Modell entwickelte spontan erweitertes Denken, Selbstkorrektur und Reflexion – Verhaltensweisen, die frühere Modelle nur aus menschlichen Demonstrationen lernten.',
-    rlKey4: 'Lesbarkeitsprobleme',
-    rlKey4Desc: 'Reine RL-Modelle können ungewöhnliche Denkmuster entwickeln, die schwer zu interpretieren sind. DeepSeek fügte eine kleine Menge menschlicher Daten hinzu, um die Lesbarkeit zu verbessern.',
-
-    rlVsRlhf: 'RL-Paradigma vs. traditionelles RLHF',
-    rlVsRlhfDesc: 'Diese Ansätze lösen unterschiedliche Probleme und können komplementär sein.',
-    rlhfApproach: 'RLHF-Ansatz',
-    rlhfApproachDesc: 'Lernen aus menschlichen Präferenzen. Erfordert teure menschliche Kennzeichnung. Gut für subjektive Aufgaben wie Schreibqualität und Hilfsbereitschaft.',
-    rlApproach: 'RL-Paradigma-Ansatz',
-    rlApproachDesc: 'Lernen aus verifizierbaren Ergebnissen. Keine menschliche Kennzeichnung erforderlich. Ausgezeichnet für Denken, Mathematik und Coding, wo Korrektheit objektiv ist.',
-    hybridApproach: 'Hybrid-Ansatz',
-    hybridApproachDesc: 'Moderne Modelle kombinieren oft beides: RL für Denkfähigkeiten, RLHF für Alignment und Benutzerpräferenzen.',
 
     // Key Alignment Concepts
     concepts: 'Schlüssel-Alignment-Konzepte',
@@ -1221,11 +1166,10 @@ export const de: Dictionary = {
 
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'LLM-Training hat distinkte Stufen: Pretraining → SFT → RLHF → spezialisiertes Alignment',
-    takeaway2: 'Das RL-Paradigma (z.B. DeepSeek R1-Zero) zeigt, dass Denken aus reinem RL ohne menschliche Demonstrationen entstehen kann',
-    takeaway3: 'RLHF aligniert Modelle mit menschlichen Präferenzen; reines RL optimiert für verifizierbare Ergebnisse',
-    takeaway4: 'Moderne Modelle kombinieren oft mehrere Techniken: SFT für Anweisungsbefolgung, RLHF für Präferenzen, RL für Denken',
+    takeaway2: 'Pretraining schafft Fähigkeit; Post-Training schafft Alignment und Sicherheit',
+    takeaway3: 'RLHF, Constitutional AI und DPO sind heute die Haupt-Alignment-Techniken',
+    takeaway4: 'Alignment ist eine fortlaufende Forschungsherausforderung – aktuelle Techniken reduzieren, aber eliminieren Risiken nicht',
     takeaway5: 'Das Verständnis der Trainingspipeline hilft, Modellverhalten und -einschränkungen zu verstehen',
-    takeaway6: 'Das Feld entwickelt sich schnell weiter – neue Paradigmen wie reines RL verändern, wie wir über Training nachdenken',
   },
 
   bias: {

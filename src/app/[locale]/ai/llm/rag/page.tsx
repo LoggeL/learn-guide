@@ -105,6 +105,97 @@ export default function RAGPage() {
         <RAGPipelineVisualizer />
       </section>
 
+      {/* Agentic RAG */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.rag.agenticRag}</h2>
+        <p className="text-muted leading-relaxed text-lg mb-6">
+          {t.rag.agenticRagDesc}
+        </p>
+
+        <h3 className="text-xl font-bold font-heading text-text mb-3">{t.rag.agenticHow}</h3>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.rag.agenticHowDesc}
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          {/* Advantages */}
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+            <h4 className="text-lg font-bold font-heading text-emerald-400 mb-3">{t.rag.agenticAdvantages}</h4>
+            <ul className="space-y-2 text-sm text-muted">
+              <li className="flex gap-2 items-start">
+                <span className="text-emerald-400 mt-0.5">+</span>
+                <span>{t.rag.agenticAdv1}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-emerald-400 mt-0.5">+</span>
+                <span>{t.rag.agenticAdv2}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-emerald-400 mt-0.5">+</span>
+                <span>{t.rag.agenticAdv3}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-emerald-400 mt-0.5">+</span>
+                <span>{t.rag.agenticAdv4}</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Disadvantages */}
+          <div className="p-5 bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-xl">
+            <h4 className="text-lg font-bold font-heading text-red-400 mb-3">{t.rag.agenticDisadvantages}</h4>
+            <ul className="space-y-2 text-sm text-muted">
+              <li className="flex gap-2 items-start">
+                <span className="text-red-400 mt-0.5">-</span>
+                <span>{t.rag.agenticDisadv1}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-red-400 mt-0.5">-</span>
+                <span>{t.rag.agenticDisadv2}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-red-400 mt-0.5">-</span>
+                <span>{t.rag.agenticDisadv3}</span>
+              </li>
+              <li className="flex gap-2 items-start">
+                <span className="text-red-400 mt-0.5">-</span>
+                <span>{t.rag.agenticDisadv4}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p className="text-sm text-muted italic">
+          {t.rag.whenToUseDesc}
+        </p>
+      </section>
+
+      {/* Multi-Tool Retrieval */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.rag.multiTool}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.rag.multiToolDesc}
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-blue-400 mb-2">{t.rag.toolSemantic}</h3>
+            <p className="text-sm text-muted">{t.rag.toolSemanticDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.rag.toolFulltext}</h3>
+            <p className="text-sm text-muted">{t.rag.toolFulltextDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">{t.rag.toolSql}</h3>
+            <p className="text-sm text-muted">{t.rag.toolSqlDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-rose-500/10 to-red-500/10 border border-rose-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-rose-400 mb-2">{t.rag.toolKg}</h3>
+            <p className="text-sm text-muted">{t.rag.toolKgDesc}</p>
+          </div>
+        </div>
+      </section>
+
       {/* Key Takeaways */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.rag.keyTakeaways}</h2>
