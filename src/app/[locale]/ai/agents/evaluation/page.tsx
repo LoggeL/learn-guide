@@ -77,6 +77,155 @@ export default function EvaluationPage() {
         </div>
       </section>
 
+      {/* Benchmarks Section */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.evaluation.benchmarksSection}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.evaluation.benchmarksSectionDesc}
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-cyan-400 mb-2">{t.evaluation.benchmarkMmlu}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkMmluDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-emerald-400 mb-2">{t.evaluation.benchmarkHellaswag}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkHellaswagDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-purple-400 mb-2">{t.evaluation.benchmarkHumaneval}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkHumanevalDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-orange-400 mb-2">{t.evaluation.benchmarkGsm8k}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkGsm8kDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-pink-400 mb-2">{t.evaluation.benchmarkArc}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkArcDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-amber-400 mb-2">{t.evaluation.benchmarkMath}</h4>
+            <p className="text-sm text-muted">{t.evaluation.benchmarkMathDesc}</p>
+          </div>
+        </div>
+
+        {/* Benchmark Caveats */}
+        <div className="rounded-xl bg-gradient-to-br from-amber-500/5 to-orange-500/5 border border-amber-500/20 p-5">
+          <h4 className="font-bold text-amber-400 mb-3">{t.evaluation.benchmarkCaveats}</h4>
+          <ul className="space-y-2 text-sm text-muted">
+            <li className="flex gap-2">
+              <span className="text-amber-400">⚠</span>
+              <span>{t.evaluation.benchmarkCaveat1}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-amber-400">⚠</span>
+              <span>{t.evaluation.benchmarkCaveat2}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-amber-400">⚠</span>
+              <span>{t.evaluation.benchmarkCaveat3}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-amber-400">⚠</span>
+              <span>{t.evaluation.benchmarkCaveat4}</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      {/* LLM as a Judge */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.evaluation.llmJudge}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.evaluation.llmJudgeDesc}
+        </p>
+
+        {/* How it works */}
+        <div className="rounded-2xl bg-surface/50 border border-border p-6 mb-6">
+          <h3 className="text-lg font-bold font-heading text-text mb-3">{t.evaluation.llmJudgeWhat}</h3>
+          <p className="text-muted">{t.evaluation.llmJudgeWhatDesc}</p>
+        </div>
+
+        {/* Advantages */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold font-heading text-emerald-400 mb-4">{t.evaluation.llmJudgeAdvantages}</h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+              <h4 className="font-bold text-emerald-400 mb-2">{t.evaluation.llmJudgeAdv1}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeAdv1Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+              <h4 className="font-bold text-emerald-400 mb-2">{t.evaluation.llmJudgeAdv2}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeAdv2Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+              <h4 className="font-bold text-emerald-400 mb-2">{t.evaluation.llmJudgeAdv3}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeAdv3Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+              <h4 className="font-bold text-emerald-400 mb-2">{t.evaluation.llmJudgeAdv4}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeAdv4Desc}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Problems */}
+        <div className="mb-6">
+          <h3 className="text-lg font-bold font-heading text-red-400 mb-4">{t.evaluation.llmJudgeProblems}</h3>
+          <div className="space-y-3">
+            <div className="p-4 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+              <h4 className="font-bold text-red-400 mb-2">{t.evaluation.llmJudgeProb1}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeProb1Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+              <h4 className="font-bold text-red-400 mb-2">{t.evaluation.llmJudgeProb2}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeProb2Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+              <h4 className="font-bold text-red-400 mb-2">{t.evaluation.llmJudgeProb3}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeProb3Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+              <h4 className="font-bold text-red-400 mb-2">{t.evaluation.llmJudgeProb4}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeProb4Desc}</p>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+              <h4 className="font-bold text-red-400 mb-2">{t.evaluation.llmJudgeProb5}</h4>
+              <p className="text-sm text-muted">{t.evaluation.llmJudgeProb5Desc}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Best Practices for LLM Judges */}
+        <div className="rounded-xl bg-gradient-to-br from-blue-500/5 to-cyan-500/5 border border-blue-500/20 p-5">
+          <h4 className="font-bold text-blue-400 mb-3">{t.evaluation.llmJudgeBestPractices}</h4>
+          <ul className="space-y-2 text-sm text-muted">
+            <li className="flex gap-2">
+              <span className="text-blue-400">→</span>
+              <span>{t.evaluation.llmJudgePractice1}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-blue-400">→</span>
+              <span>{t.evaluation.llmJudgePractice2}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-blue-400">→</span>
+              <span>{t.evaluation.llmJudgePractice3}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-blue-400">→</span>
+              <span>{t.evaluation.llmJudgePractice4}</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-blue-400">→</span>
+              <span>{t.evaluation.llmJudgePractice5}</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* Best Practices */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.evaluation.bestPractices}</h2>
@@ -110,6 +259,7 @@ export default function EvaluationPage() {
               t.evaluation.takeaway2,
               t.evaluation.takeaway3,
               t.evaluation.takeaway4,
+              t.evaluation.takeaway5,
             ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
