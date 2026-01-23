@@ -76,6 +76,7 @@ export const de: Dictionary = {
     'orchestration': 'Orchestrierung',
     'evaluation': 'Evaluierung',
     // Phase 3: ML Fundamentals
+    'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',
     'gradient-descent': 'Gradientenabstieg',
     'training': 'Trainingsprozess',
@@ -84,7 +85,7 @@ export const de: Dictionary = {
     'advanced-prompting': 'Fortgeschrittenes Prompting',
     'system-prompts': 'System-Prompts',
     // Phase 3: AI Safety
-    'alignment': 'Alignment',
+    'llm-training': 'LLM-Training',
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
   },
