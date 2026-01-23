@@ -8,15 +8,15 @@ export default function AttentionPage() {
   const { t } = useTranslation()
 
   const qkvCards = [
-    { letter: 'Q', title: 'Query', desc: '"What am I looking for?" - Represents the current word seeking context.', color: 'purple' },
-    { letter: 'K', title: 'Key', desc: '"What do I contain?" - A label for every word in the sequence to check against the query.', color: 'cyan' },
-    { letter: 'V', title: 'Value', desc: '"What information do I offer?" - The actual content that gets passed forward if the Query and Key match.', color: 'emerald' },
+    { letter: 'Q', title: t.attention.queryTitle, desc: t.attention.queryDesc, color: 'purple' },
+    { letter: 'K', title: t.attention.keyTitle, desc: t.attention.keyDesc, color: 'cyan' },
+    { letter: 'V', title: t.attention.valueTitle, desc: t.attention.valueDesc, color: 'emerald' },
   ]
 
   const benefits = [
-    { num: 1, title: 'Parallel Processing', desc: 'Unlike older models (RNNs), Transformers can process all words in a sentence at the same time, making training much faster.', color: 'purple' },
-    { num: 2, title: 'Long-Range Dependencies', desc: 'Attention can link two words even if they are thousands of tokens apart, as long as they are within the same context window.', color: 'cyan' },
-    { num: 3, title: 'Dynamic Context', desc: "The model doesn't just look at words; it learns which words are important *for each other* based on the specific sentence.", color: 'emerald' },
+    { num: 1, title: t.attention.benefit1Title, desc: t.attention.benefit1Desc, color: 'purple' },
+    { num: 2, title: t.attention.benefit2Title, desc: t.attention.benefit2Desc, color: 'cyan' },
+    { num: 3, title: t.attention.benefit3Title, desc: t.attention.benefit3Desc, color: 'emerald' },
   ]
 
   return (
@@ -60,20 +60,19 @@ export default function AttentionPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Interactive Attention Map</h2>
-            <p className="text-sm text-muted">Hover to explore attention patterns</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.attention.interactiveTitle}</h2>
+            <p className="text-sm text-muted">{t.attention.interactiveDesc}</p>
           </div>
         </div>
         <p className="text-muted mb-8 leading-relaxed">
-          Hover over different words in the sentences below. The highlighting shows where the model is 
-          "looking" to understand that specific word.
+          {t.attention.interactiveExplain}
         </p>
         <AttentionVisualizer />
       </section>
 
       {/* Core Concepts */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The Three Keys: Query, Key, and Value</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.attention.qkvTitle}</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {qkvCards.map((card) => (
             <div key={card.letter} className={`p-6 rounded-xl bg-gradient-to-br from-${card.color}-500/10 to-${card.color}-500/5 border border-${card.color}-500/20`}>
@@ -95,7 +94,7 @@ export default function AttentionPage() {
 
       {/* Why it changed everything */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Why it Changed Everything</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.attention.benefitsTitle}</h2>
         <div className="space-y-4">
           {benefits.map((item) => (
             <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>

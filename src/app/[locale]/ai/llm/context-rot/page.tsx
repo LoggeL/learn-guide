@@ -8,17 +8,17 @@ export default function ContextRotPage() {
   const { t } = useTranslation()
 
   const reasons = [
-    { num: 1, title: 'Finite Context Windows', desc: t.contextRot.whyHappensDesc, color: 'purple' },
-    { num: 2, title: 'Attention Dilution', desc: 'The model\'s attention mechanism spreads across all tokens. More content means each token gets proportionally less attention.', color: 'cyan' },
-    { num: 3, title: 'Recency Bias', desc: 'Transformers tend to weight recent tokens more heavily. Instructions at the start naturally become less influential.', color: 'orange' },
+    { num: 1, title: t.contextRot.reason1Title, desc: t.contextRot.reason1Desc, color: 'purple' },
+    { num: 2, title: t.contextRot.reason2Title, desc: t.contextRot.reason2Desc, color: 'cyan' },
+    { num: 3, title: t.contextRot.reason3Title, desc: t.contextRot.reason3Desc, color: 'orange' },
   ]
 
   const mitigations = [
-    { title: 'Periodic Instruction Reinforcement', desc: t.contextRot.mitigation1, icon: '🔄' },
-    { title: 'Conversation Summarization', desc: t.contextRot.mitigation2, icon: '📝' },
-    { title: 'Hierarchical Memory', desc: 'Use external memory systems to store and retrieve relevant context on-demand.', icon: '🗄️' },
-    { title: 'Instruction Anchoring', desc: t.contextRot.mitigation2, icon: '⚓' },
-    { title: 'Shorter Task Chains', desc: t.contextRot.mitigation4, icon: '🔗' },
+    { title: t.contextRot.mitigation1Title, desc: t.contextRot.mitigation1, icon: '🔄' },
+    { title: t.contextRot.mitigation2Title, desc: t.contextRot.mitigation2, icon: '📝' },
+    { title: t.contextRot.mitigation3Title, desc: t.contextRot.mitigation3, icon: '🗄️' },
+    { title: t.contextRot.mitigation4Title, desc: t.contextRot.mitigation4, icon: '⚓' },
+    { title: t.contextRot.mitigation5Title, desc: t.contextRot.mitigation5, icon: '🔗' },
   ]
 
   return (
@@ -30,6 +30,7 @@ export default function ContextRotPage() {
         { label: t.categories.llm, href: '/' },
         { label: t.contextRot.title },
       ]}
+      prevTopic={{ label: t.topicNames.rag, href: '/ai/llm/rag' }}
       nextTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}
     >
       {/* What is Context Rot */}

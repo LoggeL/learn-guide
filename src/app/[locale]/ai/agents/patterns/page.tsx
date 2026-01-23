@@ -33,7 +33,7 @@ export default function AgenticPatternsPage() {
         </p>
       </section>
 
-      {/* Patterns */}
+      {/* Patterns Overview */}
       <section>
         <div className="grid md:grid-cols-2 gap-4">
           {patterns.map((pattern, i) => (
@@ -48,6 +48,120 @@ export default function AgenticPatternsPage() {
         </div>
       </section>
 
+      {/* ReAct Deep Dive */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.agenticPatterns.reactDeepDive}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.agenticPatterns.reactDeepDiveDesc}</p>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-text mb-3">{t.agenticPatterns.reactHow}</h3>
+          <div className="space-y-2">
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-purple-400 font-mono text-sm">1.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.reactStep1}</span>
+            </div>
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-purple-400 font-mono text-sm">2.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.reactStep2}</span>
+            </div>
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-purple-400 font-mono text-sm">3.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.reactStep3}</span>
+            </div>
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-purple-400 font-mono text-sm">4.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.reactStep4}</span>
+            </div>
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+            <h4 className="font-semibold text-emerald-400 mb-2">{t.agenticPatterns.reactPros}</h4>
+            <ul className="space-y-1 text-sm text-muted">
+              <li>• {t.agenticPatterns.reactPro1}</li>
+              <li>• {t.agenticPatterns.reactPro2}</li>
+              <li>• {t.agenticPatterns.reactPro3}</li>
+            </ul>
+          </div>
+          <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+            <h4 className="font-semibold text-red-400 mb-2">{t.agenticPatterns.reactCons}</h4>
+            <ul className="space-y-1 text-sm text-muted">
+              <li>• {t.agenticPatterns.reactCon1}</li>
+              <li>• {t.agenticPatterns.reactCon2}</li>
+              <li>• {t.agenticPatterns.reactCon3}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Plan-and-Execute Deep Dive */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.agenticPatterns.planExecuteDeepDive}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.agenticPatterns.planExecuteDeepDiveDesc}</p>
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-text mb-3">{t.agenticPatterns.planExecuteHow}</h3>
+          <div className="space-y-2">
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-cyan-400 font-mono text-sm">1.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.planStep1}</span>
+            </div>
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-cyan-400 font-mono text-sm">2.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.planStep2}</span>
+            </div>
+            <div className="flex gap-3 items-start p-3 bg-background rounded-lg border border-border">
+              <span className="text-cyan-400 font-mono text-sm">3.</span>
+              <span className="text-muted text-sm">{t.agenticPatterns.planStep3}</span>
+            </div>
+          </div>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
+            <h4 className="font-semibold text-emerald-400 mb-2">{t.agenticPatterns.planExecutePros}</h4>
+            <ul className="space-y-1 text-sm text-muted">
+              <li>• {t.agenticPatterns.planExecutePro1}</li>
+              <li>• {t.agenticPatterns.planExecutePro2}</li>
+              <li>• {t.agenticPatterns.planExecutePro3}</li>
+            </ul>
+          </div>
+          <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+            <h4 className="font-semibold text-red-400 mb-2">{t.agenticPatterns.planExecuteCons}</h4>
+            <ul className="space-y-1 text-sm text-muted">
+              <li>• {t.agenticPatterns.planExecuteCon1}</li>
+              <li>• {t.agenticPatterns.planExecuteCon2}</li>
+              <li>• {t.agenticPatterns.planExecuteCon3}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Choosing the Right Pattern */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.agenticPatterns.choosingTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.agenticPatterns.choosingDesc}</p>
+        <div className="space-y-3">
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background rounded-xl border border-border gap-2">
+            <span className="text-text">{t.agenticPatterns.choosingSimple}</span>
+            <span className="text-purple-400 font-semibold">{t.agenticPatterns.choosingSimpleAnswer}</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background rounded-xl border border-border gap-2">
+            <span className="text-text">{t.agenticPatterns.choosingTransparency}</span>
+            <span className="text-purple-400 font-semibold">{t.agenticPatterns.choosingTransparencyAnswer}</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background rounded-xl border border-border gap-2">
+            <span className="text-text">{t.agenticPatterns.choosingComplex}</span>
+            <span className="text-cyan-400 font-semibold">{t.agenticPatterns.choosingComplexAnswer}</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background rounded-xl border border-border gap-2">
+            <span className="text-text">{t.agenticPatterns.choosingQuality}</span>
+            <span className="text-orange-400 font-semibold">{t.agenticPatterns.choosingQualityAnswer}</span>
+          </div>
+          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-background rounded-xl border border-border gap-2">
+            <span className="text-text">{t.agenticPatterns.choosingDiverse}</span>
+            <span className="text-emerald-400 font-semibold">{t.agenticPatterns.choosingDiverseAnswer}</span>
+          </div>
+        </div>
+      </section>
+
       {/* Interactive Visualization */}
       <section>
         <div className="flex items-center gap-3 mb-6">
@@ -57,8 +171,8 @@ export default function AgenticPatternsPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Pattern Comparison</h2>
-            <p className="text-sm text-muted">Explore different agentic architectures</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.agenticPatterns.interactiveTitle}</h2>
+            <p className="text-sm text-muted">{t.agenticPatterns.interactiveDesc}</p>
           </div>
         </div>
         <AgenticPatternsVisualizer />
