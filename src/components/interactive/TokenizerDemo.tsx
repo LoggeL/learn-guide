@@ -17,12 +17,26 @@ const TOKEN_COLORS = [
   'bg-red-500/30 border-red-500/50 text-red-200',
 ]
 
+// Helper to format token display with whitespace visualization
+function formatToken(token: string): { display: string; isWhitespace: boolean; wsType?: string } {
+  if (token === ' ') return { display: '·', isWhitespace: true, wsType: 'space' }
+  if (token === '\n') return { display: '↵', isWhitespace: true, wsType: 'newline' }
+  if (token === '\t') return { display: '→', isWhitespace: true, wsType: 'tab' }
+  if (token === '\r') return { display: '←', isWhitespace: true, wsType: 'return' }
+  // Leading space tokens (like " the")
+  if (token.startsWith(' ')) {
+    return { display: '·' + token.slice(1), isWhitespace: false, wsType: 'leading' }
+  }
+  return { display: token, isWhitespace: false }
+}
+
 export function TokenizerDemo() {
   const { t } = useTranslation()
   const [text, setText] = useState('The quick brown fox jumps over the lazy dog.')
   const [tokens, setTokens] = useState<{ token: string; id: number }[]>([])
   const [encoding, setEncoding] = useState<Tiktoken | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [showIdsOnly, setShowIdsOnly] = useState(false)
 
   // Initialize the tokenizer (cl100k_base is used by GPT-4, GPT-4o, GPT-3.5-turbo)
   useEffect(() => {
@@ -146,14 +160,26 @@ export function TokenizerDemo() {
 
       {/* Token Visualization */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
-            <Hash size={18} className="text-cyan-400" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center">
+              <Hash size={18} className="text-cyan-400" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-text font-heading">{t.interactive.tokenBreakdown}</h3>
+              <p className="text-xs text-muted">{t.interactive.commonTokens}</p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.tokenBreakdown}</h3>
-            <p className="text-xs text-muted">{t.interactive.commonTokens}</p>
-          </div>
+          <button
+            onClick={() => setShowIdsOnly(!showIdsOnly)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              showIdsOnly
+                ? 'bg-primary/20 text-primary-light border border-primary/30'
+                : 'bg-surface-elevated text-muted border border-border hover:text-text'
+            }`}
+          >
+            {showIdsOnly ? 'IDs Only' : 'Show Text'}
+          </button>
         </div>
 
         {isLoading ? (
@@ -163,27 +189,57 @@ export function TokenizerDemo() {
         ) : (
           <div className="flex flex-wrap gap-2 min-h-[100px]">
             <AnimatePresence mode="popLayout">
-              {tokens.map((token, index) => (
-                <motion.span
-                  key={`${index}-${token.id}`}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  transition={{ delay: index * 0.02 }}
-                  className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg border font-mono text-sm ${TOKEN_COLORS[index % TOKEN_COLORS.length]}`}
-                >
-                  <span className="font-medium whitespace-pre">
-                    {token.token === ' ' ? '␣' :
-                     token.token === '\n' ? '↵' :
-                     token.token === '\t' ? '→' :
-                     token.token}
-                  </span>
-                  <span className="text-[10px] opacity-60">{token.id}</span>
-                </motion.span>
-              ))}
+              {tokens.map((token, index) => {
+                const formatted = formatToken(token.token)
+                return (
+                  <motion.span
+                    key={`${index}-${token.id}`}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ delay: index * 0.02 }}
+                    className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border font-mono text-sm ${TOKEN_COLORS[index % TOKEN_COLORS.length]} ${
+                      formatted.isWhitespace ? 'ring-1 ring-white/20' : ''
+                    } ${formatted.wsType === 'leading' ? 'pl-1' : ''}`}
+                    title={`"${token.token}" → ${token.id}`}
+                  >
+                    {!showIdsOnly && (
+                      <span className="font-medium whitespace-pre">
+                        {formatted.wsType === 'leading' && (
+                          <span className="text-white/40 mr-0.5">·</span>
+                        )}
+                        {formatted.wsType === 'leading' ? token.token.slice(1) : formatted.display}
+                      </span>
+                    )}
+                    <span className={`${showIdsOnly ? 'text-sm' : 'text-[10px] opacity-60'}`}>
+                      {token.id}
+                    </span>
+                  </motion.span>
+                )
+              })}
             </AnimatePresence>
           </div>
         )}
+
+        {/* Whitespace Legend */}
+        <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-4 text-xs text-muted">
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">·</span>
+            <span>space</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">↵</span>
+            <span>newline</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">→</span>
+            <span>tab</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">·</span><span className="font-mono">word</span>
+            <span>leading space</span>
+          </span>
+        </div>
       </div>
 
       {/* Info */}
