@@ -50,6 +50,7 @@ const topicTree: Topic[] = [
           { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention' },
           { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
           { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+          { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
         ],
       },
       {
@@ -74,7 +75,6 @@ const topicTree: Topic[] = [
         id: 'safety',
         nameKey: 'safety',
         children: [
-          { id: 'alignment', nameKey: 'alignment', path: '/ai/safety/alignment' },
           { id: 'bias', nameKey: 'bias', path: '/ai/safety/bias' },
           { id: 'responsible-ai', nameKey: 'responsible-ai', path: '/ai/safety/responsible-ai' },
         ],

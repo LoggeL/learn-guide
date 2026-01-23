@@ -110,6 +110,11 @@ export const topics: Topic[] = [
             name: 'Visual Challenges',
             path: '/ai/llm/visual-challenges',
           },
+          {
+            id: 'llm-training',
+            name: 'LLM Training',
+            path: '/ai/llm/training',
+          },
         ],
       },
       {
@@ -158,11 +163,6 @@ export const topics: Topic[] = [
         id: 'safety',
         name: 'AI Safety & Ethics',
         children: [
-          {
-            id: 'alignment',
-            name: 'Alignment',
-            path: '/ai/safety/alignment',
-          },
           {
             id: 'bias',
             name: 'Bias & Fairness',

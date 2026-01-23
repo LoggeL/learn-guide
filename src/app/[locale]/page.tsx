@@ -59,6 +59,7 @@ const topicData = [
           { id: 'attention', path: '/ai/llm/attention' },
           { id: 'vision', path: '/ai/llm/vision' },
           { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+          { id: 'llm-training', path: '/ai/llm/training' },
         ],
       },
       {
@@ -83,7 +84,6 @@ const topicData = [
         id: 'safety',
         nameKey: 'safety',
         children: [
-          { id: 'alignment', path: '/ai/safety/alignment' },
           { id: 'bias', path: '/ai/safety/bias' },
           { id: 'responsible-ai', path: '/ai/safety/responsible-ai' },
         ],

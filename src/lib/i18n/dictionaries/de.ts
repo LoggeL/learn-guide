@@ -83,8 +83,9 @@ export const de: Dictionary = {
     'prompt-basics': 'Prompt-Grundlagen',
     'advanced-prompting': 'Fortgeschrittenes Prompting',
     'system-prompts': 'System-Prompts',
+    // Phase 3: LLM (moved from safety)
+    'llm-training': 'LLM-Training',
     // Phase 3: AI Safety
-    'alignment': 'Alignment',
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
   },
@@ -1060,14 +1061,14 @@ export const de: Dictionary = {
     takeaway4: 'System-Prompts können überschrieben werden – verlasse dich nicht allein auf sie für Sicherheit',
   },
 
-  // Phase 3: AI Safety
-  alignment: {
-    title: 'Alignment',
-    description: 'Sicherstellen, dass KI-Systeme im Einklang mit menschlichen Werten und Absichten handeln.',
-    whatIs: 'Was ist KI-Alignment?',
-    whatIsDesc: 'KI-Alignment ist die Herausforderung sicherzustellen, dass KI-Systeme das tun, was wir wirklich wollen. Es geht darum, Systeme zu bauen, die hilfreich, harmlos und ehrlich sind.',
-    whyMatters: 'Warum Alignment wichtig ist',
-    whyMattersDesc: 'Da KI-Systeme immer leistungsfähiger werden, wird es zunehmend kritisch sicherzustellen, dass sie mit menschlichen Werten aligned bleiben. Nicht-aligned KI könnte unbeabsichtigte Ziele verfolgen, im großen Maßstab Schaden anrichten oder von böswilligen Akteuren ausgenutzt werden.',
+  // LLM Training page (formerly Alignment)
+  llmTraining: {
+    title: 'LLM-Training',
+    description: 'Wie große Sprachmodelle trainiert werden: von Pretraining bis RLHF und das neue RL-Paradigma.',
+    whatIs: 'Wie LLMs trainiert werden',
+    whatIsDesc: 'Große Sprachmodelle durchlaufen mehrere Trainingsstufen, jede mit unterschiedlichen Zielen und Techniken. Das Verständnis dieser Pipeline ist entscheidend für das Verständnis von Modellfähigkeiten und -einschränkungen.',
+    whyMatters: 'Warum Training wichtig ist',
+    whyMattersDesc: 'Der Trainingsprozess prägt fundamental, was LLMs können und was nicht. Verschiedene Trainingsansätze produzieren Modelle mit unterschiedlichen Stärken, Schwächen und Verhaltensweisen.',
 
     // LLM Training Pipeline
     trainingPipeline: 'Die LLM-Trainingspipeline',
@@ -1093,6 +1094,34 @@ export const de: Dictionary = {
 
     continuedTraining: 'Stufe 4: Fortgesetztes Training & Spezialisiertes Alignment',
     continuedTrainingDesc: 'Modelle können zusätzliches Training für spezifische Fähigkeiten (Coding, Mathematik, Tool-Nutzung) oder Sicherheitsverfeinerungen (Red Teaming, Constitutional AI) durchlaufen. Diese Stufe ist während der Bereitstellung fortlaufend.',
+
+    // RL Paradigm
+    rlParadigm: 'Das RL-Paradigma: Lernen ohne menschliche Labels',
+    rlParadigmDesc: 'Ein revolutionärer Ansatz, bei dem Modelle durch reines Reinforcement Learning auf verifizierbaren Aufgaben Denken lernen, ohne menschliche Demonstrationen oder Präferenz-Labels.',
+
+    rlParadigmWhat: 'Was ist das RL-Paradigma?',
+    rlParadigmWhatDesc: 'Anstatt aus menschlich geschriebenen Beispielen (SFT) oder menschlichen Präferenzen (RLHF) zu lernen, lernen Modelle direkt aus ergebnisbasierten Belohnungen. Wenn die Antwort korrekt ist, wird das Modell belohnt. Wenn falsch, wird es bestraft. Keine menschliche Kennzeichnung erforderlich.',
+
+    deepseekR1: 'DeepSeek R1-Zero: Eine Fallstudie',
+    deepseekR1Desc: 'DeepSeek R1-Zero hat gezeigt, dass leistungsfähiges Denken aus reinem RL entstehen kann, ohne jegliches Supervised Fine-Tuning. Das Modell entwickelte Chain-of-Thought-Denken, Selbstverifikation und sogar "Aha-Momente" vollständig durch Reinforcement Learning.',
+
+    rlKey1: 'Kein SFT erforderlich',
+    rlKey1Desc: 'R1-Zero wurde direkt von einem Basismodell nur mit RL trainiert und übersprang die SFT-Stufe vollständig. Denkverhalten entstand natürlich.',
+    rlKey2: 'Verifizierbare Belohnungen',
+    rlKey2Desc: 'Das Training konzentrierte sich auf Aufgaben mit objektiv verifizierbaren Antworten: Mathematikaufgaben, Coding-Herausforderungen, logische Rätsel. Keine subjektive menschliche Beurteilung nötig.',
+    rlKey3: 'Emergente Verhaltensweisen',
+    rlKey3Desc: 'Das Modell entwickelte spontan erweitertes Denken, Selbstkorrektur und Reflexion – Verhaltensweisen, die frühere Modelle nur aus menschlichen Demonstrationen lernten.',
+    rlKey4: 'Lesbarkeitsprobleme',
+    rlKey4Desc: 'Reine RL-Modelle können ungewöhnliche Denkmuster entwickeln, die schwer zu interpretieren sind. DeepSeek fügte eine kleine Menge menschlicher Daten hinzu, um die Lesbarkeit zu verbessern.',
+
+    rlVsRlhf: 'RL-Paradigma vs. traditionelles RLHF',
+    rlVsRlhfDesc: 'Diese Ansätze lösen unterschiedliche Probleme und können komplementär sein.',
+    rlhfApproach: 'RLHF-Ansatz',
+    rlhfApproachDesc: 'Lernen aus menschlichen Präferenzen. Erfordert teure menschliche Kennzeichnung. Gut für subjektive Aufgaben wie Schreibqualität und Hilfsbereitschaft.',
+    rlApproach: 'RL-Paradigma-Ansatz',
+    rlApproachDesc: 'Lernen aus verifizierbaren Ergebnissen. Keine menschliche Kennzeichnung erforderlich. Ausgezeichnet für Denken, Mathematik und Coding, wo Korrektheit objektiv ist.',
+    hybridApproach: 'Hybrid-Ansatz',
+    hybridApproachDesc: 'Moderne Modelle kombinieren oft beides: RL für Denkfähigkeiten, RLHF für Alignment und Benutzerpräferenzen.',
 
     // Key Alignment Concepts
     concepts: 'Schlüssel-Alignment-Konzepte',
@@ -1137,10 +1166,11 @@ export const de: Dictionary = {
 
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'LLM-Training hat distinkte Stufen: Pretraining → SFT → RLHF → spezialisiertes Alignment',
-    takeaway2: 'Pretraining schafft Fähigkeit; Post-Training schafft Alignment und Sicherheit',
-    takeaway3: 'RLHF, Constitutional AI und DPO sind heute die Haupt-Alignment-Techniken',
-    takeaway4: 'Alignment ist eine fortlaufende Forschungsherausforderung – aktuelle Techniken reduzieren, aber eliminieren Risiken nicht',
+    takeaway2: 'Das RL-Paradigma (z.B. DeepSeek R1-Zero) zeigt, dass Denken aus reinem RL ohne menschliche Demonstrationen entstehen kann',
+    takeaway3: 'RLHF aligniert Modelle mit menschlichen Präferenzen; reines RL optimiert für verifizierbare Ergebnisse',
+    takeaway4: 'Moderne Modelle kombinieren oft mehrere Techniken: SFT für Anweisungsbefolgung, RLHF für Präferenzen, RL für Denken',
     takeaway5: 'Das Verständnis der Trainingspipeline hilft, Modellverhalten und -einschränkungen zu verstehen',
+    takeaway6: 'Das Feld entwickelt sich schnell weiter – neue Paradigmen wie reines RL verändern, wie wir über Training nachdenken',
   },
 
   bias: {

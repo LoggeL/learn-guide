@@ -77,7 +77,7 @@ export const en = {
     'prompt-basics': 'Prompt Basics',
     'advanced-prompting': 'Advanced Techniques',
     'system-prompts': 'System Prompts',
-    'alignment': 'Alignment',
+    'llm-training': 'LLM Training',
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Responsible AI',
   },
@@ -959,14 +959,14 @@ export const en = {
     takeaway4: 'System prompts can be overridden—don\'t rely solely on them for security',
   },
 
-  // Alignment page
-  alignment: {
-    title: 'Alignment',
-    description: 'Ensuring AI systems behave in accordance with human values and intentions.',
-    whatIs: 'What is AI Alignment?',
-    whatIsDesc: 'AI alignment is the challenge of ensuring AI systems do what we actually want them to do. It\'s about building systems that are helpful, harmless, and honest.',
-    whyMatters: 'Why Alignment Matters',
-    whyMattersDesc: 'As AI systems become more powerful, ensuring they remain aligned with human values becomes increasingly critical. Misaligned AI could pursue unintended goals, cause harm at scale, or be exploited by bad actors.',
+  // LLM Training page (formerly Alignment)
+  llmTraining: {
+    title: 'LLM Training',
+    description: 'How large language models are trained: from pretraining to RLHF, and the new RL paradigm.',
+    whatIs: 'How LLMs Are Trained',
+    whatIsDesc: 'Large language models go through multiple training stages, each with different objectives and techniques. Understanding this pipeline is crucial for understanding model capabilities and limitations.',
+    whyMatters: 'Why Training Matters',
+    whyMattersDesc: 'The training process fundamentally shapes what LLMs can and cannot do. Different training approaches produce models with different strengths, weaknesses, and behaviors.',
 
     // LLM Training Pipeline
     trainingPipeline: 'The LLM Training Pipeline',
@@ -992,6 +992,34 @@ export const en = {
 
     continuedTraining: 'Stage 4: Continued Training & Specialized Alignment',
     continuedTrainingDesc: 'Models may undergo additional training for specific capabilities (coding, math, tool use) or safety refinements (red teaming, constitutional AI). This stage is ongoing throughout deployment.',
+
+    // RL Paradigm
+    rlParadigm: 'The RL Paradigm: Learning Without Human Labels',
+    rlParadigmDesc: 'A revolutionary approach where models learn reasoning through pure reinforcement learning on verifiable tasks, without human demonstrations or preference labels.',
+
+    rlParadigmWhat: 'What is the RL Paradigm?',
+    rlParadigmWhatDesc: 'Instead of learning from human-written examples (SFT) or human preferences (RLHF), models learn directly from outcome-based rewards. If the answer is correct, the model is rewarded. If wrong, it\'s penalized. No human labeling required.',
+
+    deepseekR1: 'DeepSeek R1-Zero: A Case Study',
+    deepseekR1Desc: 'DeepSeek R1-Zero demonstrated that powerful reasoning can emerge from pure RL, without any supervised fine-tuning. The model developed chain-of-thought reasoning, self-verification, and even "aha moments" entirely through reinforcement learning.',
+
+    rlKey1: 'No SFT Required',
+    rlKey1Desc: 'R1-Zero was trained directly from a base model using only RL, skipping the SFT stage entirely. Reasoning behaviors emerged naturally.',
+    rlKey2: 'Verifiable Rewards',
+    rlKey2Desc: 'Training focused on tasks with objectively verifiable answers: math problems, coding challenges, logical puzzles. No subjective human judgment needed.',
+    rlKey3: 'Emergent Behaviors',
+    rlKey3Desc: 'The model spontaneously developed extended thinking, self-correction, and reflection—behaviors that previous models only learned from human demonstrations.',
+    rlKey4: 'Readability Challenges',
+    rlKey4Desc: 'Pure RL models can develop unusual reasoning patterns that are hard to interpret. DeepSeek added a small amount of human data to improve readability.',
+
+    rlVsRlhf: 'RL Paradigm vs. Traditional RLHF',
+    rlVsRlhfDesc: 'These approaches solve different problems and can be complementary.',
+    rlhfApproach: 'RLHF Approach',
+    rlhfApproachDesc: 'Learn from human preferences. Requires expensive human labeling. Good for subjective tasks like writing quality and helpfulness.',
+    rlApproach: 'RL Paradigm Approach',
+    rlApproachDesc: 'Learn from verifiable outcomes. No human labeling needed. Excellent for reasoning, math, and coding where correctness is objective.',
+    hybridApproach: 'Hybrid Approach',
+    hybridApproachDesc: 'Modern models often combine both: RL for reasoning capabilities, RLHF for alignment and user preferences.',
 
     // Key Alignment Concepts
     concepts: 'Key Alignment Concepts',
@@ -1036,10 +1064,11 @@ export const en = {
 
     keyTakeaways: 'Key Takeaways',
     takeaway1: 'LLM training has distinct stages: pretraining → SFT → RLHF → specialized alignment',
-    takeaway2: 'Pretraining creates capability; post-training creates alignment and safety',
-    takeaway3: 'RLHF, Constitutional AI, and DPO are the main alignment techniques today',
-    takeaway4: 'Alignment is an ongoing research challenge—current techniques reduce but don\'t eliminate risks',
+    takeaway2: 'The RL paradigm (e.g., DeepSeek R1-Zero) shows reasoning can emerge from pure RL without human demonstrations',
+    takeaway3: 'RLHF aligns models with human preferences; pure RL optimizes for verifiable outcomes',
+    takeaway4: 'Modern models often combine multiple techniques: SFT for instruction following, RLHF for preferences, RL for reasoning',
     takeaway5: 'Understanding the training pipeline helps you understand model behavior and limitations',
+    takeaway6: 'The field is rapidly evolving—new paradigms like pure RL are changing how we think about training',
   },
 
   // Bias & Fairness page

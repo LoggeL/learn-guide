@@ -16,7 +16,7 @@ export default function BiasPage() {
         { label: t.categories.safety, href: '/' },
         { label: t.bias.title },
       ]}
-      prevTopic={{ label: t.topicNames.alignment, href: '/ai/safety/alignment' }}
+      prevTopic={{ label: t.topicNames['system-prompts'], href: '/ai/prompting/system-prompts' }}
       nextTopic={{ label: t.topicNames['responsible-ai'], href: '/ai/safety/responsible-ai' }}
     >
       {/* What is AI Bias */}
