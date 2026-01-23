@@ -5,6 +5,7 @@ export { TemperatureDemo } from './TemperatureDemo'
 export { TemperatureVisualizer } from './TemperatureVisualizer'
 export { AttentionVisualizer } from './AttentionVisualizer'
 export { AgentLoopVisualizer } from './AgentLoopVisualizer'
+export { ContextAnatomyVisualizer } from './ContextAnatomyVisualizer'
 export { AgenticPatternsVisualizer } from './AgenticPatternsVisualizer'
 export { PatchGridVisualizer } from './PatchGridVisualizer'
 
