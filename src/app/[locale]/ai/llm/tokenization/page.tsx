@@ -13,7 +13,7 @@ export default function TokenizationPage() {
       description={t.tokenization.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.tokenization.title },
       ]}
       nextTopic={{ label: t.topicNames.embeddings, href: '/ai/llm/embeddings' }}

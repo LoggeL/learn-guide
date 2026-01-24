@@ -20,7 +20,7 @@ export default function AgentLoopPage() {
       description={t.agentLoop.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.agentLoop.title },
       ]}
       nextTopic={{ label: t.topicNames['agent-context'], href: '/ai/agents/context' }}

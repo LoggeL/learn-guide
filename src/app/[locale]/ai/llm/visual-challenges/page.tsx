@@ -12,7 +12,7 @@ export default function VisualChallengesPage() {
       description={t.visualChallenges.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.visualChallenges.title },
       ]}
       prevTopic={{ label: t.topicNames.vision, href: '/ai/llm/vision' }}

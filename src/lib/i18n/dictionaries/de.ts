@@ -20,6 +20,7 @@ export const de: Dictionary = {
     toSearchTopics: 'um Themen zu suchen',
     interactiveAiLearning: 'Interaktives KI-Lernen',
     guidesDescription: 'Interaktive Anleitungen zum Verstehen von KI-Konzepten',
+    backToAllTopics: 'Zurück zu allen Themen',
   },
 
   // Home page
@@ -52,6 +53,16 @@ export const de: Dictionary = {
     prompting: 'Prompting',
     safety: 'KI-Sicherheit',
     industry: 'KI-Industrie',
+  },
+
+  // Category descriptions (for category landing pages)
+  categoryDescriptions: {
+    agents: 'Lerne, wie man autonome KI-Systeme baut, die mit Tools und Speicher denken, planen und handeln können.',
+    llm: 'Verstehe die inneren Abläufe großer Sprachmodelle, von der Tokenisierung bis zu Aufmerksamkeitsmechanismen.',
+    'ml-fundamentals': 'Beherrsche die grundlegenden Konzepte des maschinellen Lernens, die moderne KI-Systeme antreiben.',
+    prompting: 'Entdecke Techniken, um effektiv mit KI-Modellen zu kommunizieren und bessere Ergebnisse zu erzielen.',
+    safety: 'Erkunde ethische Überlegungen und Best Practices für den Bau verantwortungsvoller KI-Systeme.',
+    industry: 'Erkunde die Unternehmen und Trends, die die KI-Industrielandschaft prägen.',
   },
 
   // Topic names

@@ -13,7 +13,7 @@ export default function AgentSecurityPage() {
       description={t.agentSecurity.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.agentSecurity.title },
       ]}
       prevTopic={{ label: t.topicNames['agent-problems'], href: '/ai/agents/problems' }}

@@ -13,7 +13,7 @@ export default function VisionPage() {
       description={t.vision.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.vision.title },
       ]}
       prevTopic={{ label: t.topicNames.attention, href: '/ai/llm/attention' }}

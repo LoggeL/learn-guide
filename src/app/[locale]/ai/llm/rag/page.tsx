@@ -13,7 +13,7 @@ export default function RAGPage() {
       description={t.rag.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.rag.title },
       ]}
       prevTopic={{ label: t.topicNames.embeddings, href: '/ai/llm/embeddings' }}

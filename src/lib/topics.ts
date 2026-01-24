@@ -267,3 +267,12 @@ export function searchTopics(query: string): Topic[] {
     (t) => t.name.toLowerCase().includes(q) || t.id.includes(q)
   )
 }
+
+export function findCategory(categoryId: string): Topic | undefined {
+  const ai = topics[0]
+  return ai.children?.find((cat) => cat.id === categoryId)
+}
+
+export function getCategoryPath(categoryId: string): string {
+  return `/ai/${categoryId}`
+}

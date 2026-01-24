@@ -12,7 +12,7 @@ export default function SystemPromptsPage() {
       description={t.systemPrompts.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.prompting, href: '/' },
+        { label: t.categories.prompting, href: '/ai/prompting' },
         { label: t.systemPrompts.title },
       ]}
       prevTopic={{ label: t.topicNames['advanced-prompting'], href: '/ai/prompting/advanced' }}

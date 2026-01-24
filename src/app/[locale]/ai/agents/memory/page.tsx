@@ -13,7 +13,7 @@ export default function MemoryPage() {
       description={t.memorySystems.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.memorySystems.title },
       ]}
       prevTopic={{ label: t.topicNames['tool-design'], href: '/ai/agents/tool-design' }}

@@ -34,7 +34,7 @@ export default function MCPPage() {
       description={t.mcp.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.mcp.title },
       ]}
       prevTopic={{ label: t.topicNames['agentic-patterns'], href: '/ai/agents/patterns' }}

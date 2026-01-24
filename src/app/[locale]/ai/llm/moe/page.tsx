@@ -31,7 +31,7 @@ export default function MoEPage() {
       description={t.moe.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.moe.title },
       ]}
       prevTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}

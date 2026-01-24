@@ -12,7 +12,7 @@ export default function ResponsibleAIPage() {
       description={t.responsibleAi.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.safety, href: '/' },
+        { label: t.categories.safety, href: '/ai/safety' },
         { label: t.responsibleAi.title },
       ]}
       prevTopic={{ label: t.topicNames.bias, href: '/ai/safety/bias' }}

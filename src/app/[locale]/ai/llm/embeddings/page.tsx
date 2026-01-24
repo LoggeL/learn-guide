@@ -13,7 +13,7 @@ export default function EmbeddingsPage() {
       description={t.embeddings.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.embeddings.title },
       ]}
       prevTopic={{ label: t.topicNames.tokenization, href: '/ai/llm/tokenization' }}

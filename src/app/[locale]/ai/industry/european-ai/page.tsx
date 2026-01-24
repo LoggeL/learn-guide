@@ -177,7 +177,7 @@ export default function EuropeanAiPage() {
       description={t.europeanAi.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.industry, href: '/' },
+        { label: t.categories.industry, href: '/ai/industry' },
         { label: t.europeanAi.title },
       ]}
       prevTopic={{ label: t.topicNames['responsible-ai'], href: '/ai/safety/responsible-ai' }}

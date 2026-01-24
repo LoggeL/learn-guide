@@ -25,7 +25,7 @@ export default function AttentionPage() {
       description={t.attention.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.attention.title },
       ]}
       prevTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}

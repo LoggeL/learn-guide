@@ -20,7 +20,7 @@ export default function AgentProblemsPage() {
       description={t.agentProblems.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.agentProblems.title },
       ]}
       prevTopic={{ label: t.topicNames['agent-context'], href: '/ai/agents/context' }}

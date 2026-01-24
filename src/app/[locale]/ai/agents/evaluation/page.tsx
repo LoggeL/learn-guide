@@ -12,7 +12,7 @@ export default function EvaluationPage() {
       description={t.evaluation.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.evaluation.title },
       ]}
       prevTopic={{ label: t.topicNames.orchestration, href: '/ai/agents/orchestration' }}

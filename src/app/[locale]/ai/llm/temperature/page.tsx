@@ -14,7 +14,7 @@ export default function TemperaturePage() {
       description={t.temperature.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.temperature.title },
       ]}
       prevTopic={{ label: t.topicNames['context-rot'], href: '/ai/llm/context-rot' }}

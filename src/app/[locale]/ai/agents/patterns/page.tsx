@@ -20,7 +20,7 @@ export default function AgenticPatternsPage() {
       description={t.agenticPatterns.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.agenticPatterns.title },
       ]}
       prevTopic={{ label: t.topicNames['agent-security'], href: '/ai/agents/security' }}

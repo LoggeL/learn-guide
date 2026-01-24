@@ -27,7 +27,7 @@ export default function ContextRotPage() {
       description={t.contextRot.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.contextRot.title },
       ]}
       prevTopic={{ label: t.topicNames.rag, href: '/ai/llm/rag' }}

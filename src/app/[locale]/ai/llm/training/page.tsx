@@ -12,7 +12,7 @@ export default function LLMTrainingPage() {
       description={t.llmTraining.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: t.llmTraining.title },
       ]}
       prevTopic={{ label: t.topicNames['visual-challenges'], href: '/ai/llm/visual-challenges' }}

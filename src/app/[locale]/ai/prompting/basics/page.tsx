@@ -13,7 +13,7 @@ export default function PromptBasicsPage() {
       description={t.promptBasics.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.prompting, href: '/' },
+        { label: t.categories.prompting, href: '/ai/prompting' },
         { label: t.promptBasics.title },
       ]}
       nextTopic={{ label: t.topicNames['advanced-prompting'], href: '/ai/prompting/advanced' }}

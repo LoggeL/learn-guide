@@ -13,7 +13,7 @@ export default function BiasPage() {
       description={t.bias.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.safety, href: '/' },
+        { label: t.categories.safety, href: '/ai/safety' },
         { label: t.bias.title },
       ]}
       prevTopic={{ label: t.topicNames['system-prompts'], href: '/ai/prompting/system-prompts' }}

@@ -32,7 +32,7 @@ export default function AgentSkillsPage() {
       description={t.agentSkills.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.agents, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
         { label: t.agentSkills.title },
       ]}
       prevTopic={{ label: t.topicNames.evaluation, href: '/ai/agents/evaluation' }}

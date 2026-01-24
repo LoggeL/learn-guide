@@ -18,6 +18,7 @@ export const en = {
     toSearchTopics: 'to search topics',
     interactiveAiLearning: 'Interactive AI Learning',
     guidesDescription: 'Interactive guides to understand AI concepts',
+    backToAllTopics: 'Back to all topics',
   },
 
   // Home page
@@ -50,6 +51,16 @@ export const en = {
     prompting: 'Prompting',
     safety: 'AI Safety & Ethics',
     industry: 'AI Industry',
+  },
+
+  // Category descriptions (for category landing pages)
+  categoryDescriptions: {
+    agents: 'Learn how to build autonomous AI systems that can reason, plan, and take actions using tools and memory.',
+    llm: 'Understand the inner workings of large language models, from tokenization to attention mechanisms.',
+    'ml-fundamentals': 'Master the foundational concepts of machine learning that power modern AI systems.',
+    prompting: 'Discover techniques to communicate effectively with AI models and get better results.',
+    safety: 'Explore the ethical considerations and best practices for building responsible AI systems.',
+    industry: 'Explore the companies and trends shaping the AI industry landscape.',
   },
 
   // Topic names

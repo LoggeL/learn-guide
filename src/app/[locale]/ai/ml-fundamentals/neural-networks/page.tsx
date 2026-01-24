@@ -13,7 +13,7 @@ export default function NeuralNetworksPage() {
       description={t.neuralNetworks.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.mlFundamentals, href: '/' },
+        { label: t.categories.mlFundamentals, href: '/ai/ml-fundamentals' },
         { label: t.neuralNetworks.title },
       ]}
       nextTopic={{ label: t.topicNames['gradient-descent'], href: '/ai/ml-fundamentals/gradient-descent' }}
