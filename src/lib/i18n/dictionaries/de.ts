@@ -75,6 +75,7 @@ export const de: Dictionary = {
     'memory': 'Speichersysteme',
     'orchestration': 'Orchestrierung',
     'evaluation': 'Evaluierung',
+    'skills': 'Agenten-Skills',
     // Phase 3: ML Fundamentals
     'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',
@@ -86,6 +87,7 @@ export const de: Dictionary = {
     'system-prompts': 'System-Prompts',
     // Phase 3: AI Safety
     'llm-training': 'LLM-Training',
+    'moe': 'Mixture of Experts',
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
   },
@@ -1078,6 +1080,94 @@ export const de: Dictionary = {
     takeaway5: 'LLM-als-Richter ist nützlich, hat aber erhebliche Verzerrungen zu berücksichtigen',
   },
 
+  // Agent Skills Seite
+  agentSkills: {
+    title: 'Agenten-Skills',
+    description: 'Wiederverwendbare Instruktionspakete, die Agenten bei Bedarf spezialisierte Fähigkeiten verleihen.',
+    whatIs: 'Was sind Agenten-Skills?',
+    whatIsDesc: 'sind Ordner mit Anweisungen, Prompts, Beispielen und Ressourcen, die ein LLM bei Bedarf laden kann, um spezialisierte Aufgaben konsistent auszuführen. Anstatt alles in den System-Prompt zu packen, ermöglichen Skills die Modularisierung von Expertise.',
+    metaphor: '"Skills sind wie Apps für deinen Agenten – einmal installieren, bei Bedarf verwenden."',
+    metaphorDesc: 'Genau wie du Apps auf deinem Handy für bestimmte Funktionen installierst, geben Skills Agenten spezialisierte Fähigkeiten, ohne jede Konversation aufzublähen.',
+
+    // Wie es funktioniert
+    howItWorks: 'Wie Agenten-Skills funktionieren',
+    step1Title: 'Skill-Erkennung',
+    step1Desc: 'Wenn eine Benutzeranfrage eingeht, prüft der Agent, ob verfügbare Skills zur Aufgabe passen, basierend auf Triggern, Schlüsselwörtern oder explizitem Aufruf.',
+    step2Title: 'Skill-Laden',
+    step2Desc: 'Die Anweisungen, Beispiele und der Kontext des relevanten Skills werden in den Arbeitsspeicher des Agenten geladen. Dies fügt spezialisiertes Wissen hinzu, ohne den Basis-System-Prompt zu belasten.',
+    step3Title: 'Skill-Ausführung',
+    step3Desc: 'Der Agent folgt den Anweisungen des Skills, um die Aufgabe abzuschließen, unter Verwendung bereitgestellter Vorlagen, Checklisten oder Skripte. Die Ergebnisse werden dem Benutzer zurückgegeben.',
+
+    // Struktur
+    structureTitle: 'Skill-Struktur',
+    structureSubtitle: 'Anatomie eines Skill-Ordners',
+    skillMdDesc: 'Metadaten und Hauptanweisungen',
+    instructionsDesc: 'Detaillierte Anleitungen für die Aufgabe',
+    examplesDesc: 'Beispiel-Ein- und -Ausgaben',
+    templatesDesc: 'Wiederverwendbare Ausgabeformate',
+    scriptsDesc: 'Hilfsskripte bei Bedarf',
+    skillMdNote: 'ist der Einstiegspunkt. Sie enthält Metadaten (Name, Trigger, Beschreibung) und die Kernanweisungen, denen der Agent folgt.',
+
+    // Arten von Skills
+    typesTitle: 'Arten von Agenten-Skills',
+    skillType1Title: 'Domänen-Skills',
+    skillType1Desc: 'Spezialisiertes Wissen für bestimmte Bereiche – Rechtsverträge, medizinische Terminologie, Finanzanalyse. Verwandeln einen allgemeinen Agenten in einen Domänenexperten.',
+    skillType2Title: 'Workflow-Skills',
+    skillType2Desc: 'Mehrstufige Prozesse mit definierten Phasen – Code-Review-Workflows, Content-Publishing-Pipelines, Incident-Response-Verfahren.',
+    skillType3Title: 'Format-Skills',
+    skillType3Desc: 'Konsistente Ausgabeformatierung – API-Dokumentation, Changelog-Einträge, Meeting-Zusammenfassungen. Stellen sicher, dass Ausgaben deinen Standards entsprechen.',
+    skillType4Title: 'Integrations-Skills',
+    skillType4Desc: 'Anweisungen für die Arbeit mit bestimmten Tools oder Diensten – GitHub-Workflows, Jira-Ticket-Erstellung, Slack-Benachrichtigungen.',
+
+    // Skills vs Tools
+    vsToolsTitle: 'Skills vs. Tools',
+    tools: 'Tools',
+    tool1: 'Führen Aktionen aus (Dateien lesen, APIs aufrufen, Code ausführen)',
+    tool2: 'Definiert durch Funktionssignaturen und Schemas',
+    tool3: 'Die "Hände" des Agenten',
+    skills: 'Skills',
+    skill1: 'Liefern Wissen und Methodik (wie man Aufgaben angeht)',
+    skill2: 'Definiert durch Anweisungen und Beispiele',
+    skill3: 'Die "Expertise" des Agenten',
+    vsNote: 'Skills und Tools arbeiten zusammen: Ein Code-Review-Skill sagt dem Agenten, worauf er achten soll, während Tools ihm erlauben, den Code zu lesen und Kommentare zu hinterlassen.',
+
+    // Vorteile
+    benefitsTitle: 'Vorteile von Skills',
+    benefit1Title: 'Spezialisierung ohne Aufblähung',
+    benefit1Desc: 'Halte den Basis-System-Prompt schlank. Lade spezialisiertes Wissen nur bei Bedarf und bewahre das Kontextfenster für die eigentliche Aufgabe.',
+    benefit2Title: 'Konsistenz',
+    benefit2Desc: 'Definiere einen Prozess einmal, wende ihn jedes Mal konsistent an. Keine Variationen mehr in der Herangehensweise an Aufgaben.',
+    benefit3Title: 'Teilbarkeit',
+    benefit3Desc: 'Skills sind nur Ordner – teile sie projektübergreifend, teamübergreifend oder öffentlich. Einmal erstellen, überall verwenden.',
+    benefit4Title: 'Iteration',
+    benefit4Desc: 'Verbessere Skills unabhängig vom Agenten. Aktualisiere den Code-Review-Skill, ohne den Rest deines Agenten-Setups anzufassen.',
+
+    // Beispiel
+    exampleTitle: 'Beispiel: Code-Review-Skill',
+    exampleDesc: 'Führt gründliche Code-Reviews nach Team-Standards durch',
+    exampleInstructions: 'Beim Code-Review auf Korrektheit, Performance, Sicherheit und Wartbarkeit analysieren.',
+    exampleCheck1: 'Auf häufige Sicherheitslücken prüfen',
+    exampleCheck2: 'Fehlerbehandlung auf Vollständigkeit überprüfen',
+    exampleCheck3: 'Nach Performance-Antipatterns suchen',
+    exampleCheck4: 'Sicherstellen, dass der Code den Style-Guidelines folgt',
+
+    // Best Practices
+    practicesTitle: 'Best Practices',
+    practice1Title: 'Skills fokussiert halten',
+    practice1Desc: 'Ein Skill, ein Zweck. Wenn ein Skill zu viele Dinge tut, teile ihn auf. Fokussierte Skills sind einfacher zu warten und zu kombinieren.',
+    practice2Title: 'Beispiele einbeziehen',
+    practice2Desc: 'Zeigen, nicht nur erzählen. Füge Ein-/Ausgabe-Beispiele ein, die genau demonstrieren, wie gute Ausführung aussieht.',
+    practice3Title: 'Skills versionieren',
+    practice3Desc: 'Verfolge Änderungen an Skills über die Zeit. Wenn sich das Verhalten unerwartet ändert, kannst du es auf ein Skill-Update zurückführen.',
+
+    // Wichtige Erkenntnisse
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'Skills sind wiederverwendbare Instruktionspakete, die Agenten bei Bedarf spezialisierte Expertise verleihen',
+    takeaway2: 'Im Gegensatz zu Tools (die Aktionen ausführen) liefern Skills Wissen und Methodik',
+    takeaway3: 'Gut gestaltete Skills verbessern die Konsistenz und reduzieren die Aufblähung des System-Prompts',
+    takeaway4: 'Das Skill-Framework ermöglicht modulare Agentenentwicklung – einmal erstellen, überall teilen',
+  },
+
   // Phase 3: ML Fundamentals
   neuralNetworks: {
     title: 'Neuronale Netzwerke',
@@ -1393,6 +1483,90 @@ export const de: Dictionary = {
     takeaway4: 'Moderne Modelle kombinieren oft mehrere Techniken: SFT für Anweisungsbefolgung, RLHF für Präferenzen, RL für Denken',
     takeaway5: 'Das Verständnis der Trainingspipeline hilft, Modellverhalten und -einschränkungen zu verstehen',
     takeaway6: 'Das Feld entwickelt sich schnell – neue Paradigmen wie reines RL verändern, wie wir über Training denken',
+  },
+
+  // Mixture of Experts Seite
+  moe: {
+    title: 'Mixture of Experts',
+    description: 'Verstehen von spärlich aktivierten Modellen, die spezialisierte Expertennetzwerke für effiziente Skalierung nutzen.',
+    whatIs: 'Was ist Mixture of Experts?',
+    whatIsDesc: 'ist eine neuronale Netzwerkarchitektur, die Berechnungen auf spezialisierte Teilnetzwerke namens "Experten" aufteilt. Für jede Eingabe wird nur eine Teilmenge der Experten aktiviert, was massive Modellkapazität bei handhabbaren Rechenkosten ermöglicht.',
+    brainAnalogy: '"Genau wie das Gehirn je nach Aufgabe bestimmte Regionen aktiviert, aktivieren MoE-Modelle nur die relevanten Experten für jedes Token."',
+    brainAnalogyDesc: '— Dieser biomimetische Ansatz ermöglicht Modelle mit Billionen von Parametern, während bei der Inferenz nur ein Bruchteil verwendet wird.',
+
+    // Wie es funktioniert
+    howItWorks: 'Wie MoE funktioniert',
+    step1Title: 'Eingabe kommt an',
+    step1Desc: 'Jedes Token (oder Gruppe von Tokens) wird durch die Transformer-Schichten verarbeitet, bis es die MoE-Schicht erreicht, die das traditionelle dichte Feed-Forward-Netzwerk (FFN) ersetzt.',
+    step2Title: 'Router wählt Experten',
+    step2Desc: 'Ein Gating-Netzwerk (Router) untersucht die Eingabe und bestimmt, welche Experten sie verarbeiten sollen. Typischerweise werden nur die top-K Experten (z.B. top-2 oder top-8) mit den höchsten Werten ausgewählt.',
+    step3Title: 'Experten verarbeiten & kombinieren',
+    step3Desc: 'Die ausgewählten Experten verarbeiten die Eingabe parallel. Ihre Ausgaben werden mit den Router-Scores gewichtet und kombiniert, um das Endergebnis zu erzeugen.',
+
+    // Router
+    routerTitle: 'Der Router (Gating-Netzwerk)',
+    routerSubtitle: 'Das Gehirn des MoE-Systems',
+    routerDesc: 'Der Router ist ein kleines neuronales Netzwerk, das lernt, Tokens zu geeigneten Experten zu leiten. Er gibt eine Wahrscheinlichkeitsverteilung über alle Experten aus und bestimmt, welche aktiviert werden.',
+    topKRouting: 'Top-K Routing',
+    topKRoutingDesc: 'Nur die K Experten mit den höchsten Scores werden aktiviert. Übliche Werte sind top-2 (Mixtral) oder top-8 (DeepSeek, Qwen). Dies stellt sicher, dass die Rechenkosten unabhängig von der Gesamtzahl der Experten konstant bleiben.',
+    loadBalancing: 'Lastverteilung',
+    loadBalancingDesc: 'Das Training beinhaltet Hilfsverluste, um "Expertenkollaps" zu verhindern, bei dem alle Tokens zu den gleichen wenigen Experten geleitet werden. Dies stellt sicher, dass alle Experten genutzt werden und unterschiedliche Spezialisierungen entwickeln.',
+
+    // Expertenspezialisierung
+    expertSpecialization: 'Expertenspezialisierung',
+    expert1Title: 'Domänenexperten',
+    expert1Desc: 'Einige Experten spezialisieren sich natürlich auf Domänen wie Code, Mathematik oder bestimmte Sprachen. Dies entsteht aus dem Training, nicht aus explizitem Design.',
+    expert2Title: 'Musterexperten',
+    expert2Desc: 'Experten können sich auf linguistische Muster wie formelles Schreiben, Konversationston oder technische Terminologie spezialisieren.',
+    expert3Title: 'Aufgabenexperten',
+    expert3Desc: 'Einige Experten werden besser bei bestimmten Aufgaben wie Zusammenfassung, Übersetzung oder Schlussfolgerung – obwohl die Grenzen oft fließend sind.',
+    expertNote: 'Expertenspezialisierung entsteht organisch während des Trainings. Forscher arbeiten noch daran, vollständig zu verstehen, was jeder Experte lernt.',
+
+    // Skalierung
+    scaleTitle: 'MoE im großen Maßstab: Reale Modelle',
+    modelColumn: 'Modell',
+    totalParams: 'Gesamtparameter',
+    activeParams: 'Aktiv pro Token',
+    expertsColumn: 'Experten (Routing)',
+    scaleNote: 'Beachte, wie die aktiven Parameter 5-20x kleiner sind als die Gesamtparameter – das ist der Effizienzvorteil von MoE.',
+
+    // Vorteile
+    advantagesTitle: 'Warum MoE wichtig ist',
+    advantage1Title: 'Massive Kapazität, effiziente Inferenz',
+    advantage1Desc: 'MoE-Modelle können Billionen von Parametern haben, aktivieren aber nur einen Bruchteil pro Token. Dies ermöglicht viel größere Modellkapazität ohne proportional steigende Inferenzkosten.',
+    advantage2Title: 'Schnelleres Training',
+    advantage2Desc: 'Recheneffizienteres Pretraining, da jeder Parameter nur von einer Teilmenge der Tokens aktualisiert wird. Die gleiche Leistung kann mit weniger Gesamt-Rechenaufwand erreicht werden.',
+    advantage3Title: 'Spezialisierte Verarbeitung',
+    advantage3Desc: 'Verschiedene Experten können sich auf verschiedene Inhaltstypen spezialisieren – Code, Mathematik, Sprachen – was bessere Leistung über diverse Aufgaben bietet.',
+    advantage4Title: 'Skalierbare Architektur',
+    advantage4Desc: 'Mehr Experten hinzuzufügen erhöht die Kapazität ohne die Inferenzkosten zu ändern (solange top-K gleich bleibt). Dies ermöglicht kontinuierliche Skalierung.',
+
+    // Herausforderungen
+    challengesTitle: 'Herausforderungen von MoE',
+    challenge1Title: 'Hohe Speicheranforderungen',
+    challenge1Desc: 'Alle Expertenparameter müssen in den Speicher geladen werden, obwohl nur eine Teilmenge pro Token verwendet wird. Ein 671B-Parameter-Modell benötigt 671B Parameter im VRAM.',
+    challenge2Title: 'Trainingsinstabilität',
+    challenge2Desc: 'Die Lastverteilung zwischen Experten ist knifflig. Ohne sorgfältiges Tuning werden einige Experten möglicherweise nie verwendet ("tote Experten") oder alle Tokens werden zu den gleichen wenigen Experten geleitet.',
+    challenge3Title: 'Kommunikationsoverhead',
+    challenge3Desc: 'Bei verteiltem Training/Inferenz führt das Routing von Tokens zu Experten auf verschiedenen GPUs zu Netzwerk-Kommunikationsoverhead.',
+
+    // Vergleich
+    comparisonTitle: 'Dichte vs. Spärliche Modelle',
+    denseModel: 'Dichtes Modell',
+    dense1: 'Alle Parameter aktiv für jedes Token',
+    dense2: 'Einfacheres Training und Deployment',
+    dense3: 'Speicher = Rechenkosten (beide skalieren zusammen)',
+    sparseModel: 'Spärliches MoE-Modell',
+    sparse1: 'Nur top-K Experten aktiv pro Token',
+    sparse2: 'Höhere Gesamtkapazität bei gleichem Rechenaufwand',
+    sparse3: 'Speicher >> Rechenkosten (entkoppelt)',
+
+    // Wichtige Erkenntnisse
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'MoE ermöglicht massive Modellkapazität mit handhabbaren Inferenzkosten, indem nur eine Teilmenge der Experten pro Token aktiviert wird',
+    takeaway2: 'Fast alle führenden Frontier-Modelle (DeepSeek, Qwen, Mixtral, Llama 4) nutzen jetzt MoE-Architekturen',
+    takeaway3: 'Das Router/Gating-Netzwerk lernt, Tokens zu spezialisierten Experten zu leiten – Spezialisierung entsteht aus dem Training',
+    takeaway4: 'Der Hauptkompromiss: hohe Speicheranforderungen (alle Experten geladen) vs. effiziente Berechnung (wenige Experten aktiv)',
   },
 
   bias: {

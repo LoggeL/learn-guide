@@ -36,6 +36,7 @@ const topicTree: Topic[] = [
           { id: 'memory', nameKey: 'memory', path: '/ai/agents/memory' },
           { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
           { id: 'evaluation', nameKey: 'evaluation', path: '/ai/agents/evaluation' },
+          { id: 'skills', nameKey: 'skills', path: '/ai/agents/skills' },
         ],
       },
       {
@@ -51,6 +52,7 @@ const topicTree: Topic[] = [
           { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
           { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
           { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
+          { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
         ],
       },
       {

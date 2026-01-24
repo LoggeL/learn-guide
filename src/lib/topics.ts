@@ -64,6 +64,11 @@ export const topics: Topic[] = [
             name: 'Evaluation',
             path: '/ai/agents/evaluation',
           },
+          {
+            id: 'skills',
+            name: 'Agent Skills',
+            path: '/ai/agents/skills',
+          },
         ],
       },
       {
@@ -114,6 +119,11 @@ export const topics: Topic[] = [
             id: 'llm-training',
             name: 'LLM Training',
             path: '/ai/llm/training',
+          },
+          {
+            id: 'moe',
+            name: 'Mixture of Experts',
+            path: '/ai/llm/moe',
           },
         ],
       },

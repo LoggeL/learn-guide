@@ -45,6 +45,7 @@ const topicData = [
           { id: 'memory', path: '/ai/agents/memory' },
           { id: 'orchestration', path: '/ai/agents/orchestration' },
           { id: 'evaluation', path: '/ai/agents/evaluation' },
+          { id: 'skills', path: '/ai/agents/skills' },
         ],
       },
       {
@@ -60,6 +61,7 @@ const topicData = [
           { id: 'vision', path: '/ai/llm/vision' },
           { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
           { id: 'llm-training', path: '/ai/llm/training' },
+          { id: 'moe', path: '/ai/llm/moe' },
         ],
       },
       {
