@@ -26,33 +26,81 @@ const topicTree: Topic[] = [
         id: 'agents',
         nameKey: 'agents',
         children: [
-          { id: 'agent-loop', nameKey: 'agent-loop', path: '/ai/agents/loop' },
-          { id: 'agent-context', nameKey: 'agent-context', path: '/ai/agents/context' },
-          { id: 'agent-problems', nameKey: 'agent-problems', path: '/ai/agents/problems' },
-          { id: 'agent-security', nameKey: 'agent-security', path: '/ai/agents/security' },
-          { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
-          { id: 'mcp', nameKey: 'mcp', path: '/ai/agents/mcp' },
-          { id: 'tool-design', nameKey: 'tool-design', path: '/ai/agents/tool-design' },
-          { id: 'memory', nameKey: 'memory', path: '/ai/agents/memory' },
-          { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
-          { id: 'evaluation', nameKey: 'evaluation', path: '/ai/agents/evaluation' },
-          { id: 'skills', nameKey: 'skills', path: '/ai/agents/skills' },
+          {
+            id: 'agents-core',
+            nameKey: 'agents-core',
+            children: [
+              { id: 'agent-loop', nameKey: 'agent-loop', path: '/ai/agents/loop' },
+              { id: 'agent-context', nameKey: 'agent-context', path: '/ai/agents/context' },
+            ],
+          },
+          {
+            id: 'agents-building',
+            nameKey: 'agents-building',
+            children: [
+              { id: 'tool-design', nameKey: 'tool-design', path: '/ai/agents/tool-design' },
+              { id: 'memory', nameKey: 'memory', path: '/ai/agents/memory' },
+              { id: 'skills', nameKey: 'skills', path: '/ai/agents/skills' },
+              { id: 'mcp', nameKey: 'mcp', path: '/ai/agents/mcp' },
+            ],
+          },
+          {
+            id: 'agents-patterns',
+            nameKey: 'agents-patterns',
+            children: [
+              { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
+              { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
+            ],
+          },
+          {
+            id: 'agents-quality',
+            nameKey: 'agents-quality',
+            children: [
+              { id: 'agent-problems', nameKey: 'agent-problems', path: '/ai/agents/problems' },
+              { id: 'agent-security', nameKey: 'agent-security', path: '/ai/agents/security' },
+              { id: 'evaluation', nameKey: 'evaluation', path: '/ai/agents/evaluation' },
+            ],
+          },
         ],
       },
       {
         id: 'llm',
         nameKey: 'llm',
         children: [
-          { id: 'tokenization', nameKey: 'tokenization', path: '/ai/llm/tokenization' },
-          { id: 'embeddings', nameKey: 'embeddings', path: '/ai/llm/embeddings' },
-          { id: 'rag', nameKey: 'rag', path: '/ai/llm/rag' },
-          { id: 'context-rot', nameKey: 'context-rot', path: '/ai/llm/context-rot' },
-          { id: 'temperature', nameKey: 'temperature', path: '/ai/llm/temperature' },
-          { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention' },
-          { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
-          { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
-          { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
-          { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
+          {
+            id: 'llm-fundamentals',
+            nameKey: 'llm-fundamentals',
+            children: [
+              { id: 'tokenization', nameKey: 'tokenization', path: '/ai/llm/tokenization' },
+              { id: 'embeddings', nameKey: 'embeddings', path: '/ai/llm/embeddings' },
+              { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention' },
+            ],
+          },
+          {
+            id: 'llm-behavior',
+            nameKey: 'llm-behavior',
+            children: [
+              { id: 'temperature', nameKey: 'temperature', path: '/ai/llm/temperature' },
+              { id: 'context-rot', nameKey: 'context-rot', path: '/ai/llm/context-rot' },
+            ],
+          },
+          {
+            id: 'llm-capabilities',
+            nameKey: 'llm-capabilities',
+            children: [
+              { id: 'rag', nameKey: 'rag', path: '/ai/llm/rag' },
+              { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
+              { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+            ],
+          },
+          {
+            id: 'llm-architecture',
+            nameKey: 'llm-architecture',
+            children: [
+              { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
+              { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
+            ],
+          },
         ],
       },
       {

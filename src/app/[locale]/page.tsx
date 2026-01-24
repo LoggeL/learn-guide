@@ -5,6 +5,30 @@ import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 
+// Type definitions for topic structure
+interface TopicItem {
+  id: string
+  path: string
+}
+
+interface TopicSubcategory {
+  id: string
+  nameKey: string
+  children: TopicItem[]
+}
+
+interface TopicCategory {
+  id: string
+  nameKey: string
+  children: (TopicItem | TopicSubcategory)[]
+}
+
+interface TopicRoot {
+  id: string
+  categoryKey: string
+  children: TopicCategory[]
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -25,8 +49,13 @@ const itemVariants = {
   },
 }
 
+// Type guard to check if item has a path (is a TopicItem)
+function hasPath(item: TopicItem | TopicSubcategory): item is TopicItem {
+  return 'path' in item
+}
+
 // Topic structure with paths
-const topicData = [
+const topicData: TopicRoot[] = [
   {
     id: 'ai',
     categoryKey: 'ai',
@@ -35,33 +64,81 @@ const topicData = [
         id: 'agents',
         nameKey: 'agents',
         children: [
-          { id: 'agent-loop', path: '/ai/agents/loop' },
-          { id: 'agent-context', path: '/ai/agents/context' },
-          { id: 'agent-problems', path: '/ai/agents/problems' },
-          { id: 'agent-security', path: '/ai/agents/security' },
-          { id: 'agentic-patterns', path: '/ai/agents/patterns' },
-          { id: 'mcp', path: '/ai/agents/mcp' },
-          { id: 'tool-design', path: '/ai/agents/tool-design' },
-          { id: 'memory', path: '/ai/agents/memory' },
-          { id: 'orchestration', path: '/ai/agents/orchestration' },
-          { id: 'evaluation', path: '/ai/agents/evaluation' },
-          { id: 'skills', path: '/ai/agents/skills' },
+          {
+            id: 'agents-core',
+            nameKey: 'agents-core',
+            children: [
+              { id: 'agent-loop', path: '/ai/agents/loop' },
+              { id: 'agent-context', path: '/ai/agents/context' },
+            ],
+          },
+          {
+            id: 'agents-building',
+            nameKey: 'agents-building',
+            children: [
+              { id: 'tool-design', path: '/ai/agents/tool-design' },
+              { id: 'memory', path: '/ai/agents/memory' },
+              { id: 'skills', path: '/ai/agents/skills' },
+              { id: 'mcp', path: '/ai/agents/mcp' },
+            ],
+          },
+          {
+            id: 'agents-patterns',
+            nameKey: 'agents-patterns',
+            children: [
+              { id: 'agentic-patterns', path: '/ai/agents/patterns' },
+              { id: 'orchestration', path: '/ai/agents/orchestration' },
+            ],
+          },
+          {
+            id: 'agents-quality',
+            nameKey: 'agents-quality',
+            children: [
+              { id: 'agent-problems', path: '/ai/agents/problems' },
+              { id: 'agent-security', path: '/ai/agents/security' },
+              { id: 'evaluation', path: '/ai/agents/evaluation' },
+            ],
+          },
         ],
       },
       {
         id: 'llm',
         nameKey: 'llm',
         children: [
-          { id: 'tokenization', path: '/ai/llm/tokenization' },
-          { id: 'embeddings', path: '/ai/llm/embeddings' },
-          { id: 'rag', path: '/ai/llm/rag' },
-          { id: 'context-rot', path: '/ai/llm/context-rot' },
-          { id: 'temperature', path: '/ai/llm/temperature' },
-          { id: 'attention', path: '/ai/llm/attention' },
-          { id: 'vision', path: '/ai/llm/vision' },
-          { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
-          { id: 'llm-training', path: '/ai/llm/training' },
-          { id: 'moe', path: '/ai/llm/moe' },
+          {
+            id: 'llm-fundamentals',
+            nameKey: 'llm-fundamentals',
+            children: [
+              { id: 'tokenization', path: '/ai/llm/tokenization' },
+              { id: 'embeddings', path: '/ai/llm/embeddings' },
+              { id: 'attention', path: '/ai/llm/attention' },
+            ],
+          },
+          {
+            id: 'llm-behavior',
+            nameKey: 'llm-behavior',
+            children: [
+              { id: 'temperature', path: '/ai/llm/temperature' },
+              { id: 'context-rot', path: '/ai/llm/context-rot' },
+            ],
+          },
+          {
+            id: 'llm-capabilities',
+            nameKey: 'llm-capabilities',
+            children: [
+              { id: 'rag', path: '/ai/llm/rag' },
+              { id: 'vision', path: '/ai/llm/vision' },
+              { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+            ],
+          },
+          {
+            id: 'llm-architecture',
+            nameKey: 'llm-architecture',
+            children: [
+              { id: 'llm-training', path: '/ai/llm/training' },
+              { id: 'moe', path: '/ai/llm/moe' },
+            ],
+          },
         ],
       },
       {
@@ -221,32 +298,68 @@ export default function Home() {
                 {/* Topics Grid */}
                 <div className="p-4">
                   {category.children?.map((topic) => (
-                    <div key={topic.id} className="mb-4 last:mb-0">
-                      <div className="flex items-center gap-2 px-3 py-2 text-muted text-sm">
+                    <div key={topic.id} className="mb-6 last:mb-0">
+                      <div className="flex items-center gap-2 px-3 py-2 text-muted text-sm font-semibold">
                         <MessageSquare size={14} />
                         <span>{t.categories[topic.nameKey as keyof typeof t.categories]}</span>
                       </div>
-                      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
-                        {topic.children?.map((subtopic, idx) => (
-                          <Link
-                            key={subtopic.id}
-                            href={`/${locale}${subtopic.path}`}
-                            className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
-                          >
-                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
-                              <span className="text-xs font-mono text-primary-light font-medium">
-                                {String(idx + 1).padStart(2, '0')}
-                              </span>
+                      {/* Check if children have paths (flat) or more children (nested) */}
+                      {topic.children?.[0] && hasPath(topic.children[0]) ? (
+                        // Flat structure - render directly
+                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
+                          {topic.children?.filter(hasPath).map((subtopic, idx) => (
+                            <Link
+                              key={subtopic.id}
+                              href={`/${locale}${subtopic.path}`}
+                              className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
+                                <span className="text-xs font-mono text-primary-light font-medium">
+                                  {String(idx + 1).padStart(2, '0')}
+                                </span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
+                                  {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
+                                </span>
+                              </div>
+                              <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
+                            </Link>
+                          ))}
+                        </div>
+                      ) : (
+                        // Nested structure - render subcategories
+                        <div className="space-y-4 pl-3">
+                          {(topic.children as TopicSubcategory[])?.map((subcategory) => (
+                            <div key={subcategory.id}>
+                              <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-subtle uppercase tracking-wide">
+                                <span>{t.topicNames[subcategory.nameKey as keyof typeof t.topicNames]}</span>
+                              </div>
+                              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                {subcategory.children?.map((item, idx) => (
+                                  <Link
+                                    key={item.id}
+                                    href={`/${locale}${item.path}`}
+                                    className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
+                                  >
+                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
+                                      <span className="text-xs font-mono text-primary-light font-medium">
+                                        {String(idx + 1).padStart(2, '0')}
+                                      </span>
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
+                                        {t.topicNames[item.id as keyof typeof t.topicNames]}
+                                      </span>
+                                    </div>
+                                    <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
+                                  </Link>
+                                ))}
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
-                                {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
-                              </span>
-                            </div>
-                            <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
-                          </Link>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

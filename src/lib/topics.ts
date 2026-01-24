@@ -15,59 +15,83 @@ export const topics: Topic[] = [
         name: 'AI Agents',
         children: [
           {
-            id: 'agent-loop',
-            name: 'The Agent Loop',
-            path: '/ai/agents/loop',
+            id: 'agents-core',
+            name: 'Core Concepts',
+            children: [
+              {
+                id: 'agent-loop',
+                name: 'The Agent Loop',
+                path: '/ai/agents/loop',
+              },
+              {
+                id: 'agent-context',
+                name: 'Context Anatomy',
+                path: '/ai/agents/context',
+              },
+            ],
           },
           {
-            id: 'agent-context',
-            name: 'Context Anatomy',
-            path: '/ai/agents/context',
+            id: 'agents-building',
+            name: 'Building Blocks',
+            children: [
+              {
+                id: 'tool-design',
+                name: 'Tool Design',
+                path: '/ai/agents/tool-design',
+              },
+              {
+                id: 'memory',
+                name: 'Memory Systems',
+                path: '/ai/agents/memory',
+              },
+              {
+                id: 'skills',
+                name: 'Agent Skills',
+                path: '/ai/agents/skills',
+              },
+              {
+                id: 'mcp',
+                name: 'MCP (Model Context Protocol)',
+                path: '/ai/agents/mcp',
+              },
+            ],
           },
           {
-            id: 'agent-problems',
-            name: 'Agent Problems',
-            path: '/ai/agents/problems',
+            id: 'agents-patterns',
+            name: 'Patterns',
+            children: [
+              {
+                id: 'agentic-patterns',
+                name: 'Agentic Patterns',
+                path: '/ai/agents/patterns',
+              },
+              {
+                id: 'orchestration',
+                name: 'Orchestration',
+                path: '/ai/agents/orchestration',
+              },
+            ],
           },
           {
-            id: 'agent-security',
-            name: 'Agent Security',
-            path: '/ai/agents/security',
-          },
-          {
-            id: 'agentic-patterns',
-            name: 'Agentic Patterns',
-            path: '/ai/agents/patterns',
-          },
-          {
-            id: 'mcp',
-            name: 'MCP (Model Context Protocol)',
-            path: '/ai/agents/mcp',
-          },
-          {
-            id: 'tool-design',
-            name: 'Tool Design',
-            path: '/ai/agents/tool-design',
-          },
-          {
-            id: 'memory',
-            name: 'Memory Systems',
-            path: '/ai/agents/memory',
-          },
-          {
-            id: 'orchestration',
-            name: 'Orchestration',
-            path: '/ai/agents/orchestration',
-          },
-          {
-            id: 'evaluation',
-            name: 'Evaluation',
-            path: '/ai/agents/evaluation',
-          },
-          {
-            id: 'skills',
-            name: 'Agent Skills',
-            path: '/ai/agents/skills',
+            id: 'agents-quality',
+            name: 'Quality & Security',
+            children: [
+              {
+                id: 'agent-problems',
+                name: 'Agent Problems',
+                path: '/ai/agents/problems',
+              },
+              {
+                id: 'agent-security',
+                name: 'Agent Security',
+                path: '/ai/agents/security',
+              },
+              {
+                id: 'evaluation',
+                name: 'Evaluation',
+                path: '/ai/agents/evaluation',
+              },
+            ],
           },
         ],
       },
@@ -76,54 +100,78 @@ export const topics: Topic[] = [
         name: 'Large Language Models',
         children: [
           {
-            id: 'tokenization',
-            name: 'Tokenization',
-            path: '/ai/llm/tokenization',
+            id: 'llm-fundamentals',
+            name: 'Fundamentals',
+            children: [
+              {
+                id: 'tokenization',
+                name: 'Tokenization',
+                path: '/ai/llm/tokenization',
+              },
+              {
+                id: 'embeddings',
+                name: 'Embeddings',
+                path: '/ai/llm/embeddings',
+              },
+              {
+                id: 'attention',
+                name: 'Attention Mechanism',
+                path: '/ai/llm/attention',
+              },
+            ],
           },
           {
-            id: 'embeddings',
-            name: 'Embeddings',
-            path: '/ai/llm/embeddings',
+            id: 'llm-behavior',
+            name: 'Behavior',
+            children: [
+              {
+                id: 'temperature',
+                name: 'Temperature',
+                path: '/ai/llm/temperature',
+              },
+              {
+                id: 'context-rot',
+                name: 'Context Rot',
+                path: '/ai/llm/context-rot',
+              },
+            ],
           },
           {
-            id: 'rag',
-            name: 'RAG',
-            path: '/ai/llm/rag',
+            id: 'llm-capabilities',
+            name: 'Capabilities',
+            children: [
+              {
+                id: 'rag',
+                name: 'RAG',
+                path: '/ai/llm/rag',
+              },
+              {
+                id: 'vision',
+                name: 'Vision & Images',
+                path: '/ai/llm/vision',
+              },
+              {
+                id: 'visual-challenges',
+                name: 'Visual Challenges',
+                path: '/ai/llm/visual-challenges',
+              },
+            ],
           },
           {
-            id: 'context-rot',
-            name: 'Context Rot',
-            path: '/ai/llm/context-rot',
-          },
-          {
-            id: 'temperature',
-            name: 'Temperature',
-            path: '/ai/llm/temperature',
-          },
-          {
-            id: 'attention',
-            name: 'Attention Mechanism',
-            path: '/ai/llm/attention',
-          },
-          {
-            id: 'vision',
-            name: 'Vision & Images',
-            path: '/ai/llm/vision',
-          },
-          {
-            id: 'visual-challenges',
-            name: 'Visual Challenges',
-            path: '/ai/llm/visual-challenges',
-          },
-          {
-            id: 'llm-training',
-            name: 'LLM Training',
-            path: '/ai/llm/training',
-          },
-          {
-            id: 'moe',
-            name: 'Mixture of Experts',
-            path: '/ai/llm/moe',
+            id: 'llm-architecture',
+            name: 'Architecture',
+            children: [
+              {
+                id: 'llm-training',
+                name: 'LLM Training',
+                path: '/ai/llm/training',
+              },
+              {
+                id: 'moe',
+                name: 'Mixture of Experts',
+                path: '/ai/llm/moe',
+              },
+            ],
           },
         ],
       },

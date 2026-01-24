@@ -55,39 +55,49 @@ export const de: Dictionary = {
 
   // Topic names
   topicNames: {
+    // Agent subcategories
+    'agents-core': 'Kernkonzepte',
+    'agents-building': 'Bausteine',
+    'agents-patterns': 'Muster',
+    'agents-quality': 'Qualität & Sicherheit',
+    // Agent topics
     'agent-loop': 'Der Agenten-Zyklus',
     'agent-context': 'Kontext-Anatomie',
     'agent-problems': 'Agenten-Probleme',
     'agent-security': 'Agenten-Sicherheit',
     'agentic-patterns': 'Agentische Muster',
     'mcp': 'MCP (Model Context Protocol)',
-    'context-rot': 'Kontextverfall',
-    'temperature': 'Temperatur',
-    'attention': 'Aufmerksamkeits-Mechanismus',
-    'vision': 'Bildverarbeitung',
-    'visual-challenges': 'Visuelle Herausforderungen',
-    // Phase 1: LLM topics
-    'tokenization': 'Tokenisierung',
-    'embeddings': 'Einbettungen',
-    'rag': 'RAG (Retrieval Augmented Generation)',
-    // Phase 2: Agent topics
     'tool-design': 'Tool-Design',
     'memory': 'Speichersysteme',
     'orchestration': 'Orchestrierung',
     'evaluation': 'Evaluierung',
     'skills': 'Agenten-Skills',
-    // Phase 3: ML Fundamentals
+    // LLM subcategories
+    'llm-fundamentals': 'Grundlagen',
+    'llm-behavior': 'Verhalten',
+    'llm-capabilities': 'Fähigkeiten',
+    'llm-architecture': 'Architektur',
+    // LLM topics
+    'tokenization': 'Tokenisierung',
+    'embeddings': 'Einbettungen',
+    'rag': 'RAG (Retrieval Augmented Generation)',
+    'context-rot': 'Kontextverfall',
+    'temperature': 'Temperatur',
+    'attention': 'Aufmerksamkeits-Mechanismus',
+    'vision': 'Bildverarbeitung',
+    'visual-challenges': 'Visuelle Herausforderungen',
+    'llm-training': 'LLM-Training',
+    'moe': 'Mixture of Experts',
+    // ML Fundamentals
     'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',
     'gradient-descent': 'Gradientenabstieg',
     'training': 'Trainingsprozess',
-    // Phase 3: Prompting
+    // Prompting
     'prompt-basics': 'Prompt-Grundlagen',
     'advanced-prompting': 'Fortgeschrittenes Prompting',
     'system-prompts': 'System-Prompts',
-    // Phase 3: AI Safety
-    'llm-training': 'LLM-Training',
-    'moe': 'Mixture of Experts',
+    // Safety
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
   },

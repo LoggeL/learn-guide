@@ -53,6 +53,12 @@ export const en = {
 
   // Topic names
   topicNames: {
+    // Agent subcategories
+    'agents-core': 'Core Concepts',
+    'agents-building': 'Building Blocks',
+    'agents-patterns': 'Patterns',
+    'agents-quality': 'Quality & Security',
+    // Agent topics
     'agent-loop': 'The Agent Loop',
     'agent-context': 'Context Anatomy',
     'agent-problems': 'Agent Problems',
@@ -64,6 +70,12 @@ export const en = {
     'orchestration': 'Orchestration',
     'evaluation': 'Evaluation',
     'skills': 'Agent Skills',
+    // LLM subcategories
+    'llm-fundamentals': 'Fundamentals',
+    'llm-behavior': 'Behavior',
+    'llm-capabilities': 'Capabilities',
+    'llm-architecture': 'Architecture',
+    // LLM topics
     'tokenization': 'Tokenization',
     'embeddings': 'Embeddings',
     'rag': 'RAG',
@@ -72,15 +84,18 @@ export const en = {
     'attention': 'Attention Mechanism',
     'vision': 'Vision & Images',
     'visual-challenges': 'Visual Challenges',
+    'llm-training': 'LLM Training',
+    'moe': 'Mixture of Experts',
+    // ML Fundamentals
     'ml-fundamentals': 'ML Fundamentals',
     'neural-networks': 'Neural Networks',
     'gradient-descent': 'Gradient Descent',
     'training': 'Training Process',
+    // Prompting
     'prompt-basics': 'Prompt Basics',
     'advanced-prompting': 'Advanced Techniques',
     'system-prompts': 'System Prompts',
-    'llm-training': 'LLM Training',
-    'moe': 'Mixture of Experts',
+    // Safety
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Responsible AI',
   },
