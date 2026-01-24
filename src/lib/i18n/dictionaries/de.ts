@@ -51,6 +51,7 @@ export const de: Dictionary = {
     mlFundamentals: 'ML-Grundlagen',
     prompting: 'Prompting',
     safety: 'KI-Sicherheit',
+    industry: 'KI-Industrie',
   },
 
   // Topic names
@@ -100,6 +101,8 @@ export const de: Dictionary = {
     // Safety
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Verantwortungsvolle KI',
+    // Industry
+    'european-ai': 'KI aus Europa',
   },
 
   // Temperature page
@@ -1656,6 +1659,119 @@ export const de: Dictionary = {
     takeaway2: 'Transparenz baut Vertrauen auf und ermöglicht Verantwortlichkeit',
     takeaway3: 'Gesellschaftliche Auswirkungen über unmittelbare Benutzer hinaus berücksichtigen',
     takeaway4: 'Ethik ist nicht optional – integriere sie in Entwicklungsprozesse',
+  },
+
+  // European AI page
+  europeanAi: {
+    title: 'KI aus Europa',
+    description: 'Das wachsende europäische KI-Ökosystem erkunden – Unternehmen, die souveräne, offene und datenschutzorientierte KI entwickeln.',
+    intro: 'Die europäische KI-Landschaft',
+    introDesc: 'Europa entwickelt sich zu einem bedeutenden Akteur im globalen KI-Wettbewerb, mit einem einzigartigen Ansatz, der Datensouveränität, Datenschutz, Open-Source-Modelle und regulatorische Konformität betont. Während US-amerikanische und chinesische Unternehmen die Schlagzeilen dominieren, haben europäische KI-Startups insgesamt über 13 Milliarden Euro an Finanzierung eingeworben und eine neue Generation von KI-Einhörnern geschaffen, die auf europäischen Werten aufbauen.',
+    stat1Title: 'Gesamtfinanzierung',
+    stat1Value: '€13,2 Mrd.+',
+    stat1Desc: 'Von europäischen KI-Startups eingeworben',
+    stat2Title: 'Führende Standorte',
+    stat2Value: 'FR, DE, UK',
+    stat2Desc: 'Frankreich, Deutschland und UK führen die KI-Entwicklung an',
+    stat3Title: 'Regulatorischer Vorteil',
+    stat3Value: 'EU AI Act',
+    stat3Desc: 'Erstes umfassendes KI-Gesetz weltweit',
+    keyCompanies: 'Wichtige europäische KI-Unternehmen',
+    keyCompaniesDesc: 'Führende Organisationen, die die europäische KI gestalten',
+    focus: 'Fokus',
+    funding: 'Finanzierung',
+    // Company names
+    companies: {
+      mistral: 'Mistral AI',
+      alephAlpha: 'Aleph Alpha',
+      kyutai: 'Kyutai',
+      poolside: 'Poolside',
+      elevenLabs: 'ElevenLabs',
+      photoroom: 'Photoroom',
+      lightOn: 'LightOn',
+      sana: 'Sana',
+      deepL: 'DeepL',
+    },
+    // Countries
+    countries: {
+      france: 'Frankreich',
+      germany: 'Deutschland',
+      franceParis: 'Frankreich / USA',
+      ukPoland: 'UK / Polen',
+      sweden: 'Schweden',
+    },
+    // Focus areas
+    focuses: {
+      mistralFocus: 'Open-Weight LLMs',
+      alephAlphaFocus: 'Enterprise-KI, Souveränität',
+      kyutaiFocus: 'Echtzeit-Sprach-KI',
+      poolsideFocus: 'KI-gestützte Programmierung',
+      elevenLabsFocus: 'Sprach-KI & Sprachsynthese',
+      photoroomFocus: 'KI-Bildbearbeitung',
+      lightOnFocus: 'Enterprise GenAI-Plattform',
+      sanaFocus: 'Enterprise KI-Agenten',
+      deepLFocus: 'KI-Übersetzung & Sprache',
+    },
+    // Descriptions
+    descriptions: {
+      mistralDesc: 'Gegründet von ehemaligen DeepMind- und Meta-Forschern, baut Mistral Open-Weight-Modelle, die mit proprietären Alternativen konkurrieren. Ihre Le Chat-App bietet ultraschnelle Inferenz mit bis zu 1.000 Wörtern/Sekunde.',
+      alephAlphaDesc: 'Deutscher Pionier mit Fokus auf Enterprise-KI und starker Datensouveränität. Der einzige deutsche LLM-Anbieter mit BSI C5-Zertifizierung. Kürzlich auf ihr generatives KI-Betriebssystem Pharia umgestellt.',
+      kyutaiDesc: 'Französische Non-Profit-Organisation, die Moshi entwickelt, das erste vollständig offene Echtzeit-Sprachmodell. Erreicht 160ms Latenz und nutzt ihren Mimi-Codec für 24kHz Audio bei nur 1,1 kbps.',
+      poolsideDesc: 'Gegründet vom ehemaligen GitHub-CTO, entwickelt KI-Modelle speziell für Code-Generierung. Nutzt Reinforcement Learning aus Code-Ausführung für synthetische Trainingsdaten. Stark von Nvidia unterstützt.',
+      elevenLabsDesc: 'Führendes Sprach-KI-Unternehmen mit hochrealistischer Sprachsynthese und Stimmenklonen. Gegründet von Ex-Google- und Ex-Palantir-Ingenieuren, jetzt mit 3,3 Milliarden Dollar bewertet.',
+      photoroomDesc: 'In Paris ansässige KI-Fotobearbeitungsplattform mit Hunderten Millionen Nutzern. Macht professionelle Bildqualität ohne tiefe Designkenntnisse zugänglich.',
+      lightOnDesc: 'Europas erstes börsennotiertes GenAI-Startup. Bietet On-Premises Enterprise-KI ohne Datenspeicherung. Hat ModernBERT mit über 20 Millionen Downloads entwickelt.',
+      sanaDesc: 'Schwedisches Enterprise-KI-Unternehmen, das 2025 für 1,1 Mrd. Dollar von Workday übernommen wurde. Ihre Sana Agents-Plattform ermöglicht No-Code KI-Agenten-Entwicklung mit über 100 Enterprise-Konnektoren.',
+      deepLDesc: 'In Köln ansässiger Pionier für neuronale maschinelle Übersetzung, gegründet 2017. Bedient über 200.000 Unternehmen in 228 Märkten mit Enterprise-Übersetzung. In Forbes AI 50 (2025) gelistet und erwägt einen $5 Mrd. Börsengang.',
+    },
+    // Funding
+    fundings: {
+      mistralFunding: '€6,2 Mrd. gesamt (inkl. ASML, Nvidia)',
+      alephAlphaFunding: '500 Mio. $ (Bosch, SAP, HPE)',
+      kyutaiFunding: 'Non-Profit (Xavier Niel unterstützt)',
+      poolsideFunding: '2 Mrd. $ Runde bei 12 Mrd. $ Bewertung',
+      elevenLabsFunding: '281 Mio. $ (a16z, Sequoia)',
+      photoroomFunding: 'Series B, 65 Mio. $+',
+      lightOnFunding: 'Börsennotiert (Euronext Growth)',
+      sanaFunding: 'Für 1,1 Mrd. $ übernommen',
+      deepLFunding: '536 Mio. $ gesamt, 2 Mrd. $ Bewertung',
+    },
+    // Notable
+    notables: {
+      mistralNotable: 'Le Chat, Mixtral, Open Weights',
+      alephAlphaNotable: 'Pharia OS, BSI C5 zertifiziert',
+      kyutaiNotable: 'Moshi, MoshiVis, Open Source',
+      poolsideNotable: 'Project Horizon, 40K+ GPUs',
+      elevenLabsNotable: 'Stimmenklonen, KI-Dubbing',
+      photoroomNotable: 'Hintergrundentfernung, Produktfotos',
+      lightOnNotable: 'ModernBERT, On-Prem Deployment',
+      sanaNotable: 'Sana Agents, Workday-Übernahme',
+      deepLNotable: 'Forbes AI 50, DeepL Agent, 1.257 Mitarbeiter',
+    },
+    // EU AI Act section
+    euAiAct: 'Der EU AI Act Vorteil',
+    euAiActDesc: 'Der EU AI Act ist der weltweit erste umfassende Rechtsrahmen für KI. Europäische Unternehmen gestalten ihre KI von Anfang an nach diesen Standards, was einen regulatorischen "Heimvorteil" schafft, während ausländische Anbieter sich anpassen müssen, um in Europa tätig zu sein.',
+    advantage1Title: 'Integrierte Compliance',
+    advantage1Desc: 'Europäische KI-Unternehmen entwickeln von Anfang an für DSGVO und den AI Act, was sie für datenschutzbewusste Enterprise-Kunden attraktiv macht.',
+    advantage2Title: 'Datensouveränität',
+    advantage2Desc: 'On-Premises-Bereitstellungsoptionen ermöglichen es, sensible Daten innerhalb organisatorischer oder nationaler Grenzen zu halten – entscheidend für Regierung und Verteidigung.',
+    advantage3Title: 'Mehrsprachiger Fokus',
+    advantage3Desc: 'Europäische Modelle sind von Grund auf für mehrsprachige Nutzung konzipiert und bedienen vielfältige europäische Sprachen und Märkte effektiv.',
+    advantage4Title: 'Ethische KI-Führung',
+    advantage4Desc: 'Europas Betonung auf verantwortungsvolle KI-Entwicklung positioniert seine Unternehmen als vertrauenswürdige Partner für Organisationen, die Ethik priorisieren.',
+    // Open Source section
+    openSource: 'Open Source & Open Weights',
+    openSourceDesc: 'Viele europäische KI-Unternehmen setzen auf Open-Source-Prinzipien und veröffentlichen Modellgewichte und Code unter freizügigen Lizenzen. Diese Transparenz baut Vertrauen auf, ermöglicht Anpassungen und unterstützt die breitere KI-Forschungsgemeinschaft.',
+    model1Desc: 'Open-Weight LLMs, die privat bereitgestellt und angepasst werden können',
+    model2Desc: 'Vollständig offenes Sprachmodell mit Apache 2.0 Code und CC BY 4.0 Gewichten',
+    model3Desc: 'State-of-the-Art Encoder-Modell mit über 20 Mio. Downloads',
+    model4Desc: 'Lettisches 30B-Parameter Open Model, trainiert auf dem EuroHPC LUMI Supercomputer',
+    // Key Takeaways
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'Europa baut KI mit einzigartigem Fokus auf Souveränität, Datenschutz und Open-Source-Prinzipien',
+    takeaway2: 'Französische Startups wie Mistral und Kyutai sind führend bei Open-Weight und Open-Source KI-Modellen',
+    takeaway3: 'Der EU AI Act schafft sowohl Herausforderungen als auch Chancen – europäische Unternehmen haben einen Compliance-Vorteil',
+    takeaway4: 'Während US-Unternehmen bei der Größe führen, glänzt europäische KI bei Enterprise-Vertrauen, mehrsprachiger Unterstützung und regulatorischer Ausrichtung',
   },
 
   // Visual Challenges page (expanded)

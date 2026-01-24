@@ -233,6 +233,17 @@ export const topics: Topic[] = [
           },
         ],
       },
+      {
+        id: 'industry',
+        name: 'AI Industry',
+        children: [
+          {
+            id: 'european-ai',
+            name: 'AI Made in Europe',
+            path: '/ai/industry/european-ai',
+          },
+        ],
+      },
     ],
   },
 ]

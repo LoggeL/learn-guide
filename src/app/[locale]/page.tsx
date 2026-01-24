@@ -167,6 +167,13 @@ const topicData: TopicRoot[] = [
           { id: 'responsible-ai', path: '/ai/safety/responsible-ai' },
         ],
       },
+      {
+        id: 'industry',
+        nameKey: 'industry',
+        children: [
+          { id: 'european-ai', path: '/ai/industry/european-ai' },
+        ],
+      },
     ],
   },
 ]

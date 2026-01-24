@@ -129,6 +129,13 @@ const topicTree: Topic[] = [
           { id: 'responsible-ai', nameKey: 'responsible-ai', path: '/ai/safety/responsible-ai' },
         ],
       },
+      {
+        id: 'industry',
+        nameKey: 'industry',
+        children: [
+          { id: 'european-ai', nameKey: 'european-ai', path: '/ai/industry/european-ai' },
+        ],
+      },
     ],
   },
 ]

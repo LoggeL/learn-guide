@@ -49,6 +49,7 @@ export const en = {
     mlFundamentals: 'ML Fundamentals',
     prompting: 'Prompting',
     safety: 'AI Safety & Ethics',
+    industry: 'AI Industry',
   },
 
   // Topic names
@@ -98,6 +99,8 @@ export const en = {
     // Safety
     'bias': 'Bias & Fairness',
     'responsible-ai': 'Responsible AI',
+    // Industry
+    'european-ai': 'AI Made in Europe',
   },
 
   // Temperature page
@@ -1562,6 +1565,119 @@ export const en = {
     takeaway2: 'Transparency builds trust and enables accountability',
     takeaway3: 'Consider societal impact beyond immediate users',
     takeaway4: 'Ethics are not optional—integrate them into development processes',
+  },
+
+  // European AI page
+  europeanAi: {
+    title: 'AI Made in Europe',
+    description: 'Exploring the growing European AI ecosystem—companies building sovereign, open, and privacy-focused AI.',
+    intro: 'The European AI Landscape',
+    introDesc: 'Europe is emerging as a significant player in the global AI race, with a unique approach that emphasizes data sovereignty, privacy, open-source models, and regulatory compliance. While US and Chinese companies dominate headlines, European AI startups have collectively raised over €13 billion in funding, creating a new generation of AI unicorns built on European values.',
+    stat1Title: 'Total Funding',
+    stat1Value: '€13.2B+',
+    stat1Desc: 'Raised by European AI startups',
+    stat2Title: 'Leading Hubs',
+    stat2Value: 'FR, DE, UK',
+    stat2Desc: 'France, Germany, and UK lead AI development',
+    stat3Title: 'Regulatory Edge',
+    stat3Value: 'EU AI Act',
+    stat3Desc: 'First comprehensive AI law globally',
+    keyCompanies: 'Key European AI Companies',
+    keyCompaniesDesc: 'Leading organizations shaping European AI',
+    focus: 'Focus',
+    funding: 'Funding',
+    // Company names
+    companies: {
+      mistral: 'Mistral AI',
+      alephAlpha: 'Aleph Alpha',
+      kyutai: 'Kyutai',
+      poolside: 'Poolside',
+      elevenLabs: 'ElevenLabs',
+      photoroom: 'Photoroom',
+      lightOn: 'LightOn',
+      sana: 'Sana',
+      deepL: 'DeepL',
+    },
+    // Countries
+    countries: {
+      france: 'France',
+      germany: 'Germany',
+      franceParis: 'France / US',
+      ukPoland: 'UK / Poland',
+      sweden: 'Sweden',
+    },
+    // Focus areas
+    focuses: {
+      mistralFocus: 'Open-weight LLMs',
+      alephAlphaFocus: 'Enterprise AI, Sovereignty',
+      kyutaiFocus: 'Real-time Speech AI',
+      poolsideFocus: 'AI-powered Coding',
+      elevenLabsFocus: 'Voice AI & Speech Synthesis',
+      photoroomFocus: 'AI Image Editing',
+      lightOnFocus: 'Enterprise GenAI Platform',
+      sanaFocus: 'Enterprise AI Agents',
+      deepLFocus: 'AI Translation & Language',
+    },
+    // Descriptions
+    descriptions: {
+      mistralDesc: 'Founded by ex-DeepMind and Meta researchers, Mistral builds open-weight models that compete with proprietary alternatives. Their Le Chat app offers ultra-fast inference up to 1,000 words/second.',
+      alephAlphaDesc: 'German pioneer focusing on enterprise AI with strong data sovereignty. The only German LLM provider with BSI C5 certification. Recently pivoted to their Pharia generative AI operating system.',
+      kyutaiDesc: 'French non-profit building Moshi, the first fully open-source real-time speech model. Achieves 160ms latency and uses their Mimi codec for 24kHz audio at just 1.1 kbps.',
+      poolsideDesc: 'Founded by ex-GitHub CTO, building AI models specifically for code generation. Uses reinforcement learning from code execution for synthetic training data. Backed heavily by Nvidia.',
+      elevenLabsDesc: 'Leading voice AI company with highly realistic speech synthesis and voice cloning. Founded by ex-Google and ex-Palantir engineers, now valued at $3.3 billion.',
+      photoroomDesc: 'Paris-based AI photo editing platform with hundreds of millions of users. Makes professional-quality visuals accessible without deep design skills.',
+      lightOnDesc: 'Europe\'s first publicly listed GenAI startup. Offers on-premises enterprise AI with zero data retention. Developed ModernBERT with over 20 million downloads.',
+      sanaDesc: 'Swedish enterprise AI company acquired by Workday for $1.1B in 2025. Their Sana Agents platform enables no-code AI agent building with 100+ enterprise connectors.',
+      deepLDesc: 'Cologne-based neural machine translation pioneer founded in 2017. Serves 200,000+ businesses across 228 markets with enterprise-grade translation. Featured in Forbes AI 50 (2025) and considering a $5B IPO.',
+    },
+    // Funding
+    fundings: {
+      mistralFunding: '€6.2B total (incl. ASML, Nvidia)',
+      alephAlphaFunding: '$500M (Bosch, SAP, HPE)',
+      kyutaiFunding: 'Non-profit (Xavier Niel backed)',
+      poolsideFunding: '$2B round at $12B valuation',
+      elevenLabsFunding: '$281M (a16z, Sequoia)',
+      photoroomFunding: 'Series B, $65M+',
+      lightOnFunding: 'Public (Euronext Growth)',
+      sanaFunding: 'Acquired for $1.1B',
+      deepLFunding: '$536M total, $2B valuation',
+    },
+    // Notable
+    notables: {
+      mistralNotable: 'Le Chat, Mixtral, Open weights',
+      alephAlphaNotable: 'Pharia OS, BSI C5 certified',
+      kyutaiNotable: 'Moshi, MoshiVis, Open source',
+      poolsideNotable: 'Project Horizon, 40K+ GPUs',
+      elevenLabsNotable: 'Voice cloning, AI dubbing',
+      photoroomNotable: 'Background removal, Product photos',
+      lightOnNotable: 'ModernBERT, On-prem deployment',
+      sanaNotable: 'Sana Agents, Workday acquisition',
+      deepLNotable: 'Forbes AI 50, DeepL Agent, 1,257 employees',
+    },
+    // EU AI Act section
+    euAiAct: 'The EU AI Act Advantage',
+    euAiActDesc: 'The EU AI Act is the world\'s first comprehensive legal framework for AI. European companies are designing their AI to meet these standards from day one, creating a regulatory "home-field advantage" while foreign providers must adapt to operate in Europe.',
+    advantage1Title: 'Built-in Compliance',
+    advantage1Desc: 'European AI companies design for GDPR and the AI Act from the start, making them attractive for privacy-conscious enterprise customers.',
+    advantage2Title: 'Data Sovereignty',
+    advantage2Desc: 'On-premises deployment options let sensitive data stay within organizational or national boundaries—crucial for government and defense.',
+    advantage3Title: 'Multilingual Focus',
+    advantage3Desc: 'European models are designed for multilingual use from the ground up, serving diverse European languages and markets effectively.',
+    advantage4Title: 'Ethical AI Leadership',
+    advantage4Desc: 'Europe\'s emphasis on responsible AI development positions its companies as trusted partners for organizations prioritizing ethics.',
+    // Open Source section
+    openSource: 'Open Source & Open Weights',
+    openSourceDesc: 'Many European AI companies embrace open-source principles, releasing model weights and code under permissive licenses. This transparency builds trust, enables customization, and supports the broader AI research community.',
+    model1Desc: 'Open-weight LLMs that can be deployed privately and customized',
+    model2Desc: 'Fully open-source speech model with Apache 2.0 code and CC BY 4.0 weights',
+    model3Desc: 'State-of-the-art encoder model with 20M+ downloads',
+    model4Desc: 'Latvian 30B parameter open model trained on EuroHPC LUMI supercomputer',
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'Europe is building AI with a unique emphasis on sovereignty, privacy, and open-source principles',
+    takeaway2: 'French startups like Mistral and Kyutai are leading in open-weight and open-source AI models',
+    takeaway3: 'The EU AI Act creates both challenges and opportunities—European companies have a compliance advantage',
+    takeaway4: 'While US companies lead in scale, European AI excels in enterprise trust, multilingual support, and regulatory alignment',
   },
 
   // Metadata
