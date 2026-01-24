@@ -172,36 +172,57 @@ function TopicNode({
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
   const isActive = localePath === pathname
 
+  const rowClasses = clsx(
+    'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
+    isActive
+      ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
+      : 'hover:bg-surface-elevated text-muted hover:text-text'
+  )
+  const rowStyle = { paddingLeft: `${level * 12 + 12}px` }
+
+  const rowContent = (
+    <>
+      {hasChildren && (
+        <motion.div
+          animate={{ rotate: expanded ? 90 : 0 }}
+          transition={{ duration: 0.15 }}
+          className="text-subtle"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            setExpanded(!expanded)
+          }}
+        >
+          <ChevronRight size={12} />
+        </motion.div>
+      )}
+      {!hasChildren && <span className="w-3" />}
+      <span className={clsx('flex-1 text-sm', localePath ? 'font-medium' : 'font-semibold')}>
+        {getTopicName(topic.nameKey)}
+      </span>
+    </>
+  )
+
   return (
     <div>
-      <div
-        className={clsx(
-          'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
-          isActive
-            ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
-            : 'hover:bg-surface-elevated text-muted hover:text-text'
-        )}
-        style={{ paddingLeft: `${level * 12 + 12}px` }}
-        onClick={() => hasChildren && setExpanded(!expanded)}
-      >
-        {hasChildren && (
-          <motion.div
-            animate={{ rotate: expanded ? 90 : 0 }}
-            transition={{ duration: 0.15 }}
-            className="text-subtle"
-          >
-            <ChevronRight size={12} />
-          </motion.div>
-        )}
-        {!hasChildren && <span className="w-3" />}
-        {localePath ? (
-          <Link href={localePath} className="flex-1 text-sm font-medium" onClick={onNavigate}>
-            {getTopicName(topic.nameKey)}
-          </Link>
-        ) : (
-          <span className="flex-1 text-sm font-semibold">{getTopicName(topic.nameKey)}</span>
-        )}
-      </div>
+      {localePath ? (
+        <Link
+          href={localePath}
+          className={rowClasses}
+          style={rowStyle}
+          onClick={onNavigate}
+        >
+          {rowContent}
+        </Link>
+      ) : (
+        <div
+          className={rowClasses}
+          style={rowStyle}
+          onClick={() => hasChildren && setExpanded(!expanded)}
+        >
+          {rowContent}
+        </div>
+      )}
       <AnimatePresence>
         {expanded && hasChildren && (
           <motion.div
