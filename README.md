@@ -15,7 +15,7 @@ An interactive learning platform for AI, machine learning, and LLM concepts. Fea
 ## Features
 
 - Interactive visualizations and demos
-- Real tokenizer using OpenAI's cl100k_base encoding
+- Real tokenizer using OpenAI's o200k_base encoding
 - Multi-language support (EN/DE)
 - Dark theme optimized for readability
 
