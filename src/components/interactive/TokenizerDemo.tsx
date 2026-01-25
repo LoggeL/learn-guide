@@ -38,11 +38,11 @@ export function TokenizerDemo() {
   const [isLoading, setIsLoading] = useState(true)
   const [showIdsOnly, setShowIdsOnly] = useState(false)
 
-  // Initialize the tokenizer (cl100k_base is used by GPT-4, GPT-4o, GPT-3.5-turbo)
+  // Initialize the tokenizer (o200k_base is used by GPT-4o, GPT-4.1)
   useEffect(() => {
     const initEncoder = async () => {
       try {
-        const enc = getEncoding('cl100k_base')
+        const enc = getEncoding('o200k_base')
         setEncoding(enc)
         setIsLoading(false)
       } catch (error) {
@@ -105,10 +105,10 @@ export function TokenizerDemo() {
         {/* Tokenizer Info Badge */}
         <div className="mt-3 flex items-center gap-2">
           <span className="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
-            cl100k_base
+            o200k_base
           </span>
           <span className="text-xs text-muted">
-            GPT-4 / GPT-4o / GPT-3.5-turbo tokenizer
+            GPT-4o / GPT-4.1 tokenizer
           </span>
         </div>
       </div>
