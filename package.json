@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run check-translations && next build",
+    "build": "npm run check-translations && npm run check-hardcoded && next build",
     "start": "next start",
     "lint": "next lint",
-    "check-translations": "tsx scripts/check-translations.ts"
+    "check-translations": "tsx scripts/check-translations.ts",
+    "check-hardcoded": "tsx scripts/check-hardcoded-strings.ts",
+    "check-i18n": "npm run check-translations && npm run check-hardcoded"
   },
   "dependencies": {
     "@types/katex": "^0.16.8",

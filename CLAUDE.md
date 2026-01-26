@@ -6,9 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm run dev          # Start dev server
-npm run build        # Check translations + build (runs check-translations first)
+npm run build        # Full i18n checks + Next.js build (fails on any i18n issues)
 npm run lint         # Run ESLint
-npm run check-translations  # Verify EN/DE translation parity
+npm run check-translations  # Verify EN/DE translation key parity
+npm run check-hardcoded     # Detect hardcoded English text in pages/components
+npm run check-i18n          # Run both i18n checks (translations + hardcoded)
 ```
 
 ## Architecture
@@ -31,6 +33,8 @@ When adding new topics/pages, update ALL THREE:
 
 ### i18n Requirements
 
+**STRICT: Build fails if any user-visible text is not translated.**
+
 Every new topic needs translations in BOTH files:
 - `src/lib/i18n/dictionaries/en.ts`
 - `src/lib/i18n/dictionaries/de.ts`
@@ -40,7 +44,20 @@ Add entries to:
 - `categories` - Category names (if new category)
 - Topic-specific section (e.g., `evaluation: { title, description, ... }`)
 
-The build will fail if translations are missing or out of sync.
+**Two build checks:**
+1. `check-translations` - Ensures all keys exist in both EN and DE
+2. `check-hardcoded` - Detects any hardcoded English text in JSX (must use `{t.section.key}` instead)
+
+All text in pages and components MUST use the translation system:
+```tsx
+// ❌ WRONG - will fail build
+<h2>Context Window</h2>
+<p>Click to see example</p>
+
+// ✅ CORRECT - uses translation system
+<h2>{t.context.title}</h2>
+<p>{t.context.clickToSee}</p>
+```
 
 ## Styling
 
