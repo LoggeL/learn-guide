@@ -112,6 +112,7 @@ export const en = {
     'responsible-ai': 'Responsible AI',
     // Industry
     'european-ai': 'AI Made in Europe',
+    'open-source': 'Open Source Advantages',
   },
 
   // Temperature page
@@ -1689,6 +1690,130 @@ export const en = {
     takeaway2: 'French startups like Mistral and Kyutai are leading in open-weight and open-source AI models',
     takeaway3: 'The EU AI Act creates both challenges and opportunities—European companies have a compliance advantage',
     takeaway4: 'While US companies lead in scale, European AI excels in enterprise trust, multilingual support, and regulatory alignment',
+  },
+
+  // Open Source Advantages page
+  openSource: {
+    title: 'Open Source Advantages',
+    description: 'Why open source matters in AI—transparency, community, cost, innovation speed, vendor independence, and security through auditing.',
+
+    // Introduction
+    intro: 'Why Open Source Matters in AI',
+    introDesc: 'Open source AI has fundamentally transformed how artificial intelligence is developed, deployed, and improved. From foundational models like LLaMA to specialized tools like Hugging Face Transformers, the open source movement has democratized access to cutting-edge AI technology and created a vibrant ecosystem of innovation.',
+
+    // Key Advantages Section
+    advantagesTitle: 'Key Advantages of Open Source AI',
+    advantagesDesc: 'Open source AI offers unique benefits that closed, proprietary systems cannot match.',
+
+    advantage1Title: 'Transparency',
+    advantage1Desc: 'Full visibility into model architecture, training data, and weights. You can audit how decisions are made and verify safety properties.',
+
+    advantage2Title: 'Community Innovation',
+    advantage2Desc: 'Thousands of contributors improve models, fix bugs, and create derivatives. The collective intelligence of the community accelerates progress.',
+
+    advantage3Title: 'Cost Efficiency',
+    advantage3Desc: 'No licensing fees or per-token API costs. Run models on your own infrastructure with predictable, controllable expenses.',
+
+    advantage4Title: 'Innovation Speed',
+    advantage4Desc: 'Open models can be fine-tuned, merged, and adapted rapidly. New techniques propagate through the community in days, not months.',
+
+    advantage5Title: 'Vendor Independence',
+    advantage5Desc: 'No lock-in to specific providers. Switch between models, hosting options, or combine multiple models freely.',
+
+    advantage6Title: 'Security Through Auditing',
+    advantage6Desc: 'Thousands of eyes review the code. Vulnerabilities are found and fixed faster than in closed systems.',
+
+    // Visualizer Section
+    visualizerTitle: 'Open vs Closed Source Ecosystem',
+    visualizerDesc: 'Compare how open and closed source AI ecosystems operate',
+
+    // Open Source side
+    openSideTitle: 'Open Source',
+    openCommunity: 'Community Contributors',
+    openCommunityDesc: 'Researchers, developers, and enthusiasts worldwide',
+    openModels: 'Open Models',
+    openModelsDesc: 'LLaMA, Mistral, Stable Diffusion, Whisper',
+    openTools: 'Open Tools',
+    openToolsDesc: 'Hugging Face, LangChain, vLLM, Ollama',
+    openBenefits: 'Benefits',
+    openBenefitsDesc: 'Customizable, auditable, no vendor lock-in',
+
+    // Closed Source side
+    closedSideTitle: 'Closed Source',
+    closedProvider: 'Single Provider',
+    closedProviderDesc: 'Company controls all access and development',
+    closedModels: 'Proprietary Models',
+    closedModelsDesc: 'GPT-4, Claude, Gemini (API only)',
+    closedAccess: 'API Access',
+    closedAccessDesc: 'Pay-per-token, rate limited, terms of service',
+    closedTradeoffs: 'Trade-offs',
+    closedTradeoffsDesc: 'Convenience vs control, cost at scale',
+
+    // Notable Projects Section
+    projectsTitle: 'Notable Open Source AI Projects',
+    projectsDesc: 'Key projects driving the open source AI revolution',
+
+    project1Name: 'LLaMA / LLaMA 2 / LLaMA 3',
+    project1Org: 'Meta',
+    project1Desc: 'Family of open-weight language models that sparked the open source LLM revolution. LLaMA 3 offers 8B to 405B parameter variants.',
+
+    project2Name: 'Mistral / Mixtral',
+    project2Org: 'Mistral AI',
+    project2Desc: 'European open-weight models known for efficiency. Mixtral pioneered open mixture-of-experts architecture.',
+
+    project3Name: 'Stable Diffusion',
+    project3Org: 'Stability AI',
+    project3Desc: 'Open source image generation model that democratized AI art creation. Spawned thousands of community fine-tunes.',
+
+    project4Name: 'Hugging Face Transformers',
+    project4Org: 'Hugging Face',
+    project4Desc: 'The de facto library for working with transformer models. Hosts over 500,000 models and 100,000 datasets.',
+
+    project5Name: 'Whisper',
+    project5Org: 'OpenAI',
+    project5Desc: 'Open source speech recognition model supporting 99 languages. State-of-the-art accuracy, runs locally.',
+
+    project6Name: 'Ollama',
+    project6Org: 'Ollama',
+    project6Desc: 'Simple tool for running LLMs locally. One-command setup for dozens of open models.',
+
+    // Business Perspective Section
+    businessTitle: 'When to Choose Open Source',
+    businessDesc: 'Strategic considerations for organizations evaluating open source AI',
+
+    businessCase1Title: 'Data Sovereignty',
+    businessCase1Desc: 'When data cannot leave your infrastructure due to regulations, privacy, or competitive concerns.',
+
+    businessCase2Title: 'Customization Needs',
+    businessCase2Desc: 'When you need to fine-tune models on proprietary data or adapt them for specialized domains.',
+
+    businessCase3Title: 'Cost at Scale',
+    businessCase3Desc: 'When API costs would exceed self-hosting costs, typically at high volume usage.',
+
+    businessCase4Title: 'Offline or Edge Deployment',
+    businessCase4Desc: 'When models need to run without internet connectivity or on edge devices.',
+
+    // Considerations
+    considerTitle: 'Considerations',
+    consider1: 'Self-hosting requires infrastructure expertise and compute resources',
+    consider2: 'Open models may lag behind proprietary models in raw capability',
+    consider3: 'Support comes from community rather than vendor contracts',
+    consider4: 'Fine-tuning requires ML expertise and quality training data',
+
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'Open source AI provides transparency, customization, and freedom from vendor lock-in',
+    takeaway2: 'The community-driven model accelerates innovation through collaboration and rapid iteration',
+    takeaway3: 'For organizations with data sovereignty requirements, open source may be the only viable option',
+    takeaway4: 'The gap between open and closed source models continues to narrow as the ecosystem matures',
+    takeaway5: 'Choosing between open and closed source depends on your specific needs for control, capability, and resources',
+
+    // Community Cycle
+    communityCycleTitle: 'Community Contribution Cycle',
+    communityCycleDesc: 'Continuous cycle of improvement',
+    cycleFork: 'Fork',
+    cycleCustomize: 'Customize',
+    cycleContribute: 'Contribute',
   },
 
   // Metadata

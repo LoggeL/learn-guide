@@ -114,6 +114,7 @@ export const de: Dictionary = {
     'responsible-ai': 'Verantwortungsvolle KI',
     // Industry
     'european-ai': 'KI aus Europa',
+    'open-source': 'Open-Source-Vorteile',
   },
 
   // Temperature page
@@ -1783,6 +1784,130 @@ export const de: Dictionary = {
     takeaway2: 'Französische Startups wie Mistral und Kyutai sind führend bei Open-Weight und Open-Source KI-Modellen',
     takeaway3: 'Der EU AI Act schafft sowohl Herausforderungen als auch Chancen – europäische Unternehmen haben einen Compliance-Vorteil',
     takeaway4: 'Während US-Unternehmen bei der Größe führen, glänzt europäische KI bei Enterprise-Vertrauen, mehrsprachiger Unterstützung und regulatorischer Ausrichtung',
+  },
+
+  // Open Source Advantages page
+  openSource: {
+    title: 'Open-Source-Vorteile',
+    description: 'Warum Open Source in der KI wichtig ist – Transparenz, Community, Kosten, Innovationsgeschwindigkeit, Anbieterunabhängigkeit und Sicherheit durch Auditing.',
+
+    // Introduction
+    intro: 'Warum Open Source in der KI wichtig ist',
+    introDesc: 'Open-Source-KI hat grundlegend verändert, wie künstliche Intelligenz entwickelt, eingesetzt und verbessert wird. Von grundlegenden Modellen wie LLaMA bis hin zu spezialisierten Tools wie Hugging Face Transformers hat die Open-Source-Bewegung den Zugang zu modernster KI-Technologie demokratisiert und ein lebendiges Ökosystem der Innovation geschaffen.',
+
+    // Key Advantages Section
+    advantagesTitle: 'Wichtige Vorteile von Open-Source-KI',
+    advantagesDesc: 'Open-Source-KI bietet einzigartige Vorteile, die geschlossene, proprietäre Systeme nicht bieten können.',
+
+    advantage1Title: 'Transparenz',
+    advantage1Desc: 'Vollständige Einsicht in Modellarchitektur, Trainingsdaten und Gewichte. Sie können prüfen, wie Entscheidungen getroffen werden, und Sicherheitseigenschaften verifizieren.',
+
+    advantage2Title: 'Community-Innovation',
+    advantage2Desc: 'Tausende von Mitwirkenden verbessern Modelle, beheben Fehler und erstellen Derivate. Die kollektive Intelligenz der Community beschleunigt den Fortschritt.',
+
+    advantage3Title: 'Kosteneffizienz',
+    advantage3Desc: 'Keine Lizenzgebühren oder API-Kosten pro Token. Betreiben Sie Modelle auf Ihrer eigenen Infrastruktur mit vorhersehbaren, kontrollierbaren Ausgaben.',
+
+    advantage4Title: 'Innovationsgeschwindigkeit',
+    advantage4Desc: 'Offene Modelle können schnell feingetunt, zusammengeführt und angepasst werden. Neue Techniken verbreiten sich in der Community in Tagen, nicht Monaten.',
+
+    advantage5Title: 'Anbieterunabhängigkeit',
+    advantage5Desc: 'Keine Bindung an bestimmte Anbieter. Wechseln Sie frei zwischen Modellen, Hosting-Optionen oder kombinieren Sie mehrere Modelle.',
+
+    advantage6Title: 'Sicherheit durch Auditing',
+    advantage6Desc: 'Tausende Augen überprüfen den Code. Schwachstellen werden schneller gefunden und behoben als in geschlossenen Systemen.',
+
+    // Visualizer Section
+    visualizerTitle: 'Open Source vs. Closed Source Ökosystem',
+    visualizerDesc: 'Vergleichen Sie, wie Open-Source- und Closed-Source-KI-Ökosysteme funktionieren',
+
+    // Open Source side
+    openSideTitle: 'Open Source',
+    openCommunity: 'Community-Mitwirkende',
+    openCommunityDesc: 'Forscher, Entwickler und Enthusiasten weltweit',
+    openModels: 'Offene Modelle',
+    openModelsDesc: 'LLaMA, Mistral, Stable Diffusion, Whisper',
+    openTools: 'Offene Tools',
+    openToolsDesc: 'Hugging Face, LangChain, vLLM, Ollama',
+    openBenefits: 'Vorteile',
+    openBenefitsDesc: 'Anpassbar, prüfbar, keine Anbieterbindung',
+
+    // Closed Source side
+    closedSideTitle: 'Closed Source',
+    closedProvider: 'Einzelner Anbieter',
+    closedProviderDesc: 'Unternehmen kontrolliert Zugang und Entwicklung',
+    closedModels: 'Proprietäre Modelle',
+    closedModelsDesc: 'GPT-4, Claude, Gemini (nur API)',
+    closedAccess: 'API-Zugang',
+    closedAccessDesc: 'Bezahlung pro Token, Ratenlimits, Nutzungsbedingungen',
+    closedTradeoffs: 'Kompromisse',
+    closedTradeoffsDesc: 'Komfort vs. Kontrolle, Kosten bei Skalierung',
+
+    // Notable Projects Section
+    projectsTitle: 'Bedeutende Open-Source-KI-Projekte',
+    projectsDesc: 'Schlüsselprojekte, die die Open-Source-KI-Revolution vorantreiben',
+
+    project1Name: 'LLaMA / LLaMA 2 / LLaMA 3',
+    project1Org: 'Meta',
+    project1Desc: 'Familie von Open-Weight-Sprachmodellen, die die Open-Source-LLM-Revolution ausgelöst hat. LLaMA 3 bietet Varianten von 8B bis 405B Parametern.',
+
+    project2Name: 'Mistral / Mixtral',
+    project2Org: 'Mistral AI',
+    project2Desc: 'Europäische Open-Weight-Modelle, bekannt für Effizienz. Mixtral war Pionier der offenen Mixture-of-Experts-Architektur.',
+
+    project3Name: 'Stable Diffusion',
+    project3Org: 'Stability AI',
+    project3Desc: 'Open-Source-Bildgenerierungsmodell, das die KI-Kunsterzeugung demokratisiert hat. Hat Tausende von Community-Feinabstimmungen hervorgebracht.',
+
+    project4Name: 'Hugging Face Transformers',
+    project4Org: 'Hugging Face',
+    project4Desc: 'Die De-facto-Bibliothek für die Arbeit mit Transformer-Modellen. Hostet über 500.000 Modelle und 100.000 Datensätze.',
+
+    project5Name: 'Whisper',
+    project5Org: 'OpenAI',
+    project5Desc: 'Open-Source-Spracherkennungsmodell, das 99 Sprachen unterstützt. Modernste Genauigkeit, läuft lokal.',
+
+    project6Name: 'Ollama',
+    project6Org: 'Ollama',
+    project6Desc: 'Einfaches Tool zum lokalen Ausführen von LLMs. Ein-Befehl-Setup für Dutzende offene Modelle.',
+
+    // Business Perspective Section
+    businessTitle: 'Wann Open Source wählen',
+    businessDesc: 'Strategische Überlegungen für Organisationen, die Open-Source-KI bewerten',
+
+    businessCase1Title: 'Datensouveränität',
+    businessCase1Desc: 'Wenn Daten aufgrund von Vorschriften, Datenschutz oder Wettbewerbsbedenken Ihre Infrastruktur nicht verlassen dürfen.',
+
+    businessCase2Title: 'Anpassungsbedarf',
+    businessCase2Desc: 'Wenn Sie Modelle mit proprietären Daten feintunen oder für spezialisierte Bereiche anpassen müssen.',
+
+    businessCase3Title: 'Kosten bei Skalierung',
+    businessCase3Desc: 'Wenn API-Kosten die Selbst-Hosting-Kosten übersteigen würden, typischerweise bei hohem Nutzungsvolumen.',
+
+    businessCase4Title: 'Offline- oder Edge-Deployment',
+    businessCase4Desc: 'Wenn Modelle ohne Internetverbindung oder auf Edge-Geräten laufen müssen.',
+
+    // Considerations
+    considerTitle: 'Zu beachten',
+    consider1: 'Selbst-Hosting erfordert Infrastruktur-Expertise und Rechenressourcen',
+    consider2: 'Offene Modelle können bei rohen Fähigkeiten hinter proprietären Modellen zurückbleiben',
+    consider3: 'Support kommt von der Community statt von Anbieterverträgen',
+    consider4: 'Feintuning erfordert ML-Expertise und qualitativ hochwertige Trainingsdaten',
+
+    // Key Takeaways
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'Open-Source-KI bietet Transparenz, Anpassung und Freiheit von Anbieterbindung',
+    takeaway2: 'Das Community-getriebene Modell beschleunigt Innovation durch Zusammenarbeit und schnelle Iteration',
+    takeaway3: 'Für Organisationen mit Datensouveränitätsanforderungen kann Open Source die einzige praktikable Option sein',
+    takeaway4: 'Die Lücke zwischen Open-Source- und Closed-Source-Modellen verringert sich weiter, während das Ökosystem reift',
+    takeaway5: 'Die Wahl zwischen Open und Closed Source hängt von Ihren spezifischen Bedürfnissen nach Kontrolle, Fähigkeit und Ressourcen ab',
+
+    // Community Cycle
+    communityCycleTitle: 'Community-Beitragszyklus',
+    communityCycleDesc: 'Kontinuierlicher Verbesserungszyklus',
+    cycleFork: 'Forken',
+    cycleCustomize: 'Anpassen',
+    cycleContribute: 'Beitragen',
   },
 
   // Visual Challenges page (expanded)

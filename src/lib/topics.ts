@@ -242,6 +242,11 @@ export const topics: Topic[] = [
             name: 'AI Made in Europe',
             path: '/ai/industry/european-ai',
           },
+          {
+            id: 'open-source',
+            name: 'Open Source Advantages',
+            path: '/ai/industry/open-source',
+          },
         ],
       },
     ],

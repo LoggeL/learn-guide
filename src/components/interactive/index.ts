@@ -30,3 +30,6 @@ export { ChainOfThoughtDemo } from './ChainOfThoughtDemo'
 
 // Phase 3: AI Safety components
 export { BiasDetectionDemo } from './BiasDetectionDemo'
+
+// Phase 3: Industry components
+export { OpenSourceComparisonVisualizer } from './OpenSourceComparisonVisualizer'
