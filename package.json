@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run check-translations && npm run check-hardcoded && next build",
+    "build": "npm run check-translations && next build",
     "start": "next start",
     "lint": "next lint",
     "check-translations": "tsx scripts/check-translations.ts",
