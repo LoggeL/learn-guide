@@ -1817,32 +1817,6 @@ export const de: Dictionary = {
     advantage6Title: 'Sicherheit durch Auditing',
     advantage6Desc: 'Tausende Augen überprüfen den Code. Schwachstellen werden schneller gefunden und behoben als in geschlossenen Systemen.',
 
-    // Visualizer Section
-    visualizerTitle: 'Open Source vs. Closed Source Ökosystem',
-    visualizerDesc: 'Vergleichen Sie, wie Open-Source- und Closed-Source-KI-Ökosysteme funktionieren',
-
-    // Open Source side
-    openSideTitle: 'Open Source',
-    openCommunity: 'Community-Mitwirkende',
-    openCommunityDesc: 'Forscher, Entwickler und Enthusiasten weltweit',
-    openModels: 'Offene Modelle',
-    openModelsDesc: 'LLaMA, Mistral, Stable Diffusion, Whisper',
-    openTools: 'Offene Tools',
-    openToolsDesc: 'Hugging Face, LangChain, vLLM, Ollama',
-    openBenefits: 'Vorteile',
-    openBenefitsDesc: 'Anpassbar, prüfbar, keine Anbieterbindung',
-
-    // Closed Source side
-    closedSideTitle: 'Closed Source',
-    closedProvider: 'Einzelner Anbieter',
-    closedProviderDesc: 'Unternehmen kontrolliert Zugang und Entwicklung',
-    closedModels: 'Proprietäre Modelle',
-    closedModelsDesc: 'GPT-4, Claude, Gemini (nur API)',
-    closedAccess: 'API-Zugang',
-    closedAccessDesc: 'Bezahlung pro Token, Ratenlimits, Nutzungsbedingungen',
-    closedTradeoffs: 'Kompromisse',
-    closedTradeoffsDesc: 'Komfort vs. Kontrolle, Kosten bei Skalierung',
-
     // Notable Projects Section
     projectsTitle: 'Bedeutende Open-Source-KI-Projekte',
     projectsDesc: 'Schlüsselprojekte, die die Open-Source-KI-Revolution vorantreiben',
@@ -1901,13 +1875,6 @@ export const de: Dictionary = {
     takeaway3: 'Für Organisationen mit Datensouveränitätsanforderungen kann Open Source die einzige praktikable Option sein',
     takeaway4: 'Die Lücke zwischen Open-Source- und Closed-Source-Modellen verringert sich weiter, während das Ökosystem reift',
     takeaway5: 'Die Wahl zwischen Open und Closed Source hängt von Ihren spezifischen Bedürfnissen nach Kontrolle, Fähigkeit und Ressourcen ab',
-
-    // Community Cycle
-    communityCycleTitle: 'Community-Beitragszyklus',
-    communityCycleDesc: 'Kontinuierlicher Verbesserungszyklus',
-    cycleFork: 'Forken',
-    cycleCustomize: 'Anpassen',
-    cycleContribute: 'Beitragen',
   },
 
   // Visual Challenges page (expanded)

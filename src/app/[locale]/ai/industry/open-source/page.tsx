@@ -11,14 +11,9 @@ import {
   Shield,
   Unlock,
   Code,
-  Building2,
-  Globe,
-  Server,
   Wifi,
-  HardDrive,
   ExternalLink
 } from 'lucide-react'
-import { OpenSourceComparisonVisualizer } from '@/components/interactive/OpenSourceComparisonVisualizer'
 
 interface Advantage {
   titleKey: string
@@ -129,7 +124,7 @@ const projects: Project[] = [
 interface BusinessCase {
   titleKey: string
   descKey: string
-  icon: typeof Server
+  icon: typeof Shield
   color: string
 }
 
@@ -247,25 +242,6 @@ export default function OpenSourcePage() {
           {advantages.map((advantage, idx) => (
             <AdvantageCard key={advantage.titleKey} advantage={advantage} t={t} index={idx} />
           ))}
-        </div>
-      </section>
-
-      {/* Interactive Visualizer */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <Globe size={18} className="text-emerald-400" />
-            </div>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.openSource.visualizerTitle}</h2>
-            <p className="text-sm text-muted">{t.openSource.visualizerDesc}</p>
-          </div>
-        </div>
-
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <OpenSourceComparisonVisualizer />
         </div>
       </section>
 

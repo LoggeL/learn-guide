@@ -1723,32 +1723,6 @@ export const en = {
     advantage6Title: 'Security Through Auditing',
     advantage6Desc: 'Thousands of eyes review the code. Vulnerabilities are found and fixed faster than in closed systems.',
 
-    // Visualizer Section
-    visualizerTitle: 'Open vs Closed Source Ecosystem',
-    visualizerDesc: 'Compare how open and closed source AI ecosystems operate',
-
-    // Open Source side
-    openSideTitle: 'Open Source',
-    openCommunity: 'Community Contributors',
-    openCommunityDesc: 'Researchers, developers, and enthusiasts worldwide',
-    openModels: 'Open Models',
-    openModelsDesc: 'LLaMA, Mistral, Stable Diffusion, Whisper',
-    openTools: 'Open Tools',
-    openToolsDesc: 'Hugging Face, LangChain, vLLM, Ollama',
-    openBenefits: 'Benefits',
-    openBenefitsDesc: 'Customizable, auditable, no vendor lock-in',
-
-    // Closed Source side
-    closedSideTitle: 'Closed Source',
-    closedProvider: 'Single Provider',
-    closedProviderDesc: 'Company controls all access and development',
-    closedModels: 'Proprietary Models',
-    closedModelsDesc: 'GPT-4, Claude, Gemini (API only)',
-    closedAccess: 'API Access',
-    closedAccessDesc: 'Pay-per-token, rate limited, terms of service',
-    closedTradeoffs: 'Trade-offs',
-    closedTradeoffsDesc: 'Convenience vs control, cost at scale',
-
     // Notable Projects Section
     projectsTitle: 'Notable Open Source AI Projects',
     projectsDesc: 'Key projects driving the open source AI revolution',
@@ -1807,13 +1781,6 @@ export const en = {
     takeaway3: 'For organizations with data sovereignty requirements, open source may be the only viable option',
     takeaway4: 'The gap between open and closed source models continues to narrow as the ecosystem matures',
     takeaway5: 'Choosing between open and closed source depends on your specific needs for control, capability, and resources',
-
-    // Community Cycle
-    communityCycleTitle: 'Community Contribution Cycle',
-    communityCycleDesc: 'Continuous cycle of improvement',
-    cycleFork: 'Fork',
-    cycleCustomize: 'Customize',
-    cycleContribute: 'Contribute',
   },
 
   // Metadata
