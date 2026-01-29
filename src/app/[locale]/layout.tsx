@@ -12,8 +12,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const locale = params.locale as Locale
   const dict = getDictionary(isValidLocale(locale) ? locale : 'en')
-  
+
   return {
+    metadataBase: new URL('https://learn.logge.top'),
     title: dict.metadata.title,
     description: dict.metadata.description,
     keywords: ['AI', 'Machine Learning', 'LLM', 'Temperature', 'Attention', 'Transformer', 'Interactive Learning'],
