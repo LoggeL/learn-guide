@@ -64,7 +64,7 @@ export default function LocaleLayout({
   const dictionary = getDictionary(locale)
 
   return (
-    <html lang={locale} className="dark">
+    <html lang={locale} className="dark overflow-x-hidden">
       <body className="bg-background text-text min-h-screen antialiased overflow-x-hidden">
         {/* Ambient background gradient */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
