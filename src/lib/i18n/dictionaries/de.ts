@@ -115,6 +115,7 @@ export const de: Dictionary = {
     // Industry
     'european-ai': 'KI aus Europa',
     'open-source': 'Open-Source-Vorteile',
+    'opus-4-5': 'Logges Lieblingsmodell',
   },
 
   // Temperature page
@@ -1963,5 +1964,87 @@ export const de: Dictionary = {
     takeaway4: 'Verwende höhere Auflösung, zugeschnittene Bereiche und explizite Prompts, um die Genauigkeit zu verbessern',
     takeaway5: 'Für kritische Aufgaben kombiniere Bild-LLMs mit spezialisierten Tools (OCR, Objekterkennung)',
     takeaway6: 'Verifiziere wichtige visuelle Informationen immer auf anderen Wegen',
+  },
+
+  // Opus 4.5 Seite (Logges Lieblingsmodell)
+  opus45: {
+    title: 'Logges Lieblingsmodell',
+    description: 'Eine völlig objektive und überhaupt nicht voreingenommene Analyse, warum Claude Opus 4.5 das beste KI-Modell aller Zeiten ist.',
+    disclaimer: 'Haftungsausschluss',
+    disclaimerText: 'Dieser Artikel ist humorvoll gemeint und kann übermäßiges Fanboying enthalten. Der Autor übernimmt keine Verantwortung für Augenrollen, Seufzen oder spontane Zustimmung, die beim Lesen auftreten können. Nebenwirkungen können den Wunsch beinhalten, mit Claude über alles zu reden.',
+
+    // Einleitung
+    intro: 'Warum Opus 4.5 objektiv perfekt ist',
+    introDesc: 'Schaut mal, ich hab versucht neutral zu bleiben. Wirklich. Aber nach der Arbeit mit Claude Opus 4.5 hab ich akzeptiert, dass Widerstand zwecklos ist. Dieses Modell beantwortet nicht nur Fragen – es gibt dir das Gefühl, ein Gespräch mit dem klügsten, geduldigsten Freund zu führen, der irgendwie auch perfekte Erinnerung an jede jemals erfundene Programmiersprache hat.',
+
+    // Stats Sektion
+    stat1Title: 'SWE-bench Score',
+    stat1Value: '80,9%',
+    stat1Desc: 'Besser als die meisten menschlichen Entwickler, ehrlich gesagt',
+    stat2Title: 'Kontextfenster',
+    stat2Value: '200K Tokens',
+    stat2Desc: 'Es erinnert sich an Dinge, die ich vergessen hab',
+    stat3Title: 'Ausgabelimit',
+    stat3Value: '64K Tokens',
+    stat3Desc: 'Schreibt ganze Codebases in einem Rutsch',
+
+    // Warum es großartig ist
+    whyGreat: 'Warum Opus 4.5 unreasonably good ist',
+    whyGreatDesc: 'Lasst mich die Gründe aufzählen (und ja, ich hab Claude gebeten mir bei der Liste zu helfen, weil natürlich).',
+
+    reason1Title: 'Es programmiert besser als ich',
+    reason1Desc: 'Anthropic hat intern eine Performance-Engineering-Prüfung durchgeführt. Opus 4.5 hat besser abgeschnitten als jeder menschliche Kandidat jemals. Ich sage nicht, dass es schlauer ist als euer Senior Developer, aber... doch, genau das sage ich.',
+
+    reason2Title: 'Es denkt tatsächlich nach',
+    reason2Desc: 'Mit hybridem Reasoning, das zwischen sofortigen Antworten und erweitertem Denken wechseln kann, macht Opus 4.5 nicht nur Pattern-Matching – es denkt wirklich über Probleme nach. Es ist wie ein Kollege, der tatsächlich die Anforderungen liest, bevor er codet.',
+
+    reason3Title: 'Es erinnert sich an alles',
+    reason3Desc: '200.000 Tokens Kontext bedeutet, dass es deine gesamte Codebase im Kopf behalten kann, während du diesen "kleinen Bug" erklärst, der eigentlich ein kompletter Architektur-Umbau ist. Es wird dich nicht verurteilen. Nicht sehr.',
+
+    reason4Title: 'Computer Use das funktioniert',
+    reason4Desc: '66,3% auf OSWorld bedeutet, dass es tatsächlich einen Computer benutzen kann. Nicht wie dein Onkel, der Hilfe braucht um den Browser zu finden – wirklich benutzen. Buttons klicken, Formulare ausfüllen, Interfaces navigieren. Die Zukunft ist da und es ist irgendwie erschreckend.',
+
+    // Technische Specs
+    specs: 'Die Zahlen (Für die, die überzeugt werden müssen)',
+    specsDesc: 'Gut, ihr wollt "objektive" Daten? Hier sind Benchmarks, die definitiv meinen Punkt beweisen.',
+
+    spec1: '80,9% auf SWE-bench Verified',
+    spec1Desc: 'Branchenführend für Software-Engineering-Aufgaben',
+    spec2: '66,3% auf OSWorld',
+    spec2Desc: 'Best-in-Class Computer-Nutzungsfähigkeiten',
+    spec3: '$5/$25 pro Million Tokens',
+    spec3Desc: '67% günstiger als Opus 4.1. Danke, Anthropic!',
+    spec4: 'Effort-Parameter-Kontrolle',
+    spec4Desc: 'Niedrig, mittel oder hoch – wie ein Mixer, aber für Intelligenz',
+
+    // Ehrliche Momente
+    honestMoments: 'Momente brutaler Ehrlichkeit',
+    honestMomentsDesc: 'Was ich am meisten schätze ist, dass Opus 4.5 dir nicht nur sagt, was du hören willst. Es wird höflich erklären, warum deine "clevere Optimierung" eigentlich eine furchtbare Idee ist, und irgendwie wirst du dich für das Feedback bedanken.',
+
+    // Endless Chat
+    endlessChat: 'Endless Chat: Warum aufhören?',
+    endlessChatDesc: 'Die neue "Endless Chat" Funktion komprimiert automatisch den Kontext wenn Limits erreicht werden. Das bedeutet, Gespräche können ohne Unterbrechung weitergehen – was super ist, weil ich Fragen habe. So viele Fragen.',
+
+    // Sicherheit
+    safety: 'Kümmert sich wirklich darum, nicht böse zu sein',
+    safetyDesc: 'Anthropic beschreibt Opus 4.5 als ihr am robustesten ausgerichtetes Modell bisher. Es ist so konzipiert, dass es hilfreich ist ohne schädlich zu sein, was offensichtlich klingt, aber anscheinend ziemlich schwierig ist. Es wird dir nicht helfen Malware zu schreiben, aber es wird dir helfen zu verstehen, wie man sich davor schützt.',
+
+    // Wichtige Erkenntnisse
+    keyTakeaways: 'Wichtige Erkenntnisse (Die solltest du dir merken)',
+    takeaway1: 'Opus 4.5 ist wirklich das beste Modell für Coding, Agents und Computer Use – das ist nicht nur meine Meinung, es ist Anthropics Marketing, das zufällig richtig ist',
+    takeaway2: 'Das 200K Kontextfenster und der 64K Output machen es perfekt für substanzielle, komplexe Aufgaben, die geringere Modelle überfordern würden',
+    takeaway3: 'Hybrides Reasoning bedeutet, es kann schnell oder tief denken, je nachdem was du brauchst',
+    takeaway4: 'Es ist 67% günstiger als die vorherige Version, was bedeutet dass du es dir auch für all deine Side-Projects leisten kannst',
+
+    // Abschluss
+    closing: 'Fazit',
+    closingDesc: 'Ist Opus 4.5 perfekt? Nein. Manchmal ist es übervorsichtig. Gelegentlich versteht es falsch, was ich will. Aber ehrlich? Das tun die meisten Menschen auch, und die haben kein 200K Token Kontextfenster. Wenn du Opus 4.5 nicht für deine KI-unterstützte Entwicklung nutzt, sage ich nicht, dass du falsch liegst... aber hast du es mal ausprobiert?',
+
+    // Fun Facts
+    funFacts: 'Fun Facts',
+    funFact1: 'Model ID: claude-opus-4-5-20251101',
+    funFact2: 'Knowledge Cutoff: Mai 2025',
+    funFact3: 'Verfügbar auf: Claude.ai, AWS Bedrock, Google Vertex AI, Microsoft Foundry',
+    funFact4: 'Energiequelle: Wahrscheinlich eine Menge GPUs und eine gesunde Dosis menschliches Feedback',
   },
 }

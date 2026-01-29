@@ -172,6 +172,7 @@ const topicData: TopicRoot[] = [
         nameKey: 'industry',
         children: [
           { id: 'european-ai', path: '/ai/industry/european-ai' },
+          { id: 'opus-4-5', path: '/ai/industry/opus-4-5' },
         ],
       },
     ],

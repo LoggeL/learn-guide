@@ -5,8 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev          # Start dev server
+npm install          # Install dependencies
+npm run dev          # Start dev server (http://localhost:3000)
 npm run build        # Full i18n checks + Next.js build (fails on any i18n issues)
+npm start            # Start production server
 npm run lint         # Run ESLint
 npm run check-translations  # Verify EN/DE translation key parity
 npm run check-hardcoded     # Detect hardcoded English text in pages/components
@@ -23,13 +25,19 @@ Next.js 14 App Router with locale-based routing (`/[locale]/...`). All pages are
 - `src/components/layout/` - TopicLayout, Sidebar
 - `src/lib/i18n/dictionaries/` - Translation files (en.ts, de.ts)
 
-### Adding New Topics - Three Files Must Stay In Sync
+### URL Routing
 
-When adding new topics/pages, update ALL THREE:
+Middleware auto-redirects `/ai/llm/tokenization` → `/en/ai/llm/tokenization` based on browser language. Links in code use paths without locale prefix (e.g., `/ai/llm/tokenization`); `TopicLayout.localizeHref()` adds the prefix.
 
-1. **`src/lib/topics.ts`** - Canonical topic registry
+### Adding New Topics - Five Files Must Stay In Sync
+
+When adding new topics/pages, update ALL FIVE:
+
+1. **`src/lib/topics.ts`** - Canonical topic registry (id, name, path)
 2. **`src/components/layout/Sidebar.tsx`** - `topicTree` constant for navigation
 3. **`src/app/[locale]/page.tsx`** - `topicData` constant for home page grid
+4. **`src/lib/i18n/dictionaries/en.ts`** - English translations
+5. **`src/lib/i18n/dictionaries/de.ts`** - German translations
 
 ### i18n Requirements
 
@@ -44,9 +52,8 @@ Add entries to:
 - `categories` - Category names (if new category)
 - Topic-specific section (e.g., `evaluation: { title, description, ... }`)
 
-**Two build checks:**
-1. `check-translations` - Ensures all keys exist in both EN and DE
-2. `check-hardcoded` - Detects any hardcoded English text in JSX (must use `{t.section.key}` instead)
+**Build checks (run automatically on `npm run build`):**
+- `check-translations` - Ensures all keys exist in both EN and DE
 
 All text in pages and components MUST use the translation system:
 ```tsx

@@ -247,6 +247,11 @@ export const topics: Topic[] = [
             name: 'Open Source Advantages',
             path: '/ai/industry/open-source',
           },
+          {
+            id: 'opus-4-5',
+            name: "Logge's Favourite Model",
+            path: '/ai/industry/opus-4-5',
+          },
         ],
       },
     ],
