@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { useTranslation } from '@/lib/i18n/context'
 
 interface TokenProb {
   token: string
@@ -22,6 +23,8 @@ const BASE_PROBS: TokenProb[] = [
 ]
 
 export function TemperatureVisualizer({ temperature }: TemperatureVisualizerProps) {
+  const { t } = useTranslation()
+
   const adjustedProbs = BASE_PROBS.map((p) => {
     const weight = temperature === 0 
       ? (p.prob === 0.6 ? 1000 : 0) 
@@ -44,8 +47,8 @@ export function TemperatureVisualizer({ temperature }: TemperatureVisualizerProp
           </svg>
         </div>
         <div>
-          <h3 className="font-semibold text-text font-heading">Probability Distribution</h3>
-          <p className="text-xs text-muted">Next token probabilities</p>
+          <h3 className="font-semibold text-text font-heading">{t.interactive.probabilityDistribution}</h3>
+          <p className="text-xs text-muted">{t.interactive.nextTokenProbs}</p>
         </div>
       </div>
       
@@ -98,22 +101,22 @@ export function TemperatureVisualizer({ temperature }: TemperatureVisualizerProp
         <div className="flex items-start gap-3 p-4 rounded-xl bg-background border border-border">
           {temperature === 0 && (
             <p className="text-sm text-cyan-400">
-              <strong className="text-cyan-300">Greedy Sampling (T=0):</strong> Always picks the highest probability token. Output is 100% deterministic.
+              <strong className="text-cyan-300">{t.interactive.greedySamplingTitle}</strong> {t.interactive.greedySamplingDesc}
             </p>
           )}
           {temperature > 0 && temperature <= 0.7 && (
             <p className="text-sm text-blue-400">
-              <strong className="text-blue-300">Focused Sampling:</strong> Distribution is sharpened. High-probability tokens dominate while low-probability tokens are suppressed.
+              <strong className="text-blue-300">{t.interactive.focusedSamplingTitle}</strong> {t.interactive.focusedSamplingDesc}
             </p>
           )}
           {temperature > 0.7 && temperature <= 1.2 && (
             <p className="text-sm text-purple-400">
-              <strong className="text-purple-300">Balanced Sampling (T≈1):</strong> Natural distribution preserved. Good balance between coherence and creativity.
+              <strong className="text-purple-300">{t.interactive.balancedSamplingTitle}</strong> {t.interactive.balancedSamplingDesc}
             </p>
           )}
           {temperature > 1.2 && (
             <p className="text-sm text-orange-400">
-              <strong className="text-orange-300">Flat Sampling:</strong> Distribution becomes more uniform. Low-probability tokens gain significant weight, leading to more unpredictable outputs.
+              <strong className="text-orange-300">{t.interactive.flatSamplingTitle}</strong> {t.interactive.flatSamplingDesc}
             </p>
           )}
         </div>

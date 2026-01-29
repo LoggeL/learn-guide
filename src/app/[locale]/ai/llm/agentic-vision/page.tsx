@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { AgenticVisionDemo } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
 import { Eye, Brain, Play, RotateCcw, Scan, Calculator, PenTool, RefreshCw, Cpu, Sparkles, FileText, CheckCircle, MapPin, Receipt, ArrowRight } from 'lucide-react'
@@ -123,6 +124,11 @@ export default function AgenticVisionPage() {
         <p className="text-muted leading-relaxed text-lg">
           {t.agenticVision.whatIsDesc}
         </p>
+      </section>
+
+      {/* Interactive Demo */}
+      <section>
+        <AgenticVisionDemo />
       </section>
 
       {/* The Think-Act-Observe Loop */}

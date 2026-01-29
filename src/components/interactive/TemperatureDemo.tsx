@@ -1,59 +1,76 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Shuffle, Thermometer, Flame, Snowflake, Wind } from 'lucide-react'
 import { TemperatureVisualizer } from './TemperatureVisualizer'
 import { useTranslation } from '@/lib/i18n/context'
 
-const COMPLETION_SAMPLES = {
-  0: [
-    { text: "the king who ruled the land with wisdom and justice.", bold: "the" },
-  ],
-  0.4: [
-    { text: "a small village nestled between the mountains.", bold: "a" },
-    { text: "the ancient kingdom of forgotten dreams.", bold: "the" },
-  ],
-  0.8: [
-    { text: "a peculiar inventor named Elara.", bold: "a" },
-    { text: "one curious cat who spoke in riddles.", bold: "one" },
-    { text: "the last lighthouse keeper of the void.", bold: "the" },
-  ],
-  1.2: [
-    { text: "whispers that painted the starlight backwards.", bold: "whispers" },
-    { text: "seventeen moons dancing through crystal waterfalls.", bold: "seventeen" },
-    { text: "every shadow that learned to sing in colors.", bold: "every" },
-  ],
-  1.6: [
-    { text: "quantum butterflies debugging the simulation matrix.", bold: "quantum" },
-    { text: "recursive echoes of unwritten tomorrows cascading through probability fog.", bold: "recursive" },
-    { text: "effervescent consciousness manifesting as crystallized thunder.", bold: "effervescent" },
-  ],
-  2.0: [
-    { text: "banana philosophy triangulating the essence of purple velocity.", bold: "banana" },
-    { text: "fragmented synaptic overflow encoding marmalade dimensions.", bold: "fragmented" },
-  ],
+interface CompletionSample {
+  text: string
+  bold: string
 }
 
-function getCompletion(temperature: number) {
-  let key = 0
-  if (temperature <= 0.2) key = 0
-  else if (temperature <= 0.5) key = 0.4
-  else if (temperature <= 1.0) key = 0.8
-  else if (temperature <= 1.4) key = 1.2
-  else if (temperature <= 1.8) key = 1.6
-  else key = 2.0
-  
-  const samples = COMPLETION_SAMPLES[key as keyof typeof COMPLETION_SAMPLES]
-  return samples[Math.floor(Math.random() * samples.length)]
+interface CompletionSamples {
+  [key: number]: CompletionSample[]
 }
 
 export function TemperatureDemo() {
   const { t } = useTranslation()
   const [temperature, setTemperature] = useState(0.7)
-  const [completion, setCompletion] = useState(getCompletion(0.7))
+  const [completionIndex, setCompletionIndex] = useState(0)
   const [isGenerating, setIsGenerating] = useState(false)
-  
+
+  // Get completion samples from translations
+  const getCompletionSamples = useCallback((): CompletionSamples => ({
+    0: [
+      { text: t.interactive.completion0_0, bold: t.interactive.completionBold0_0 },
+    ],
+    0.4: [
+      { text: t.interactive.completion04_0, bold: t.interactive.completionBold04_0 },
+      { text: t.interactive.completion04_1, bold: t.interactive.completionBold04_1 },
+    ],
+    0.8: [
+      { text: t.interactive.completion08_0, bold: t.interactive.completionBold08_0 },
+      { text: t.interactive.completion08_1, bold: t.interactive.completionBold08_1 },
+      { text: t.interactive.completion08_2, bold: t.interactive.completionBold08_2 },
+    ],
+    1.2: [
+      { text: t.interactive.completion12_0, bold: t.interactive.completionBold12_0 },
+      { text: t.interactive.completion12_1, bold: t.interactive.completionBold12_1 },
+      { text: t.interactive.completion12_2, bold: t.interactive.completionBold12_2 },
+    ],
+    1.6: [
+      { text: t.interactive.completion16_0, bold: t.interactive.completionBold16_0 },
+      { text: t.interactive.completion16_1, bold: t.interactive.completionBold16_1 },
+      { text: t.interactive.completion16_2, bold: t.interactive.completionBold16_2 },
+    ],
+    2.0: [
+      { text: t.interactive.completion20_0, bold: t.interactive.completionBold20_0 },
+      { text: t.interactive.completion20_1, bold: t.interactive.completionBold20_1 },
+    ],
+  }), [t])
+
+  const getCompletion = useCallback((temp: number) => {
+    let key = 0
+    if (temp <= 0.2) key = 0
+    else if (temp <= 0.5) key = 0.4
+    else if (temp <= 1.0) key = 0.8
+    else if (temp <= 1.4) key = 1.2
+    else if (temp <= 1.8) key = 1.6
+    else key = 2.0
+
+    const samples = getCompletionSamples()[key]
+    return samples[Math.floor(Math.random() * samples.length)]
+  }, [getCompletionSamples])
+
+  const [completion, setCompletion] = useState<CompletionSample>({ text: '', bold: '' })
+
+  // Initialize completion on mount and when translations change
+  useEffect(() => {
+    setCompletion(getCompletion(temperature))
+  }, [t]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const getTemperatureState = (temp: number) => {
     if (temp === 0) return { label: t.interactive.frozen, icon: Snowflake, color: 'text-cyan-400', bg: 'from-cyan-500/20 to-blue-500/20' }
     if (temp <= 0.5) return { label: t.interactive.focused, icon: Snowflake, color: 'text-blue-400', bg: 'from-blue-500/20 to-indigo-500/20' }
@@ -64,7 +81,7 @@ export function TemperatureDemo() {
 
   const state = getTemperatureState(temperature)
   const StateIcon = state.icon
-  
+
   const regenerate = () => {
     setIsGenerating(true)
     setTimeout(() => {
@@ -72,10 +89,10 @@ export function TemperatureDemo() {
       setIsGenerating(false)
     }, 300)
   }
-  
+
   useEffect(() => {
     setCompletion(getCompletion(temperature))
-  }, [temperature])
+  }, [temperature, getCompletion])
 
   return (
     <div className="space-y-8">
@@ -211,7 +228,7 @@ export function TemperatureDemo() {
             </motion.div>
           </AnimatePresence>
           
-          <motion.p 
+          <motion.p
             key={state.label}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -223,6 +240,16 @@ export function TemperatureDemo() {
             {temperature > 1.0 && temperature <= 1.5 && t.interactive.highTemp}
             {temperature > 1.5 && t.interactive.veryHighTemp}
           </motion.p>
+
+          {/* Sampling explanation */}
+          {temperature > 0 && (
+            <div className="mt-4 p-3 rounded-lg bg-surface-elevated border border-border">
+              <p className="text-xs text-muted">
+                <span className="text-primary-light font-semibold">{t.interactive.whySamplingMatters}</span>{' '}
+                {t.interactive.samplingExplanation}
+              </p>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

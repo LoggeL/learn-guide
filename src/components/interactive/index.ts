@@ -37,6 +37,7 @@ export { MoEVisualizer } from './MoEVisualizer'
 
 // Vision components
 export { VisualChallengesDemo } from './VisualChallengesDemo'
+export { AgenticVisionDemo } from './AgenticVisionDemo'
 
 // Agent Skills components
 export { SkillComposerDemo } from './SkillComposerDemo'
