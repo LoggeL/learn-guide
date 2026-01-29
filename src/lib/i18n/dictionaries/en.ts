@@ -507,6 +507,33 @@ export const en = {
     takeaway5: 'This paradigm bridges the gap between how humans and AI systems investigate visual information',
   },
 
+  // Agentic Vision Demo component
+  agenticVisionDemo: {
+    title: 'Agentic Vision in Action',
+    subtitle: 'Watch the model zoom, rotate, and scan a document',
+    start: 'Start Demo',
+    reset: 'Reset',
+    documentView: 'Document View',
+    agentLog: 'Agent Log',
+    clickStart: 'Click "Start Demo" to see agentic vision in action',
+    processing: 'Processing...',
+    thinkMessage: 'I need to read the serial number in the bottom-right of this invoice. The text appears small, so I should zoom in on that region.',
+    zoomMessage: 'Cropping and upscaling the serial number region...',
+    zoomObserve: 'Zoomed view obtained. The text is now larger but appears slightly rotated.',
+    rotateThink: 'The text is tilted approximately 15 degrees. I should correct the rotation for better OCR accuracy.',
+    rotateMessage: 'Correcting document rotation for optimal text recognition...',
+    rotateObserve: 'Document is now properly aligned. Ready to extract the serial number.',
+    scanMessage: 'Running OCR on the aligned, zoomed region...',
+    scanObserve: 'Serial number extracted with high confidence:',
+    resultTitle: 'Extracted Serial Number',
+    resultConfidence: 'Confidence: 97% | Method: zoom + rotate + OCR',
+    stepThink: 'Think',
+    stepZoom: 'Zoom',
+    stepRotate: 'Rotate',
+    stepScan: 'Scan',
+    stepDone: 'Done',
+  },
+
   // Visual Challenges Demo component
   visualChallengesDemo: {
     title: 'VLM Failure Mode Explorer',
@@ -2590,6 +2617,7 @@ export const en = {
     overflowIt: 'Overflow It!',
     reset: 'Reset',
     typeMessage: 'Type a message...',
+    addMessage: 'Add Message',
     systemInstructionLost: 'System Instruction Lost!',
     systemLostDesc: 'Your system instruction has been pushed completely out of the context window. The model can no longer see it at all—it\'s as if you never gave the instruction. This is the worst case of context rot: total amnesia.',
     contextFilling: 'Context Filling Up',

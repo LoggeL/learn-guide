@@ -15,6 +15,14 @@ interface Message {
   truncated?: boolean
 }
 
+const SAMPLE_MESSAGES = [
+  "Can you help me with this?",
+  "What do you think about that?",
+  "Tell me more about it.",
+  "That's interesting, please continue.",
+  "Could you explain further?",
+]
+
 const SAMPLE_RESPONSES = [
   "I understand. Here's my response to your message...",
   "That's a great point. Let me elaborate on that...",
@@ -35,9 +43,9 @@ export function ContextRotSimulator() {
   ]
 
   const [systemPrompt, setSystemPrompt] = useState(EXAMPLE_PROMPTS[0].prompt)
-  const [userInput, setUserInput] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [isStarted, setIsStarted] = useState(false)
+  const [messageCount, setMessageCount] = useState(0)
   const maxTokens = 2048  // Smaller window for faster demo
 
   const totalTokens = messages.reduce((sum, m) => sum + m.tokens, 0)
@@ -57,17 +65,16 @@ export function ContextRotSimulator() {
     setIsStarted(true)
   }, [systemPrompt])
 
-  const sendMessage = useCallback(() => {
-    if (!userInput.trim()) return
-
+  const addSampleMessage = useCallback(() => {
+    const userText = SAMPLE_MESSAGES[messageCount % SAMPLE_MESSAGES.length]
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       role: 'user',
-      content: userInput,
-      tokens: estimateTokens(userInput),
+      content: userText,
+      tokens: estimateTokens(userText),
     }
 
-    const responseText = SAMPLE_RESPONSES[Math.floor(Math.random() * SAMPLE_RESPONSES.length)]
+    const responseText = SAMPLE_RESPONSES[messageCount % SAMPLE_RESPONSES.length]
     const assistantMessage: Message = {
       id: `assistant-${Date.now()}`,
       role: 'assistant',
@@ -76,13 +83,13 @@ export function ContextRotSimulator() {
     }
 
     setMessages((prev) => [...prev, userMessage, assistantMessage])
-    setUserInput('')
-  }, [userInput])
+    setMessageCount((c) => c + 1)
+  }, [messageCount])
 
   const reset = () => {
     setMessages([])
     setIsStarted(false)
-    setUserInput('')
+    setMessageCount(0)
   }
 
   const fillQuickly = () => {
@@ -268,23 +275,13 @@ export function ContextRotSimulator() {
 
               {/* Input */}
               <div className="p-4 border-t border-border bg-background/50">
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-                    placeholder={t.interactive.typeMessage}
-                    className="flex-1 bg-surface border border-border rounded-xl px-4 py-3 text-text placeholder:text-subtle focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all"
-                  />
-                  <button
-                    onClick={sendMessage}
-                    disabled={!userInput.trim()}
-                    className="px-5 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-xl hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 font-medium"
-                  >
-                    <Send size={16} />
-                  </button>
-                </div>
+                <button
+                  onClick={addSampleMessage}
+                  className="w-full px-5 py-3 bg-gradient-to-r from-primary to-accent text-white rounded-xl hover:opacity-90 transition-all flex items-center justify-center gap-2 font-medium"
+                >
+                  <Send size={16} />
+                  {t.interactive.addMessage}
+                </button>
               </div>
             </div>
 

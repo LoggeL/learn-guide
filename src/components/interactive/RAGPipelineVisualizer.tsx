@@ -50,8 +50,9 @@ export function RAGPipelineVisualizer() {
   const [retrievedDocs, setRetrievedDocs] = useState<typeof DOCUMENTS>([])
   const [response, setResponse] = useState('')
 
-  const runPipeline = async () => {
-    if (!query.trim()) return
+  const runPipeline = async (queryToUse?: string) => {
+    const searchQuery = queryToUse || query
+    if (!searchQuery.trim()) return
 
     // Reset state
     setResponse('')
@@ -68,7 +69,7 @@ export function RAGPipelineVisualizer() {
     // Calculate relevance scores
     const docsWithScores = DOCUMENTS.map(doc => ({
       ...doc,
-      relevance: calculateRelevance(query, doc.title + ' ' + doc.content),
+      relevance: calculateRelevance(searchQuery, doc.title + ' ' + doc.content),
     }))
       .sort((a, b) => b.relevance - a.relevance)
       .slice(0, 3)
@@ -115,60 +116,60 @@ export function RAGPipelineVisualizer() {
     <div className="space-y-6">
       {/* Query Input */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center">
-            <Search size={18} className="text-blue-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.enterQuery}</h3>
-            <p className="text-xs text-muted">{t.interactive.sampleQuery}</p>
-          </div>
-        </div>
-
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && stage === 'idle' && runPipeline()}
-            disabled={stage !== 'idle' && stage !== 'complete'}
-            className="flex-1 bg-background border border-border rounded-xl px-4 py-3 text-text focus:outline-none focus:border-primary/50 transition-colors disabled:opacity-50"
-            placeholder="Ask a question..."
-          />
-          {stage === 'idle' || stage === 'complete' ? (
-            <button
-              onClick={stage === 'complete' ? reset : runPipeline}
-              disabled={!query.trim() && stage === 'idle'}
-              className="px-6 py-3 bg-primary/20 hover:bg-primary/30 text-primary-light rounded-xl transition-colors disabled:opacity-50"
-            >
-              {stage === 'complete' ? 'Reset' : 'Search'}
-            </button>
-          ) : (
-            <div className="px-6 py-3 bg-surface-elevated rounded-xl flex items-center gap-2">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              >
-                <Sparkles size={18} className="text-primary" />
-              </motion.div>
-              <span className="text-sm text-muted">Processing...</span>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-indigo-500/20 flex items-center justify-center">
+              <Search size={18} className="text-blue-400" />
             </div>
+            <div>
+              <h3 className="font-semibold text-text font-heading">{t.interactive.enterQuery}</h3>
+              <p className="text-xs text-muted">{t.interactive.sampleQuery}</p>
+            </div>
+          </div>
+          {stage === 'complete' && (
+            <button
+              onClick={reset}
+              className="px-4 py-2 bg-surface-elevated hover:bg-surface text-muted hover:text-text rounded-xl transition-colors text-sm"
+            >
+              Reset
+            </button>
           )}
         </div>
 
-        {/* Quick queries */}
-        <div className="flex flex-wrap gap-2 mt-4">
+        {/* Query buttons */}
+        <div className="flex flex-wrap gap-2">
           {SAMPLE_QUERIES.map((q) => (
             <button
               key={q}
-              onClick={() => setQuery(q)}
-              disabled={stage !== 'idle'}
-              className="px-3 py-1.5 text-xs bg-surface-elevated border border-border rounded-lg hover:border-primary/30 text-muted hover:text-text transition-colors disabled:opacity-50"
+              onClick={() => {
+                if (stage === 'idle' || stage === 'complete') {
+                  setQuery(q)
+                  runPipeline(q)
+                }
+              }}
+              disabled={stage !== 'idle' && stage !== 'complete'}
+              className={`px-4 py-2.5 text-sm rounded-xl transition-colors ${
+                query === q && stage !== 'idle'
+                  ? 'bg-primary/20 text-primary-light border border-primary/30'
+                  : 'bg-surface-elevated border border-border hover:border-primary/30 text-muted hover:text-text'
+              } disabled:opacity-50`}
             >
               {q}
             </button>
           ))}
         </div>
+
+        {stage !== 'idle' && stage !== 'complete' && (
+          <div className="mt-4 flex items-center gap-2 text-sm text-muted">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+            >
+              <Sparkles size={16} className="text-primary" />
+            </motion.div>
+            <span>Processing: &quot;{query}&quot;</span>
+          </div>
+        )}
       </div>
 
       {/* Pipeline Visualization */}
