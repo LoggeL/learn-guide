@@ -14,21 +14,27 @@ export default function Opus45Page() {
       value: t.opus45.stat1Value,
       desc: t.opus45.stat1Desc,
       icon: Trophy,
-      gradient: 'from-yellow-500 to-orange-500',
+      bgClass: 'bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border-yellow-500/30',
+      iconClass: 'text-yellow-400',
+      valueClass: 'text-yellow-400',
     },
     {
       title: t.opus45.stat2Title,
       value: t.opus45.stat2Value,
       desc: t.opus45.stat2Desc,
       icon: Brain,
-      gradient: 'from-purple-500 to-pink-500',
+      bgClass: 'bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30',
+      iconClass: 'text-purple-400',
+      valueClass: 'text-purple-400',
     },
     {
       title: t.opus45.stat3Title,
       value: t.opus45.stat3Value,
       desc: t.opus45.stat3Desc,
       icon: Code,
-      gradient: 'from-cyan-500 to-blue-500',
+      bgClass: 'bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border-cyan-500/30',
+      iconClass: 'text-cyan-400',
+      valueClass: 'text-cyan-400',
     },
   ]
 
@@ -121,11 +127,11 @@ export default function Opus45Page() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className={`p-5 bg-gradient-to-br ${stat.gradient.replace('from-', 'from-').replace('to-', 'to-')}/10 border border-${stat.gradient.split(' ')[0].replace('from-', '')}/20 rounded-xl`}
+              className={`p-5 ${stat.bgClass} border rounded-xl`}
             >
-              <stat.icon className={`w-8 h-8 text-${stat.gradient.split(' ')[0].replace('from-', '')} mb-3`} />
+              <stat.icon className={`w-8 h-8 ${stat.iconClass} mb-3`} />
               <h3 className="text-lg font-bold font-heading text-text mb-1">{stat.title}</h3>
-              <p className="text-3xl font-bold text-gradient mb-1">{stat.value}</p>
+              <p className={`text-3xl font-bold ${stat.valueClass} mb-1`}>{stat.value}</p>
               <p className="text-sm text-muted">{stat.desc}</p>
             </motion.div>
           ))}
@@ -189,6 +195,17 @@ export default function Opus45Page() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* Price Reality */}
+      <section className="rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/10 border border-red-500/30 p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
+            <AlertTriangle className="w-5 h-5 text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold font-heading text-red-400">{t.opus45.priceReality}</h2>
+        </div>
+        <p className="text-text/90 leading-relaxed">{t.opus45.priceRealityDesc}</p>
       </section>
 
       {/* Honest Moments */}

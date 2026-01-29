@@ -2837,7 +2837,7 @@ export const de: Dictionary = {
     stat1Desc: 'Besser als die meisten menschlichen Entwickler, ehrlich gesagt',
     stat2Title: 'Kontextfenster',
     stat2Value: '200K Tokens',
-    stat2Desc: 'Es erinnert sich an Dinge, die ich vergessen hab',
+    stat2Desc: 'Reicht zumindest für ein ordentliches Gespräch',
     stat3Title: 'Ausgabelimit',
     stat3Value: '64K Tokens',
     stat3Desc: 'Schreibt ganze Codebases in einem Rutsch',
@@ -2870,6 +2870,10 @@ export const de: Dictionary = {
     spec3Desc: '67% günstiger als Opus 4.1. Danke, Anthropic!',
     spec4: 'Effort-Parameter-Kontrolle',
     spec4Desc: 'Niedrig, mittel oder hoch – wie ein Mixer, aber für Intelligenz',
+
+    // Preis-Realität
+    priceReality: 'Der Preis (Autsch)',
+    priceRealityDesc: 'Seien wir ehrlich: Opus 4.5 ist immer noch verdammt teuer. Bei $15 pro Million Input-Tokens und $75 pro Million Output-Tokens spürt dein Geldbeutel jedes Gespräch. Ja, es ist 67% günstiger als vorher. Nein, das heißt nicht, dass es günstig ist. Stell es dir vor wie einen Sportwagen kaufen – klar, es ist der Beste, aber dein Konto kennt den Unterschied. Nutze es weise, oder bereite dich darauf vor, deine API-Rechnung der Finanzabteilung zu erklären.',
 
     // Ehrliche Momente
     honestMoments: 'Momente brutaler Ehrlichkeit',

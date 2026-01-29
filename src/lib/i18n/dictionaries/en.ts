@@ -2846,7 +2846,7 @@ export const en = {
     stat1Desc: "Better than most human developers, honestly",
     stat2Title: "Context Window",
     stat2Value: "200K tokens",
-    stat2Desc: "It remembers things I forgot I said",
+    stat2Desc: "Enough for a decent conversation, at least",
     stat3Title: "Output Limit",
     stat3Value: "64K tokens",
     stat3Desc: "Writes entire codebases in one go",
@@ -2879,6 +2879,10 @@ export const en = {
     spec3Desc: "67% cheaper than Opus 4.1. Thanks, Anthropic!",
     spec4: "Effort parameter control",
     spec4Desc: "Low, medium, or high—like a blender, but for intelligence",
+
+    // Price reality
+    priceReality: "The Price Tag (Ouch)",
+    priceRealityDesc: "Let's be honest: Opus 4.5 is still expensive as hell. At $15 per million input tokens and $75 per million output tokens, your wallet will feel every conversation. Yes, it's 67% cheaper than before. No, that doesn't mean it's cheap. Think of it as buying a sports car—sure, it's the best, but your bank account knows the difference. Use it wisely, or prepare to explain your API bill to your finance team.",
 
     // Honest moments
     honestMoments: "Moments of Brutal Honesty",
