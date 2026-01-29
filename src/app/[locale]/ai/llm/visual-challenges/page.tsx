@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { VisualChallengesDemo } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function VisualChallengesPage() {
@@ -23,6 +24,11 @@ export default function VisualChallengesPage() {
         <p className="text-muted leading-relaxed text-lg">
           {t.visualChallenges.overviewDesc}
         </p>
+      </section>
+
+      {/* Interactive Demo */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <VisualChallengesDemo />
       </section>
 
       {/* Challenge 1: Counting Objects */}

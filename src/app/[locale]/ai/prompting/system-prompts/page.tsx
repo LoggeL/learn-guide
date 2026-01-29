@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { SystemPromptBuilder } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function SystemPromptsPage() {
@@ -77,9 +78,16 @@ export default function SystemPromptsPage() {
         </div>
       </section>
 
+      {/* Interactive Builder */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-2">{t.systemPrompts.interactiveBuilder}</h2>
+        <p className="text-muted mb-6">{t.systemPrompts.builderDesc}</p>
+        <SystemPromptBuilder />
+      </section>
+
       {/* Example System Prompt */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Example System Prompt</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.systemPrompts.examplePrompt}</h2>
         <pre className="p-4 bg-background rounded-xl border border-border overflow-x-auto text-sm text-muted font-mono">
 {`You are a helpful coding assistant specialized in TypeScript.
 

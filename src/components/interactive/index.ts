@@ -27,9 +27,16 @@ export { TrainingProgressVisualizer } from './TrainingProgressVisualizer'
 // Phase 3: Prompting components
 export { PromptComparisonDemo } from './PromptComparisonDemo'
 export { ChainOfThoughtDemo } from './ChainOfThoughtDemo'
+export { SystemPromptBuilder } from './SystemPromptBuilder'
 
 // Phase 3: AI Safety components
 export { BiasDetectionDemo } from './BiasDetectionDemo'
 
 // MoE components
 export { MoEVisualizer } from './MoEVisualizer'
+
+// Vision components
+export { VisualChallengesDemo } from './VisualChallengesDemo'
+
+// Agent Skills components
+export { SkillComposerDemo } from './SkillComposerDemo'

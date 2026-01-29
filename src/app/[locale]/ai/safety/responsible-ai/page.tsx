@@ -51,6 +51,96 @@ export default function ResponsibleAIPage() {
         </div>
       </section>
 
+      {/* Governance Frameworks */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.responsibleAi.frameworks}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.responsibleAi.frameworksDesc}
+        </p>
+        <div className="space-y-6">
+          {/* NIST AI RMF */}
+          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-blue-400 mb-3">{t.responsibleAi.nistTitle}</h3>
+            <p className="text-sm text-muted mb-4">{t.responsibleAi.nistDesc}</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 bg-background/50 rounded-lg text-center">
+                <div className="font-bold text-blue-400 mb-1">{t.responsibleAi.nistGovern}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.nistGovernDesc}</div>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg text-center">
+                <div className="font-bold text-blue-400 mb-1">{t.responsibleAi.nistMap}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.nistMapDesc}</div>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg text-center">
+                <div className="font-bold text-blue-400 mb-1">{t.responsibleAi.nistMeasure}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.nistMeasureDesc}</div>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg text-center">
+                <div className="font-bold text-blue-400 mb-1">{t.responsibleAi.nistManage}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.nistManageDesc}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* OECD AI Principles */}
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-green-500/10 border border-emerald-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-3">{t.responsibleAi.oecdTitle}</h3>
+            <p className="text-sm text-muted mb-4">{t.responsibleAi.oecdDesc}</p>
+            <div className="flex flex-wrap gap-2">
+              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">{t.responsibleAi.oecdInclusive}</span>
+              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">{t.responsibleAi.oecdHuman}</span>
+              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">{t.responsibleAi.oecdTransparency}</span>
+              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">{t.responsibleAi.oecdRobust}</span>
+              <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-sm">{t.responsibleAi.oecdAccountability}</span>
+            </div>
+          </div>
+
+          {/* ISO/IEC 42001 */}
+          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-violet-500/10 border border-purple-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-3">{t.responsibleAi.isoTitle}</h3>
+            <p className="text-sm text-muted mb-4">{t.responsibleAi.isoDesc}</p>
+            <div className="grid md:grid-cols-3 gap-3">
+              <div className="p-3 bg-background/50 rounded-lg">
+                <div className="font-bold text-purple-400 text-sm mb-1">{t.responsibleAi.isoPolicy}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.isoPolicyDesc}</div>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg">
+                <div className="font-bold text-purple-400 text-sm mb-1">{t.responsibleAi.isoRisk}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.isoRiskDesc}</div>
+              </div>
+              <div className="p-3 bg-background/50 rounded-lg">
+                <div className="font-bold text-purple-400 text-sm mb-1">{t.responsibleAi.isoImprovement}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.isoImprovementDesc}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* EU AI Act */}
+          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 border border-orange-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-orange-400 mb-3">{t.responsibleAi.euActTitle}</h3>
+            <p className="text-sm text-muted mb-4">{t.responsibleAi.euActDesc}</p>
+            <div className="grid md:grid-cols-4 gap-3">
+              <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <div className="font-bold text-red-400 text-sm mb-1">{t.responsibleAi.euProhibited}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.euProhibitedDesc}</div>
+              </div>
+              <div className="p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                <div className="font-bold text-orange-400 text-sm mb-1">{t.responsibleAi.euHighRisk}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.euHighRiskDesc}</div>
+              </div>
+              <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                <div className="font-bold text-yellow-400 text-sm mb-1">{t.responsibleAi.euLimited}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.euLimitedDesc}</div>
+              </div>
+              <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+                <div className="font-bold text-green-400 text-sm mb-1">{t.responsibleAi.euMinimal}</div>
+                <div className="text-xs text-muted">{t.responsibleAi.euMinimalDesc}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Responsible Practices */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.responsibleAi.practices}</h2>

@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { SkillComposerDemo } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function AgentSkillsPage() {
@@ -94,6 +95,13 @@ export default function AgentSkillsPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Interactive Demo */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.interactiveDemo}</h2>
+        <p className="text-muted mb-6">{t.agentSkills.interactiveDemoDesc}</p>
+        <SkillComposerDemo />
       </section>
 
       {/* Skill Structure */}

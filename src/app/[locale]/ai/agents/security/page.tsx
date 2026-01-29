@@ -2,7 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
-import { Shield, AlertOctagon, Mail, Zap, CheckCircle2, XCircle, Lock } from 'lucide-react'
+import { Shield, AlertOctagon, Mail, Zap, CheckCircle2, XCircle, Lock, FileWarning, Users, BookOpen } from 'lucide-react'
 
 export default function AgentSecurityPage() {
   const { t } = useTranslation()
@@ -223,6 +223,232 @@ const sendEmailTool = {
                 Agent: *tries to fix, makes it worse*<br/>
                 Agent: *&quot;cleans up&quot; by deleting evidence*
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Attack 4: Indirect Prompt Injection (IPI) - 2025 Threat */}
+      <section className="rounded-2xl bg-surface border border-border overflow-hidden">
+        <div className="px-6 py-4 bg-rose-500/10 border-b border-rose-500/20 flex items-center gap-3">
+          <FileWarning size={20} className="text-rose-400" />
+          <h3 className="font-semibold text-text font-heading">{t.agentSecurity.attack4Title}</h3>
+          <span className="ml-auto px-2 py-0.5 text-xs font-medium bg-rose-500/20 text-rose-400 rounded-full">2025</span>
+        </div>
+        <div className="p-6 space-y-6">
+          <p className="text-muted leading-relaxed">
+            {t.agentSecurity.attack4Desc}
+          </p>
+
+          {/* IPI Attack flow */}
+          <div className="p-4 rounded-xl bg-background border border-border">
+            <h4 className="text-sm font-semibold text-text mb-4">{t.agentSecurity.ipiFlow}</h4>
+            <div className="flex flex-col md:flex-row items-center gap-4 text-sm">
+              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/20 text-center">
+                <div className="text-blue-400 font-semibold">{t.agentSecurity.ipiStep1}</div>
+                <div className="text-muted text-xs mt-1">{t.agentSecurity.ipiStep1Desc}</div>
+              </div>
+              <div className="text-muted">→</div>
+              <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-center">
+                <div className="text-purple-400 font-semibold">{t.agentSecurity.ipiStep2}</div>
+                <div className="text-muted text-xs mt-1">{t.agentSecurity.ipiStep2Desc}</div>
+              </div>
+              <div className="text-muted">→</div>
+              <div className="p-3 rounded-lg bg-orange-500/10 border border-orange-500/20 text-center">
+                <div className="text-orange-400 font-semibold">{t.agentSecurity.ipiStep3}</div>
+                <div className="text-muted text-xs mt-1">{t.agentSecurity.ipiStep3Desc}</div>
+              </div>
+              <div className="text-muted">→</div>
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center">
+                <div className="text-red-400 font-semibold">{t.agentSecurity.ipiStep4}</div>
+                <div className="text-muted text-xs mt-1">{t.agentSecurity.ipiStep4Desc}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Common IPI vectors */}
+          <div className="p-4 rounded-xl bg-rose-500/5 border border-rose-500/20">
+            <h4 className="text-sm font-semibold text-rose-400 mb-3">{t.agentSecurity.ipiVectors}</h4>
+            <ul className="text-sm text-muted space-y-2">
+              <li className="flex gap-2">
+                <span className="text-rose-400">•</span>
+                <span><strong className="text-text">{t.agentSecurity.ipiVector1Title}</strong> — {t.agentSecurity.ipiVector1Desc}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-rose-400">•</span>
+                <span><strong className="text-text">{t.agentSecurity.ipiVector2Title}</strong> — {t.agentSecurity.ipiVector2Desc}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-rose-400">•</span>
+                <span><strong className="text-text">{t.agentSecurity.ipiVector3Title}</strong> — {t.agentSecurity.ipiVector3Desc}</span>
+              </li>
+              <li className="flex gap-2">
+                <span className="text-rose-400">•</span>
+                <span><strong className="text-text">{t.agentSecurity.ipiVector4Title}</strong> — {t.agentSecurity.ipiVector4Desc}</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Why IPI is dangerous */}
+          <div className="p-4 rounded-xl bg-background border border-border">
+            <h4 className="text-sm font-semibold text-text mb-3">{t.agentSecurity.ipiDanger}</h4>
+            <p className="text-sm text-muted">
+              {t.agentSecurity.ipiDangerDesc}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Attack 5: Agent-to-Agent Attacks */}
+      <section className="rounded-2xl bg-surface border border-border overflow-hidden">
+        <div className="px-6 py-4 bg-cyan-500/10 border-b border-cyan-500/20 flex items-center gap-3">
+          <Users size={20} className="text-cyan-400" />
+          <h3 className="font-semibold text-text font-heading">{t.agentSecurity.attack5Title}</h3>
+          <span className="ml-auto px-2 py-0.5 text-xs font-medium bg-cyan-500/20 text-cyan-400 rounded-full">2025</span>
+        </div>
+        <div className="p-6 space-y-6">
+          <p className="text-muted leading-relaxed">
+            {t.agentSecurity.attack5Desc}
+          </p>
+
+          {/* Multi-agent attack diagram */}
+          <div className="p-4 rounded-xl bg-background border border-border">
+            <h4 className="text-sm font-semibold text-text mb-4">{t.agentSecurity.a2aScenario}</h4>
+            <div className="grid md:grid-cols-3 gap-4 text-sm">
+              <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-center">
+                <div className="text-emerald-400 font-semibold mb-1">{t.agentSecurity.a2aAgent1}</div>
+                <div className="text-muted text-xs">{t.agentSecurity.a2aAgent1Desc}</div>
+              </div>
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-center relative">
+                <div className="absolute -top-2 left-1/2 -translate-x-1/2 px-2 py-0.5 text-xs bg-red-500 text-white rounded-full">{t.agentSecurity.a2aCompromised}</div>
+                <div className="text-red-400 font-semibold mb-1 mt-2">{t.agentSecurity.a2aAgent2}</div>
+                <div className="text-muted text-xs">{t.agentSecurity.a2aAgent2Desc}</div>
+              </div>
+              <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/20 text-center">
+                <div className="text-purple-400 font-semibold mb-1">{t.agentSecurity.a2aAgent3}</div>
+                <div className="text-muted text-xs">{t.agentSecurity.a2aAgent3Desc}</div>
+              </div>
+            </div>
+            <div className="mt-4 p-3 rounded-lg bg-red-500/5 border border-red-500/20">
+              <p className="text-xs text-muted">
+                <span className="text-red-400 font-semibold">{t.agentSecurity.a2aAttackLabel}</span> {t.agentSecurity.a2aAttackDesc}
+              </p>
+            </div>
+          </div>
+
+          {/* Attack types */}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+              <h4 className="text-sm font-semibold text-cyan-400 mb-2">{t.agentSecurity.a2aType1}</h4>
+              <p className="text-sm text-muted">
+                {t.agentSecurity.a2aType1Desc}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+              <h4 className="text-sm font-semibold text-cyan-400 mb-2">{t.agentSecurity.a2aType2}</h4>
+              <p className="text-sm text-muted">
+                {t.agentSecurity.a2aType2Desc}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+              <h4 className="text-sm font-semibold text-cyan-400 mb-2">{t.agentSecurity.a2aType3}</h4>
+              <p className="text-sm text-muted">
+                {t.agentSecurity.a2aType3Desc}
+              </p>
+            </div>
+            <div className="p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+              <h4 className="text-sm font-semibold text-cyan-400 mb-2">{t.agentSecurity.a2aType4}</h4>
+              <p className="text-sm text-muted">
+                {t.agentSecurity.a2aType4Desc}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Compliance Frameworks */}
+      <section className="rounded-2xl bg-surface border border-border overflow-hidden">
+        <div className="px-6 py-4 bg-indigo-500/10 border-b border-indigo-500/20 flex items-center gap-3">
+          <BookOpen size={20} className="text-indigo-400" />
+          <h3 className="font-semibold text-text font-heading">{t.agentSecurity.complianceTitle}</h3>
+        </div>
+        <div className="p-6 space-y-6">
+          <p className="text-muted leading-relaxed">
+            {t.agentSecurity.complianceDesc}
+          </p>
+
+          {/* Framework cards */}
+          <div className="grid gap-4">
+            <div className="p-4 rounded-xl bg-background border border-border">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-2 py-1 text-xs font-mono bg-indigo-500/20 text-indigo-400 rounded">{t.agentSecurity.framework1Tag}</span>
+                <h4 className="font-semibold text-text">{t.agentSecurity.framework1Title}</h4>
+              </div>
+              <p className="text-sm text-muted mb-3">
+                {t.agentSecurity.framework1Desc}
+              </p>
+              <ul className="text-sm text-muted space-y-1">
+                <li className="flex gap-2">
+                  <span className="text-indigo-400">•</span>
+                  <span>{t.agentSecurity.framework1Point1}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-indigo-400">•</span>
+                  <span>{t.agentSecurity.framework1Point2}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-indigo-400">•</span>
+                  <span>{t.agentSecurity.framework1Point3}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-background border border-border">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-2 py-1 text-xs font-mono bg-orange-500/20 text-orange-400 rounded">{t.agentSecurity.framework2Tag}</span>
+                <h4 className="font-semibold text-text">{t.agentSecurity.framework2Title}</h4>
+              </div>
+              <p className="text-sm text-muted mb-3">
+                {t.agentSecurity.framework2Desc}
+              </p>
+              <ul className="text-sm text-muted space-y-1">
+                <li className="flex gap-2">
+                  <span className="text-orange-400">•</span>
+                  <span>{t.agentSecurity.framework2Point1}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-orange-400">•</span>
+                  <span>{t.agentSecurity.framework2Point2}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-orange-400">•</span>
+                  <span>{t.agentSecurity.framework2Point3}</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-4 rounded-xl bg-background border border-border">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="px-2 py-1 text-xs font-mono bg-emerald-500/20 text-emerald-400 rounded">{t.agentSecurity.framework3Tag}</span>
+                <h4 className="font-semibold text-text">{t.agentSecurity.framework3Title}</h4>
+              </div>
+              <p className="text-sm text-muted mb-3">
+                {t.agentSecurity.framework3Desc}
+              </p>
+              <ul className="text-sm text-muted space-y-1">
+                <li className="flex gap-2">
+                  <span className="text-emerald-400">•</span>
+                  <span>{t.agentSecurity.framework3Point1}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-emerald-400">•</span>
+                  <span>{t.agentSecurity.framework3Point2}</span>
+                </li>
+                <li className="flex gap-2">
+                  <span className="text-emerald-400">•</span>
+                  <span>{t.agentSecurity.framework3Point3}</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>

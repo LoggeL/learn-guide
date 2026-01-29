@@ -12,7 +12,11 @@ import {
   Unlock,
   Code,
   Wifi,
-  ExternalLink
+  ExternalLink,
+  TrendingUp,
+  Cpu,
+  Globe,
+  Smartphone
 } from 'lucide-react'
 
 interface Advantage {
@@ -76,40 +80,40 @@ const projects: Project[] = [
     orgKey: 'project1Org',
     descKey: 'project1Desc',
     icon: Code,
-    gradient: 'from-blue-500 to-indigo-500',
-    website: 'https://llama.meta.com',
+    gradient: 'from-red-500 to-rose-500',
+    website: 'https://github.com/deepseek-ai/DeepSeek-R1',
   },
   {
     nameKey: 'project2Name',
     orgKey: 'project2Org',
     descKey: 'project2Desc',
     icon: Code,
-    gradient: 'from-orange-500 to-red-500',
-    website: 'https://mistral.ai',
+    gradient: 'from-violet-500 to-purple-500',
+    website: 'https://qwenlm.github.io',
   },
   {
     nameKey: 'project3Name',
     orgKey: 'project3Org',
     descKey: 'project3Desc',
     icon: Code,
-    gradient: 'from-purple-500 to-pink-500',
-    website: 'https://stability.ai',
+    gradient: 'from-blue-500 to-indigo-500',
+    website: 'https://llama.meta.com',
   },
   {
     nameKey: 'project4Name',
     orgKey: 'project4Org',
     descKey: 'project4Desc',
     icon: Code,
-    gradient: 'from-amber-500 to-yellow-500',
-    website: 'https://huggingface.co',
+    gradient: 'from-orange-500 to-red-500',
+    website: 'https://mistral.ai',
   },
   {
     nameKey: 'project5Name',
     orgKey: 'project5Org',
     descKey: 'project5Desc',
     icon: Code,
-    gradient: 'from-emerald-500 to-green-500',
-    website: 'https://github.com/openai/whisper',
+    gradient: 'from-amber-500 to-yellow-500',
+    website: 'https://huggingface.co',
   },
   {
     nameKey: 'project6Name',
@@ -119,6 +123,20 @@ const projects: Project[] = [
     gradient: 'from-cyan-500 to-blue-500',
     website: 'https://ollama.ai',
   },
+]
+
+interface Trend {
+  titleKey: string
+  descKey: string
+  icon: typeof TrendingUp
+  color: string
+}
+
+const trends: Trend[] = [
+  { titleKey: 'trend1Title', descKey: 'trend1Desc', icon: TrendingUp, color: 'cyan' },
+  { titleKey: 'trend2Title', descKey: 'trend2Desc', icon: Globe, color: 'purple' },
+  { titleKey: 'trend3Title', descKey: 'trend3Desc', icon: Cpu, color: 'emerald' },
+  { titleKey: 'trend4Title', descKey: 'trend4Desc', icon: Smartphone, color: 'orange' },
 ]
 
 interface BusinessCase {
@@ -263,6 +281,42 @@ export default function OpenSourcePage() {
           {projects.map((project) => (
             <ProjectCard key={project.nameKey} project={project} t={t} />
           ))}
+        </div>
+      </section>
+
+      {/* 2025 Trends */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.openSource.trendsTitle}</h2>
+        <p className="text-muted leading-relaxed mb-8">
+          {t.openSource.trendsDesc}
+        </p>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          {trends.map((trend) => {
+            const Icon = trend.icon
+            const colorClasses: Record<string, { bg: string; border: string; text: string }> = {
+              cyan: { bg: 'from-cyan-500/10 to-blue-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400' },
+              purple: { bg: 'from-purple-500/10 to-pink-500/10', border: 'border-purple-500/20', text: 'text-purple-400' },
+              emerald: { bg: 'from-emerald-500/10 to-teal-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400' },
+              orange: { bg: 'from-orange-500/10 to-red-500/10', border: 'border-orange-500/20', text: 'text-orange-400' },
+            }
+            const colors = colorClasses[trend.color]
+
+            return (
+              <div
+                key={trend.titleKey}
+                className={`p-5 rounded-xl bg-gradient-to-br ${colors.bg} border ${colors.border}`}
+              >
+                <Icon className={`w-8 h-8 ${colors.text} mb-3`} />
+                <h3 className={`text-lg font-bold font-heading ${colors.text} mb-2`}>
+                  {t.openSource[trend.titleKey as keyof typeof t.openSource]}
+                </h3>
+                <p className="text-sm text-muted leading-relaxed">
+                  {t.openSource[trend.descKey as keyof typeof t.openSource]}
+                </p>
+              </div>
+            )
+          })}
         </div>
       </section>
 
