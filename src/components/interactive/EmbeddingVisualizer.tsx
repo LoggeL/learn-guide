@@ -23,8 +23,8 @@ const WORD_EMBEDDINGS: Record<string, [number, number]> = {
   'computer': [-0.3, -0.7],
   'software': [-0.35, -0.65],
   'algorithm': [-0.4, -0.6],
-  'data': [-0.25, -0.55],
-  'AI': [-0.2, -0.5],
+  'data': [-0.25, -0.7],
+  'AI': [-0.35, -0.75],
   // Food
   'apple': [0.3, -0.3],
   'banana': [0.35, -0.35],
