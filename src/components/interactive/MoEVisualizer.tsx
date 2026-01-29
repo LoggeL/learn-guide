@@ -1,125 +1,117 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, RotateCcw, Cpu, HardDrive } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { Play, RotateCcw, Cpu, HardDrive, AlertTriangle } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
-interface Expert {
-  id: number
-  name: string
-  color: string
-  specialization: string
-}
-
-interface Token {
-  id: number
-  text: string
-  selectedExperts: number[]
-  weights: number[]
-}
-
 const EXPERT_COLORS = [
-  'purple',
-  'cyan',
-  'emerald',
-  'orange',
-  'pink',
-  'yellow',
-  'blue',
-  'red',
+  '#a855f7', // purple
+  '#06b6d4', // cyan
+  '#10b981', // emerald
+  '#f97316', // orange
+  '#ec4899', // pink
+  '#eab308', // yellow
+  '#3b82f6', // blue
+  '#ef4444', // red
 ]
 
-const colorClasses: Record<string, { bg: string; border: string; text: string; glow: string }> = {
-  purple: { bg: 'bg-purple-500/20', border: 'border-purple-500/40', text: 'text-purple-400', glow: 'shadow-purple-500/30' },
-  cyan: { bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', text: 'text-cyan-400', glow: 'shadow-cyan-500/30' },
-  emerald: { bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', glow: 'shadow-emerald-500/30' },
-  orange: { bg: 'bg-orange-500/20', border: 'border-orange-500/40', text: 'text-orange-400', glow: 'shadow-orange-500/30' },
-  pink: { bg: 'bg-pink-500/20', border: 'border-pink-500/40', text: 'text-pink-400', glow: 'shadow-pink-500/30' },
-  yellow: { bg: 'bg-yellow-500/20', border: 'border-yellow-500/40', text: 'text-yellow-400', glow: 'shadow-yellow-500/30' },
-  blue: { bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-400', glow: 'shadow-blue-500/30' },
-  red: { bg: 'bg-red-500/20', border: 'border-red-500/40', text: 'text-red-400', glow: 'shadow-red-500/30' },
+interface GenerationStep {
+  context: string
+  nextToken: string
+  selectedExperts: [number, number]
+  weights: [number, number]
 }
 
 export function MoEVisualizer() {
   const { t } = useTranslation()
-  const [experts] = useState<Expert[]>(() =>
-    EXPERT_COLORS.map((color, i) => ({
-      id: i,
-      name: `Expert ${i + 1}`,
-      color,
-      specialization: [
-        t.moe.vizMath,
-        t.moe.vizCode,
-        t.moe.vizLanguage,
-        t.moe.vizReasoning,
-        t.moe.vizCreative,
-        t.moe.vizFactual,
-        t.moe.vizScience,
-        t.moe.vizGeneral,
-      ][i],
-    }))
-  )
+  const svgRef = useRef<SVGSVGElement>(null)
 
-  const [tokens] = useState<Token[]>([
-    { id: 0, text: t.moe.vizToken1, selectedExperts: [1, 3], weights: [0.7, 0.3] },
-    { id: 1, text: t.moe.vizToken2, selectedExperts: [0, 6], weights: [0.6, 0.4] },
-    { id: 2, text: t.moe.vizToken3, selectedExperts: [2, 4], weights: [0.8, 0.2] },
-  ])
+  const generationSteps: GenerationStep[] = [
+    { context: 'The capital of France is', nextToken: ' Paris', selectedExperts: [2, 5], weights: [0.72, 0.28] },
+    { context: 'The capital of France is Paris', nextToken: '.', selectedExperts: [7, 3], weights: [0.65, 0.35] },
+    { context: 'The capital of France is Paris.', nextToken: ' It', selectedExperts: [0, 4], weights: [0.58, 0.42] },
+    { context: 'The capital of France is Paris. It', nextToken: ' is', selectedExperts: [3, 1], weights: [0.81, 0.19] },
+  ]
 
-  const [currentTokenIndex, setCurrentTokenIndex] = useState(-1)
-  const [phase, setPhase] = useState<'idle' | 'routing' | 'processing' | 'done'>('idle')
-  const [activeExperts, setActiveExperts] = useState<number[]>([])
+  const [currentStep, setCurrentStep] = useState(-1)
+  const [phase, setPhase] = useState<'idle' | 'routing' | 'processing' | 'output' | 'done'>('idle')
+  const [generatedText, setGeneratedText] = useState('The capital of France is')
+  const [expertUsage, setExpertUsage] = useState<number[]>(Array(8).fill(0))
 
   const runDemo = () => {
     if (phase !== 'idle' && phase !== 'done') return
-    setCurrentTokenIndex(0)
+    setCurrentStep(0)
     setPhase('routing')
-    setActiveExperts([])
+    setGeneratedText('The capital of France is')
+    setExpertUsage(Array(8).fill(0))
   }
 
   const reset = () => {
-    setCurrentTokenIndex(-1)
+    setCurrentStep(-1)
     setPhase('idle')
-    setActiveExperts([])
+    setGeneratedText('The capital of France is')
+    setExpertUsage(Array(8).fill(0))
   }
 
   useEffect(() => {
-    if (phase === 'idle' || currentTokenIndex < 0) return
+    if (phase === 'idle' || currentStep < 0) return
 
-    const token = tokens[currentTokenIndex]
-    if (!token) {
+    const step = generationSteps[currentStep]
+    if (!step) {
       setPhase('done')
       return
     }
 
     if (phase === 'routing') {
-      const timer = setTimeout(() => {
-        setActiveExperts(token.selectedExperts)
-        setPhase('processing')
-      }, 800)
+      const timer = setTimeout(() => setPhase('processing'), 600)
       return () => clearTimeout(timer)
     }
 
     if (phase === 'processing') {
       const timer = setTimeout(() => {
-        if (currentTokenIndex < tokens.length - 1) {
-          setCurrentTokenIndex(currentTokenIndex + 1)
-          setActiveExperts([])
+        // Update expert usage stats
+        setExpertUsage(prev => {
+          const next = [...prev]
+          next[step.selectedExperts[0]] += step.weights[0]
+          next[step.selectedExperts[1]] += step.weights[1]
+          return next
+        })
+        setPhase('output')
+      }, 800)
+      return () => clearTimeout(timer)
+    }
+
+    if (phase === 'output') {
+      const timer = setTimeout(() => {
+        setGeneratedText(prev => prev + step.nextToken)
+        if (currentStep < generationSteps.length - 1) {
+          setCurrentStep(currentStep + 1)
           setPhase('routing')
         } else {
           setPhase('done')
         }
-      }, 1200)
+      }, 500)
       return () => clearTimeout(timer)
     }
-  }, [phase, currentTokenIndex, tokens])
+  }, [phase, currentStep, generationSteps])
 
-  const currentToken = currentTokenIndex >= 0 ? tokens[currentTokenIndex] : null
+  const currentStepData = currentStep >= 0 ? generationSteps[currentStep] : null
 
-  // Calculate VRAM usage - all experts always loaded
-  const totalVRAM = 46.7 // Mixtral example: 46.7B total params
-  const activeVRAM = 12.9 // Only ~12.9B active per token
+  // SVG Layout constants
+  const width = 700
+  const height = 340
+  const tokenY = 50
+  const routerY = 130
+  const expertsY = 250
+  const expertSpacing = width / 9
+  const routerX = width / 2
+
+  // Calculate expert positions
+  const getExpertX = (i: number) => expertSpacing * (i + 1)
+
+  // Calculate max usage for scaling
+  const maxUsage = Math.max(...expertUsage, 0.1)
 
   return (
     <div className="space-y-6">
@@ -144,11 +136,11 @@ export function MoEVisualizer() {
           </button>
           <button
             onClick={runDemo}
-            disabled={phase === 'routing' || phase === 'processing'}
+            disabled={phase !== 'idle' && phase !== 'done'}
             className="flex items-center gap-2 px-4 py-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-colors disabled:opacity-50"
           >
             <Play size={14} />
-            {t.moe.vizRun}
+            {t.moe.vizGenerate}
           </button>
         </div>
       </div>
@@ -164,34 +156,263 @@ export function MoEVisualizer() {
         </div>
       </div>
 
+      {/* Main SVG Visualization - Fixed Size */}
+      <div className="rounded-xl bg-surface border border-border p-4 overflow-x-auto">
+        <svg
+          ref={svgRef}
+          width={width}
+          height={height}
+          className="mx-auto"
+          style={{ minWidth: width }}
+        >
+          {/* Background grid hint */}
+          <defs>
+            <linearGradient id="routerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#a855f7" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#06b6d4" stopOpacity="0.3" />
+            </linearGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          {/* Labels */}
+          <text x={width / 2} y={20} textAnchor="middle" className="fill-muted text-xs uppercase tracking-wider">
+            {t.moe.vizNextToken}
+          </text>
+          <text x={width / 2} y={routerY - 25} textAnchor="middle" className="fill-muted text-xs uppercase tracking-wider">
+            {t.moe.vizRouterLabel}
+          </text>
+          <text x={width / 2} y={expertsY - 35} textAnchor="middle" className="fill-muted text-xs uppercase tracking-wider">
+            {t.moe.vizExpertsLabel}
+          </text>
+
+          {/* Current Token being generated */}
+          <g>
+            <rect
+              x={routerX - 60}
+              y={tokenY - 15}
+              width={120}
+              height={30}
+              rx={8}
+              className={`transition-all duration-300 ${
+                phase === 'routing' ? 'fill-purple-500/30 stroke-purple-400' : 'fill-surface-elevated stroke-border'
+              }`}
+              strokeWidth={phase === 'routing' ? 2 : 1}
+            />
+            <text
+              x={routerX}
+              y={tokenY + 5}
+              textAnchor="middle"
+              className="fill-text text-sm font-mono"
+            >
+              {currentStepData?.nextToken || '?'}
+            </text>
+          </g>
+
+          {/* Line from Token to Router */}
+          <motion.line
+            x1={routerX}
+            y1={tokenY + 15}
+            x2={routerX}
+            y2={routerY - 20}
+            stroke={phase === 'routing' ? '#a855f7' : '#444'}
+            strokeWidth={2}
+            strokeDasharray={phase === 'routing' ? '0' : '4'}
+            initial={{ pathLength: 0 }}
+            animate={{
+              pathLength: phase !== 'idle' ? 1 : 0,
+              opacity: phase === 'routing' ? 1 : 0.3
+            }}
+            transition={{ duration: 0.3 }}
+          />
+
+          {/* Router */}
+          <g>
+            <motion.rect
+              x={routerX - 80}
+              y={routerY - 20}
+              width={160}
+              height={40}
+              rx={12}
+              fill="url(#routerGradient)"
+              stroke={phase === 'routing' ? '#a855f7' : '#555'}
+              strokeWidth={phase === 'routing' ? 2 : 1}
+              animate={{
+                filter: phase === 'routing' ? 'url(#glow)' : 'none'
+              }}
+            />
+            <text x={routerX} y={routerY + 5} textAnchor="middle" className="fill-text text-sm font-semibold">
+              {t.moe.vizRouter}
+            </text>
+          </g>
+
+          {/* Lines from Router to Experts */}
+          {Array(8).fill(0).map((_, i) => {
+            const expertX = getExpertX(i)
+            const isSelected = currentStepData?.selectedExperts.includes(i)
+            const weight = isSelected
+              ? currentStepData?.weights[currentStepData.selectedExperts.indexOf(i)] || 0
+              : 0
+
+            return (
+              <g key={i}>
+                {/* Connection line */}
+                <motion.path
+                  d={`M ${routerX} ${routerY + 20} Q ${routerX} ${(routerY + expertsY) / 2} ${expertX} ${expertsY - 30}`}
+                  fill="none"
+                  stroke={EXPERT_COLORS[i]}
+                  strokeWidth={isSelected && phase === 'processing' ? 3 : 1}
+                  strokeOpacity={isSelected && phase === 'processing' ? 1 : 0.2}
+                  initial={{ pathLength: 0 }}
+                  animate={{
+                    pathLength: 1,
+                    strokeOpacity: isSelected && phase === 'processing' ? 1 : 0.2
+                  }}
+                  transition={{ duration: 0.4, delay: isSelected ? 0.1 : 0 }}
+                />
+
+                {/* Weight label */}
+                {isSelected && phase === 'processing' && (
+                  <motion.text
+                    x={(routerX + expertX) / 2}
+                    y={(routerY + expertsY) / 2 - 10}
+                    textAnchor="middle"
+                    className="text-xs font-mono"
+                    fill={EXPERT_COLORS[i]}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  >
+                    {(weight * 100).toFixed(0)}%
+                  </motion.text>
+                )}
+              </g>
+            )
+          })}
+
+          {/* Experts */}
+          {Array(8).fill(0).map((_, i) => {
+            const expertX = getExpertX(i)
+            const isSelected = currentStepData?.selectedExperts.includes(i) && phase === 'processing'
+            const usage = expertUsage[i]
+
+            return (
+              <g key={i}>
+                {/* Expert box */}
+                <motion.rect
+                  x={expertX - 32}
+                  y={expertsY - 25}
+                  width={64}
+                  height={50}
+                  rx={8}
+                  fill={`${EXPERT_COLORS[i]}20`}
+                  stroke={EXPERT_COLORS[i]}
+                  strokeWidth={isSelected ? 2 : 1}
+                  strokeOpacity={isSelected ? 1 : 0.5}
+                  animate={{
+                    scale: isSelected ? 1.1 : 1,
+                    filter: isSelected ? 'url(#glow)' : 'none'
+                  }}
+                  style={{ transformOrigin: `${expertX}px ${expertsY}px` }}
+                />
+
+                {/* Expert number */}
+                <text
+                  x={expertX}
+                  y={expertsY - 5}
+                  textAnchor="middle"
+                  className="text-xs font-bold"
+                  fill={EXPERT_COLORS[i]}
+                >
+                  E{i + 1}
+                </text>
+
+                {/* VRAM indicator (always loaded) */}
+                <circle
+                  cx={expertX + 22}
+                  cy={expertsY - 18}
+                  r={4}
+                  fill={isSelected ? '#10b981' : '#666'}
+                  className={isSelected ? 'animate-pulse' : ''}
+                />
+
+                {/* Usage bar */}
+                <rect
+                  x={expertX - 25}
+                  y={expertsY + 30}
+                  width={50}
+                  height={6}
+                  rx={3}
+                  fill="#333"
+                />
+                <motion.rect
+                  x={expertX - 25}
+                  y={expertsY + 30}
+                  width={50 * (usage / maxUsage)}
+                  height={6}
+                  rx={3}
+                  fill={EXPERT_COLORS[i]}
+                  animate={{ width: 50 * (usage / maxUsage) }}
+                />
+              </g>
+            )
+          })}
+
+          {/* Output indicator */}
+          {phase === 'output' && (
+            <motion.g
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <text
+                x={width / 2}
+                y={height - 20}
+                textAnchor="middle"
+                className="fill-emerald-400 text-sm"
+              >
+                → {currentStepData?.nextToken}
+              </text>
+            </motion.g>
+          )}
+        </svg>
+      </div>
+
+      {/* Generated Text Display */}
+      <div className="rounded-xl bg-surface border border-border p-4">
+        <div className="text-xs text-muted mb-2 uppercase tracking-wider">{t.moe.vizGeneratedText}</div>
+        <div className="font-mono text-text bg-background rounded-lg p-3 min-h-[48px]">
+          {generatedText}
+          {phase !== 'idle' && phase !== 'done' && (
+            <span className="inline-block w-2 h-4 bg-purple-400 ml-0.5 animate-pulse" />
+          )}
+        </div>
+      </div>
+
       {/* VRAM Usage Bar */}
       <div className="rounded-xl bg-surface border border-border p-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-medium text-text">{t.moe.vizVramUsage}</span>
           <span className="text-sm text-muted">
-            {totalVRAM}B {t.moe.vizLoaded} / {activeVRAM}B {t.moe.vizActive}
+            46.7B {t.moe.vizLoaded} / ~12.9B {t.moe.vizActive}
           </span>
         </div>
-        <div className="h-8 rounded-lg bg-background overflow-hidden relative">
-          {/* All experts always in VRAM */}
-          <div className="absolute inset-0 flex">
-            {experts.map((expert, i) => (
+        <div className="h-8 rounded-lg bg-background overflow-hidden relative flex">
+          {EXPERT_COLORS.map((color, i) => {
+            const isActive = currentStepData?.selectedExperts.includes(i) && phase === 'processing'
+            return (
               <motion.div
-                key={expert.id}
-                className={`h-full flex-1 ${colorClasses[expert.color].bg} border-r border-background/50 last:border-r-0`}
-                animate={{
-                  opacity: activeExperts.includes(i) ? 1 : 0.4,
-                }}
-                transition={{ duration: 0.3 }}
+                key={i}
+                className="h-full flex-1 border-r border-background/50 last:border-r-0"
+                style={{ backgroundColor: `${color}${isActive ? '60' : '30'}` }}
+                animate={{ opacity: isActive ? 1 : 0.5 }}
+                transition={{ duration: 0.2 }}
               />
-            ))}
-          </div>
-          {/* Active indicator */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xs font-mono text-text/80 bg-background/60 px-2 py-0.5 rounded">
-              {t.moe.vizAllExperts}
-            </span>
-          </div>
+            )
+          })}
         </div>
         <div className="flex justify-between mt-2 text-xs text-muted">
           <span>{t.moe.vizMemoryFootprint}</span>
@@ -199,177 +420,37 @@ export function MoEVisualizer() {
         </div>
       </div>
 
-      {/* Main Visualization */}
-      <div className="rounded-xl bg-surface border border-border p-6">
-        {/* Token Input */}
-        <div className="mb-6">
-          <div className="text-xs text-muted mb-2 uppercase tracking-wider">{t.moe.vizInputTokens}</div>
-          <div className="flex gap-2 flex-wrap">
-            {tokens.map((token, i) => (
-              <motion.div
-                key={token.id}
-                className={`px-3 py-1.5 rounded-lg border text-sm font-mono ${
-                  currentTokenIndex === i
-                    ? 'bg-primary/20 border-primary/50 text-primary-light'
-                    : currentTokenIndex > i
-                    ? 'bg-emerald-500/20 border-emerald-500/30 text-emerald-400'
-                    : 'bg-surface-elevated border-border text-muted'
-                }`}
-                animate={{
-                  scale: currentTokenIndex === i ? 1.05 : 1,
-                }}
-              >
-                {token.text}
-              </motion.div>
-            ))}
+      {/* Training Complexity Warning */}
+      <div className="rounded-xl bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 p-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle size={18} className="text-yellow-400 shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-semibold text-yellow-400 mb-2">{t.moe.vizTrainingTitle}</p>
+            <p className="text-muted mb-3">{t.moe.vizTrainingDesc}</p>
+            <ul className="space-y-1.5 text-muted">
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-400">•</span>
+                <span>{t.moe.vizTraining1}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-400">•</span>
+                <span>{t.moe.vizTraining2}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-400">•</span>
+                <span>{t.moe.vizTraining3}</span>
+              </li>
+            </ul>
           </div>
-        </div>
-
-        {/* Router */}
-        <div className="flex justify-center mb-6">
-          <motion.div
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-cyan-500/20 border border-purple-500/30"
-            animate={{
-              boxShadow: phase === 'routing' ? '0 0 20px rgba(168, 85, 247, 0.4)' : '0 0 0px transparent',
-            }}
-          >
-            <div className="text-center">
-              <div className="text-sm font-semibold text-text">{t.moe.vizRouter}</div>
-              <div className="text-xs text-muted">{t.moe.vizSelectsTop2}</div>
-            </div>
-          </motion.div>
-        </div>
-
-        {/* Routing Lines (animated) */}
-        <AnimatePresence>
-          {phase === 'processing' && currentToken && (
-            <div className="flex justify-center mb-4">
-              <div className="flex gap-8">
-                {currentToken.selectedExperts.map((expertId, i) => (
-                  <motion.div
-                    key={expertId}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className={`text-xs ${colorClasses[experts[expertId].color].text}`}
-                  >
-                    ↓ {(currentToken.weights[i] * 100).toFixed(0)}%
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          )}
-        </AnimatePresence>
-
-        {/* Experts Grid */}
-        <div className="grid grid-cols-4 gap-3">
-          {experts.map((expert, i) => {
-            const isActive = activeExperts.includes(i)
-            const colors = colorClasses[expert.color]
-            const weight = currentToken?.selectedExperts.includes(i)
-              ? currentToken.weights[currentToken.selectedExperts.indexOf(i)]
-              : 0
-
-            return (
-              <motion.div
-                key={expert.id}
-                className={`p-3 rounded-xl border ${colors.border} ${colors.bg} relative overflow-hidden`}
-                animate={{
-                  scale: isActive ? 1.05 : 1,
-                  boxShadow: isActive ? `0 0 20px var(--tw-shadow-color)` : 'none',
-                }}
-                style={{
-                  '--tw-shadow-color': isActive ? colors.glow.replace('shadow-', '').replace('/30', '') : 'transparent',
-                } as React.CSSProperties}
-              >
-                {/* Always in VRAM indicator */}
-                <div className="absolute top-1 right-1">
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      isActive ? 'bg-emerald-400 animate-pulse' : 'bg-gray-500'
-                    }`}
-                    title={isActive ? t.moe.vizActiveNow : t.moe.vizLoadedIdle}
-                  />
-                </div>
-
-                <div className={`text-xs font-bold ${colors.text} mb-1`}>
-                  {expert.name}
-                </div>
-                <div className="text-[10px] text-muted truncate">{expert.specialization}</div>
-
-                {/* Activity indicator */}
-                <AnimatePresence>
-                  {isActive && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${weight * 100}%` }}
-                      exit={{ width: 0 }}
-                      className={`absolute bottom-0 left-0 h-1 ${colors.bg.replace('/20', '/60')}`}
-                    />
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* Status */}
-        <div className="mt-6 text-center">
-          <AnimatePresence mode="wait">
-            {phase === 'idle' && (
-              <motion.p
-                key="idle"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-muted"
-              >
-                {t.moe.vizClickRun}
-              </motion.p>
-            )}
-            {phase === 'routing' && currentToken && (
-              <motion.p
-                key="routing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-purple-400"
-              >
-                {t.moe.vizRouting} &quot;{currentToken.text}&quot;...
-              </motion.p>
-            )}
-            {phase === 'processing' && currentToken && (
-              <motion.p
-                key="processing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-emerald-400"
-              >
-                {t.moe.vizProcessing} {currentToken.selectedExperts.map(i => experts[i].name).join(' + ')}
-              </motion.p>
-            )}
-            {phase === 'done' && (
-              <motion.p
-                key="done"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="text-sm text-cyan-400"
-              >
-                {t.moe.vizComplete}
-              </motion.p>
-            )}
-          </AnimatePresence>
         </div>
       </div>
 
       {/* Key Insight */}
-      <div className="rounded-xl bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 p-4">
+      <div className="rounded-xl bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 p-4">
         <div className="flex items-start gap-3">
-          <HardDrive size={18} className="text-orange-400 shrink-0 mt-0.5" />
+          <HardDrive size={18} className="text-purple-400 shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
-            <p className="font-semibold text-orange-400 mb-1">{t.moe.vizKeyInsight}</p>
+            <p className="font-semibold text-purple-400 mb-1">{t.moe.vizKeyInsight}</p>
             <p>{t.moe.vizKeyInsightDesc}</p>
           </div>
         </div>
