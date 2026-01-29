@@ -49,6 +49,58 @@ export default function EmbeddingsPage() {
         </div>
       </section>
 
+      {/* How Embeddings Are Created */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.embeddings.howCreated}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.embeddings.howCreatedDesc}
+        </p>
+
+        {/* Embedding Layer Diagram */}
+        <div className="mb-6 p-6 rounded-xl bg-background border border-border">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-center">
+            <div className="p-4 rounded-lg bg-purple-500/20 border border-purple-500/30">
+              <div className="text-2xl mb-1">Token</div>
+              <div className="text-xs text-muted font-mono">&quot;cat&quot; → ID: 2368</div>
+            </div>
+            <div className="text-2xl text-muted">→</div>
+            <div className="p-4 rounded-lg bg-cyan-500/20 border border-cyan-500/30">
+              <div className="text-lg mb-1">{t.embeddings.embeddingLayer}</div>
+              <div className="text-xs text-muted font-mono">matrix[2368]</div>
+            </div>
+            <div className="text-2xl text-muted">→</div>
+            <div className="p-4 rounded-lg bg-emerald-500/20 border border-emerald-500/30">
+              <div className="text-2xl mb-1">Vector</div>
+              <div className="text-xs text-muted font-mono">[0.23, -0.87, 0.41, ...]</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.embeddings.embeddingLayer}</h3>
+            <p className="text-sm text-muted">{t.embeddings.embeddingLayerDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">{t.embeddings.training}</h3>
+            <p className="text-sm text-muted">{t.embeddings.trainingDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">{t.embeddings.inLLM}</h3>
+            <p className="text-sm text-muted">{t.embeddings.inLLMDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-yellow-500/10 border border-orange-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-orange-400 mb-2">{t.embeddings.dedicated}</h3>
+            <p className="text-sm text-muted">{t.embeddings.dedicatedDesc}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
+          <h4 className="font-semibold text-text mb-2">{t.embeddings.embeddingSize}</h4>
+          <p className="text-sm text-muted">{t.embeddings.embeddingSizeDesc}</p>
+        </div>
+      </section>
+
       {/* Use Cases */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.embeddings.useCases}</h2>

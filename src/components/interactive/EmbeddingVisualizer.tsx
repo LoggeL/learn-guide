@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, X, Target, Layers } from 'lucide-react'
+import { Plus, Target, Layers } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
 // Simulated embeddings for demonstration
@@ -76,23 +76,30 @@ function getEmbedding(word: string): [number, number] {
   ]
 }
 
+// All available words grouped by category
+const AVAILABLE_WORDS = {
+  animals: ['cat', 'dog', 'bird', 'fish', 'horse'],
+  royalty: ['king', 'queen', 'prince', 'princess'],
+  technology: ['computer', 'software', 'algorithm', 'data', 'AI'],
+  food: ['apple', 'banana', 'pizza', 'bread'],
+  emotions: ['happy', 'sad', 'angry', 'love'],
+}
+
 export function EmbeddingVisualizer() {
   const { t } = useTranslation()
-  const [words, setWords] = useState<string[]>(['king', 'queen', 'cat', 'dog', 'computer'])
-  const [newWord, setNewWord] = useState('')
+  const [activeWords, setActiveWords] = useState<string[]>(['king', 'queen', 'cat', 'dog', 'computer'])
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
 
-  const addWord = () => {
-    if (newWord.trim() && !words.includes(newWord.trim().toLowerCase())) {
-      setWords([...words, newWord.trim().toLowerCase()])
-      setNewWord('')
+  const toggleWord = (word: string) => {
+    if (activeWords.includes(word)) {
+      setActiveWords(activeWords.filter(w => w !== word))
+      if (selectedWord === word) setSelectedWord(null)
+    } else {
+      setActiveWords([...activeWords, word])
     }
   }
 
-  const removeWord = (word: string) => {
-    setWords(words.filter(w => w !== word))
-    if (selectedWord === word) setSelectedWord(null)
-  }
+  const words = activeWords
 
   const getSimilarities = () => {
     if (!selectedWord) return []
@@ -108,61 +115,61 @@ export function EmbeddingVisualizer() {
 
   return (
     <div className="space-y-6">
-      {/* Input */}
+      {/* Word Selection */}
       <div className="rounded-2xl bg-surface border border-border p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
             <Plus size={18} className="text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.enterWords}</h3>
-            <p className="text-xs text-muted">Try: king, queen, cat, dog, computer, apple</p>
+            <h3 className="font-semibold text-text font-heading">{t.interactive.selectWords}</h3>
+            <p className="text-xs text-muted">{t.interactive.clickToToggle}</p>
           </div>
         </div>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newWord}
-            onChange={(e) => setNewWord(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addWord()}
-            className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-text focus:outline-none focus:border-primary/50 transition-colors"
-            placeholder="Enter a word..."
-          />
-          <button
-            onClick={addWord}
-            className="px-4 py-2 bg-primary/20 hover:bg-primary/30 text-primary-light rounded-xl transition-colors"
-          >
-            {t.interactive.addWord}
-          </button>
+        {/* Word selection by category */}
+        <div className="space-y-4">
+          {Object.entries(AVAILABLE_WORDS).map(([category, categoryWords]) => (
+            <div key={category}>
+              <div className="flex items-center gap-2 mb-2">
+                <span className={`w-3 h-3 rounded-full ${CATEGORY_COLORS[category]}`} />
+                <span className="text-xs text-muted uppercase tracking-wider">{category}</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {categoryWords.map((word) => {
+                  const isActive = activeWords.includes(word)
+                  const isSelected = selectedWord === word
+                  return (
+                    <motion.button
+                      key={word}
+                      onClick={() => toggleWord(word)}
+                      className={`px-3 py-1.5 rounded-lg border text-sm transition-all ${
+                        isActive
+                          ? isSelected
+                            ? 'bg-primary/30 border-primary/50 text-primary-light ring-2 ring-primary/30'
+                            : 'bg-surface-elevated border-border text-text'
+                          : 'bg-background border-border/50 text-muted opacity-50 hover:opacity-75'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      {word}
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+          ))}
         </div>
 
-        {/* Word chips */}
-        <div className="flex flex-wrap gap-2 mt-4">
-          {words.map((word) => (
-            <motion.button
-              key={word}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              onClick={() => setSelectedWord(selectedWord === word ? null : word)}
-              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
-                selectedWord === word
-                  ? 'bg-primary/20 border-primary/50 text-primary-light'
-                  : 'bg-surface-elevated border-border text-text hover:border-primary/30'
-              }`}
-            >
-              <span className={`w-2 h-2 rounded-full ${CATEGORY_COLORS[getCategory(word)]}`} />
-              <span className="font-medium">{word}</span>
-              <X
-                size={14}
-                className="opacity-50 hover:opacity-100"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  removeWord(word)
-                }}
-              />
-            </motion.button>
-          ))}
+        {/* Active words count */}
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-sm">
+          <span className="text-muted">{activeWords.length} {t.interactive.wordsActive}</span>
+          {selectedWord && (
+            <span className="text-primary-light">
+              {t.interactive.comparing}: <strong>{selectedWord}</strong>
+            </span>
+          )}
         </div>
       </div>
 
@@ -179,74 +186,162 @@ export function EmbeddingVisualizer() {
         </div>
 
         <div className="relative w-full h-80 bg-background rounded-xl border border-border overflow-hidden">
-          {/* Grid lines */}
-          <div className="absolute inset-0">
-            <div className="absolute left-1/2 top-0 bottom-0 w-px bg-border" />
-            <div className="absolute top-1/2 left-0 right-0 h-px bg-border" />
-          </div>
-
-          {/* Words */}
-          {words.map((word) => {
-            const [x, y] = getEmbedding(word)
-            const posX = 50 + x * 40 // Convert to percentage
-            const posY = 50 - y * 40 // Invert Y for screen coordinates
-            const isSelected = selectedWord === word
-
-            return (
-              <motion.div
-                key={word}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: 1,
-                  scale: isSelected ? 1.2 : 1,
-                  left: `${posX}%`,
-                  top: `${posY}%`,
-                }}
-                className="absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-                onClick={() => setSelectedWord(isSelected ? null : word)}
-              >
-                <div
-                  className={`relative w-4 h-4 rounded-full ${CATEGORY_COLORS[getCategory(word)]} ${
-                    isSelected ? 'ring-2 ring-white ring-offset-2 ring-offset-background' : ''
-                  }`}
-                >
-                  <motion.div
-                    className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-surface border border-border rounded text-xs font-medium text-text whitespace-nowrap"
-                    initial={{ opacity: 0, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                  >
-                    {word}
-                  </motion.div>
-                </div>
-              </motion.div>
-            )
-          })}
-
-          {/* Draw lines to selected word */}
-          {selectedWord && (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none">
-              {words.filter(w => w !== selectedWord).map((word) => {
-                const [x1, y1] = getEmbedding(selectedWord)
-                const [x2, y2] = getEmbedding(word)
-                const similarity = cosineSimilarity([x1, y1], [x2, y2])
-
+          <svg className="absolute inset-0 w-full h-full">
+            {/* Defs for arrow markers */}
+            <defs>
+              {words.map((word) => {
+                const category = getCategory(word)
+                const colorMap: Record<string, string> = {
+                  animals: '#10b981',
+                  royalty: '#a855f7',
+                  technology: '#06b6d4',
+                  food: '#f97316',
+                  emotions: '#ec4899',
+                  default: '#6b7280',
+                }
                 return (
-                  <motion.line
-                    key={word}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: Math.max(0.1, (similarity + 1) / 2) }}
-                    x1={`${50 + x1 * 40}%`}
-                    y1={`${50 - y1 * 40}%`}
-                    x2={`${50 + x2 * 40}%`}
-                    y2={`${50 - y2 * 40}%`}
-                    stroke={similarity > 0.5 ? '#22c55e' : similarity > 0 ? '#eab308' : '#ef4444'}
-                    strokeWidth={Math.max(1, Math.abs(similarity) * 3)}
-                    strokeDasharray={similarity < 0 ? '4 4' : undefined}
-                  />
+                  <marker
+                    key={`arrow-${word}`}
+                    id={`arrow-${word}`}
+                    markerWidth="10"
+                    markerHeight="10"
+                    refX="9"
+                    refY="3"
+                    orient="auto"
+                    markerUnits="strokeWidth"
+                  >
+                    <path d="M0,0 L0,6 L9,3 z" fill={colorMap[category]} />
+                  </marker>
                 )
               })}
-            </svg>
-          )}
+            </defs>
+
+            {/* Grid lines */}
+            <line x1="50%" y1="0" x2="50%" y2="100%" stroke="#333" strokeWidth="1" />
+            <line x1="0" y1="50%" x2="100%" y2="50%" stroke="#333" strokeWidth="1" />
+
+            {/* Axis labels */}
+            <text x="96%" y="52%" className="fill-muted text-[10px]">+x</text>
+            <text x="2%" y="52%" className="fill-muted text-[10px]">-x</text>
+            <text x="51%" y="4%" className="fill-muted text-[10px]">+y</text>
+            <text x="51%" y="98%" className="fill-muted text-[10px]">-y</text>
+
+            {/* Origin dot */}
+            <circle cx="50%" cy="50%" r="4" className="fill-gray-500" />
+            <text x="52%" y="54%" className="fill-muted text-[10px]">0</text>
+
+            {/* Similarity lines (when word selected) */}
+            {selectedWord && words.filter(w => w !== selectedWord).map((word) => {
+              const [x1, y1] = getEmbedding(selectedWord)
+              const [x2, y2] = getEmbedding(word)
+              const similarity = cosineSimilarity([x1, y1], [x2, y2])
+
+              return (
+                <motion.line
+                  key={`sim-${word}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: Math.max(0.1, (similarity + 1) / 2) * 0.5 }}
+                  x1={`${50 + x1 * 40}%`}
+                  y1={`${50 - y1 * 40}%`}
+                  x2={`${50 + x2 * 40}%`}
+                  y2={`${50 - y2 * 40}%`}
+                  stroke={similarity > 0.5 ? '#22c55e' : similarity > 0 ? '#eab308' : '#ef4444'}
+                  strokeWidth={Math.max(1, Math.abs(similarity) * 2)}
+                  strokeDasharray="4 4"
+                />
+              )
+            })}
+
+            {/* Vector arrows from origin */}
+            {words.map((word) => {
+              const [x, y] = getEmbedding(word)
+              const posX = 50 + x * 40
+              const posY = 50 - y * 40
+              const isSelected = selectedWord === word
+              const category = getCategory(word)
+              const colorMap: Record<string, string> = {
+                animals: '#10b981',
+                royalty: '#a855f7',
+                technology: '#06b6d4',
+                food: '#f97316',
+                emotions: '#ec4899',
+                default: '#6b7280',
+              }
+
+              return (
+                <g key={word}>
+                  {/* Vector line */}
+                  <motion.line
+                    initial={{ pathLength: 0, opacity: 0 }}
+                    animate={{
+                      pathLength: 1,
+                      opacity: isSelected ? 1 : 0.7,
+                      strokeWidth: isSelected ? 3 : 2
+                    }}
+                    transition={{ duration: 0.5 }}
+                    x1="50%"
+                    y1="50%"
+                    x2={`${posX}%`}
+                    y2={`${posY}%`}
+                    stroke={colorMap[category]}
+                    markerEnd={`url(#arrow-${word})`}
+                  />
+                </g>
+              )
+            })}
+
+            {/* Word labels at vector endpoints */}
+            {words.map((word) => {
+              const [x, y] = getEmbedding(word)
+              const posX = 50 + x * 40
+              const posY = 50 - y * 40
+              const isSelected = selectedWord === word
+
+              // Offset label based on quadrant
+              const labelOffsetX = x > 0 ? 12 : -12
+              const labelOffsetY = y > 0 ? -12 : 12
+              const textAnchor = x > 0 ? 'start' : 'end'
+
+              return (
+                <g key={`label-${word}`} className="cursor-pointer" onClick={() => setSelectedWord(isSelected ? null : word)}>
+                  {/* Endpoint dot */}
+                  <motion.circle
+                    cx={`${posX}%`}
+                    cy={`${posY}%`}
+                    r={isSelected ? 8 : 6}
+                    className={`${isSelected ? 'fill-white' : 'fill-current'}`}
+                    style={{ color: isSelected ? undefined : (getCategory(word) === 'animals' ? '#10b981' : getCategory(word) === 'royalty' ? '#a855f7' : getCategory(word) === 'technology' ? '#06b6d4' : getCategory(word) === 'food' ? '#f97316' : getCategory(word) === 'emotions' ? '#ec4899' : '#6b7280') }}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3 }}
+                  />
+                  {isSelected && (
+                    <motion.circle
+                      cx={`${posX}%`}
+                      cy={`${posY}%`}
+                      r="12"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="2"
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 0.5 }}
+                    />
+                  )}
+                  {/* Word label */}
+                  <text
+                    x={`${posX}%`}
+                    y={`${posY}%`}
+                    dx={labelOffsetX}
+                    dy={labelOffsetY}
+                    textAnchor={textAnchor}
+                    className={`text-xs font-medium ${isSelected ? 'fill-white' : 'fill-text'}`}
+                  >
+                    {word}
+                  </text>
+                </g>
+              )
+            })}
+          </svg>
         </div>
 
         {/* Legend */}

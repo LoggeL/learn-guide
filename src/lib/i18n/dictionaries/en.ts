@@ -739,6 +739,21 @@ export const en = {
     dimensionsDesc: 'Each dimension captures some aspect of meaning—though these dimensions aren\'t human-interpretable.',
     operations: 'Vector Operations',
     operationsDesc: 'Famous example: King - Man + Woman ≈ Queen. Relationships are encoded as directions in the space.',
+
+    // How embeddings are created
+    howCreated: 'How Embeddings Are Created',
+    howCreatedDesc: 'Embeddings come from the embedding layer—a learned lookup table that sits at the very beginning of a neural network.',
+    embeddingLayer: 'The Embedding Layer',
+    embeddingLayerDesc: 'When a token enters the model, its ID is used to look up a row in a large matrix. This row IS the embedding—a dense vector of learned weights.',
+    training: 'Learning Through Training',
+    trainingDesc: 'During training, the embedding weights are adjusted via backpropagation. Words that appear in similar contexts develop similar embeddings.',
+    inLLM: 'In LLMs',
+    inLLMDesc: 'The embedding layer converts each token ID to a vector. These vectors are then processed through transformer layers, combined with positional encodings to understand word order.',
+    dedicated: 'Dedicated Models',
+    dedicatedDesc: 'Models like text-embedding-3-small or all-MiniLM are trained specifically to produce embeddings useful for similarity search, with contrastive learning objectives.',
+    embeddingSize: 'Embedding Dimensions',
+    embeddingSizeDesc: 'Embedding size varies: GPT-2 uses 768d, GPT-4 uses 12,288d, dedicated embedding models often use 384-1536d. Larger isn\'t always better—it depends on the task.',
+
     useCases: 'Common Use Cases',
     search: 'Semantic Search',
     searchDesc: 'Find documents by meaning, not just keyword matching.',
@@ -1905,12 +1920,14 @@ export const en = {
     rareTokens: 'Rare words get split into subwords',
 
     // Embedding Visualizer
-    enterWords: 'Enter words to compare',
-    addWord: 'Add Word',
+    selectWords: 'Select words to visualize',
+    clickToToggle: 'Click words to add/remove from visualization',
+    wordsActive: 'words shown',
+    comparing: 'Selected',
     similarityScore: 'Similarity Score',
     dimensions: 'Dimensions',
     nearestNeighbors: 'Nearest Neighbors',
-    vectorSpace: 'Vector Space',
+    vectorSpace: 'Vector Space (2D Projection)',
 
     // RAG Pipeline Visualizer
     enterQuery: 'Enter your query',

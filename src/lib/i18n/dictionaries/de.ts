@@ -706,12 +706,14 @@ export const de: Dictionary = {
     rareTokens: 'Seltene Wörter werden in Teilwörter aufgeteilt',
 
     // Embedding Visualizer
-    enterWords: 'Wörter zum Vergleichen eingeben',
-    addWord: 'Wort hinzufügen',
+    selectWords: 'Wörter zur Visualisierung auswählen',
+    clickToToggle: 'Klicke auf Wörter zum Hinzufügen/Entfernen',
+    wordsActive: 'Wörter angezeigt',
+    comparing: 'Ausgewählt',
     similarityScore: 'Ähnlichkeits-Score',
     dimensions: 'Dimensionen',
     nearestNeighbors: 'Nächste Nachbarn',
-    vectorSpace: 'Vektorraum',
+    vectorSpace: 'Vektorraum (2D-Projektion)',
 
     // RAG Pipeline Visualizer
     enterQuery: 'Abfrage eingeben',
@@ -843,6 +845,21 @@ export const de: Dictionary = {
     dimensionsDesc: 'Jede Dimension erfasst einen Aspekt der Bedeutung – obwohl diese Dimensionen nicht für Menschen interpretierbar sind.',
     operations: 'Vektoroperationen',
     operationsDesc: 'Berühmtes Beispiel: König - Mann + Frau ≈ Königin. Beziehungen werden als Richtungen im Raum kodiert.',
+
+    // Wie Einbettungen erstellt werden
+    howCreated: 'Wie Einbettungen erstellt werden',
+    howCreatedDesc: 'Einbettungen stammen aus der Einbettungsschicht – einer gelernten Nachschlagetabelle ganz am Anfang eines neuronalen Netzwerks.',
+    embeddingLayer: 'Die Einbettungsschicht',
+    embeddingLayerDesc: 'Wenn ein Token in das Modell eintritt, wird seine ID verwendet, um eine Zeile in einer großen Matrix nachzuschlagen. Diese Zeile IST die Einbettung – ein dichter Vektor aus gelernten Gewichten.',
+    training: 'Lernen durch Training',
+    trainingDesc: 'Während des Trainings werden die Einbettungsgewichte durch Backpropagation angepasst. Wörter, die in ähnlichen Kontexten erscheinen, entwickeln ähnliche Einbettungen.',
+    inLLM: 'In LLMs',
+    inLLMDesc: 'Die Einbettungsschicht wandelt jede Token-ID in einen Vektor um. Diese Vektoren werden dann durch Transformer-Schichten verarbeitet und mit Positionskodierungen kombiniert, um die Wortstellung zu verstehen.',
+    dedicated: 'Dedizierte Modelle',
+    dedicatedDesc: 'Modelle wie text-embedding-3-small oder all-MiniLM werden speziell trainiert, um Einbettungen für Ähnlichkeitssuche zu erzeugen, mit kontrastiven Lernzielen.',
+    embeddingSize: 'Einbettungsdimensionen',
+    embeddingSizeDesc: 'Einbettungsgrößen variieren: GPT-2 nutzt 768d, GPT-4 nutzt 12.288d, dedizierte Einbettungsmodelle oft 384-1536d. Größer ist nicht immer besser – es hängt von der Aufgabe ab.',
+
     useCases: 'Häufige Anwendungsfälle',
     search: 'Semantische Suche',
     searchDesc: 'Dokumente nach Bedeutung finden, nicht nur durch Schlüsselwort-Matching.',
