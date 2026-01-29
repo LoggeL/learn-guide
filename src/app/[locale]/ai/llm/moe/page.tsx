@@ -2,6 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
+import { MoEVisualizer } from '@/components/interactive'
 
 export default function MoEPage() {
   const { t } = useTranslation()
@@ -92,6 +93,11 @@ export default function MoEPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Interactive Visualizer */}
+      <section>
+        <MoEVisualizer />
       </section>
 
       {/* Router/Gating Network */}
