@@ -2920,7 +2920,7 @@ export const en = {
     stat1Desc: "Better than most human developers, honestly",
     stat2Title: "Context Window",
     stat2Value: "200K tokens",
-    stat2Desc: "Enough for a decent conversation, at least",
+    stat2Desc: "Sounds impressive until you hit compression every 30 minutes",
     stat3Title: "Output Limit",
     stat3Value: "64K tokens",
     stat3Desc: "Writes entire codebases in one go",

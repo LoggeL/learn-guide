@@ -217,15 +217,6 @@ export default function Opus45Page() {
         </div>
       </section>
 
-      {/* Endless Chat */}
-      <section className="rounded-2xl bg-surface border border-cyan-500/30 p-6 md:p-8">
-        <div className="flex items-center gap-3 mb-4">
-          <Clock className="w-8 h-8 text-cyan-400" />
-          <h2 className="text-2xl font-bold font-heading text-cyan-400">{t.opus45.endlessChat}</h2>
-        </div>
-        <p className="text-text/90 leading-relaxed">{t.opus45.endlessChatDesc}</p>
-      </section>
-
       {/* Safety */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.opus45.safety}</h2>

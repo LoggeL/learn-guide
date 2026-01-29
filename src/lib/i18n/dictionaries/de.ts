@@ -2911,7 +2911,7 @@ export const de: Dictionary = {
     stat1Desc: 'Besser als die meisten menschlichen Entwickler, ehrlich gesagt',
     stat2Title: 'Kontextfenster',
     stat2Value: '200K Tokens',
-    stat2Desc: 'Reicht zumindest für ein ordentliches Gespräch',
+    stat2Desc: 'Klingt beeindruckend bis zur Kompression alle 30 Minuten',
     stat3Title: 'Ausgabelimit',
     stat3Value: '64K Tokens',
     stat3Desc: 'Schreibt ganze Codebases in einem Rutsch',
