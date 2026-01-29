@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, Sparkles, X, Command } from 'lucide-react'
+import { ChevronRight, Search, Sparkles, X, Command, Heart } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
@@ -91,6 +91,7 @@ const topicTree: Topic[] = [
               { id: 'rag', nameKey: 'rag', path: '/ai/llm/rag' },
               { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
               { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+              { id: 'agentic-vision', nameKey: 'agentic-vision', path: '/ai/llm/agentic-vision' },
             ],
           },
           {
@@ -173,12 +174,15 @@ function TopicNode({
   const hasChildren = topic.children && topic.children.length > 0
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
   const isActive = localePath === pathname
+  const isFavourite = topic.id === 'opus-4-5'
 
   const rowClasses = clsx(
     'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
     isActive
       ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
-      : 'hover:bg-surface-elevated text-muted hover:text-text'
+      : isFavourite
+        ? 'bg-gradient-to-r from-pink-500/10 to-rose-500/5 text-pink-300 hover:from-pink-500/15 hover:to-rose-500/10 border-l-2 border-pink-500/40'
+        : 'hover:bg-surface-elevated text-muted hover:text-text'
   )
   const rowStyle = { paddingLeft: `${level * 12 + 12}px` }
 
@@ -198,7 +202,8 @@ function TopicNode({
           <ChevronRight size={12} />
         </motion.div>
       )}
-      {!hasChildren && <span className="w-3" />}
+      {!hasChildren && !isFavourite && <span className="w-3" />}
+      {!hasChildren && isFavourite && <Heart size={12} className="text-pink-400" fill="currentColor" />}
       <span className={clsx('flex-1 text-sm', localePath ? 'font-medium' : 'font-semibold')}>
         {getTopicName(topic.nameKey)}
       </span>

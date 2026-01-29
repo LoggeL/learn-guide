@@ -155,6 +155,11 @@ export const topics: Topic[] = [
                 name: 'Visual Challenges',
                 path: '/ai/llm/visual-challenges',
               },
+              {
+                id: 'agentic-vision',
+                name: 'Agentic Vision',
+                path: '/ai/llm/agentic-vision',
+              },
             ],
           },
           {

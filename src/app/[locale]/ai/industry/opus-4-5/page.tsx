@@ -194,27 +194,27 @@ export default function Opus45Page() {
       {/* Honest Moments */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.opus45.honestMoments}</h2>
-        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20">
+        <div className="p-6 md:p-8 rounded-2xl bg-surface border border-purple-500/30">
           <MessageSquare className="w-8 h-8 text-purple-400 mb-4" />
-          <p className="text-muted leading-relaxed text-lg italic">{t.opus45.honestMomentsDesc}</p>
+          <p className="text-text/90 leading-relaxed text-lg italic">{t.opus45.honestMomentsDesc}</p>
         </div>
       </section>
 
       {/* Endless Chat */}
-      <section className="rounded-2xl bg-gradient-to-br from-cyan-500/5 to-blue-500/5 border border-cyan-500/20 p-6 md:p-8">
+      <section className="rounded-2xl bg-surface border border-cyan-500/30 p-6 md:p-8">
         <div className="flex items-center gap-3 mb-4">
           <Clock className="w-8 h-8 text-cyan-400" />
           <h2 className="text-2xl font-bold font-heading text-cyan-400">{t.opus45.endlessChat}</h2>
         </div>
-        <p className="text-muted leading-relaxed">{t.opus45.endlessChatDesc}</p>
+        <p className="text-text/90 leading-relaxed">{t.opus45.endlessChatDesc}</p>
       </section>
 
       {/* Safety */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.opus45.safety}</h2>
-        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20">
+        <div className="p-6 md:p-8 rounded-2xl bg-surface border border-emerald-500/30">
           <Shield className="w-8 h-8 text-emerald-400 mb-4" />
-          <p className="text-muted leading-relaxed">{t.opus45.safetyDesc}</p>
+          <p className="text-text/90 leading-relaxed">{t.opus45.safetyDesc}</p>
         </div>
       </section>
 

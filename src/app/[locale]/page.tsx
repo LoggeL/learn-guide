@@ -129,6 +129,7 @@ const topicData: TopicRoot[] = [
               { id: 'rag', path: '/ai/llm/rag' },
               { id: 'vision', path: '/ai/llm/vision' },
               { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
+              { id: 'agentic-vision', path: '/ai/llm/agentic-vision' },
             ],
           },
           {
