@@ -100,6 +100,7 @@ const topicTree: Topic[] = [
             children: [
               { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
               { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
+              { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization' },
             ],
           },
         ],

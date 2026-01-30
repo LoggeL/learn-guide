@@ -176,6 +176,11 @@ export const topics: Topic[] = [
                 name: 'Mixture of Experts',
                 path: '/ai/llm/moe',
               },
+              {
+                id: 'quantization',
+                name: 'Quantization',
+                path: '/ai/llm/quantization',
+              },
             ],
           },
         ],

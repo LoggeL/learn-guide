@@ -41,3 +41,6 @@ export { AgenticVisionDemo } from './AgenticVisionDemo'
 
 // Agent Skills components
 export { SkillComposerDemo } from './SkillComposerDemo'
+
+// Quantization components
+export { QuantizationVisualizer } from './QuantizationVisualizer'
