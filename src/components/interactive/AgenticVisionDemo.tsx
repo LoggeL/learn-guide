@@ -67,7 +67,7 @@ export function AgenticVisionDemo() {
           step: 'zooming',
           action: 'act',
           message: t.agenticVisionDemo.zoomMessage,
-          code: 'crop_region(x=320, y=180, w=160, h=80)\nupscale(factor=3)',
+          code: 'crop_region(x=480, y=780, w=220, h=72)\nupscale(factor=3)',
         }])
       }, 300))
 
@@ -230,7 +230,7 @@ export function AgenticVisionDemo() {
                 }}
                 transition={{ type: 'spring', stiffness: 100, damping: 20 }}
                 className="relative"
-                style={{ transformOrigin: '70% 60%' }}
+                style={{ transformOrigin: '74% 80%' }}
               >
                 <svg width="200" height="260" viewBox="0 0 200 260" className="drop-shadow-lg">
                   {/* Document background */}
@@ -263,9 +263,9 @@ export function AgenticVisionDemo() {
                 <AnimatePresence>
                   {currentStep === 'scanning' && (
                     <motion.div
-                      initial={{ top: '70%', opacity: 0 }}
+                      initial={{ top: '75%', opacity: 0 }}
                       animate={{
-                        top: `${70 + (scanProgress / 100) * 10}%`,
+                        top: `${75 + (scanProgress / 100) * 8}%`,
                         opacity: [0, 1, 1, 0],
                       }}
                       className="absolute left-1/2 -translate-x-1/2 w-16 h-0.5 bg-cyan-400 shadow-[0_0_10px_#22d3ee]"
@@ -285,10 +285,10 @@ export function AgenticVisionDemo() {
                       exit={{ opacity: 0 }}
                       className="absolute border-2 border-cyan-400 rounded pointer-events-none"
                       style={{
-                        top: '72%',
-                        left: '58%',
-                        width: '32%',
-                        height: '10%',
+                        top: '76%',
+                        left: '60%',
+                        width: '28%',
+                        height: '8%',
                         boxShadow: '0 0 20px rgba(34, 211, 238, 0.3)',
                       }}
                     />
@@ -386,8 +386,8 @@ export function AgenticVisionDemo() {
                 const steps: Step[] = ['thinking', 'zooming', 'rotating', 'scanning', 'complete']
                 const currentIndex = steps.indexOf(currentStep)
                 const stepIndex = i
-                const isActive = currentStep === step
-                const isComplete = stepIndex < currentIndex
+                const isActive = currentStep === step && currentStep !== 'complete'
+                const isComplete = stepIndex < currentIndex || (currentStep === 'complete' && step === 'complete')
 
                 return (
                   <div key={step} className="flex items-center">
