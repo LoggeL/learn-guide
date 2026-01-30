@@ -185,11 +185,11 @@ export function QuantizationVisualizer() {
 
             {/* Original distribution (faded) */}
             <motion.path
-              d={`M ${originalDistribution.map((val, i) => {
+              d={originalDistribution.map((val, i) => {
                 const x = padding + (i / (originalDistribution.length - 1)) * chartWidth
                 const y = height - padding - (val / 0.4) * chartHeight
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
-              }).join(' ')}`}
+              }).join(' ')}
               fill="none"
               stroke="#555"
               strokeWidth="2"
@@ -201,11 +201,11 @@ export function QuantizationVisualizer() {
 
             {/* Quantized distribution */}
             <motion.path
-              d={`M ${quantizedDistribution.map((val, i) => {
+              d={quantizedDistribution.map((val, i) => {
                 const x = padding + (i / (quantizedDistribution.length - 1)) * chartWidth
                 const y = height - padding - (val / 0.4) * chartHeight
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`
-              }).join(' ')}`}
+              }).join(' ')}
               fill="none"
               stroke={selectedLevel.color}
               strokeWidth="3"
