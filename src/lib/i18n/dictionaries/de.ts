@@ -17,8 +17,6 @@ export const de: Dictionary = {
     next: 'Weiter',
     projectBy: 'Ein Projekt von',
     blog: 'Blog',
-    timeSensitiveNotice: 'Diese Seite referenziert aktuelle Modelle und kann veralten.',
-    latestUpdates: 'Siehe den Blog für die neuesten Updates',
     proTip: 'Profi-Tipp: Drücke',
     toSearchTopics: 'um Themen zu suchen',
     interactiveAiLearning: 'Interaktives KI-Lernen',

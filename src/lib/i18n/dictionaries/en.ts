@@ -15,8 +15,6 @@ export const en = {
     next: 'Next',
     projectBy: 'A project by',
     blog: 'Blog',
-    timeSensitiveNotice: 'This page references current models and may become outdated.',
-    latestUpdates: 'See the blog for the latest updates',
     proTip: 'Pro tip: Press',
     toSearchTopics: 'to search topics',
     interactiveAiLearning: 'Interactive AI Learning',

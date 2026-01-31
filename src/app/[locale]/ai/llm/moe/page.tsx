@@ -3,7 +3,6 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { MoEVisualizer } from '@/components/interactive'
-import { BlogNotice } from '@/components/ui/BlogNotice'
 
 export default function MoEPage() {
   const { t } = useTranslation()
@@ -191,9 +190,6 @@ export default function MoEPage() {
           </table>
         </div>
         <p className="text-sm text-muted mt-4 text-center">{t.moe.scaleNote}</p>
-        <div className="mt-6">
-          <BlogNotice />
-        </div>
       </section>
 
       {/* Advantages */}
