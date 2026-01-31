@@ -280,6 +280,17 @@ export const en = {
     takeaway2: 'The quadratic complexity of attention limits context window size',
     takeaway3: 'Different attention heads learn to focus on different linguistic patterns',
     takeaway4: 'Attention visualization can help interpret model behavior',
+    // Quadratic problem
+    quadraticTitle: 'The Quadratic Problem',
+    quadraticDesc: 'Standard attention computes scores between every pair of tokens, resulting in O(n²) complexity. Doubling the context length quadruples memory usage and compute. This is why extending context windows is so challenging.',
+    // Optimizations
+    optimizationsTitle: 'Attention Optimizations',
+    optimizationsDesc: 'Several techniques have been developed to make attention more efficient, enabling longer contexts and faster inference.',
+    flashAttentionDesc: 'Rewrites the attention algorithm to be IO-aware, computing attention in blocks that fit in GPU fast memory (SRAM) rather than constantly reading/writing to slow HBM. The math is identical—just smarter memory access patterns.',
+    mqaDesc: 'Instead of separate Key and Value heads for each Query head, all Query heads share a single K and V. Reduces the KV cache size dramatically, speeding up inference at the cost of some quality.',
+    gqaDesc: 'A middle ground between standard Multi-Head Attention and MQA. Groups of Query heads share K/V heads. Maintains most of the quality while still reducing memory.',
+    slidingWindowDesc: 'Each token only attends to a fixed window of nearby tokens (e.g., 4096) rather than the full context. Information propagates through layers, so distant tokens can still influence each other indirectly.',
+    ringAttentionDesc: 'Distributes the sequence across multiple devices in a ring topology. Each device computes attention for its chunk while passing KV states around the ring, enabling context lengths in the millions.',
   },
 
   // Vision page

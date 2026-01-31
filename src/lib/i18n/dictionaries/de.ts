@@ -282,6 +282,17 @@ export const de: Dictionary = {
     takeaway2: 'Die quadratische Komplexität der Aufmerksamkeit begrenzt die Kontextfenstergröße',
     takeaway3: 'Verschiedene Aufmerksamkeitsköpfe lernen, sich auf verschiedene linguistische Muster zu konzentrieren',
     takeaway4: 'Aufmerksamkeitsvisualisierung kann helfen, das Modellverhalten zu interpretieren',
+    // Quadratic problem
+    quadraticTitle: 'Das Quadratische Problem',
+    quadraticDesc: 'Standard-Aufmerksamkeit berechnet Scores zwischen jedem Token-Paar, was zu O(n²) Komplexität führt. Eine Verdopplung der Kontextlänge vervierfacht Speicherverbrauch und Rechenaufwand. Deshalb ist die Erweiterung von Kontextfenstern so herausfordernd.',
+    // Optimizations
+    optimizationsTitle: 'Aufmerksamkeits-Optimierungen',
+    optimizationsDesc: 'Mehrere Techniken wurden entwickelt, um Aufmerksamkeit effizienter zu machen und längere Kontexte sowie schnellere Inferenz zu ermöglichen.',
+    flashAttentionDesc: 'Schreibt den Aufmerksamkeitsalgorithmus IO-bewusst um und berechnet Aufmerksamkeit in Blöcken, die in den schnellen GPU-Speicher (SRAM) passen, anstatt ständig aus dem langsamen HBM zu lesen/schreiben. Die Mathematik ist identisch – nur intelligentere Speicherzugriffsmuster.',
+    mqaDesc: 'Anstatt separate Key- und Value-Köpfe für jeden Query-Kopf zu haben, teilen sich alle Query-Köpfe ein einzelnes K und V. Reduziert die KV-Cache-Größe drastisch und beschleunigt die Inferenz auf Kosten etwas geringerer Qualität.',
+    gqaDesc: 'Ein Mittelweg zwischen Standard Multi-Head Attention und MQA. Gruppen von Query-Köpfen teilen sich K/V-Köpfe. Erhält den Großteil der Qualität bei reduziertem Speicherbedarf.',
+    slidingWindowDesc: 'Jedes Token beachtet nur ein festes Fenster nahegelegener Tokens (z.B. 4096) anstatt des gesamten Kontexts. Information propagiert durch die Schichten, sodass entfernte Tokens sich dennoch indirekt beeinflussen können.',
+    ringAttentionDesc: 'Verteilt die Sequenz über mehrere Geräte in einer Ring-Topologie. Jedes Gerät berechnet Aufmerksamkeit für seinen Abschnitt, während KV-Zustände im Ring weitergereicht werden, was Kontextlängen in Millionen ermöglicht.',
   },
 
   // Vision page
