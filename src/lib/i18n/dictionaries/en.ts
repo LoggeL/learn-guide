@@ -101,6 +101,7 @@ export const en = {
     'llm-training': 'LLM Training',
     'moe': 'Mixture of Experts',
     'quantization': 'Quantization',
+    'nested-learning': 'Nested Learning',
     // ML Fundamentals
     'ml-fundamentals': 'ML Fundamentals',
     'neural-networks': 'Neural Networks',
@@ -2418,6 +2419,80 @@ export const en = {
     takeaway4: 'GPTQ and AWQ are the leading techniques for LLM quantization, with GGUF as the standard format',
     takeaway5: 'Quantization democratizes AI by enabling frontier models on consumer hardware',
     takeaway6: 'For critical applications, prefer higher precision (INT8/FP16); for experimentation, Q4 is ideal',
+  },
+
+  // Nested Learning page
+  nestedLearning: {
+    title: 'Nested Learning',
+    description: 'A new paradigm that treats ML models as interconnected optimization problems, enabling continual learning without catastrophic forgetting.',
+
+    // Research disclaimer
+    researchDisclaimer: 'Research Preview',
+    researchDisclaimerDesc: 'Nested Learning was introduced at NeurIPS 2025 by Google Research. This is cutting-edge research that is not yet widely adopted in production systems.',
+
+    // What is Nested Learning
+    whatIs: 'What is Nested Learning?',
+    whatIsDesc: 'Nested Learning is a new paradigm that views machine learning models not as one continuous learning process, but as a system of interconnected, multi-level optimization problems that are optimized simultaneously at different speeds.',
+    whatIsDesc2: 'The key insight is that a model\'s architecture (layers, modules) and its optimization procedure (the learning algorithm) need not be separate concerns—they can be seen as different levels of a unified learning system.',
+
+    // The Problem
+    problemTitle: 'The Problem: Catastrophic Forgetting',
+    problemDesc: 'Current LLMs face a fundamental limitation: they cannot truly "learn" after training. When you try to teach a model new information, it tends to forget what it previously knew—a phenomenon called catastrophic forgetting.',
+    problemExample1: 'Training on Task B degrades performance on Task A',
+    problemExample2: 'Fine-tuning often "breaks" general capabilities',
+    problemExample3: 'Knowledge is frozen at pre-training time',
+
+    // Core Insight
+    insightTitle: 'Core Insight: Architecture = Optimization',
+    insightDesc: 'Traditional deep learning treats model architecture and the learning algorithm as separate. Nested Learning unifies them:',
+    insightPoint1: 'Each "layer" is itself a learning problem with its own context and update rule',
+    insightPoint2: 'Different components update at different timescales (like biological brains)',
+    insightPoint3: 'The hierarchy of update frequencies creates "levels" of learning',
+
+    // Nested Structure
+    structureTitle: 'The Nested Structure',
+    outerLoop: 'Outer Loop',
+    outerLoopDesc: 'Slow updates — consolidates long-term knowledge',
+    middleLoop: 'Middle Loop',
+    middleLoopDesc: 'Medium updates — learns recurring patterns',
+    innerLoop: 'Inner Loop',
+    innerLoopDesc: 'Fast updates — adapts to immediate context',
+    structureExplain: 'By separating learning into multiple timescales, each level can focus on different aspects of the task without interfering with others.',
+
+    // Comparison
+    comparisonTitle: 'Traditional vs Nested Learning',
+    traditionalTitle: 'Traditional Learning',
+    traditionalDesc: 'Single optimization loop. Learning Task B overwrites Task A knowledge. No timescale separation.',
+    nestedTitle: 'Nested Learning',
+    nestedDesc: 'Multi-level optimization. Each level preserves different types of knowledge. Natural continual learning.',
+
+    // Hope Architecture
+    hopeTitle: 'The Hope Architecture',
+    hopeDesc: 'Google Research introduced Hope, a proof-of-concept architecture that implements nested learning principles:',
+    hopeFeature1: 'Self-modifying learning module that can learn its own update rules',
+    hopeFeature2: 'Continuum Memory System (CMS) for extended context handling',
+    hopeFeature3: 'Unbounded in-context learning through self-referential optimization',
+    hopeResults: 'Results',
+    hopeResult1: 'Outperforms Transformers on language modeling (lower perplexity)',
+    hopeResult2: 'Better common-sense reasoning accuracy',
+    hopeResult3: 'Superior performance on long-context Needle-In-Haystack tasks',
+
+    // Why it matters
+    mattersTitle: 'Why This Matters',
+    mattersDesc: 'If validated at scale, Nested Learning could fundamentally change how we build and deploy AI systems:',
+    matter1Title: 'Continual Learning',
+    matter1Desc: 'Models that can learn from deployment without full retraining',
+    matter2Title: 'Efficiency',
+    matter2Desc: 'Potentially much more efficient than current architectures',
+    matter3Title: 'Biological Alignment',
+    matter3Desc: 'Closer to how biological brains actually learn and remember',
+
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'Nested Learning treats models as multi-level optimization problems, not single continuous processes',
+    takeaway2: 'It addresses catastrophic forgetting by separating learning into different timescales',
+    takeaway3: 'The Hope architecture shows promising results on language modeling and reasoning tasks',
+    takeaway4: 'This is active research (NeurIPS 2025)—not yet production-ready, but worth watching',
   },
 
   // Bias & Fairness page

@@ -45,7 +45,7 @@ export default function QuantizationPage() {
         { label: t.quantization.title },
       ]}
       prevTopic={{ label: t.topicNames['moe'], href: '/ai/llm/moe' }}
-      nextTopic={{ label: t.topicNames['neural-networks'], href: '/ai/ml-fundamentals/neural-networks' }}
+      nextTopic={{ label: t.topicNames['nested-learning'], href: '/ai/llm/nested-learning' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

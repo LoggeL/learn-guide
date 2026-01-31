@@ -139,6 +139,7 @@ const topicData: TopicRoot[] = [
               { id: 'llm-training', path: '/ai/llm/training' },
               { id: 'moe', path: '/ai/llm/moe' },
               { id: 'quantization', path: '/ai/llm/quantization' },
+              { id: 'nested-learning', path: '/ai/llm/nested-learning' },
             ],
           },
         ],

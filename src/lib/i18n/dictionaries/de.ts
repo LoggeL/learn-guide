@@ -103,6 +103,7 @@ export const de: Dictionary = {
     'llm-training': 'LLM-Training',
     'moe': 'Mixture of Experts',
     'quantization': 'Quantisierung',
+    'nested-learning': 'Verschachteltes Lernen',
     // ML Fundamentals
     'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',
@@ -2396,6 +2397,80 @@ export const de: Dictionary = {
     takeaway4: 'GPTQ und AWQ sind die führenden Techniken für LLM-Quantisierung, mit GGUF als Standardformat',
     takeaway5: 'Quantisierung demokratisiert KI, indem sie Frontier-Modelle auf Consumer-Hardware ermöglicht',
     takeaway6: 'Für kritische Anwendungen höhere Präzision (INT8/FP16) bevorzugen; für Experimente ist Q4 ideal',
+  },
+
+  // Nested Learning page
+  nestedLearning: {
+    title: 'Verschachteltes Lernen',
+    description: 'Ein neues Paradigma, das ML-Modelle als verbundene Optimierungsprobleme behandelt und kontinuierliches Lernen ohne katastrophales Vergessen ermöglicht.',
+
+    // Research disclaimer
+    researchDisclaimer: 'Forschungsvorschau',
+    researchDisclaimerDesc: 'Verschachteltes Lernen wurde auf der NeurIPS 2025 von Google Research vorgestellt. Dies ist Spitzenforschung, die noch nicht breit in Produktionssystemen eingesetzt wird.',
+
+    // What is Nested Learning
+    whatIs: 'Was ist Verschachteltes Lernen?',
+    whatIsDesc: 'Verschachteltes Lernen ist ein neues Paradigma, das maschinelle Lernmodelle nicht als einen kontinuierlichen Lernprozess betrachtet, sondern als ein System von verbundenen, mehrstufigen Optimierungsproblemen, die gleichzeitig mit unterschiedlichen Geschwindigkeiten optimiert werden.',
+    whatIsDesc2: 'Die zentrale Erkenntnis ist, dass die Architektur eines Modells (Schichten, Module) und sein Optimierungsverfahren (der Lernalgorithmus) nicht getrennte Belange sein müssen – sie können als verschiedene Ebenen eines einheitlichen Lernsystems betrachtet werden.',
+
+    // The Problem
+    problemTitle: 'Das Problem: Katastrophales Vergessen',
+    problemDesc: 'Aktuelle LLMs haben eine fundamentale Einschränkung: Sie können nach dem Training nicht wirklich "lernen". Wenn man versucht, einem Modell neue Informationen beizubringen, vergisst es tendenziell das zuvor Gelernte – ein Phänomen namens katastrophales Vergessen.',
+    problemExample1: 'Training auf Aufgabe B verschlechtert die Leistung bei Aufgabe A',
+    problemExample2: 'Fine-Tuning "zerstört" oft allgemeine Fähigkeiten',
+    problemExample3: 'Wissen ist zum Zeitpunkt des Pre-Trainings eingefroren',
+
+    // Core Insight
+    insightTitle: 'Kernerkenntnis: Architektur = Optimierung',
+    insightDesc: 'Traditionelles Deep Learning behandelt Modellarchitektur und Lernalgorithmus als getrennt. Verschachteltes Lernen vereint sie:',
+    insightPoint1: 'Jede "Schicht" ist selbst ein Lernproblem mit eigenem Kontext und eigener Aktualisierungsregel',
+    insightPoint2: 'Verschiedene Komponenten werden mit unterschiedlichen Zeitskalen aktualisiert (wie biologische Gehirne)',
+    insightPoint3: 'Die Hierarchie der Aktualisierungsfrequenzen erzeugt "Ebenen" des Lernens',
+
+    // Nested Structure
+    structureTitle: 'Die verschachtelte Struktur',
+    outerLoop: 'Äußere Schleife',
+    outerLoopDesc: 'Langsame Aktualisierungen — konsolidiert Langzeitwissen',
+    middleLoop: 'Mittlere Schleife',
+    middleLoopDesc: 'Mittlere Aktualisierungen — lernt wiederkehrende Muster',
+    innerLoop: 'Innere Schleife',
+    innerLoopDesc: 'Schnelle Aktualisierungen — passt sich an unmittelbaren Kontext an',
+    structureExplain: 'Durch die Trennung des Lernens in mehrere Zeitskalen kann sich jede Ebene auf verschiedene Aspekte der Aufgabe konzentrieren, ohne andere zu beeinträchtigen.',
+
+    // Comparison
+    comparisonTitle: 'Traditionell vs. Verschachteltes Lernen',
+    traditionalTitle: 'Traditionelles Lernen',
+    traditionalDesc: 'Einzelne Optimierungsschleife. Lernen von Aufgabe B überschreibt Wissen von Aufgabe A. Keine Zeitskalentrennung.',
+    nestedTitle: 'Verschachteltes Lernen',
+    nestedDesc: 'Mehrstufige Optimierung. Jede Ebene bewahrt verschiedene Arten von Wissen. Natürliches kontinuierliches Lernen.',
+
+    // Hope Architecture
+    hopeTitle: 'Die Hope-Architektur',
+    hopeDesc: 'Google Research stellte Hope vor, eine Proof-of-Concept-Architektur, die Prinzipien des verschachtelten Lernens implementiert:',
+    hopeFeature1: 'Selbstmodifizierendes Lernmodul, das seine eigenen Aktualisierungsregeln lernen kann',
+    hopeFeature2: 'Kontinuierliches Speichersystem (CMS) für erweiterte Kontextverarbeitung',
+    hopeFeature3: 'Unbegrenztes In-Context-Lernen durch selbstreferenzielle Optimierung',
+    hopeResults: 'Ergebnisse',
+    hopeResult1: 'Übertrifft Transformer bei Sprachmodellierung (niedrigere Perplexität)',
+    hopeResult2: 'Bessere Genauigkeit beim Common-Sense-Reasoning',
+    hopeResult3: 'Überlegene Leistung bei Langkontext-Needle-In-Haystack-Aufgaben',
+
+    // Why it matters
+    mattersTitle: 'Warum das wichtig ist',
+    mattersDesc: 'Wenn es sich in großem Maßstab bestätigt, könnte Verschachteltes Lernen grundlegend verändern, wie wir KI-Systeme bauen und einsetzen:',
+    matter1Title: 'Kontinuierliches Lernen',
+    matter1Desc: 'Modelle, die aus dem Einsatz lernen können, ohne vollständiges Neutraining',
+    matter2Title: 'Effizienz',
+    matter2Desc: 'Potenziell viel effizienter als aktuelle Architekturen',
+    matter3Title: 'Biologische Ausrichtung',
+    matter3Desc: 'Näher daran, wie biologische Gehirne tatsächlich lernen und sich erinnern',
+
+    // Key Takeaways
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'Verschachteltes Lernen behandelt Modelle als mehrstufige Optimierungsprobleme, nicht als einzelne kontinuierliche Prozesse',
+    takeaway2: 'Es adressiert katastrophales Vergessen durch Trennung des Lernens in verschiedene Zeitskalen',
+    takeaway3: 'Die Hope-Architektur zeigt vielversprechende Ergebnisse bei Sprachmodellierung und Reasoning-Aufgaben',
+    takeaway4: 'Dies ist aktive Forschung (NeurIPS 2025) – noch nicht produktionsreif, aber beobachtenswert',
   },
 
   bias: {

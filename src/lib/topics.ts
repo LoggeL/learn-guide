@@ -181,6 +181,11 @@ export const topics: Topic[] = [
                 name: 'Quantization',
                 path: '/ai/llm/quantization',
               },
+              {
+                id: 'nested-learning',
+                name: 'Nested Learning',
+                path: '/ai/llm/nested-learning',
+              },
             ],
           },
         ],
