@@ -3,6 +3,7 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { MoEVisualizer } from '@/components/interactive'
+import { BlogNotice } from '@/components/ui/BlogNotice'
 
 export default function MoEPage() {
   const { t } = useTranslation()
@@ -36,6 +37,7 @@ export default function MoEPage() {
         { label: t.moe.title },
       ]}
       prevTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
+      nextTopic={{ label: t.topicNames['quantization'], href: '/ai/llm/quantization' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -189,6 +191,9 @@ export default function MoEPage() {
           </table>
         </div>
         <p className="text-sm text-muted mt-4 text-center">{t.moe.scaleNote}</p>
+        <div className="mt-6">
+          <BlogNotice />
+        </div>
       </section>
 
       {/* Advantages */}

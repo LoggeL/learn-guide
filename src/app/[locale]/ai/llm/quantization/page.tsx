@@ -3,6 +3,7 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { QuantizationVisualizer } from '@/components/interactive'
+import { BlogNotice } from '@/components/ui/BlogNotice'
 
 export default function QuantizationPage() {
   const { t } = useTranslation()
@@ -311,6 +312,9 @@ export default function QuantizationPage() {
               </div>
             </div>
           </div>
+        </div>
+        <div className="mt-6">
+          <BlogNotice />
         </div>
       </section>
 
