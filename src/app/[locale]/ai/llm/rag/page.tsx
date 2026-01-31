@@ -1,7 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { RAGPipelineVisualizer } from '@/components/interactive'
+import { RAGPipelineVisualizer, RAGComparisonVisualizer, RAGCaseStudyVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function RAGPage() {
@@ -103,6 +103,38 @@ export default function RAGPage() {
           </div>
         </div>
         <RAGPipelineVisualizer />
+      </section>
+
+      {/* Traditional vs Agentic RAG Comparison */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-0.5">
+            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+              <span className="text-lg">⚖️</span>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.rag.comparisonTitle}</h2>
+            <p className="text-sm text-muted">{t.rag.comparisonDesc}</p>
+          </div>
+        </div>
+        <RAGComparisonVisualizer />
+      </section>
+
+      {/* Case Study: When Each Approach Wins */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-amber-500/20 p-0.5">
+            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+              <span className="text-lg">🎯</span>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.rag.caseStudyTitle}</h2>
+            <p className="text-sm text-muted">{t.rag.caseStudyDesc}</p>
+          </div>
+        </div>
+        <RAGCaseStudyVisualizer />
       </section>
 
       {/* Agentic RAG */}

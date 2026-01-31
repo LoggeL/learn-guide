@@ -13,6 +13,8 @@ export { PatchGridVisualizer } from './PatchGridVisualizer'
 export { TokenizerDemo } from './TokenizerDemo'
 export { EmbeddingVisualizer } from './EmbeddingVisualizer'
 export { RAGPipelineVisualizer } from './RAGPipelineVisualizer'
+export { RAGComparisonVisualizer } from './RAGComparisonVisualizer'
+export { RAGCaseStudyVisualizer } from './RAGCaseStudyVisualizer'
 
 // Phase 2: Agent components
 export { ToolSchemaBuilder } from './ToolSchemaBuilder'
