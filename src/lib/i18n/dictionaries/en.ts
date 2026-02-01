@@ -98,6 +98,7 @@ export const en = {
     'vision': 'Vision & Images',
     'visual-challenges': 'Visual Challenges',
     'agentic-vision': 'Agentic Vision',
+    'multimodality': 'Multimodality',
     'llm-training': 'LLM Training',
     'moe': 'Mixture of Experts',
     'quantization': 'Quantization',
@@ -519,6 +520,106 @@ export const en = {
     takeaway3: 'Code execution provides verifiable, grounded visual reasoning',
     takeaway4: 'Enabling agentic capabilities shows 5-10% improvement on vision benchmarks',
     takeaway5: 'This paradigm bridges the gap between how humans and AI systems investigate visual information',
+  },
+
+  // Multimodality page
+  multimodality: {
+    title: 'Multimodality',
+    description: 'How modern AI models process and understand multiple types of input including images, audio, video, and text.',
+    whatIs: 'What is Multimodality?',
+    whatIsDesc: 'Multimodality refers to the ability of AI models to process and understand multiple types of input simultaneously—text, images, audio, video, and more. Just as humans naturally integrate information from different senses to understand the world, multimodal AI systems combine different data types to build richer, more complete understanding.',
+
+    // Modality Types
+    modalityTypes: 'Types of Modalities',
+    modalityTypesDesc: 'Modern AI systems can process a variety of input and output modalities, each with unique characteristics and challenges.',
+    images: 'Images',
+    imagesDesc: 'Static visual information processed through vision transformers. Images are divided into patches, embedded, and processed alongside text tokens for tasks like image captioning, visual Q&A, and document analysis.',
+    audio: 'Audio',
+    audioDesc: 'Sound information including speech, music, and ambient audio. Audio is typically converted to spectrograms or waveform representations before being processed by neural networks for transcription, generation, or understanding.',
+    video: 'Video',
+    videoDesc: 'Temporal sequences of images with optional audio tracks. Video understanding requires reasoning about changes over time, tracking objects, and often synchronizing visual and audio information.',
+    other: 'Other Modalities',
+    otherDesc: 'Emerging modalities include 3D point clouds, sensor data, code, structured data, and even physical actions in robotics applications.',
+    text: 'Text',
+
+    // Interactive Demo
+    interactiveDemo: 'Interactive Demo',
+    interactiveDemoDesc: 'Explore how different modalities combine in multimodal AI',
+    selectModalities: 'Select Modalities to Combine',
+    fusionResult: 'Fusion Result',
+    selectToSee: 'Select modalities to see how they combine',
+    understanding: 'Single modality provides focused, specialized understanding.',
+    combinedUnderstanding: 'Multiple modalities enable richer, cross-referenced understanding that captures relationships between different types of information.',
+    imageShort: 'Visual patterns and objects',
+    audioShort: 'Speech, music, and sounds',
+    videoShort: 'Motion and temporal patterns',
+    textShort: 'Language and semantics',
+
+    // How It Works
+    howWorks: 'How Multimodal Models Work',
+    howWorksDesc: 'Multimodal models use specialized encoders for each modality, then align these representations in a shared embedding space where the model can reason across modalities.',
+    step1: 'Encode Each Modality',
+    step1Desc: 'Specialized encoders (vision transformers for images, audio encoders for sound) convert each input type into embedding vectors.',
+    step2: 'Align in Shared Space',
+    step2Desc: 'These embeddings are projected into a common representation space where text, images, and audio can be compared and combined.',
+    step3: 'Cross-Modal Reasoning',
+    step3Desc: 'The model uses attention mechanisms to relate information across modalities, enabling tasks like "describe what you see" or "answer based on the video."',
+
+    // Audio Processing
+    audioProcessing: 'Audio Processing',
+    audioProcessingDesc: 'Audio modalities enable AI systems to understand and generate speech, music, and other sounds.',
+    speechRecognition: 'Speech Recognition',
+    speechRecognitionDesc: 'Converting spoken language into text. Modern models like Whisper can transcribe in 100+ languages with high accuracy, even handling accents and background noise.',
+    textToSpeech: 'Text-to-Speech',
+    textToSpeechDesc: 'Generating natural-sounding speech from text. Advanced models can clone voices, express emotions, and maintain consistent speaking styles.',
+    musicUnderstanding: 'Music Understanding',
+    musicUnderstandingDesc: 'Analyzing musical content including genre, tempo, instruments, and mood. Some models can also generate music from text descriptions.',
+    audioGeneration: 'Audio Generation',
+    audioGenerationDesc: 'Creating sound effects, ambient audio, and music. Models can generate everything from realistic sound effects to full musical compositions.',
+
+    // Video Understanding
+    videoUnderstanding: 'Video Understanding',
+    videoUnderstandingDesc: 'Video presents unique challenges as it combines spatial information from images with temporal information about how things change over time.',
+    temporalReasoning: 'Temporal Reasoning',
+    temporalReasoningDesc: 'Understanding cause and effect, action sequences, and changes over time. Models must track objects and understand how frames relate to each other.',
+    frameSampling: 'Frame Sampling',
+    frameSamplingDesc: 'Videos contain far too many frames to process entirely. Models use intelligent sampling strategies to select key frames that capture important moments.',
+    audioVideoSync: 'Audio-Video Synchronization',
+    audioVideoSyncDesc: 'Aligning audio and visual information to understand events like someone speaking, music playing, or objects making sounds.',
+
+    // Cross-Modal Fusion
+    crossModal: 'Cross-Modal Fusion Strategies',
+    crossModalDesc: 'Different architectures for combining information from multiple modalities, each with trade-offs between efficiency and capability.',
+    earlyFusion: 'Early Fusion',
+    earlyFusionDesc: 'Combine modalities at the input level before any processing. Simple but may lose modality-specific patterns.',
+    lateFusion: 'Late Fusion',
+    lateFusionDesc: 'Process each modality separately with specialized encoders, then combine at the end. Preserves modality-specific features.',
+    crossAttention: 'Cross-Attention',
+    crossAttentionDesc: 'Use attention mechanisms to let each modality selectively attend to relevant parts of other modalities. The most flexible and powerful approach, used in models like Gemini and GPT-4.',
+
+    // Applications
+    applications: 'Real-World Applications',
+    applicationsDesc: 'Multimodal AI enables applications that were previously impossible with single-modality systems.',
+    app1: 'Video Captioning',
+    app1Desc: 'Generate detailed descriptions of video content for accessibility, search, and content moderation.',
+    app2: 'Voice Assistants',
+    app2Desc: 'Natural conversations that understand speech, respond vocally, and can reference images or screens.',
+    app3: 'Medical Imaging',
+    app3Desc: 'Analyze X-rays, MRIs, and other scans alongside patient records and doctor notes.',
+    app4: 'Robotics',
+    app4Desc: 'Process camera feeds, sensor data, and commands to navigate and manipulate the physical world.',
+    app5: 'Content Creation',
+    app5Desc: 'Generate images from text, add audio to videos, or create multimedia content from descriptions.',
+    app6: 'Accessibility',
+    app6Desc: 'Describe images for the visually impaired, transcribe audio for the deaf, and translate across modalities.',
+
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'Multimodal AI combines text, images, audio, and video to build richer understanding of the world',
+    takeaway2: 'Each modality requires specialized encoders that convert inputs into embedding vectors',
+    takeaway3: 'Cross-attention mechanisms allow models to relate information across different modalities',
+    takeaway4: 'Video understanding adds the dimension of time, requiring temporal reasoning and frame sampling',
+    takeaway5: 'Real-world applications span from accessibility tools to robotics and content creation',
   },
 
   // Agentic Vision Demo component

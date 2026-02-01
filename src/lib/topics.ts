@@ -160,6 +160,11 @@ export const topics: Topic[] = [
                 name: 'Agentic Vision',
                 path: '/ai/llm/agentic-vision',
               },
+              {
+                id: 'multimodality',
+                name: 'Multimodality',
+                path: '/ai/llm/multimodality',
+              },
             ],
           },
           {
