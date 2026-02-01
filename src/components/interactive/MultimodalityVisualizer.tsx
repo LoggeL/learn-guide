@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Image, Music, Video, MessageSquare, ArrowRight, Sparkles, Layers } from 'lucide-react'
+import { Image, Music, Video, MessageSquare, ArrowRight, Sparkles, Layers, Lightbulb } from 'lucide-react'
 
 interface Modality {
   id: string
@@ -19,6 +19,12 @@ const modalities: Modality[] = [
   { id: 'text', icon: MessageSquare, color: 'text-orange-400', bgColor: 'from-orange-500/20 to-red-500/20', borderColor: 'border-orange-500/30' },
 ]
 
+interface UseCase {
+  title: string
+  description: string
+  example: string
+}
+
 interface MultimodalityVisualizerProps {
   labels: {
     selectModalities: string
@@ -34,6 +40,54 @@ interface MultimodalityVisualizerProps {
     videoDesc: string
     textDesc: string
     combinedUnderstanding: string
+    useCases: string
+    examplePrompt: string
+    // Use case labels
+    useCaseImageText: string
+    useCaseImageTextDesc: string
+    useCaseImageTextExample: string
+    useCaseAudioText: string
+    useCaseAudioTextDesc: string
+    useCaseAudioTextExample: string
+    useCaseVideoText: string
+    useCaseVideoTextDesc: string
+    useCaseVideoTextExample: string
+    useCaseImageAudio: string
+    useCaseImageAudioDesc: string
+    useCaseImageAudioExample: string
+    useCaseVideoAudio: string
+    useCaseVideoAudioDesc: string
+    useCaseVideoAudioExample: string
+    useCaseImageVideo: string
+    useCaseImageVideoDesc: string
+    useCaseImageVideoExample: string
+    useCaseImageAudioText: string
+    useCaseImageAudioTextDesc: string
+    useCaseImageAudioTextExample: string
+    useCaseVideoAudioText: string
+    useCaseVideoAudioTextDesc: string
+    useCaseVideoAudioTextExample: string
+    useCaseImageVideoText: string
+    useCaseImageVideoTextDesc: string
+    useCaseImageVideoTextExample: string
+    useCaseImageAudioVideo: string
+    useCaseImageAudioVideoDesc: string
+    useCaseImageAudioVideoExample: string
+    useCaseAll: string
+    useCaseAllDesc: string
+    useCaseAllExample: string
+    useCaseImageOnly: string
+    useCaseImageOnlyDesc: string
+    useCaseImageOnlyExample: string
+    useCaseAudioOnly: string
+    useCaseAudioOnlyDesc: string
+    useCaseAudioOnlyExample: string
+    useCaseVideoOnly: string
+    useCaseVideoOnlyDesc: string
+    useCaseVideoOnlyExample: string
+    useCaseTextOnly: string
+    useCaseTextOnlyDesc: string
+    useCaseTextOnlyExample: string
   }
 }
 
@@ -66,6 +120,96 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
       case 'text': return labels.textDesc
       default: return ''
     }
+  }
+
+  const getUseCases = (): UseCase[] => {
+    const sorted = [...activeModalities].sort()
+    const key = sorted.join('+')
+
+    // Define use cases for each combination
+    const useCaseMap: Record<string, UseCase[]> = {
+      // Single modalities
+      'image': [{
+        title: labels.useCaseImageOnly,
+        description: labels.useCaseImageOnlyDesc,
+        example: labels.useCaseImageOnlyExample
+      }],
+      'audio': [{
+        title: labels.useCaseAudioOnly,
+        description: labels.useCaseAudioOnlyDesc,
+        example: labels.useCaseAudioOnlyExample
+      }],
+      'video': [{
+        title: labels.useCaseVideoOnly,
+        description: labels.useCaseVideoOnlyDesc,
+        example: labels.useCaseVideoOnlyExample
+      }],
+      'text': [{
+        title: labels.useCaseTextOnly,
+        description: labels.useCaseTextOnlyDesc,
+        example: labels.useCaseTextOnlyExample
+      }],
+      // Two modality combinations
+      'image+text': [{
+        title: labels.useCaseImageText,
+        description: labels.useCaseImageTextDesc,
+        example: labels.useCaseImageTextExample
+      }],
+      'audio+text': [{
+        title: labels.useCaseAudioText,
+        description: labels.useCaseAudioTextDesc,
+        example: labels.useCaseAudioTextExample
+      }],
+      'text+video': [{
+        title: labels.useCaseVideoText,
+        description: labels.useCaseVideoTextDesc,
+        example: labels.useCaseVideoTextExample
+      }],
+      'audio+image': [{
+        title: labels.useCaseImageAudio,
+        description: labels.useCaseImageAudioDesc,
+        example: labels.useCaseImageAudioExample
+      }],
+      'audio+video': [{
+        title: labels.useCaseVideoAudio,
+        description: labels.useCaseVideoAudioDesc,
+        example: labels.useCaseVideoAudioExample
+      }],
+      'image+video': [{
+        title: labels.useCaseImageVideo,
+        description: labels.useCaseImageVideoDesc,
+        example: labels.useCaseImageVideoExample
+      }],
+      // Three modality combinations
+      'audio+image+text': [{
+        title: labels.useCaseImageAudioText,
+        description: labels.useCaseImageAudioTextDesc,
+        example: labels.useCaseImageAudioTextExample
+      }],
+      'audio+text+video': [{
+        title: labels.useCaseVideoAudioText,
+        description: labels.useCaseVideoAudioTextDesc,
+        example: labels.useCaseVideoAudioTextExample
+      }],
+      'image+text+video': [{
+        title: labels.useCaseImageVideoText,
+        description: labels.useCaseImageVideoTextDesc,
+        example: labels.useCaseImageVideoTextExample
+      }],
+      'audio+image+video': [{
+        title: labels.useCaseImageAudioVideo,
+        description: labels.useCaseImageAudioVideoDesc,
+        example: labels.useCaseImageAudioVideoExample
+      }],
+      // All four modalities
+      'audio+image+text+video': [{
+        title: labels.useCaseAll,
+        description: labels.useCaseAllDesc,
+        example: labels.useCaseAllExample
+      }],
+    }
+
+    return useCaseMap[key] || []
   }
 
   return (
@@ -204,6 +348,42 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
           </motion.div>
         )}
       </div>
+
+      {/* Use Cases Section */}
+      {activeModalities.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8"
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Lightbulb className="w-5 h-5 text-yellow-400" />
+            <h4 className="font-bold text-text">{labels.useCases}</h4>
+          </div>
+          <AnimatePresence mode="popLayout">
+            <div className="grid gap-4">
+              {getUseCases().map((useCase, index) => (
+                <motion.div
+                  key={useCase.title}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-5 rounded-xl bg-gradient-to-br from-yellow-500/5 via-orange-500/5 to-red-500/5 border border-yellow-500/20"
+                >
+                  <h5 className="font-bold text-text mb-2">{useCase.title}</h5>
+                  <p className="text-sm text-muted mb-3">{useCase.description}</p>
+                  <div className="p-3 rounded-lg bg-background/50 border border-border">
+                    <span className="text-xs font-medium text-primary-light block mb-1">{labels.examplePrompt}</span>
+                    <p className="text-sm text-text italic">&ldquo;{useCase.example}&rdquo;</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   )
 }
