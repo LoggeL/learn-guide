@@ -92,6 +92,7 @@ const topicTree: Topic[] = [
               { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
               { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
               { id: 'agentic-vision', nameKey: 'agentic-vision', path: '/ai/llm/agentic-vision' },
+              { id: 'multimodality', nameKey: 'multimodality', path: '/ai/llm/multimodality' },
             ],
           },
           {

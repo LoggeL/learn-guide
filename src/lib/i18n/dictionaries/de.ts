@@ -100,6 +100,7 @@ export const de: Dictionary = {
     'vision': 'Bildverarbeitung',
     'visual-challenges': 'Visuelle Herausforderungen',
     'agentic-vision': 'Agentische Bildverarbeitung',
+    'multimodality': 'Multimodalität',
     'llm-training': 'LLM-Training',
     'moe': 'Mixture of Experts',
     'quantization': 'Quantisierung',
@@ -3105,6 +3106,106 @@ export const de: Dictionary = {
     takeaway3: 'Code-Ausführung bietet überprüfbares, fundiertes visuelles Reasoning',
     takeaway4: 'Aktivierung agentischer Fähigkeiten zeigt 5-10% Verbesserung bei Bild-Benchmarks',
     takeaway5: 'Dieses Paradigma überbrückt die Lücke zwischen menschlicher und KI-Untersuchung visueller Informationen',
+  },
+
+  // Multimodalität Seite
+  multimodality: {
+    title: 'Multimodalität',
+    description: 'Wie moderne KI-Modelle mehrere Eingabetypen verarbeiten und verstehen, einschließlich Bilder, Audio, Video und Text.',
+    whatIs: 'Was ist Multimodalität?',
+    whatIsDesc: 'Multimodalität bezeichnet die Fähigkeit von KI-Modellen, mehrere Eingabetypen gleichzeitig zu verarbeiten und zu verstehen – Text, Bilder, Audio, Video und mehr. So wie Menschen natürlich Informationen aus verschiedenen Sinnen integrieren, um die Welt zu verstehen, kombinieren multimodale KI-Systeme verschiedene Datentypen, um ein reichhaltigeres, vollständigeres Verständnis aufzubauen.',
+
+    // Modalitätstypen
+    modalityTypes: 'Typen von Modalitäten',
+    modalityTypesDesc: 'Moderne KI-Systeme können eine Vielzahl von Ein- und Ausgabemodalitäten verarbeiten, jede mit einzigartigen Eigenschaften und Herausforderungen.',
+    images: 'Bilder',
+    imagesDesc: 'Statische visuelle Informationen, die durch Vision Transformer verarbeitet werden. Bilder werden in Patches unterteilt, eingebettet und zusammen mit Text-Tokens für Aufgaben wie Bildbeschreibung, visuelle Q&A und Dokumentenanalyse verarbeitet.',
+    audio: 'Audio',
+    audioDesc: 'Klanginformationen einschließlich Sprache, Musik und Umgebungsgeräusche. Audio wird typischerweise in Spektrogramme oder Wellenformdarstellungen umgewandelt, bevor es von neuronalen Netzen für Transkription, Generierung oder Verständnis verarbeitet wird.',
+    video: 'Video',
+    videoDesc: 'Zeitliche Sequenzen von Bildern mit optionalen Audiospuren. Videoverständnis erfordert Reasoning über Veränderungen im Zeitverlauf, Objektverfolgung und oft Synchronisation von visuellen und akustischen Informationen.',
+    other: 'Andere Modalitäten',
+    otherDesc: 'Aufkommende Modalitäten umfassen 3D-Punktwolken, Sensordaten, Code, strukturierte Daten und sogar physische Aktionen in Robotikanwendungen.',
+    text: 'Text',
+
+    // Interaktive Demo
+    interactiveDemo: 'Interaktive Demo',
+    interactiveDemoDesc: 'Erkunde, wie verschiedene Modalitäten in multimodaler KI kombiniert werden',
+    selectModalities: 'Wähle Modalitäten zum Kombinieren',
+    fusionResult: 'Fusionsergebnis',
+    selectToSee: 'Wähle Modalitäten, um zu sehen, wie sie kombiniert werden',
+    understanding: 'Eine einzelne Modalität bietet fokussiertes, spezialisiertes Verständnis.',
+    combinedUnderstanding: 'Mehrere Modalitäten ermöglichen ein reichhaltigeres, querverweisbasiertes Verständnis, das Beziehungen zwischen verschiedenen Informationstypen erfasst.',
+    imageShort: 'Visuelle Muster und Objekte',
+    audioShort: 'Sprache, Musik und Klänge',
+    videoShort: 'Bewegung und zeitliche Muster',
+    textShort: 'Sprache und Semantik',
+
+    // Wie es funktioniert
+    howWorks: 'Wie multimodale Modelle funktionieren',
+    howWorksDesc: 'Multimodale Modelle verwenden spezialisierte Encoder für jede Modalität und richten diese Repräsentationen dann in einem gemeinsamen Einbettungsraum aus, in dem das Modell über Modalitäten hinweg schlussfolgern kann.',
+    step1: 'Jede Modalität kodieren',
+    step1Desc: 'Spezialisierte Encoder (Vision Transformer für Bilder, Audio-Encoder für Klang) wandeln jeden Eingabetyp in Einbettungsvektoren um.',
+    step2: 'Im gemeinsamen Raum ausrichten',
+    step2Desc: 'Diese Einbettungen werden in einen gemeinsamen Repräsentationsraum projiziert, in dem Text, Bilder und Audio verglichen und kombiniert werden können.',
+    step3: 'Cross-Modales Reasoning',
+    step3Desc: 'Das Modell verwendet Aufmerksamkeitsmechanismen, um Informationen über Modalitäten hinweg zu verknüpfen, was Aufgaben wie "Beschreibe, was du siehst" oder "Antworte basierend auf dem Video" ermöglicht.',
+
+    // Audioverarbeitung
+    audioProcessing: 'Audioverarbeitung',
+    audioProcessingDesc: 'Audio-Modalitäten ermöglichen KI-Systemen, Sprache, Musik und andere Klänge zu verstehen und zu generieren.',
+    speechRecognition: 'Spracherkennung',
+    speechRecognitionDesc: 'Umwandlung gesprochener Sprache in Text. Moderne Modelle wie Whisper können in über 100 Sprachen mit hoher Genauigkeit transkribieren, auch bei Akzenten und Hintergrundgeräuschen.',
+    textToSpeech: 'Text-to-Speech',
+    textToSpeechDesc: 'Generierung natürlich klingender Sprache aus Text. Fortgeschrittene Modelle können Stimmen klonen, Emotionen ausdrücken und konsistente Sprechstile beibehalten.',
+    musicUnderstanding: 'Musikverständnis',
+    musicUnderstandingDesc: 'Analyse musikalischer Inhalte einschließlich Genre, Tempo, Instrumente und Stimmung. Einige Modelle können auch Musik aus Textbeschreibungen generieren.',
+    audioGeneration: 'Audiogenerierung',
+    audioGenerationDesc: 'Erstellung von Soundeffekten, Umgebungsaudio und Musik. Modelle können alles von realistischen Soundeffekten bis hin zu vollständigen Musikkompositionen generieren.',
+
+    // Videoverständnis
+    videoUnderstanding: 'Videoverständnis',
+    videoUnderstandingDesc: 'Video stellt einzigartige Herausforderungen dar, da es räumliche Informationen aus Bildern mit zeitlichen Informationen über Veränderungen kombiniert.',
+    temporalReasoning: 'Zeitliches Reasoning',
+    temporalReasoningDesc: 'Verständnis von Ursache und Wirkung, Handlungssequenzen und Veränderungen über die Zeit. Modelle müssen Objekte verfolgen und verstehen, wie Frames zueinander in Beziehung stehen.',
+    frameSampling: 'Frame-Sampling',
+    frameSamplingDesc: 'Videos enthalten viel zu viele Frames, um sie vollständig zu verarbeiten. Modelle verwenden intelligente Sampling-Strategien, um Schlüsselframes auszuwählen, die wichtige Momente erfassen.',
+    audioVideoSync: 'Audio-Video-Synchronisation',
+    audioVideoSyncDesc: 'Ausrichtung von Audio- und visuellen Informationen, um Ereignisse wie sprechende Personen, spielende Musik oder klingende Objekte zu verstehen.',
+
+    // Cross-Modale Fusion
+    crossModal: 'Cross-Modale Fusionsstrategien',
+    crossModalDesc: 'Verschiedene Architekturen zur Kombination von Informationen aus mehreren Modalitäten, jeweils mit Kompromissen zwischen Effizienz und Fähigkeit.',
+    earlyFusion: 'Frühe Fusion',
+    earlyFusionDesc: 'Modalitäten auf Eingabeebene vor jeder Verarbeitung kombinieren. Einfach, aber kann modalitätsspezifische Muster verlieren.',
+    lateFusion: 'Späte Fusion',
+    lateFusionDesc: 'Jede Modalität separat mit spezialisierten Encodern verarbeiten, dann am Ende kombinieren. Bewahrt modalitätsspezifische Merkmale.',
+    crossAttention: 'Cross-Attention',
+    crossAttentionDesc: 'Aufmerksamkeitsmechanismen verwenden, um jeder Modalität zu ermöglichen, selektiv auf relevante Teile anderer Modalitäten zu achten. Der flexibelste und leistungsstärkste Ansatz, verwendet in Modellen wie Gemini und GPT-4.',
+
+    // Anwendungen
+    applications: 'Reale Anwendungen',
+    applicationsDesc: 'Multimodale KI ermöglicht Anwendungen, die mit Einzelmodalitätssystemen zuvor unmöglich waren.',
+    app1: 'Videobeschriftung',
+    app1Desc: 'Detaillierte Beschreibungen von Videoinhalten für Barrierefreiheit, Suche und Inhaltsmoderation generieren.',
+    app2: 'Sprachassistenten',
+    app2Desc: 'Natürliche Gespräche, die Sprache verstehen, stimmlich antworten und auf Bilder oder Bildschirme Bezug nehmen können.',
+    app3: 'Medizinische Bildgebung',
+    app3Desc: 'Analyse von Röntgenaufnahmen, MRTs und anderen Scans zusammen mit Patientenakten und Arztnotizen.',
+    app4: 'Robotik',
+    app4Desc: 'Verarbeitung von Kamerabildern, Sensordaten und Befehlen zur Navigation und Manipulation der physischen Welt.',
+    app5: 'Content-Erstellung',
+    app5Desc: 'Bilder aus Text generieren, Audio zu Videos hinzufügen oder multimediale Inhalte aus Beschreibungen erstellen.',
+    app6: 'Barrierefreiheit',
+    app6Desc: 'Bilder für Sehbehinderte beschreiben, Audio für Gehörlose transkribieren und zwischen Modalitäten übersetzen.',
+
+    // Kernerkenntnisse
+    keyTakeaways: 'Kernerkenntnisse',
+    takeaway1: 'Multimodale KI kombiniert Text, Bilder, Audio und Video, um ein reichhaltigeres Verständnis der Welt aufzubauen',
+    takeaway2: 'Jede Modalität erfordert spezialisierte Encoder, die Eingaben in Einbettungsvektoren umwandeln',
+    takeaway3: 'Cross-Attention-Mechanismen ermöglichen Modellen, Informationen über verschiedene Modalitäten hinweg zu verknüpfen',
+    takeaway4: 'Videoverständnis fügt die Zeitdimension hinzu und erfordert zeitliches Reasoning und Frame-Sampling',
+    takeaway5: 'Reale Anwendungen reichen von Barrierefreiheitstools bis hin zu Robotik und Content-Erstellung',
   },
 
   // Agentic Vision Demo Komponente

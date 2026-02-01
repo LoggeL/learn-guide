@@ -46,3 +46,6 @@ export { SkillComposerDemo } from './SkillComposerDemo'
 
 // Quantization components
 export { QuantizationVisualizer } from './QuantizationVisualizer'
+
+// Multimodality components
+export { MultimodalityVisualizer } from './MultimodalityVisualizer'
