@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronRight, Search, Sparkles, X, Command, Heart } from 'lucide-react'
 import clsx from 'clsx'
@@ -261,8 +261,10 @@ function TopicNode({
 export function Sidebar() {
   const { t } = useTranslation()
   const { locale } = useLocale()
+  const router = useRouter()
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
 
@@ -307,6 +309,11 @@ export function Sidebar() {
       return name.includes(q) || topic.id.includes(q)
     })
   }, [searchQuery, allTopics, t])
+
+  // Reset selected index when search results change
+  useEffect(() => {
+    setSelectedIndex(0)
+  }, [searchResults])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -522,6 +529,23 @@ export function Sidebar() {
                   placeholder={t.common.searchTopics}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'ArrowDown') {
+                      e.preventDefault()
+                      setSelectedIndex((i) => Math.min(i + 1, searchResults.length - 1))
+                    } else if (e.key === 'ArrowUp') {
+                      e.preventDefault()
+                      setSelectedIndex((i) => Math.max(i - 1, 0))
+                    } else if (e.key === 'Enter' && searchResults.length > 0) {
+                      e.preventDefault()
+                      const topic = searchResults[selectedIndex]
+                      if (topic?.path) {
+                        router.push(`/${locale}${topic.path}`)
+                        setSearchOpen(false)
+                        setSearchQuery('')
+                      }
+                    }
+                  }}
                   className="flex-1 bg-transparent outline-none text-text text-lg placeholder:text-subtle"
                 />
                 <button
@@ -545,7 +569,7 @@ export function Sidebar() {
                     <p className="text-muted text-sm">{t.common.noResults} "{searchQuery}"</p>
                   </div>
                 ) : (
-                  searchResults.map((topic) => (
+                  searchResults.map((topic, index) => (
                     <Link
                       key={topic.id}
                       href={`/${locale}${topic.path}`}
@@ -553,7 +577,11 @@ export function Sidebar() {
                         setSearchOpen(false)
                         setSearchQuery('')
                       }}
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-surface-elevated text-text transition-colors"
+                      onMouseEnter={() => setSelectedIndex(index)}
+                      className={clsx(
+                        "flex items-center gap-3 px-4 py-3 rounded-xl text-text transition-colors",
+                        index === selectedIndex ? "bg-surface-elevated" : "hover:bg-surface-elevated"
+                      )}
                     >
                       <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
                         <Sparkles size={14} className="text-primary-light" />
