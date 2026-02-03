@@ -105,6 +105,7 @@ export const de: Dictionary = {
     'moe': 'Mixture of Experts',
     'quantization': 'Quantisierung',
     'nested-learning': 'Verschachteltes Lernen',
+    'distillation': 'Destillation',
     // ML Fundamentals
     'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',
@@ -2587,6 +2588,111 @@ export const de: Dictionary = {
     takeaway2: 'Es adressiert katastrophales Vergessen durch Trennung des Lernens in verschiedene Zeitskalen',
     takeaway3: 'Die Hope-Architektur zeigt vielversprechende Ergebnisse bei Sprachmodellierung und Reasoning-Aufgaben',
     takeaway4: 'Dies ist aktive Forschung (NeurIPS 2025) – noch nicht produktionsreif, aber beobachtenswert',
+  },
+
+  distillation: {
+    title: 'Destillation',
+    description: 'Wie kleinere Modelle von gr\u00F6\u00DFeren lernen, indem sie auf Wahrscheinlichkeitsverteilungen statt auf einzelne Tokens trainiert werden, nach dem Lehrer-Sch\u00FCler-Paradigma.',
+
+    // What is Distillation
+    whatIs: 'Was ist Wissensdestillation?',
+    whatIsDesc: 'Wissensdestillation ist eine Modellkomprimierungstechnik, bei der ein kleineres \u201ESch\u00FCler\u201C-Modell trainiert wird, das Verhalten eines gr\u00F6\u00DFeren, leistungsf\u00E4higeren \u201ELehrer\u201C-Modells nachzubilden. Anstatt den Sch\u00FCler von Grund auf mit Rohdaten zu trainieren, lernt er aus den Ausgabe-Wahrscheinlichkeitsverteilungen des Lehrers \u2013 und erfasst nicht nur, was der Lehrer vorhersagt, sondern wie sicher er \u00FCber alle m\u00F6glichen Vorhersagen hinweg ist.',
+    analogy: '\u201EStell dir einen Meisterkoch vor, der einem Lehrling beibringt \u2013 nicht nur die Rezepte, sondern all die subtilen Intuitionen: warum dieses Gew\u00FCrz fast passt, warum diese Technik nah dran, aber nicht ganz richtig ist.\u201C',
+    analogyDesc: 'Destillation \u00FCbertr\u00E4gt diese nuancierten Einsch\u00E4tzungen, indem die vollst\u00E4ndige Wahrscheinlichkeitsverteilung geteilt wird, nicht nur die endg\u00FCltige Antwort.',
+
+    // Teacher-Student
+    teacherStudentTitle: 'Das Lehrer-Sch\u00FCler-Paradigma',
+    teacherStudentDesc: 'Destillation folgt einem einfachen zweistufigen Prozess: Zuerst wird ein gro\u00DFes, leistungsf\u00E4higes Lehrer-Modell trainiert, dann werden seine Ausgaben verwendet, um einen kleineren, effizienten Sch\u00FCler zu trainieren.',
+    teacherTitle: 'Lehrer-Modell',
+    teacherDesc: 'Ein gro\u00DFes, hochkapazit\u00E4res Modell (z.B. GPT-4, Claude Opus), trainiert auf massiven Datens\u00E4tzen. Es hat reichhaltige Repr\u00E4sentationen und nuancierte Entscheidungsgrenzen gelernt. Seine Rolle ist es, weiche Wahrscheinlichkeitsverteilungen zu erzeugen, die sein Wissen kodieren.',
+    studentTitle: 'Sch\u00FCler-Modell',
+    studentDesc: 'Ein kleineres, effizienteres Modell, das f\u00FCr den Einsatz konzipiert ist. Es lernt, indem es die Wahrscheinlichkeitsverteilungen des Lehrers abgleicht, anstatt nur die Ground-Truth-Labels. Dies erm\u00F6glicht es, das \u201Edunkle Wissen\u201C des Lehrers zu erfassen \u2013 die Beziehungen zwischen Klassen, die harte Labels verwerfen.',
+    flowTeacher: 'Lehrer-Modell',
+    flowSoftDistribution: 'Weiche Wahrscheinlichkeitsverteilung',
+    flowStudent: 'Sch\u00FCler-Modell lernt',
+
+    // Key Insight
+    keyInsightTitle: 'Die Kernidee: Verteilungen, nicht Tokens',
+    keyInsightSubtitle: 'Warum Verteilungen Destillation so effektiv machen',
+    keyInsightDesc: 'Der fundamentale Grund, warum Destillation so gut funktioniert, ist, dass wir auf vollst\u00E4ndige Wahrscheinlichkeitsverteilungen trainieren, nicht auf einzelne Tokens oder harte Labels. Wenn ein Lehrer-Modell \u201EDie Hauptstadt von Frankreich ist ___\u201C verarbeitet, gibt es nicht einfach \u201EParis\u201C aus \u2013 es erzeugt eine Wahrscheinlichkeitsverteilung \u00FCber sein gesamtes Vokabular.',
+    keyInsightDesc2: 'Diese Verteilung enth\u00E4lt reichhaltige Informationen: \u201EParis\u201C erh\u00E4lt 92%, aber \u201ELyon\u201C erh\u00E4lt 3%, \u201EMarseille\u201C erh\u00E4lt 1,5% und \u201EBerlin\u201C erh\u00E4lt 0,8%. Diese \u201Efalschen\u201C Antworten kodieren das Verst\u00E4ndnis des Lehrers f\u00FCr Geografie, \u00C4hnlichkeit zwischen St\u00E4dten und konzeptuelle Beziehungen. Ein hartes Label von nur \u201EParis\u201C wirft all dieses Wissen weg.',
+
+    // Hard vs Soft Labels
+    hardLabelTitle: 'Harte Labels (Traditionelles Training)',
+    hardLabelExample: '\u201EParis\u201C = 1,0, alles andere = 0,0',
+    hardLabelExplain: 'Bin\u00E4r: entweder richtig oder falsch. Keine Nuancen. Das Modell lernt nichts \u00FCber die Beziehungen zwischen Ausgaben.',
+    softLabelTitle: 'Weiche Labels (Destillation)',
+    softLabelExample: '\u201EParis\u201C = 0,92, \u201ELyon\u201C = 0,03, \u201EMarseille\u201C = 0,015, \u201EBerlin\u201C = 0,008, ...',
+    softLabelExplain: 'Reichhaltiges Signal: Jede Wahrscheinlichkeit kodiert eine Beziehung. Der Sch\u00FCler lernt, dass Lyon Paris \u00E4hnlicher ist als Berlin.',
+
+    // Visualizer
+    vizTitle: 'Temperatur & Verteilungsgl\u00E4ttung',
+    vizToken1: 'Paris',
+    vizToken2: 'Lyon',
+    vizToken3: 'Mars.',
+    vizToken4: 'Berlin',
+    vizToken5: 'Rom',
+    hardLabels: 'Harte Verteilung',
+    hardLabelsDesc: 'Bei T=1 \u00FCberw\u00E4ltigt der dominante Token die anderen. Wenig Information im Schwanz.',
+    softLabels: 'Weiche Verteilung',
+    softLabelsDesc: 'H\u00F6here Temperatur enth\u00FCllt Beziehungen zwischen Tokens, die harte Labels verbergen.',
+    distillTemp: 'Destillationstemperatur',
+    tempSharp: 'scharf',
+    tempSmooth: 'glatt',
+    tempExplainLow: 'Niedrige Temperatur: Die Verteilung ist noch spitz. Der Sch\u00FCler lernt haupts\u00E4chlich, was die Top-Vorhersage ist.',
+    tempExplainMid: 'Mittlere Temperatur: Die Verteilung ist gegl\u00E4ttet und enth\u00FCllt bedeutungsvolle Beziehungen zwischen Tokens. Dies ist der optimale Bereich f\u00FCr Destillation.',
+    tempExplainHigh: 'Hohe Temperatur: Die Verteilung n\u00E4hert sich der Gleichverteilung. Zu viel Gl\u00E4ttung kann das Signal, das der Lehrer gelernt hat, auswaschen.',
+
+    // Why it Works
+    whyWorks: 'Warum Destillation funktioniert',
+    whyWorksDesc: 'Destillation ist bemerkenswert effektiv, weil weiche Labels ein viel reichhaltigeres Trainingssignal liefern als harte Labels:',
+    benefit1Title: 'Reichhaltigeres Gradientensignal',
+    benefit1Desc: 'Jedes Trainingsbeispiel liefert Informationen \u00FCber alle Ausgabeklassen gleichzeitig, nicht nur \u00FCber die korrekte. Das bedeutet, dass jedes Beispiel dem Sch\u00FCler effektiv Tausende von Beziehungen gleichzeitig beibringt.',
+    benefit2Title: '\u00DCbertragung von dunklem Wissen',
+    benefit2Desc: 'Die \u201EFehler\u201C des Lehrers sind informativ. Wenn der Lehrer 3% Wahrscheinlichkeit f\u00FCr \u201ELyon\u201C bei einer Frage \u00FCber Frankreichs Hauptstadt zuweist, sagt er dem Sch\u00FCler, dass Lyon f\u00FCr Frankreich relevant ist \u2013 Wissen, das harte Labels komplett verwerfen.',
+    benefit3Title: 'Bessere Generalisierung',
+    benefit3Desc: 'Sch\u00FCler, die \u00FCber Destillation trainiert werden, generalisieren oft besser als Modelle, die nur auf harten Labels trainiert wurden, selbst wenn der Sch\u00FCler viel weniger Parameter hat. Die weichen Labels wirken als leistungsstarker Regularisierer.',
+    benefit4Title: 'Stichprobeneffizienz',
+    benefit4Desc: 'Da jedes Trainingsbeispiel mehr Information tr\u00E4gt (eine vollst\u00E4ndige Verteilung vs. ein einzelnes Label), ben\u00F6tigt der Sch\u00FCler weniger Beispiele, um effektiv zu lernen. Dies reduziert Trainingszeit und Datenanforderungen.',
+
+    // Loss Function
+    lossTitle: 'Die Destillationsverlustfunktion',
+    lossDesc: 'Das Trainingsziel kombiniert zwei Verlustfunktionen: die Standard-Kreuzentropie mit Ground-Truth-Labels und die KL-Divergenz zwischen Lehrer- und Sch\u00FClerverteilungen:',
+    lossCE: 'Kreuzentropie mit Ground Truth: stellt sicher, dass der Sch\u00FCler weiterhin aus echten Labels lernt',
+    lossKL: 'KL-Divergenz: misst, wie unterschiedlich die Verteilung des Sch\u00FClers von der des Lehrers ist. Der Sch\u00FCler wird f\u00FCr Abweichungen von den weichen Wahrscheinlichkeiten des Lehrers bestraft.',
+    lossT: 'Temperatur: steuert, wie weich/glatt die Verteilungen sind. H\u00F6here T enth\u00FCllt mehr Beziehungen zwischen Klassen.',
+    lossAlpha: 'Alpha: balanciert die beiden Verlustterme. Typische Werte liegen zwischen 0,1 und 0,9, wobei h\u00F6here Werte mehr Gewicht auf die \u00DCbereinstimmung mit dem Lehrer legen.',
+    lossInsight: 'Der T\u00B2-Faktor kompensiert den Skalierungseffekt der Temperatur auf Gradienten und stellt sicher, dass Destillationsverlust und Kreuzentropieverlust unabh\u00E4ngig von der Temperaturwahl ausgewogen bleiben.',
+
+    // Types
+    typesTitle: 'Arten der Destillation',
+    typesDesc: 'Verschiedene Ans\u00E4tze, je nachdem welches Wissen vom Lehrer zum Sch\u00FCler \u00FCbertragen wird:',
+    typeResponseTitle: 'Antwortbasiert',
+    typeResponseDesc: 'Der Sch\u00FCler ahmt die endg\u00FCltige Ausgabeverteilung des Lehrers nach. Dies ist die urspr\u00FCngliche und h\u00E4ufigste Form, eingef\u00FChrt von Hinton et al. (2015). Einfach zu implementieren und effektiv f\u00FCr Klassifikation und Sprachmodellierung.',
+    typeFeatureTitle: 'Merkmalsbasiert',
+    typeFeatureDesc: 'Der Sch\u00FCler lernt, Zwischendarstellungen (versteckte Zust\u00E4nde) des Lehrers abzugleichen, nicht nur die Ausgabe. Erfasst tieferes strukturelles Wissen. Verwendet in Modellen wie DistilBERT und TinyBERT.',
+    typeRelationTitle: 'Beziehungsbasiert',
+    typeRelationDesc: '\u00DCbertr\u00E4gt die Beziehungen zwischen verschiedenen Beispielen oder Schichten, anstatt einzelne Ausgaben. Bewahrt, wie der Lehrer seine internen Repr\u00E4sentationen strukturiert und wie er verschiedene Eingaben zueinander in Beziehung setzt.',
+    typeOnlineTitle: 'Online-Destillation',
+    typeOnlineDesc: 'Lehrer und Sch\u00FCler trainieren gleichzeitig und lernen voneinander. Kein vortrainierter Lehrer erforderlich. N\u00FCtzlich, wenn man es sich nicht leisten kann, zuerst ein massives Lehrer-Modell zu trainieren.',
+
+    // Examples
+    examplesTitle: 'Praxisbeispiele',
+    examplesDesc: 'Destillation wird umfangreich in produktiven KI-Systemen eingesetzt:',
+    example1Title: 'DistilBERT (Hugging Face)',
+    example1Desc: 'Eine destillierte Version von BERT, die 60% kleiner, 60% schneller ist und 97% von BERTs Sprachverst\u00E4ndnis beh\u00E4lt. Trainiert mit einer Kombination aus antwort- und merkmalsbasierter Destillation. Eines der am weitesten verbreiteten destillierten Modelle.',
+    example2Title: 'OpenAI GPT-4 zu GPT-4o-mini',
+    example2Desc: 'GPT-4o-mini wird weithin als destilliert aus gr\u00F6\u00DFeren GPT-4-Klasse-Modellen angesehen. Es bietet deutlich geringere Latenz und Kosten bei wettbewerbsf\u00E4higer Leistung bei den meisten Aufgaben. Dieses Muster \u2013 ein gro\u00DFes Frontier-Modell destilliert in eine kleinere, schnellere Variante \u2013 ist zur Standardpraxis geworden.',
+    example3Title: 'DeepSeek R1 Destillation',
+    example3Desc: 'DeepSeek ver\u00F6ffentlichte destillierte Versionen ihres R1-Reasoning-Modells in Qwen- und Llama-Basismodelle. Diese destillierten Varianten bringen fortgeschrittene Reasoning-F\u00E4higkeiten in viel kleinere, besser einsetzbare Modelle und zeigen, dass selbst komplexes Chain-of-Thought-Reasoning effektiv destilliert werden kann.',
+
+    // Key Takeaways
+    keyTakeaways: 'Wichtige Erkenntnisse',
+    takeaway1: 'Wissensdestillation trainiert kleinere Modelle, gr\u00F6\u00DFere nachzubilden, indem sie aus vollst\u00E4ndigen Wahrscheinlichkeitsverteilungen lernen, nicht nur aus endg\u00FCltigen Antworten',
+    takeaway2: 'Die entscheidende Erkenntnis ist, dass wir auf Verteilungen trainieren, nicht auf einzelne Tokens \u2013 weiche Labels kodieren reichhaltiges relationales Wissen (\u201Edunkles Wissen\u201C), das harte Labels komplett verwerfen',
+    takeaway3: 'Temperaturgl\u00E4ttung enth\u00FCllt Beziehungen zwischen Klassen, die in der Verteilung des Lehrers verborgen sind, und macht Destillation weitaus effektiver als einfaches Label-Matching',
+    takeaway4: 'Destillierte Modelle k\u00F6nnen 95-99% der Lehrerleistung bei einem Bruchteil der Gr\u00F6\u00DFe beibehalten und machen Frontier-KI-F\u00E4higkeiten f\u00FCr den realen Einsatz zug\u00E4nglich',
+    takeaway5: 'Destillation ist zur Standardpraxis in der Industrie geworden \u2013 die meisten kleinen, schnellen Modelle, die man t\u00E4glich nutzt (GPT-4o-mini, DistilBERT, Gemini Flash), sind wahrscheinlich von gr\u00F6\u00DFeren Lehrern destilliert',
   },
 
   bias: {

@@ -103,6 +103,7 @@ const topicTree: Topic[] = [
               { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
               { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization' },
               { id: 'nested-learning', nameKey: 'nested-learning', path: '/ai/llm/nested-learning' },
+              { id: 'distillation', nameKey: 'distillation', path: '/ai/llm/distillation' },
             ],
           },
         ],

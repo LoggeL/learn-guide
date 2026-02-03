@@ -103,6 +103,7 @@ export const en = {
     'moe': 'Mixture of Experts',
     'quantization': 'Quantization',
     'nested-learning': 'Nested Learning',
+    'distillation': 'Distillation',
     // ML Fundamentals
     'ml-fundamentals': 'ML Fundamentals',
     'neural-networks': 'Neural Networks',
@@ -2764,6 +2765,112 @@ export const en = {
     takeaway2: 'It addresses catastrophic forgetting by separating learning into different timescales',
     takeaway3: 'The Hope architecture shows promising results on language modeling and reasoning tasks',
     takeaway4: 'This is active research (NeurIPS 2025)—not yet production-ready, but worth watching',
+  },
+
+  // Distillation page
+  distillation: {
+    title: 'Distillation',
+    description: 'How smaller models learn from larger ones by training on probability distributions rather than single tokens, using the teacher-student paradigm.',
+
+    // What is Distillation
+    whatIs: 'What is Knowledge Distillation?',
+    whatIsDesc: 'Knowledge distillation is a model compression technique where a smaller "student" model is trained to replicate the behavior of a larger, more capable "teacher" model. Instead of training the student from scratch on raw data, it learns from the teacher\'s output probability distributions—capturing not just what the teacher predicts, but how confident it is across all possible predictions.',
+    analogy: '"Imagine a master chef teaching an apprentice—not just the recipes, but all the subtle intuitions: why this spice almost works, why that technique is close but not quite right."',
+    analogyDesc: 'Distillation transfers these nuanced judgments by sharing the full probability distribution, not just the final answer.',
+
+    // Teacher-Student
+    teacherStudentTitle: 'The Teacher-Student Paradigm',
+    teacherStudentDesc: 'Distillation follows a straightforward two-phase process: first train a large, powerful teacher model, then use its outputs to train a smaller, efficient student.',
+    teacherTitle: 'Teacher Model',
+    teacherDesc: 'A large, high-capacity model (e.g., GPT-4, Claude Opus) trained on massive datasets. It has learned rich representations and nuanced decision boundaries. Its role is to generate soft probability distributions that encode its knowledge.',
+    studentTitle: 'Student Model',
+    studentDesc: 'A smaller, more efficient model designed for deployment. It learns by matching the teacher\'s probability distributions rather than just the ground truth labels. This allows it to capture the teacher\'s "dark knowledge"—the relationships between classes that hard labels discard.',
+    flowTeacher: 'Teacher Model',
+    flowSoftDistribution: 'Soft Probability Distribution',
+    flowStudent: 'Student Model Learns',
+
+    // Key Insight
+    keyInsightTitle: 'The Key Insight: Distributions, Not Tokens',
+    keyInsightSubtitle: 'Why Distributions Make Distillation So Effective',
+    keyInsightDesc: 'The fundamental reason distillation works so well is that we train on full probability distributions, not single tokens or hard labels. When a teacher model processes "The capital of France is ___", it doesn\'t just output "Paris"—it produces a probability distribution over its entire vocabulary.',
+    keyInsightDesc2: 'This distribution contains rich information: "Paris" gets 92%, but "Lyon" gets 3%, "Marseille" gets 1.5%, and "Berlin" gets 0.8%. These "wrong" answers encode the teacher\'s understanding of geography, similarity between cities, and conceptual relationships. A hard label of just "Paris" throws all of this knowledge away.',
+
+    // Hard vs Soft Labels
+    hardLabelTitle: 'Hard Labels (Traditional Training)',
+    hardLabelExample: '"Paris" = 1.0, everything else = 0.0',
+    hardLabelExplain: 'Binary: either right or wrong. No nuance. The model learns nothing about the relationships between outputs.',
+    softLabelTitle: 'Soft Labels (Distillation)',
+    softLabelExample: '"Paris" = 0.92, "Lyon" = 0.03, "Marseille" = 0.015, "Berlin" = 0.008, ...',
+    softLabelExplain: 'Rich signal: every probability encodes a relationship. The student learns that Lyon is more similar to Paris than Berlin is.',
+
+    // Visualizer
+    vizTitle: 'Temperature & Distribution Softening',
+    vizToken1: 'Paris',
+    vizToken2: 'Lyon',
+    vizToken3: 'Mars.',
+    vizToken4: 'Berlin',
+    vizToken5: 'Rome',
+    hardLabels: 'Hard Distribution',
+    hardLabelsDesc: 'At T=1, the dominant token overwhelms others. Little information in the tail.',
+    softLabels: 'Soft Distribution',
+    softLabelsDesc: 'Higher temperature reveals relationships between tokens that hard labels hide.',
+    distillTemp: 'Distillation Temperature',
+    tempSharp: 'sharp',
+    tempSmooth: 'smooth',
+    tempExplainLow: 'Low temperature: distribution is still peaked. The student mainly learns what the top prediction is.',
+    tempExplainMid: 'Medium temperature: the distribution is smoothed, revealing meaningful relationships between tokens. This is the sweet spot for distillation.',
+    tempExplainHigh: 'High temperature: distribution approaches uniform. Too much smoothing can wash out the signal the teacher has learned.',
+
+    // Why it Works
+    whyWorks: 'Why Distillation Works',
+    whyWorksDesc: 'Distillation is remarkably effective because soft labels provide a much richer training signal than hard labels:',
+    benefit1Title: 'Richer Gradient Signal',
+    benefit1Desc: 'Each training example provides information about all output classes simultaneously, not just the correct one. This means each example effectively teaches the student about thousands of relationships at once.',
+    benefit2Title: 'Dark Knowledge Transfer',
+    benefit2Desc: 'The teacher\'s "mistakes" are informative. When the teacher assigns 3% probability to "Lyon" for a question about France\'s capital, it tells the student that Lyon is relevant to France—knowledge that hard labels completely discard.',
+    benefit3Title: 'Better Generalization',
+    benefit3Desc: 'Students trained via distillation often generalize better than models trained on hard labels alone, even when the student has much fewer parameters. The soft labels act as a powerful regularizer.',
+    benefit4Title: 'Sample Efficiency',
+    benefit4Desc: 'Because each training example carries more information (a full distribution vs. a single label), the student needs fewer examples to learn effectively. This reduces training time and data requirements.',
+
+    // Loss Function
+    lossTitle: 'The Distillation Loss',
+    lossDesc: 'The training objective combines two losses: the standard cross-entropy with ground truth labels, and the KL divergence between teacher and student distributions:',
+    lossCE: 'Cross-Entropy with ground truth: ensures the student still learns from real labels',
+    lossKL: 'KL Divergence: measures how different the student\'s distribution is from the teacher\'s. The student is penalized for deviating from the teacher\'s soft probabilities.',
+    lossT: 'Temperature: controls how soft/smooth the distributions are. Higher T reveals more inter-class relationships.',
+    lossAlpha: 'Alpha: balances the two loss terms. Typical values range from 0.1 to 0.9, with higher values placing more weight on matching the teacher.',
+    lossInsight: 'The T\u00B2 factor compensates for the scaling effect of temperature on gradients, ensuring the distillation loss and cross-entropy loss remain balanced regardless of temperature choice.',
+
+    // Types
+    typesTitle: 'Types of Distillation',
+    typesDesc: 'Different approaches depending on what knowledge is transferred from teacher to student:',
+    typeResponseTitle: 'Response-Based',
+    typeResponseDesc: 'The student mimics the teacher\'s final output distribution. This is the original and most common form, used by Hinton et al. (2015). Simple to implement and effective for classification and language modeling.',
+    typeFeatureTitle: 'Feature-Based',
+    typeFeatureDesc: 'The student learns to match intermediate representations (hidden states) of the teacher, not just the output. Captures deeper structural knowledge. Used in models like DistilBERT and TinyBERT.',
+    typeRelationTitle: 'Relation-Based',
+    typeRelationDesc: 'Transfers the relationships between different examples or layers, rather than individual outputs. Preserves how the teacher structures its internal representations and how it relates different inputs to each other.',
+    typeOnlineTitle: 'Online Distillation',
+    typeOnlineDesc: 'Teacher and student train simultaneously, learning from each other. No pre-trained teacher required. Useful when you cannot afford to train a massive teacher model first.',
+
+    // Examples
+    examplesTitle: 'Real-World Examples',
+    examplesDesc: 'Distillation is used extensively in production AI systems:',
+    example1Title: 'DistilBERT (Hugging Face)',
+    example1Desc: 'A distilled version of BERT that is 60% smaller, 60% faster, and retains 97% of BERT\'s language understanding. Trained using a combination of response-based and feature-based distillation. One of the most widely deployed distilled models.',
+    example2Title: 'OpenAI GPT-4 to GPT-4o-mini',
+    example2Desc: 'GPT-4o-mini is widely believed to be distilled from larger GPT-4 class models. It offers substantially lower latency and cost while maintaining competitive performance on most tasks. This pattern—a large frontier model distilled into a smaller, faster variant—has become standard practice.',
+    example3Title: 'DeepSeek R1 Distillation',
+    example3Desc: 'DeepSeek released distilled versions of their R1 reasoning model into Qwen and Llama base models. These distilled variants bring advanced reasoning capabilities to much smaller, more deployable models, demonstrating that even complex chain-of-thought reasoning can be effectively distilled.',
+
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'Knowledge distillation trains smaller models to replicate larger ones by learning from full probability distributions, not just final answers',
+    takeaway2: 'The critical insight is that we train on distributions, not single tokens—soft labels encode rich relational knowledge ("dark knowledge") that hard labels discard entirely',
+    takeaway3: 'Temperature softening reveals inter-class relationships hidden in the teacher\'s distribution, making distillation far more effective than simple label matching',
+    takeaway4: 'Distilled models can retain 95-99% of teacher performance at a fraction of the size, making frontier AI capabilities accessible for real-world deployment',
+    takeaway5: 'Distillation has become a standard practice in the industry—most small, fast models you use daily (GPT-4o-mini, DistilBERT, Gemini Flash) are likely distilled from larger teachers',
   },
 
   // Bias & Fairness page
