@@ -102,25 +102,21 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
     )
   }
 
-  const getModalityLabel = (id: string) => {
-    switch(id) {
-      case 'image': return labels.image
-      case 'audio': return labels.audio
-      case 'video': return labels.video
-      case 'text': return labels.text
-      default: return id
-    }
+  const modalityLabels: Record<string, string> = {
+    image: labels.image,
+    audio: labels.audio,
+    video: labels.video,
+    text: labels.text,
   }
+  const getModalityLabel = (id: string) => modalityLabels[id] ?? id
 
-  const getModalityDescription = (id: string) => {
-    switch(id) {
-      case 'image': return labels.imageDesc
-      case 'audio': return labels.audioDesc
-      case 'video': return labels.videoDesc
-      case 'text': return labels.textDesc
-      default: return ''
-    }
+  const modalityDescriptions: Record<string, string> = {
+    image: labels.imageDesc,
+    audio: labels.audioDesc,
+    video: labels.videoDesc,
+    text: labels.textDesc,
   }
+  const getModalityDescription = (id: string) => modalityDescriptions[id] ?? ''
 
   const getUseCases = (): UseCase[] => {
     const sorted = [...activeModalities].sort()
@@ -263,7 +259,8 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
             {activeModalities.length > 0 ? (
               <div className="grid gap-3">
                 {activeModalities.map((id) => {
-                  const modality = modalities.find(m => m.id === id)!
+                  const modality = modalities.find(m => m.id === id)
+                  if (!modality) return null
                   const Icon = modality.icon
                   return (
                     <motion.div
@@ -327,7 +324,8 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
               </div>
               <div className="flex flex-wrap gap-2 mb-4">
                 {activeModalities.map((id) => {
-                  const modality = modalities.find(m => m.id === id)!
+                  const modality = modalities.find(m => m.id === id)
+                  if (!modality) return null
                   return (
                     <span
                       key={id}
