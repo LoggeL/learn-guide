@@ -50,7 +50,6 @@ const topicTree: Topic[] = [
             children: [
               { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
               { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
-              { id: 'speculative-coding', nameKey: 'speculative-coding', path: '/ai/agents/speculative-coding' },
             ],
           },
           {
@@ -105,6 +104,7 @@ const topicTree: Topic[] = [
               { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization' },
               { id: 'nested-learning', nameKey: 'nested-learning', path: '/ai/llm/nested-learning' },
               { id: 'distillation', nameKey: 'distillation', path: '/ai/llm/distillation' },
+              { id: 'speculative-decoding', nameKey: 'speculative-decoding', path: '/ai/llm/speculative-decoding' },
             ],
           },
         ],

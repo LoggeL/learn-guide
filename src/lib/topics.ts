@@ -70,11 +70,6 @@ export const topics: Topic[] = [
                 name: 'Orchestration',
                 path: '/ai/agents/orchestration',
               },
-              {
-                id: 'speculative-coding',
-                name: 'Speculative Coding',
-                path: '/ai/agents/speculative-coding',
-              },
             ],
           },
           {
@@ -200,6 +195,11 @@ export const topics: Topic[] = [
                 id: 'distillation',
                 name: 'Distillation',
                 path: '/ai/llm/distillation',
+              },
+              {
+                id: 'speculative-decoding',
+                name: 'Speculative Decoding',
+                path: '/ai/llm/speculative-decoding',
               },
             ],
           },
