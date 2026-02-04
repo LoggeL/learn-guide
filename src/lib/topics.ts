@@ -70,6 +70,11 @@ export const topics: Topic[] = [
                 name: 'Orchestration',
                 path: '/ai/agents/orchestration',
               },
+              {
+                id: 'speculative-coding',
+                name: 'Speculative Coding',
+                path: '/ai/agents/speculative-coding',
+              },
             ],
           },
           {

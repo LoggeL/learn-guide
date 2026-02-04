@@ -50,6 +50,7 @@ const topicTree: Topic[] = [
             children: [
               { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
               { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
+              { id: 'speculative-coding', nameKey: 'speculative-coding', path: '/ai/agents/speculative-coding' },
             ],
           },
           {
