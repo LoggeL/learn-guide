@@ -3443,13 +3443,13 @@ export const de: Dictionary = {
     thinkMessage: 'Ich muss die Seriennummer unten rechts auf dieser Rechnung lesen. Der Text erscheint klein, also sollte ich diesen Bereich heranzoomen.',
     zoomMessage: 'Zuschneiden und Vergrößern des Seriennummernbereichs...',
     zoomObserve: 'Gezoomte Ansicht erhalten. Der Text ist jetzt größer, aber leicht gedreht.',
-    rotateThink: 'Der Text ist etwa 15 Grad geneigt. Ich sollte die Drehung für bessere OCR-Genauigkeit korrigieren.',
+    rotateThink: 'Der Text ist etwa 15 Grad geneigt. Ich sollte die Drehung für bessere Lesbarkeit korrigieren.',
     rotateMessage: 'Korrigiere Dokumentdrehung für optimale Texterkennung...',
-    rotateObserve: 'Dokument ist jetzt korrekt ausgerichtet. Bereit zur Extraktion der Seriennummer.',
-    scanMessage: 'Führe OCR auf dem ausgerichteten, gezoomten Bereich aus...',
-    scanObserve: 'Seriennummer mit hoher Konfidenz extrahiert:',
+    rotateObserve: 'Dokument ist jetzt korrekt ausgerichtet. Ich kann die Seriennummer jetzt klar lesen.',
+    scanMessage: 'Lese den ausgerichteten, gezoomten Bereich...',
+    scanObserve: 'Seriennummer mit hoher Konfidenz identifiziert:',
     resultTitle: 'Extrahierte Seriennummer',
-    resultConfidence: 'Konfidenz: 97% | Methode: Zoom + Rotation + OCR',
+    resultConfidence: 'Konfidenz: 97% | Methode: Zoom + Rotation + Lesen',
     stepThink: 'Denken',
     stepZoom: 'Zoom',
     stepRotate: 'Drehen',
@@ -3641,14 +3641,14 @@ export const de: Dictionary = {
     spec1Desc: 'Branchenführend für Software-Engineering-Aufgaben',
     spec2: '66,3% auf OSWorld',
     spec2Desc: 'Best-in-Class Computer-Nutzungsfähigkeiten',
-    spec3: '$5/$25 pro Million Tokens',
-    spec3Desc: '67% günstiger als Opus 4.1. Danke, Anthropic!',
+    spec3: '$15/$75 pro Million Tokens',
+    spec3Desc: 'Premium-Preise für Premium-Leistung',
     spec4: 'Effort-Parameter-Kontrolle',
     spec4Desc: 'Niedrig, mittel oder hoch – wie ein Mixer, aber für Intelligenz',
 
     // Preis-Realität
     priceReality: 'Der Preis (Autsch)',
-    priceRealityDesc: 'Seien wir ehrlich: Opus 4.5 ist immer noch verdammt teuer. Bei $15 pro Million Input-Tokens und $75 pro Million Output-Tokens spürt dein Geldbeutel jedes Gespräch. Ja, es ist 67% günstiger als vorher. Nein, das heißt nicht, dass es günstig ist. Stell es dir vor wie einen Sportwagen kaufen – klar, es ist der Beste, aber dein Konto kennt den Unterschied. Nutze es weise, oder bereite dich darauf vor, deine API-Rechnung der Finanzabteilung zu erklären.',
+    priceRealityDesc: 'Seien wir ehrlich: Opus 4.5 ist immer noch teuer. Bei $15 pro Million Input-Tokens und $75 pro Million Output-Tokens spürt dein Geldbeutel jede längere Session. Ja, es ist 67% günstiger als vorher. Nein, das macht es nicht günstig. Stell es dir wie einen Sportwagen vor: beeindruckende Leistung, ebenso beeindruckende laufende Kosten.',
 
     // Ehrliche Momente
     honestMoments: 'Momente brutaler Ehrlichkeit',
@@ -3667,7 +3667,7 @@ export const de: Dictionary = {
     takeaway1: 'Opus 4.5 ist wirklich das beste Modell für Coding, Agents und Computer Use – das ist nicht nur meine Meinung, es ist Anthropics Marketing, das zufällig richtig ist',
     takeaway2: 'Das 200K Kontextfenster und der 64K Output machen es perfekt für substanzielle, komplexe Aufgaben, die geringere Modelle überfordern würden',
     takeaway3: 'Hybrides Reasoning bedeutet, es kann schnell oder tief denken, je nachdem was du brauchst',
-    takeaway4: 'Es ist 67% günstiger als die vorherige Version, was bedeutet dass du es dir auch für all deine Side-Projects leisten kannst',
+    takeaway4: 'Die Preise sind gegenüber Opus 4.1 deutlich gesunken, aber sinnvoll bleibt es vor allem für Aufgaben mit hohem Impact',
 
     // Abschluss
     closing: 'Fazit',

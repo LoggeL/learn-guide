@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Play, RotateCcw, Brain, Code, Eye, CheckCircle, Search, RotateCw, ScanLine } from 'lucide-react'
+import { Play, RotateCcw, Brain, Code, Eye, CheckCircle, Search, RotateCw } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
-type Step = 'idle' | 'thinking' | 'zooming' | 'rotating' | 'scanning' | 'complete'
+type Step = 'idle' | 'thinking' | 'zooming' | 'rotating' | 'complete'
 
 interface LogEntry {
   step: Step
@@ -14,8 +14,11 @@ interface LogEntry {
   code?: string
 }
 
+// How long a message takes to typewrite (+ buffer for reading)
+const typeDur = (msg: string) => msg.length * 15 + 400
+
 // Typewriter text helper
-function TypewriterText({ text, speed = 20 }: { text: string; speed?: number }) {
+function TypewriterText({ text, speed = 15 }: { text: string; speed?: number }) {
   const [displayed, setDisplayed] = useState('')
   const [done, setDone] = useState(false)
 
@@ -54,7 +57,6 @@ export function AgenticVisionDemo() {
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [zoomLevel, setZoomLevel] = useState(1)
   const [rotation, setRotation] = useState(15)
-  const [scanProgress, setScanProgress] = useState(0)
   const [detectedNumber, setDetectedNumber] = useState('')
   const logContainerRef = useRef<HTMLDivElement>(null)
 
@@ -72,7 +74,6 @@ export function AgenticVisionDemo() {
     setLogs([])
     setZoomLevel(1)
     setRotation(15)
-    setScanProgress(0)
     setDetectedNumber('')
   }
 
@@ -88,66 +89,92 @@ export function AgenticVisionDemo() {
     const timers: NodeJS.Timeout[] = []
 
     if (currentStep === 'thinking') {
+      const msg = t.agenticVisionDemo.thinkMessage
       timers.push(setTimeout(() => {
         setLogs(prev => [...prev, {
           step: 'thinking',
           action: 'think',
-          message: t.agenticVisionDemo.thinkMessage,
+          message: msg,
         }])
       }, 500))
 
+      // Wait for typewriter to finish before transitioning
       timers.push(setTimeout(() => {
         setCurrentStep('zooming')
-      }, 2000))
+      }, 500 + typeDur(msg)))
     }
 
     if (currentStep === 'zooming') {
+      const actMsg = t.agenticVisionDemo.zoomMessage
+      const obsMsg = t.agenticVisionDemo.zoomObserve
+
+      // Add act log
       timers.push(setTimeout(() => {
         setLogs(prev => [...prev, {
           step: 'zooming',
           action: 'act',
-          message: t.agenticVisionDemo.zoomMessage,
+          message: actMsg,
           code: 'crop_region(x=480, y=780, w=220, h=72)\nupscale(factor=3)',
         }])
       }, 300))
 
+      // Animate zoom (runs concurrently with typewriter)
       let zoom = 1
       const zoomInterval = setInterval(() => {
         zoom += 0.1
         setZoomLevel(zoom)
         if (zoom >= 2.5) {
           clearInterval(zoomInterval)
-          timers.push(setTimeout(() => {
-            setLogs(prev => [...prev, {
-              step: 'zooming',
-              action: 'observe',
-              message: t.agenticVisionDemo.zoomObserve,
-            }])
-            setCurrentStep('rotating')
-          }, 800))
         }
       }, 80)
       timers.push(zoomInterval as unknown as NodeJS.Timeout)
+
+      // Observe log: wait for act typewriter AND zoom animation to both finish
+      const actDone = 300 + typeDur(actMsg)
+      const zoomDone = 15 * 80 // ~1200ms for zoom animation
+      const obsStart = Math.max(actDone, zoomDone) + 300
+
+      timers.push(setTimeout(() => {
+        setLogs(prev => [...prev, {
+          step: 'zooming',
+          action: 'observe',
+          message: obsMsg,
+        }])
+      }, obsStart))
+
+      // Transition after observe typewriter finishes
+      timers.push(setTimeout(() => {
+        setCurrentStep('rotating')
+      }, obsStart + typeDur(obsMsg)))
     }
 
     if (currentStep === 'rotating') {
+      const thinkMsg = t.agenticVisionDemo.rotateThink
+      const actMsg = t.agenticVisionDemo.rotateMessage
+      const obsMsg = t.agenticVisionDemo.rotateObserve
+      const readMsg = `${t.agenticVisionDemo.scanObserve} "${serialNumber}"`
+
+      // Think log
       timers.push(setTimeout(() => {
         setLogs(prev => [...prev, {
           step: 'rotating',
           action: 'think',
-          message: t.agenticVisionDemo.rotateThink,
+          message: thinkMsg,
         }])
       }, 300))
 
+      // Act log: after think typewriter finishes
+      const actStart = 300 + typeDur(thinkMsg)
       timers.push(setTimeout(() => {
         setLogs(prev => [...prev, {
           step: 'rotating',
           action: 'act',
-          message: t.agenticVisionDemo.rotateMessage,
+          message: actMsg,
           code: 'rotate(angle=-15)',
         }])
-      }, 1200))
+      }, actStart))
 
+      // Start rotation animation after act log appears
       timers.push(setTimeout(() => {
         let rot = 15
         const rotInterval = setInterval(() => {
@@ -155,50 +182,39 @@ export function AgenticVisionDemo() {
           setRotation(rot)
           if (rot <= 0) {
             clearInterval(rotInterval)
-            timers.push(setTimeout(() => {
-              setLogs(prev => [...prev, {
-                step: 'rotating',
-                action: 'observe',
-                message: t.agenticVisionDemo.rotateObserve,
-              }])
-              setCurrentStep('scanning')
-            }, 600))
           }
         }, 50)
         timers.push(rotInterval as unknown as NodeJS.Timeout)
-      }, 1800))
-    }
+      }, actStart + 200))
 
-    if (currentStep === 'scanning') {
+      // Observe log: after act typewriter AND rotation animation finish
+      const actDone = actStart + typeDur(actMsg)
+      const rotDone = actStart + 200 + 10 * 50 // rotation takes ~500ms
+      const obsStart = Math.max(actDone, rotDone) + 300
+
       timers.push(setTimeout(() => {
         setLogs(prev => [...prev, {
-          step: 'scanning',
-          action: 'act',
-          message: t.agenticVisionDemo.scanMessage,
-          code: 'text = ocr_extract(region)\nconfidence = 0.97',
+          step: 'rotating',
+          action: 'observe',
+          message: obsMsg,
         }])
-      }, 300))
+      }, obsStart))
 
+      // Read result: after observe typewriter finishes
+      const readStart = obsStart + typeDur(obsMsg)
       timers.push(setTimeout(() => {
-        let progress = 0
-        const scanInterval = setInterval(() => {
-          progress += 5
-          setScanProgress(progress)
-          if (progress >= 100) {
-            clearInterval(scanInterval)
-            timers.push(setTimeout(() => {
-              setDetectedNumber(serialNumber)
-              setLogs(prev => [...prev, {
-                step: 'scanning',
-                action: 'observe',
-                message: `${t.agenticVisionDemo.scanObserve} "${serialNumber}"`,
-              }])
-              setCurrentStep('complete')
-            }, 400))
-          }
-        }, 40)
-        timers.push(scanInterval as unknown as NodeJS.Timeout)
-      }, 1000))
+        setDetectedNumber(serialNumber)
+        setLogs(prev => [...prev, {
+          step: 'rotating',
+          action: 'observe',
+          message: readMsg,
+        }])
+      }, readStart))
+
+      // Complete: after read typewriter finishes
+      timers.push(setTimeout(() => {
+        setCurrentStep('complete')
+      }, readStart + typeDur(readMsg)))
     }
 
     return () => {
@@ -222,16 +238,15 @@ export function AgenticVisionDemo() {
     }
   }
 
-  // Step progress bar data
+  // Step progress bar data (no scan step)
   const stepDefs: { key: Step; icon: React.ReactNode; label: string; color: string }[] = [
     { key: 'thinking', icon: <Brain size={16} />, label: t.agenticVisionDemo.stepThink, color: 'purple' },
     { key: 'zooming', icon: <Search size={16} />, label: t.agenticVisionDemo.stepZoom, color: 'cyan' },
     { key: 'rotating', icon: <RotateCw size={16} />, label: t.agenticVisionDemo.stepRotate, color: 'orange' },
-    { key: 'scanning', icon: <ScanLine size={16} />, label: t.agenticVisionDemo.stepScan, color: 'cyan' },
     { key: 'complete', icon: <CheckCircle size={16} />, label: t.agenticVisionDemo.stepDone, color: 'emerald' },
   ]
 
-  const steps: Step[] = ['thinking', 'zooming', 'rotating', 'scanning', 'complete']
+  const steps: Step[] = ['thinking', 'zooming', 'rotating', 'complete']
   const currentIndex = steps.indexOf(currentStep)
 
   const colorMap: Record<string, { bg: string; text: string; ring: string; label: string }> = {
@@ -242,7 +257,7 @@ export function AgenticVisionDemo() {
   }
 
   const getStepColor = (stepIndex: number, color: string) => {
-    const isComplete = stepIndex < currentIndex || (currentStep === 'complete' && stepIndex === 4)
+    const isComplete = stepIndex < currentIndex || (currentStep === 'complete' && stepIndex === 3)
     const isActive = stepIndex === currentIndex && currentStep !== 'idle'
     if (isComplete) return { bg: 'bg-emerald-500', text: 'text-white', ring: '' }
     if (isActive) {
@@ -286,7 +301,7 @@ export function AgenticVisionDemo() {
         <div className="px-6 pt-5 pb-2">
           <div className="flex items-center justify-between">
             {stepDefs.map((step, i) => {
-              const isComplete = i < currentIndex || (currentStep === 'complete' && i === 4)
+              const isComplete = i < currentIndex || (currentStep === 'complete' && i === 3)
               const isActive = i === currentIndex
               const colors = getStepColor(i, step.color)
 
@@ -550,55 +565,6 @@ export function AgenticVisionDemo() {
                   )}
                 </AnimatePresence>
 
-                {/* Scan phase: Glowing scan bar */}
-                <AnimatePresence>
-                  {currentStep === 'scanning' && (
-                    <motion.svg
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      className="absolute inset-0 pointer-events-none"
-                      width="200"
-                      height="260"
-                      viewBox="0 0 200 260"
-                    >
-                      <defs>
-                        <linearGradient id="scanBarGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#22d3ee" stopOpacity="0" />
-                          <stop offset="40%" stopColor="#22d3ee" stopOpacity="0.8" />
-                          <stop offset="60%" stopColor="#22d3ee" stopOpacity="0.8" />
-                          <stop offset="100%" stopColor="#22d3ee" stopOpacity="0" />
-                        </linearGradient>
-                        <filter id="scanGlow">
-                          <feGaussianBlur stdDeviation="2" result="blur" />
-                          <feMerge>
-                            <feMergeNode in="blur" />
-                            <feMergeNode in="SourceGraphic" />
-                          </feMerge>
-                        </filter>
-                      </defs>
-                      {/* Translucent fill-in behind scan bar */}
-                      <motion.rect
-                        x="118" y="196"
-                        width="60" height={18 * (scanProgress / 100)}
-                        fill="#22d3ee"
-                        opacity="0.08"
-                        rx="1"
-                      />
-                      {/* Wide glowing scan bar */}
-                      <motion.rect
-                        x="116"
-                        y={196 + (scanProgress / 100) * 16}
-                        width="64"
-                        height="4"
-                        rx="2"
-                        fill="url(#scanBarGrad)"
-                        filter="url(#scanGlow)"
-                      />
-                    </motion.svg>
-                  )}
-                </AnimatePresence>
-
                 {/* Complete phase: Green highlight with checkmark */}
                 <AnimatePresence>
                   {currentStep === 'complete' && (
@@ -640,9 +606,9 @@ export function AgenticVisionDemo() {
                   )}
                 </AnimatePresence>
 
-                {/* Zoom indicator box (during zoom/rotate/scan at high zoom) */}
+                {/* Zoom indicator box (during zoom/rotate at high zoom) */}
                 <AnimatePresence>
-                  {(currentStep === 'zooming' || currentStep === 'rotating' || currentStep === 'scanning') && zoomLevel > 1.8 && (
+                  {(currentStep === 'zooming' || currentStep === 'rotating') && zoomLevel > 1.8 && (
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
@@ -717,7 +683,7 @@ export function AgenticVisionDemo() {
                             </span>
                           </div>
                           <p className="text-sm text-text/90 leading-relaxed">
-                            <TypewriterText text={log.message} speed={15} />
+                            <TypewriterText text={log.message} />
                           </p>
                           {log.code && (
                             <pre className="mt-2 p-2 rounded bg-black/30 text-xs font-mono text-cyan-400/80 overflow-x-auto border border-white/5">

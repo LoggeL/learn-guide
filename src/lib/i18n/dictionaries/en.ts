@@ -692,13 +692,13 @@ export const en = {
     thinkMessage: 'I need to read the serial number in the bottom-right of this invoice. The text appears small, so I should zoom in on that region.',
     zoomMessage: 'Cropping and upscaling the serial number region...',
     zoomObserve: 'Zoomed view obtained. The text is now larger but appears slightly rotated.',
-    rotateThink: 'The text is tilted approximately 15 degrees. I should correct the rotation for better OCR accuracy.',
+    rotateThink: 'The text is tilted approximately 15 degrees. I should correct the rotation for better readability.',
     rotateMessage: 'Correcting document rotation for optimal text recognition...',
-    rotateObserve: 'Document is now properly aligned. Ready to extract the serial number.',
-    scanMessage: 'Running OCR on the aligned, zoomed region...',
-    scanObserve: 'Serial number extracted with high confidence:',
+    rotateObserve: 'Document is now properly aligned. I can read the serial number clearly now.',
+    scanMessage: 'Reading the aligned, zoomed region...',
+    scanObserve: 'Serial number identified with high confidence:',
     resultTitle: 'Extracted Serial Number',
-    resultConfidence: 'Confidence: 97% | Method: zoom + rotate + OCR',
+    resultConfidence: 'Confidence: 97% | Method: zoom + rotate + read',
     stepThink: 'Think',
     stepZoom: 'Zoom',
     stepRotate: 'Rotate',
@@ -3651,14 +3651,14 @@ export const en = {
     spec1Desc: "Industry-leading for software engineering tasks",
     spec2: "66.3% on OSWorld",
     spec2Desc: "Best-in-class computer use capabilities",
-    spec3: "$5/$25 per million tokens",
-    spec3Desc: "67% cheaper than Opus 4.1. Thanks, Anthropic!",
+    spec3: "$15/$75 per million tokens",
+    spec3Desc: "Premium pricing for premium capability",
     spec4: "Effort parameter control",
     spec4Desc: "Low, medium, or high—like a blender, but for intelligence",
 
     // Price reality
     priceReality: "The Price Tag (Ouch)",
-    priceRealityDesc: "Let's be honest: Opus 4.5 is still expensive as hell. At $15 per million input tokens and $75 per million output tokens, your wallet will feel every conversation. Yes, it's 67% cheaper than before. No, that doesn't mean it's cheap. Think of it as buying a sports car—sure, it's the best, but your bank account knows the difference. Use it wisely, or prepare to explain your API bill to your finance team.",
+    priceRealityDesc: "Let's be honest: Opus 4.5 is still expensive. At $15 per million input tokens and $75 per million output tokens, your wallet will feel every long session. Yes, it's 67% cheaper than before. No, that doesn't make it cheap. Think of it like a sports car: incredible performance, equally memorable running costs.",
 
     // Honest moments
     honestMoments: "Moments of Brutal Honesty",
@@ -3677,7 +3677,7 @@ export const en = {
     takeaway1: "Opus 4.5 is genuinely the best model for coding, agents, and computer use—this isn't just my opinion, it's Anthropic's marketing, which happens to be correct",
     takeaway2: "The 200K context window and 64K output make it perfect for substantial, complex tasks that would overwhelm lesser models",
     takeaway3: "Hybrid reasoning means it can think fast or think deep, depending on what you need",
-    takeaway4: "It's 67% cheaper than the previous version, which means you can afford to use it for all your side projects too",
+    takeaway4: "Pricing dropped significantly vs. Opus 4.1, but it's still best reserved for high-impact tasks",
 
     // Closing
     closing: "In Conclusion",
