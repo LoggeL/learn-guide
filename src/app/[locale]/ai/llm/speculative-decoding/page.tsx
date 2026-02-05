@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { SpeculativeDecodingVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function SpeculativeDecodingPage() {
@@ -188,6 +189,39 @@ export default function SpeculativeDecodingPage() {
             <p className="text-sm text-muted">{t.speculativeDecoding.variant4Desc}</p>
           </div>
         </div>
+      </section>
+
+      {/* Limitations */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.speculativeDecoding.limitations}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.speculativeDecoding.limitationsDesc}</p>
+        <div className="space-y-4">
+          <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">
+            <h3 className="font-semibold text-red-400 mb-2">{t.speculativeDecoding.limit1}</h3>
+            <p className="text-sm text-muted">{t.speculativeDecoding.limit1Desc}</p>
+          </div>
+          <div className="p-4 bg-orange-500/5 border border-orange-500/20 rounded-xl">
+            <h3 className="font-semibold text-orange-400 mb-2">{t.speculativeDecoding.limit2}</h3>
+            <p className="text-sm text-muted">{t.speculativeDecoding.limit2Desc}</p>
+          </div>
+          <div className="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl">
+            <h3 className="font-semibold text-yellow-400 mb-2">{t.speculativeDecoding.limit3}</h3>
+            <p className="text-sm text-muted">{t.speculativeDecoding.limit3Desc}</p>
+          </div>
+          <div className="p-4 bg-purple-500/5 border border-purple-500/20 rounded-xl">
+            <h3 className="font-semibold text-purple-400 mb-2">{t.speculativeDecoding.limit4}</h3>
+            <p className="text-sm text-muted">{t.speculativeDecoding.limit4Desc}</p>
+          </div>
+          <div className="p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-xl">
+            <h3 className="font-semibold text-cyan-400 mb-2">{t.speculativeDecoding.limit5}</h3>
+            <p className="text-sm text-muted">{t.speculativeDecoding.limit5Desc}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Visualization */}
+      <section>
+        <SpeculativeDecodingVisualizer />
       </section>
 
       {/* Key Takeaways */}

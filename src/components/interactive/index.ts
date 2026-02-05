@@ -49,3 +49,6 @@ export { QuantizationVisualizer } from './QuantizationVisualizer'
 
 // Multimodality components
 export { MultimodalityVisualizer } from './MultimodalityVisualizer'
+
+// Speculative Decoding components
+export { SpeculativeDecodingVisualizer } from './SpeculativeDecodingVisualizer'
