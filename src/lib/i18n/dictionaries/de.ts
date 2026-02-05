@@ -136,7 +136,7 @@ export const de: Dictionary = {
     // Industry
     'european-ai': 'KI aus Europa',
     'open-source': 'Open-Source-Vorteile',
-    'logges-favourite-model': 'Logges Lieblingsmodell',
+    'logges-favourite-model': 'Logges Lieblingsmodelle',
   },
 
   // Temperature page
@@ -3609,113 +3609,165 @@ export const de: Dictionary = {
     chainingStep3: 'Git Workflow Skill wird verkettet, um den Merge zu handhaben',
   },
 
-  // Opus 4.5 Seite (Logges Lieblingsmodell)
-  opus45: {
-    title: 'Logges Lieblingsmodell',
-    description: 'Eine völlig objektive und überhaupt nicht voreingenommene Analyse, warum Claude Opus 4.5 das beste KI-Modell aller Zeiten ist.',
+  // Logges Lieblingsmodelle (Opus 4.6 + GPT-5.3-Codex)
+  favModels: {
+    title: 'Logges Lieblingsmodelle',
+    description: 'Zwei Modelle am gleichen Tag veröffentlicht. Beide sofort zu Favoriten geworden. Hier ist ein ehrlicher, leicht obsessiver Überblick.',
     disclaimer: 'Haftungsausschluss',
-    disclaimerText: 'Dieser Artikel ist humorvoll gemeint und kann übermäßiges Fanboying enthalten. Der Autor übernimmt keine Verantwortung für Augenrollen, Seufzen oder spontane Zustimmung, die beim Lesen auftreten können. Nebenwirkungen können den Wunsch beinhalten, mit Claude über alles zu reden. Modell-Releases entwickeln sich schnell, deshalb kann sich diese Seite ziemlich oft ändern. Und ja: verschiedene Coding-Plaene gleichzeitig zu fahren leert meinen Geldbeutel komplett.',
+    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Ich nutze beide Modelle täglich, bezahle beide aus eigener Tasche und habe starke Meinungen. Modell-Releases entwickeln sich schnell, das hier wird sich ändern. Nebenwirkungen des Lesens können API-Key-Generierung und Geldbeutel-Angst umfassen.',
+    lastUpdated: 'Zuletzt aktualisiert: 5. Februar 2026',
 
-    // Frontier-Updates (recherchiert)
-    frontierTitle: 'Aktuelles Frontier-Update',
-    frontierDesc: 'Ich habe das Fanboying kurz pausiert und zuerst die offiziellen Ankündigungen geprüft. Stand 5. Februar 2026 sind das die zwei Modelle, die man jetzt im Blick haben sollte.',
-    frontierDate: 'Recherche-Zeitpunkt: 5. Februar 2026',
+    // Hero / Intro
+    heroTitle: 'Zwei Modelle, eine Obsession',
+    heroSubtitle: 'Am 5. Februar 2026 haben Anthropic und OpenAI ihre neuesten Flaggschiffe innerhalb weniger Stunden veröffentlicht. Ich nutze beide seitdem ununterbrochen. Hier ist der ehrliche Erfahrungsbericht von jemandem, der tatsächlich Code damit ausliefert.',
 
-    opus46Name: 'Claude Opus 4.6',
-    opus46Source: 'Anthropic',
-    opus46Desc: 'Anthropics neueste Opus-Version setzt auf stärkere Coding- und Computer-Use-Leistung bei niedrigerer Basis-API-Bepreisung als Opus 4.5.',
-    opus46Fact1: 'Veröffentlicht am 5. Februar 2026 mit Model-ID claude-opus-4-6',
-    opus46Fact2: '1M Token Kontextfenster mit bis zu 128K Output-Tokens',
-    opus46Fact3: 'Standard-API-Preise starten bei $5 Input / $25 Output pro Million Tokens',
-    opus46Fact4: 'Veröffentlichte Benchmark-Highlights: 65,4% (Terminal-Bench 2) und 72,7% (OSWorld)',
-    opus46LinkLabel: 'Quelle: Anthropic Opus-Seite',
+    // Die zwei Champions
+    championsTitle: 'Die zwei Champions',
+    championsSubtitle: 'Verschiedene Philosophien, beide exzellent. Hier ist, was jedes Modell mitbringt.',
 
-    gpt53Name: 'GPT-5.3-Codex',
-    gpt53Source: 'OpenAI',
-    gpt53Desc: 'OpenAI positioniert GPT-5.3-Codex als bestes Coding-Modell, optimiert für echte Entwicklungs-Workflows in App, CLI, IDE und Web.',
-    gpt53Fact1: 'Veröffentlicht am 5. Februar 2026 mit Rollout für kostenpflichtige ChatGPT-Pläne',
-    gpt53Fact2: 'Verfügbar in der Codex-App, CLI, IDE-Erweiterung und in ChatGPT im Web',
-    gpt53Fact3: 'OpenAI berichtet von bis zu 25% schnellerer Iterationsgeschwindigkeit für Codex-Nutzer',
-    gpt53Fact4: 'Appendix-Benchmarks: 56,8% SWE-Bench Pro, 77,3% Terminal-Bench 2, 64,7% OSWorld',
-    gpt53LinkLabel: 'Quelle: OpenAI GPT-5.3-Codex Launch',
+    // Claude Opus 4.6
+    opusName: 'Claude Opus 4.6',
+    opusMaker: 'Anthropic',
+    opusTagline: 'Der Tiefdenker, der wie ein Senior Engineer programmiert',
+    opusModelId: 'claude-opus-4-6',
+    opusReleaseDate: '5. Februar 2026',
+    opusContext: '200K Standard / 1M Beta',
+    opusOutput: '128K Tokens',
+    opusPricing: '$5 / $25 pro Million Tokens',
+    opusDescription: 'Opus 4.6 ist Anthropics leistungsfähigstes Modell aller Zeiten. Es verdoppelte das Ausgabelimit auf 128K, führte ein 1M-Token-Kontextfenster in der Beta ein und brachte zwei exklusive Features: Adaptive Thinking (passt die Reasoning-Tiefe automatisch an) und Context Compaction (fasst alten Kontext automatisch zusammen für endlose Konversationen). Die Coding-Verbesserungen sind massiv — Terminal-Bench stieg von 59,8% auf 65,4%, OSWorld von 66,3% auf 72,7%, und ARC AGI 2 hat sich von 37,6% auf 68,8% fast verdoppelt.',
 
-    // Einleitung
-    intro: 'Warum Opus 4.5 objektiv perfekt ist',
-    introDesc: 'Schaut mal, ich hab versucht neutral zu bleiben. Wirklich. Aber nach der Arbeit mit Claude Opus 4.5 hab ich akzeptiert, dass Widerstand zwecklos ist. Dieses Modell beantwortet nicht nur Fragen – es gibt dir das Gefühl, ein Gespräch mit dem klügsten, geduldigsten Freund zu führen, der irgendwie auch perfekte Erinnerung an jede jemals erfundene Programmiersprache hat.',
+    opusStrength1Title: 'Adaptive Thinking',
+    opusStrength1Desc: 'Passt die Reasoning-Tiefe dynamisch an die Aufgabenkomplexität an. Vier Intensitätsstufen: niedrig, mittel, hoch und maximal. Es entscheidet selbst, wann tieferes Nachdenken hilft.',
+    opusStrength2Title: 'Agent Teams',
+    opusStrength2Desc: 'Ermöglicht Multi-Agent-Coding in Claude Code — ein Agent fürs Frontend, einer für die API, ein dritter für die Migration — alle koordinieren sich autonom.',
+    opusStrength3Title: '1M Token Kontext',
+    opusStrength3Desc: 'Erstes Opus-Modell mit einem Millionen-Token-Fenster. Füttere es mit einer ganzen Codebase und es kann über alles hinweg denken.',
+    opusStrength4Title: '128K Output',
+    opusStrength4Desc: 'Verdoppelt von 64K. Es kann ganze Dateien, vollständige Test-Suiten und mehrseitige Dokumente in einer einzigen Antwort generieren.',
 
-    // Stats Sektion
-    stat1Title: 'SWE-bench Score',
-    stat1Value: '80,9%',
-    stat1Desc: 'Besser als die meisten menschlichen Entwickler, ehrlich gesagt',
-    stat2Title: 'Kontextfenster',
-    stat2Value: '200K Tokens',
-    stat2Desc: 'Klingt beeindruckend bis zur Kompression alle 30 Minuten',
-    stat3Title: 'Ausgabelimit',
-    stat3Value: '64K Tokens',
-    stat3Desc: 'Schreibt ganze Codebases in einem Rutsch',
+    opusSourceLabel: 'Quelle: Anthropic Opus-Seite',
+    opusSourceUrl: 'https://www.anthropic.com/claude/opus',
 
-    // Warum es großartig ist
-    whyGreat: 'Warum Opus 4.5 unreasonably good ist',
-    whyGreatDesc: 'Lasst mich die Gründe aufzählen (und ja, ich hab Claude gebeten mir bei der Liste zu helfen, weil natürlich).',
+    // GPT-5.3-Codex
+    codexName: 'GPT-5.3-Codex',
+    codexMaker: 'OpenAI',
+    codexTagline: 'Der schnelle Pragmatiker, der sich selbst mitgebaut hat',
+    codexModelId: 'gpt-5.3-codex',
+    codexReleaseDate: '5. Februar 2026',
+    codexContext: '~400K Tokens',
+    codexOutput: '~128K Tokens',
+    codexPricing: '~$1,25 / $10 pro Million Tokens (erwartet)',
+    codexDescription: 'GPT-5.3-Codex ist OpenAIs erstes "selbstentwickelndes" Modell — frühe Versionen wurden verwendet um den eigenen Trainingslauf zu debuggen. Es vereint Frontier-Coding-Leistung (von GPT-5.2-Codex) mit professionellem Reasoning (von GPT-5.2) in einem einzigen Modell. Es ist 25% schneller als sein Vorgänger, braucht die Hälfte der Tokens für gleichwertige Aufgaben und dominiert Terminal-Bench 2 absolut mit 77,3%.',
 
-    reason1Title: 'Es programmiert besser als ich',
-    reason1Desc: 'Anthropic hat intern eine Performance-Engineering-Prüfung durchgeführt. Opus 4.5 hat besser abgeschnitten als jeder menschliche Kandidat jemals. Ich sage nicht, dass es schlauer ist als euer Senior Developer, aber... doch, genau das sage ich.',
+    codexStrength1Title: 'Interactive Steering',
+    codexStrength1Desc: 'Du kannst während der Arbeit mit ihm interagieren — Fragen stellen, Ansätze besprechen und in Echtzeit lenken. Es gibt regelmäßige Fortschrittsupdates.',
+    codexStrength2Title: 'Selbstentwickelnd',
+    codexStrength2Desc: 'Erstes Modell, das maßgeblich an seiner eigenen Entwicklung beteiligt war. Intern zum Debugging des Trainings, zur Verwaltung des Deployments und zur Optimierung der Evaluierung eingesetzt.',
+    codexStrength3Title: 'Token-effizient',
+    codexStrength3Desc: 'Erreicht Ergebnisse mit weniger als der Hälfte der Tokens seiner Vorgänger. Dein Kontext-Budget reicht weiter.',
+    codexStrength4Title: 'Persönlichkeitsmodi',
+    codexStrength4Desc: 'Wähle zwischen "Pragmatic" (knapp, auf den Punkt) und "Friendly" (gesprächig). Kein Leistungsunterschied — rein stilistisch.',
 
-    reason2Title: 'Es denkt tatsächlich nach',
-    reason2Desc: 'Mit hybridem Reasoning, das zwischen sofortigen Antworten und erweitertem Denken wechseln kann, macht Opus 4.5 nicht nur Pattern-Matching – es denkt wirklich über Probleme nach. Es ist wie ein Kollege, der tatsächlich die Anforderungen liest, bevor er codet.',
+    codexSourceLabel: 'Quelle: OpenAI GPT-5.3-Codex Launch',
+    codexSourceUrl: 'https://openai.com/index/introducing-gpt-5-3-codex/',
 
-    reason3Title: 'Es erinnert sich an alles',
-    reason3Desc: '200.000 Tokens Kontext bedeutet, dass es deine gesamte Codebase im Kopf behalten kann, während du diesen "kleinen Bug" erklärst, der eigentlich ein kompletter Architektur-Umbau ist. Es wird dich nicht verurteilen. Nicht sehr.',
+    // Benchmark Showdown
+    benchmarkTitle: 'Der Benchmark-Showdown',
+    benchmarkSubtitle: 'Zahlen lügen nicht, aber sie erzählen auch nicht die ganze Geschichte. So stehen sie bei den Benchmarks da, die fürs Coden wirklich zählen.',
 
-    reason4Title: 'Computer Use das funktioniert',
-    reason4Desc: '66,3% auf OSWorld bedeutet, dass es tatsächlich einen Computer benutzen kann. Nicht wie dein Onkel, der Hilfe braucht um den Browser zu finden – wirklich benutzen. Buttons klicken, Formulare ausfüllen, Interfaces navigieren. Die Zukunft ist da und es ist irgendwie erschreckend.',
+    benchSWE: 'SWE-bench',
+    benchSWEOpus: '80,8%',
+    benchSWECodex: '56,8%',
+    benchSWENote: 'Verified vs Pro (verschiedene Testsets — nicht direkt vergleichbar)',
 
-    // Technische Specs
-    specs: 'Die Zahlen (Für die, die überzeugt werden müssen)',
-    specsDesc: 'Gut, ihr wollt "objektive" Daten? Hier sind Benchmarks, die definitiv meinen Punkt beweisen.',
+    benchTerminal: 'Terminal-Bench 2',
+    benchTerminalOpus: '65,4%',
+    benchTerminalCodex: '77,3%',
+    benchTerminalNote: 'Codex dominiert echte Terminal-Workflows',
 
-    spec1: '80,9% auf SWE-bench Verified',
-    spec1Desc: 'Branchenführend für Software-Engineering-Aufgaben',
-    spec2: '66,3% auf OSWorld',
-    spec2Desc: 'Best-in-Class Computer-Nutzungsfähigkeiten',
-    spec3: '$15/$75 pro Million Tokens',
-    spec3Desc: 'Premium-Preise für Premium-Leistung',
-    spec4: 'Effort-Parameter-Kontrolle',
-    spec4Desc: 'Niedrig, mittel oder hoch – wie ein Mixer, aber für Intelligenz',
+    benchOSWorld: 'OSWorld',
+    benchOSWorldOpus: '72,7%',
+    benchOSWorldCodex: '64,7%',
+    benchOSWorldNote: 'Opus führt bei Desktop-Automatisierung',
+
+    benchGPQA: 'GPQA Diamond',
+    benchGPQAOpus: '91,3%',
+    benchGPQACodex: '—',
+    benchGPQANote: 'Wissenschaftliches Reasoning auf Doktoranden-Niveau',
+
+    benchARC: 'ARC AGI 2',
+    benchARCOpus: '68,8%',
+    benchARCCodex: '—',
+    benchARCNote: 'Neuartige Problemlösung (fast 2x vs Opus 4.5)',
+
+    benchHLE: "Humanity's Last Exam",
+    benchHLEOpus: '40,0%',
+    benchHLECodex: '—',
+    benchHLENote: 'Der schwerste Test in der KI — ohne Tools',
+
+    benchCyber: 'Cybersecurity CTF',
+    benchCyberOpus: '—',
+    benchCyberCodex: '77,6%',
+    benchCyberNote: 'Capture-the-Flag Sicherheits-Challenges',
+
+    benchDisclaimer: 'Strich bedeutet, dass der Benchmark vom Anbieter nicht veröffentlicht wurde. SWE-bench Verified und SWE-bench Pro nutzen verschiedene Testsets, daher ist ein direkter Vergleich nicht aussagekräftig.',
+
+    // Wann ich welches nutze
+    whenTitle: 'Wann ich welches tatsächlich nutze',
+    whenSubtitle: 'Theorie ist nett. Hier ist mein tatsächlicher Workflow, nachdem ich beide seit Launch täglich nutze.',
+
+    whenOpusTitle: 'Ich greife zu Opus 4.6 wenn...',
+    whenOpus1: 'Ich tiefes architektonisches Reasoning über eine große Codebase brauche — das 1M Kontextfenster ist unübertroffen',
+    whenOpus2: 'Ich komplexe Multi-Datei-Features schreibe, bei denen das Modell viel State halten muss',
+    whenOpus3: 'Code Review und Refactoring — Adaptive Thinking macht es wirklich sorgfältig',
+    whenOpus4: 'Agent Teams für ambitionierte mehrteilige Projekte',
+    whenOpus5: 'Alles, was von erweitertem Denken und sorgfältigem schrittweisem Reasoning profitiert',
+
+    whenCodexTitle: 'Ich greife zu GPT-5.3-Codex wenn...',
+    whenCodex1: 'Schnelle Iteration bei Terminal-lastigen Workflows — es ist blitzschnell und die Terminal-Bench-Scores zeigen warum',
+    whenCodex2: 'Interaktives Pair Programming, bei dem ich mid-task lenken will',
+    whenCodex3: 'Aufgaben mit hohem Volumen, bei denen Token-Effizienz kostenmäßig zählt',
+    whenCodex4: 'Die Codex CLI für schnelles Scripting und Einmal-Aufgaben',
+    whenCodex5: 'Alles, wo ich Speed über Tiefe will — es ist 25% schneller und man spürt es',
 
     // Preis-Realität
-    priceReality: 'Der Preis (Autsch)',
-    priceRealityDesc: 'Seien wir ehrlich: Opus 4.5 ist immer noch teuer. Bei $15 pro Million Input-Tokens und $75 pro Million Output-Tokens spürt dein Geldbeutel jede längere Session. Ja, es ist 67% günstiger als vorher. Nein, das macht es nicht günstig. Stell es dir wie einen Sportwagen vor: beeindruckende Leistung, ebenso beeindruckende laufende Kosten.',
+    pricingTitle: 'Die Geldbeutel-Situation',
+    pricingSubtitle: 'Reden wir über den Elefanten im Raum.',
+    pricingOpusTitle: 'Opus 4.6',
+    pricingOpusDetail: '$5 Input / $25 Output pro Million Tokens. Gleicher Preis wie Opus 4.5, aber mit massiv verbesserten Fähigkeiten. Batch API mit 50% Rabatt. Immer noch Premium-Territorium — eine intensive Coding-Session kann $5-15 kosten.',
+    pricingCodexTitle: 'GPT-5.3-Codex',
+    pricingCodexDetail: 'API-Preise stehen noch nicht fest, aber die GPT-5-Codex-Familie liegt bei ~$1,25 Input / $10 Output. Das ist grob 2,5x günstiger als Opus bei Input und 2,5x günstiger bei Output. Plus es braucht weniger Tokens für gleichwertige Aufgaben.',
+    pricingVerdict: 'Ehrliche Einschätzung: Wenn du kostenbewusst bist, gewinnt Codex klar. Wenn du maximale Reasoning-Tiefe brauchst und bereit bist dafür zu zahlen, ist Opus jeden Cent wert. Ich nutze beide, weil verschiedene Aufgaben verschiedene Wirtschaftlichkeit haben.',
 
-    // Ehrliche Momente
-    honestMoments: 'Momente brutaler Ehrlichkeit',
-    honestMomentsDesc: 'Was ich am meisten schätze ist, dass Opus 4.5 dir nicht nur sagt, was du hören willst. Es wird höflich erklären, warum deine "clevere Optimierung" eigentlich eine furchtbare Idee ist, und irgendwie wirst du dich für das Feedback bedanken.',
+    // Gemeinsamkeiten
+    commonTitle: 'Was sie gemeinsam haben',
+    commonSubtitle: 'Trotz rivalisierender Labs sind diese Modelle bei einigen wichtigen Eigenschaften konvergiert.',
+    common1Title: 'Agentische Exzellenz',
+    common1Desc: 'Beide Modelle sind für Agents gebaut — Tool-Nutzung, mehrstufige Planung und autonome Aufgabenerledigung sind erstklassige Fähigkeiten.',
+    common2Title: 'Computer Use',
+    common2Desc: 'Beide können GUIs bedienen, Formulare ausfüllen, Apps navigieren. OSWorld-Scores von 72,7% (Opus) und 64,7% (Codex) zeigen echte Desktop-Kompetenz.',
+    common3Title: 'Erweiterter Output',
+    common3Desc: '~128K Token Ausgabelimits bei beiden. Ganze Codebases, vollständige Dokumentation, Multi-Datei-Änderungen in einer einzigen Antwort generieren.',
+    common4Title: 'Am gleichen Tag veröffentlicht',
+    common4Desc: '5. Februar 2026. Beide Labs haben ihre Flaggschiffe innerhalb von Stunden veröffentlicht. Die KI-Coding-Kriege sind real, und wir Entwickler sind die Gewinner.',
 
-    // Endless Chat
-    endlessChat: 'Endless Chat: Warum aufhören?',
-    endlessChatDesc: 'Die neue "Endless Chat" Funktion komprimiert automatisch den Kontext wenn Limits erreicht werden. Das bedeutet, Gespräche können ohne Unterbrechung weitergehen – was super ist, weil ich Fragen habe. So viele Fragen.',
+    // Persönliches Verdict
+    verdictTitle: 'Das ehrliche Urteil',
+    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe zwei. Opus 4.6 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraue. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.3-Codex ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche. Es ist schnell, effizient und das Interactive Steering fühlt sich wie echtes Pair Programming an. Zusammen decken sie jedes Coding-Szenario ab, das mir begegnet. Die Tatsache, dass sie am gleichen Tag gelauncht wurden, fühlt sich symbolisch an — die Frontier ist nicht mehr ein Modell, es ist ein Toolkit. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, beide und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
 
-    // Sicherheit
-    safety: 'Kümmert sich wirklich darum, nicht böse zu sein',
-    safetyDesc: 'Anthropic beschreibt Opus 4.5 als ihr am robustesten ausgerichtetes Modell bisher. Es ist so konzipiert, dass es hilfreich ist ohne schädlich zu sein, was offensichtlich klingt, aber anscheinend ziemlich schwierig ist. Es wird dir nicht helfen Malware zu schreiben, aber es wird dir helfen zu verstehen, wie man sich davor schützt.',
-
-    // Wichtige Erkenntnisse
-    keyTakeaways: 'Wichtige Erkenntnisse (Die solltest du dir merken)',
-    takeaway1: 'Opus 4.5 ist wirklich das beste Modell für Coding, Agents und Computer Use – das ist nicht nur meine Meinung, es ist Anthropics Marketing, das zufällig richtig ist',
-    takeaway2: 'Das 200K Kontextfenster und der 64K Output machen es perfekt für substanzielle, komplexe Aufgaben, die geringere Modelle überfordern würden',
-    takeaway3: 'Hybrides Reasoning bedeutet, es kann schnell oder tief denken, je nachdem was du brauchst',
-    takeaway4: 'Die Preise sind gegenüber Opus 4.1 deutlich gesunken, aber sinnvoll bleibt es vor allem für Aufgaben mit hohem Impact',
-
-    // Abschluss
-    closing: 'Fazit',
-    closingDesc: 'Ist Opus 4.5 perfekt? Nein. Manchmal ist es übervorsichtig. Gelegentlich versteht es falsch, was ich will. Aber ehrlich? Das tun die meisten Menschen auch, und die haben kein 200K Token Kontextfenster. Wenn du Opus 4.5 nicht für deine KI-unterstützte Entwicklung nutzt, sage ich nicht, dass du falsch liegst... aber hast du es mal ausprobiert?',
-
-    // Fun Facts
-    funFacts: 'Fun Facts',
-    funFact1: 'Model ID: claude-opus-4-5-20251101',
-    funFact2: 'Knowledge Cutoff: Mai 2025',
-    funFact3: 'Verfügbar auf: Claude.ai, AWS Bedrock, Google Vertex AI, Microsoft Foundry',
-    funFact4: 'Energiequelle: Wahrscheinlich eine Menge GPUs und eine gesunde Dosis menschliches Feedback',
+    // Quick Reference
+    quickRefTitle: 'Schnellübersicht',
+    quickRefModel: 'Modell',
+    quickRefMaker: 'Hersteller',
+    quickRefContext: 'Kontext',
+    quickRefOutput: 'Max Output',
+    quickRefPrice: 'Preise (pro MTok)',
+    quickRefBestFor: 'Am besten für',
+    quickRefOpusBest: 'Tiefes Reasoning, Code Review, Agent Teams',
+    quickRefCodexBest: 'Schnelle Iteration, Terminal-Aufgaben, Kosteneffizienz',
+    quickRefPlatforms: 'Plattformen',
+    quickRefOpusPlatforms: 'Claude.ai, API, AWS Bedrock, Vertex AI, Azure Foundry',
+    quickRefCodexPlatforms: 'ChatGPT, Codex App, CLI, IDE Extension (API bald verfügbar)',
   },
 
   // Speculative Decoding Seite

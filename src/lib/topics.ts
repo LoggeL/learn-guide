@@ -279,7 +279,7 @@ export const topics: Topic[] = [
           },
           {
             id: 'logges-favourite-model',
-            name: "Logge's Favourite Model",
+            name: "Logge's Favourite Models",
             path: '/ai/industry/logges-favourite-model',
           },
         ],
