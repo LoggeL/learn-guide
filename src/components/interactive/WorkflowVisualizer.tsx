@@ -3,16 +3,16 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, Bot, Wrench, GitBranch, ArrowRight, Check } from 'lucide-react'
-import { useTranslation } from '@/lib/i18n/context'
 
 type NodeType = 'agent' | 'tool' | 'condition'
 type WorkflowPattern = 'sequential' | 'parallel' | 'hierarchical'
+type NodeStatus = 'pending' | 'running' | 'completed' | 'error'
 
 interface WorkflowNode {
   id: string
   type: NodeType
   label: string
-  status: 'pending' | 'running' | 'completed' | 'error'
+  status: NodeStatus
   x: number
   y: number
 }
@@ -25,10 +25,10 @@ interface Connection {
 const PATTERNS: Record<WorkflowPattern, { nodes: WorkflowNode[]; connections: Connection[] }> = {
   sequential: {
     nodes: [
-      { id: '1', type: 'agent', label: 'Planner', status: 'pending', x: 50, y: 50 },
-      { id: '2', type: 'tool', label: 'Search', status: 'pending', x: 200, y: 50 },
-      { id: '3', type: 'agent', label: 'Analyzer', status: 'pending', x: 350, y: 50 },
-      { id: '4', type: 'tool', label: 'Summarize', status: 'pending', x: 500, y: 50 },
+      { id: '1', type: 'agent', label: 'Planner', status: 'pending', x: 12, y: 50 },
+      { id: '2', type: 'tool', label: 'Search', status: 'pending', x: 37, y: 50 },
+      { id: '3', type: 'agent', label: 'Analyzer', status: 'pending', x: 63, y: 50 },
+      { id: '4', type: 'tool', label: 'Summarize', status: 'pending', x: 88, y: 50 },
     ],
     connections: [
       { from: '1', to: '2' },
@@ -38,11 +38,11 @@ const PATTERNS: Record<WorkflowPattern, { nodes: WorkflowNode[]; connections: Co
   },
   parallel: {
     nodes: [
-      { id: '1', type: 'agent', label: 'Coordinator', status: 'pending', x: 275, y: 30 },
-      { id: '2', type: 'tool', label: 'Task A', status: 'pending', x: 100, y: 120 },
-      { id: '3', type: 'tool', label: 'Task B', status: 'pending', x: 275, y: 120 },
-      { id: '4', type: 'tool', label: 'Task C', status: 'pending', x: 450, y: 120 },
-      { id: '5', type: 'agent', label: 'Aggregator', status: 'pending', x: 275, y: 210 },
+      { id: '1', type: 'agent', label: 'Coordinator', status: 'pending', x: 50, y: 14 },
+      { id: '2', type: 'tool', label: 'Task A', status: 'pending', x: 20, y: 44 },
+      { id: '3', type: 'tool', label: 'Task B', status: 'pending', x: 50, y: 44 },
+      { id: '4', type: 'tool', label: 'Task C', status: 'pending', x: 80, y: 44 },
+      { id: '5', type: 'agent', label: 'Aggregator', status: 'pending', x: 50, y: 78 },
     ],
     connections: [
       { from: '1', to: '2' },
@@ -55,13 +55,13 @@ const PATTERNS: Record<WorkflowPattern, { nodes: WorkflowNode[]; connections: Co
   },
   hierarchical: {
     nodes: [
-      { id: '1', type: 'agent', label: 'Supervisor', status: 'pending', x: 275, y: 30 },
-      { id: '2', type: 'agent', label: 'Worker A', status: 'pending', x: 125, y: 120 },
-      { id: '3', type: 'agent', label: 'Worker B', status: 'pending', x: 425, y: 120 },
-      { id: '4', type: 'tool', label: 'Tool 1', status: 'pending', x: 50, y: 210 },
-      { id: '5', type: 'tool', label: 'Tool 2', status: 'pending', x: 200, y: 210 },
-      { id: '6', type: 'tool', label: 'Tool 3', status: 'pending', x: 350, y: 210 },
-      { id: '7', type: 'tool', label: 'Tool 4', status: 'pending', x: 500, y: 210 },
+      { id: '1', type: 'agent', label: 'Supervisor', status: 'pending', x: 50, y: 12 },
+      { id: '2', type: 'agent', label: 'Worker A', status: 'pending', x: 32, y: 38 },
+      { id: '3', type: 'agent', label: 'Worker B', status: 'pending', x: 68, y: 38 },
+      { id: '4', type: 'tool', label: 'Tool 1', status: 'pending', x: 14, y: 72 },
+      { id: '5', type: 'tool', label: 'Tool 2', status: 'pending', x: 36, y: 72 },
+      { id: '6', type: 'tool', label: 'Tool 3', status: 'pending', x: 64, y: 72 },
+      { id: '7', type: 'tool', label: 'Tool 4', status: 'pending', x: 86, y: 72 },
     ],
     connections: [
       { from: '1', to: '2' },
@@ -74,140 +74,127 @@ const PATTERNS: Record<WorkflowPattern, { nodes: WorkflowNode[]; connections: Co
   },
 }
 
+const EXECUTION_STEPS: Record<WorkflowPattern, string[][]> = {
+  sequential: [['1'], ['2'], ['3'], ['4']],
+  parallel: [['1'], ['2', '3', '4'], ['5']],
+  hierarchical: [['1'], ['2', '3'], ['4', '5', '6', '7']],
+}
+
+const PATTERN_META: Record<WorkflowPattern, { label: string; summary: string; details: string }> = {
+  sequential: {
+    label: 'Sequential',
+    summary: 'One step at a time',
+    details: 'Each node depends on the previous result, which improves control and traceability.',
+  },
+  parallel: {
+    label: 'Parallel',
+    summary: 'Fan out then merge',
+    details: 'A coordinator distributes independent tasks, then an aggregator combines results.',
+  },
+  hierarchical: {
+    label: 'Hierarchical',
+    summary: 'Delegate by layers',
+    details: 'A supervisor routes work to sub-agents, which orchestrate specialist tools beneath them.',
+  },
+}
+
 const NODE_ICONS: Record<NodeType, typeof Bot> = {
   agent: Bot,
   tool: Wrench,
   condition: GitBranch,
 }
 
-const NODE_COLORS: Record<NodeType, string> = {
-  agent: 'from-purple-500/20 to-pink-500/20 border-purple-500/50',
-  tool: 'from-cyan-500/20 to-blue-500/20 border-cyan-500/50',
-  condition: 'from-orange-500/20 to-yellow-500/20 border-orange-500/50',
+const NODE_COLORS: Record<NodeType, { shell: string; icon: string }> = {
+  agent: {
+    shell: 'from-purple-500/15 to-pink-500/20 border-purple-400/40',
+    icon: 'text-purple-300 bg-purple-500/20',
+  },
+  tool: {
+    shell: 'from-cyan-500/15 to-blue-500/20 border-cyan-400/40',
+    icon: 'text-cyan-300 bg-cyan-500/20',
+  },
+  condition: {
+    shell: 'from-orange-500/15 to-yellow-500/20 border-orange-400/40',
+    icon: 'text-orange-300 bg-orange-500/20',
+  },
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-gray-500/20 text-gray-400',
-  running: 'bg-blue-500/20 text-blue-400',
-  completed: 'bg-emerald-500/20 text-emerald-400',
-  error: 'bg-red-500/20 text-red-400',
+const STATUS_COLORS: Record<NodeStatus, string> = {
+  pending: 'bg-zinc-500/20 text-zinc-400',
+  running: 'bg-blue-500/20 text-blue-300',
+  completed: 'bg-emerald-500/20 text-emerald-300',
+  error: 'bg-red-500/20 text-red-300',
 }
 
 export function WorkflowVisualizer() {
-  const { t } = useTranslation()
   const [pattern, setPattern] = useState<WorkflowPattern>('sequential')
   const [nodes, setNodes] = useState(PATTERNS.sequential.nodes)
-  const [connections] = useState(PATTERNS.sequential.connections)
   const [isRunning, setIsRunning] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentFrame, setCurrentFrame] = useState(0)
 
   useEffect(() => {
     const newPattern = PATTERNS[pattern]
     setNodes(newPattern.nodes.map(n => ({ ...n, status: 'pending' as const })))
-    setCurrentStep(0)
+    setCurrentFrame(0)
     setIsRunning(false)
   }, [pattern])
 
   useEffect(() => {
     if (!isRunning) return
 
-    const runStep = () => {
-      const patternData = PATTERNS[pattern]
-      const totalSteps = patternData.nodes.length
+    const steps = EXECUTION_STEPS[pattern]
+    const totalFrames = steps.length + 1
 
-      if (currentStep >= totalSteps) {
+    const timer = setTimeout(() => {
+      if (currentFrame >= totalFrames) {
         setIsRunning(false)
         return
       }
 
-      setNodes(prev => {
-        const updated = [...prev]
+      const activeNodeIds = currentFrame < steps.length ? steps[currentFrame] : []
+      const completedNodeIds = new Set(steps.slice(0, currentFrame).flat())
 
-        // For sequential: one at a time
-        if (pattern === 'sequential') {
-          if (currentStep > 0) {
-            updated[currentStep - 1] = { ...updated[currentStep - 1], status: 'completed' }
-          }
-          updated[currentStep] = { ...updated[currentStep], status: 'running' }
-        }
+      setNodes(
+        PATTERNS[pattern].nodes.map((node) => ({
+          ...node,
+          status: activeNodeIds.includes(node.id) ? 'running' : completedNodeIds.has(node.id) ? 'completed' : 'pending',
+        })),
+      )
+      setCurrentFrame(prev => prev + 1)
+    }, 900)
 
-        // For parallel: coordinator first, then all tasks, then aggregator
-        if (pattern === 'parallel') {
-          if (currentStep === 0) {
-            updated[0] = { ...updated[0], status: 'running' }
-          } else if (currentStep === 1) {
-            updated[0] = { ...updated[0], status: 'completed' }
-            updated[1] = { ...updated[1], status: 'running' }
-            updated[2] = { ...updated[2], status: 'running' }
-            updated[3] = { ...updated[3], status: 'running' }
-          } else if (currentStep === 2) {
-            updated[1] = { ...updated[1], status: 'completed' }
-            updated[2] = { ...updated[2], status: 'completed' }
-            updated[3] = { ...updated[3], status: 'completed' }
-            updated[4] = { ...updated[4], status: 'running' }
-          } else if (currentStep === 3) {
-            updated[4] = { ...updated[4], status: 'completed' }
-          }
-        }
-
-        // For hierarchical: supervisor, then workers, then tools
-        if (pattern === 'hierarchical') {
-          if (currentStep === 0) {
-            updated[0] = { ...updated[0], status: 'running' }
-          } else if (currentStep === 1) {
-            updated[0] = { ...updated[0], status: 'completed' }
-            updated[1] = { ...updated[1], status: 'running' }
-            updated[2] = { ...updated[2], status: 'running' }
-          } else if (currentStep === 2) {
-            updated[1] = { ...updated[1], status: 'completed' }
-            updated[2] = { ...updated[2], status: 'completed' }
-            updated[3] = { ...updated[3], status: 'running' }
-            updated[4] = { ...updated[4], status: 'running' }
-            updated[5] = { ...updated[5], status: 'running' }
-            updated[6] = { ...updated[6], status: 'running' }
-          } else if (currentStep === 3) {
-            updated[3] = { ...updated[3], status: 'completed' }
-            updated[4] = { ...updated[4], status: 'completed' }
-            updated[5] = { ...updated[5], status: 'completed' }
-            updated[6] = { ...updated[6], status: 'completed' }
-          }
-        }
-
-        return updated
-      })
-
-      setCurrentStep(prev => prev + 1)
-    }
-
-    const timer = setTimeout(runStep, 1000)
     return () => clearTimeout(timer)
-  }, [isRunning, currentStep, pattern])
+  }, [currentFrame, isRunning, pattern])
 
   const handleReset = () => {
     setIsRunning(false)
-    setCurrentStep(0)
+    setCurrentFrame(0)
     setNodes(PATTERNS[pattern].nodes.map(n => ({ ...n, status: 'pending' as const })))
   }
 
+  const steps = EXECUTION_STEPS[pattern]
+  const totalFrames = steps.length + 1
   const isComplete = nodes.every(n => n.status === 'completed')
+  const progress = Math.min((currentFrame / totalFrames) * 100, 100)
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Pattern Selection */}
       <div className="rounded-2xl bg-surface border border-border p-6">
         <h3 className="font-semibold text-text font-heading mb-4">Workflow Pattern</h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid gap-2 md:grid-cols-3">
           {(['sequential', 'parallel', 'hierarchical'] as WorkflowPattern[]).map((p) => (
             <button
               key={p}
               onClick={() => setPattern(p)}
-              className={`px-4 py-2 rounded-lg text-sm capitalize transition-colors ${
+              className={`rounded-xl border p-3 text-left transition-colors ${
                 pattern === p
-                  ? 'bg-primary/20 text-primary-light border border-primary/50'
-                  : 'bg-surface-elevated text-muted border border-border hover:border-primary/30'
+                  ? 'bg-primary/15 text-primary-light border-primary/40'
+                  : 'bg-surface-elevated text-muted border-border hover:border-primary/25 hover:text-text'
               }`}
             >
-              {p}
+              <p className="text-sm font-medium">{PATTERN_META[p].label}</p>
+              <p className="text-xs mt-1 opacity-80">{PATTERN_META[p].summary}</p>
             </button>
           ))}
         </div>
@@ -215,17 +202,20 @@ export function WorkflowVisualizer() {
 
       {/* Workflow Canvas */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold text-text font-heading">Workflow Execution</h3>
-          <div className="flex gap-2">
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-4">
+          <div className="min-w-0">
+            <h3 className="font-semibold text-text font-heading">Workflow Execution</h3>
+            <p className="text-xs text-muted mt-0.5">{PATTERN_META[pattern].summary}</p>
+          </div>
+          <div className="flex gap-2 shrink-0">
             <button
               onClick={() => setIsRunning(!isRunning)}
               disabled={isComplete}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition-colors border ${
                 isRunning
-                  ? 'bg-yellow-500/20 text-yellow-400'
-                  : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-              } disabled:opacity-50`}
+                  ? 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40'
+                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               {isRunning ? <Pause size={14} /> : <Play size={14} />}
               {isRunning ? 'Pause' : isComplete ? 'Complete' : 'Run'}
@@ -240,34 +230,61 @@ export function WorkflowVisualizer() {
           </div>
         </div>
 
+        <div className="mb-4">
+          <div className="flex items-center justify-between text-xs mb-2">
+            <span className="text-muted">Progress</span>
+            <span className="text-muted">{Math.round(progress)}%</span>
+          </div>
+          <div className="h-2 rounded-full bg-surface-elevated border border-border overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400"
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.25 }}
+            />
+          </div>
+        </div>
+
         {/* Canvas */}
-        <div className="relative w-full h-72 bg-background rounded-xl border border-border overflow-hidden">
+        <div className="relative w-full min-h-[320px] md:min-h-[360px] bg-background rounded-xl border border-border overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-60"
+            style={{
+              backgroundImage:
+                'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 via-transparent to-purple-500/5" />
+
           {/* Connections */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
             {PATTERNS[pattern].connections.map((conn, i) => {
               const fromNode = nodes.find(n => n.id === conn.from)
               const toNode = nodes.find(n => n.id === conn.to)
               if (!fromNode || !toNode) return null
 
-              const fromX = fromNode.x + 40
-              const fromY = fromNode.y + 20
+              const fromX = fromNode.x
+              const fromY = fromNode.y
               const toX = toNode.x
-              const toY = toNode.y + 20
+              const toY = toNode.y
+              const midY = fromY + (toY - fromY) / 2
 
-              const isActive = fromNode.status === 'completed' || fromNode.status === 'running'
+              const isActive =
+                fromNode.status === 'completed' || fromNode.status === 'running' || toNode.status === 'running'
+              const path = `M ${fromX} ${fromY} C ${fromX} ${midY}, ${toX} ${midY}, ${toX} ${toY}`
 
               return (
-                <motion.line
+                <motion.path
                   key={i}
-                  x1={fromX}
-                  y1={fromY}
-                  x2={toX}
-                  y2={toY}
-                  stroke={isActive ? '#22c55e' : '#333'}
-                  strokeWidth={2}
-                  strokeDasharray={isActive ? undefined : '4 4'}
+                  d={path}
+                  fill="none"
+                  stroke={isActive ? '#34d399' : '#3f3f46'}
+                  strokeWidth={isActive ? 2.2 : 1.6}
+                  strokeDasharray={isActive ? undefined : '4 3'}
+                  strokeLinecap="round"
                   initial={{ pathLength: 0 }}
-                  animate={{ pathLength: 1 }}
+                  animate={{ pathLength: 1, opacity: isActive ? 1 : 0.7 }}
+                  transition={{ duration: 0.35, delay: i * 0.03 }}
                 />
               )
             })}
@@ -284,33 +301,41 @@ export function WorkflowVisualizer() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{
                     opacity: 1,
-                    scale: node.status === 'running' ? 1.1 : 1,
-                    left: node.x,
-                    top: node.y,
+                    scale: node.status === 'running' ? 1.06 : 1,
+                    left: `${node.x}%`,
+                    top: `${node.y}%`,
                   }}
-                  className="absolute"
+                  transition={{ duration: 0.25 }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
                 >
                   <div
-                    className={`w-20 h-10 rounded-xl bg-gradient-to-br ${NODE_COLORS[node.type]} border-2 flex items-center justify-center gap-2 transition-all ${
-                      node.status === 'running' ? 'ring-2 ring-blue-400 ring-offset-2 ring-offset-background' : ''
+                    className={`w-[74px] md:w-[110px] rounded-xl px-2.5 py-2 bg-gradient-to-br border shadow-sm backdrop-blur-sm transition-all ${
+                      NODE_COLORS[node.type].shell
+                    } ${
+                      node.status === 'running'
+                        ? 'ring-2 ring-blue-400/60 ring-offset-1 ring-offset-background shadow-[0_0_20px_-8px_rgba(56,189,248,0.8)]'
+                        : node.status === 'completed'
+                          ? 'shadow-[0_0_18px_-10px_rgba(16,185,129,0.7)]'
+                          : ''
                     }`}
                   >
-                    {node.status === 'completed' ? (
-                      <Check size={14} className="text-emerald-400" />
-                    ) : (
-                      <Icon size={14} className={node.type === 'agent' ? 'text-purple-400' : 'text-cyan-400'} />
-                    )}
-                    <span className="text-[10px] font-medium text-text truncate max-w-[50px]">
-                      {node.label}
-                    </span>
+                    <div className="flex items-center justify-between gap-1">
+                      <span className={`w-5 h-5 md:w-6 md:h-6 rounded-md flex items-center justify-center ${NODE_COLORS[node.type].icon}`}>
+                        {node.status === 'completed' ? <Check size={11} className="text-emerald-300" /> : <Icon size={11} />}
+                      </span>
+                      <span className={`px-1.5 py-0.5 rounded-full text-[9px] md:text-[10px] ${STATUS_COLORS[node.status]}`}>
+                        {node.status}
+                      </span>
+                    </div>
+                    <p className="text-[9px] md:text-xs font-medium text-text mt-1 truncate">{node.label}</p>
                   </div>
                   {node.status === 'running' && (
                     <motion.div
-                      animate={{ opacity: [0.5, 1, 0.5] }}
-                      transition={{ duration: 1, repeat: Infinity }}
-                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-[8px] text-blue-400"
+                      animate={{ opacity: [0.3, 1, 0.3] }}
+                      transition={{ duration: 1.1, repeat: Infinity }}
+                      className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-blue-300"
                     >
-                      Running...
+                      active
                     </motion.div>
                   )}
                 </motion.div>
@@ -320,7 +345,7 @@ export function WorkflowVisualizer() {
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 mt-4 text-xs">
+        <div className="flex flex-wrap gap-3 mt-4 text-xs">
           <div className="flex items-center gap-2">
             <Bot size={14} className="text-purple-400" />
             <span className="text-muted">Agent</span>
@@ -330,11 +355,11 @@ export function WorkflowVisualizer() {
             <span className="text-muted">Tool</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-emerald-500" />
+            <div className="w-3 h-3 rounded-full bg-emerald-400" />
             <span className="text-muted">Completed</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-blue-500 animate-pulse" />
+            <div className="w-3 h-3 rounded-full bg-blue-400 animate-pulse" />
             <span className="text-muted">Running</span>
           </div>
         </div>
@@ -344,16 +369,8 @@ export function WorkflowVisualizer() {
       <div className="rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 p-4">
         <div className="flex items-start gap-3">
           <ArrowRight size={18} className="text-primary-light shrink-0 mt-0.5" />
-          <div className="text-sm text-muted">
-            {pattern === 'sequential' && (
-              <p>Sequential workflows execute steps one after another. Each step must complete before the next begins.</p>
-            )}
-            {pattern === 'parallel' && (
-              <p>Parallel workflows run multiple tasks simultaneously. A coordinator distributes work, and an aggregator combines results.</p>
-            )}
-            {pattern === 'hierarchical' && (
-              <p>Hierarchical workflows use supervisors to delegate to workers. Workers can use multiple tools independently.</p>
-            )}
+          <div className="text-sm text-muted leading-relaxed">
+            <p>{PATTERN_META[pattern].details}</p>
           </div>
         </div>
       </div>
