@@ -24,6 +24,20 @@ export const de: Dictionary = {
     backToAllTopics: 'Zurück zu allen Themen',
   },
 
+  // 404 Seite
+  notFound: {
+    badge: '404: Plot Twist',
+    title: 'Diese Seite ist auf Abwegen.',
+    description: 'Entweder ist der Link kaputt, oder die Seite ist in einen anderen Branch geflüchtet.',
+    joke1: 'Ich habe drei Agenten gefragt. Zwei sagen Caching, einer sagt Merkur ist rückläufig.',
+    joke2: 'Ich habe mehr Kontext gegeben. Die Seite meinte trotzdem nur: "Nö."',
+    joke3: 'Gute Nachricht: Dein Geldbeutel ist hier sicher. Auf dieser URL werden keine Tokens verbrannt.',
+    goHome: 'Zur Startseite',
+    exploreFavorite: 'Logges Lieblingsmodell öffnen',
+    exploreTemperature: 'Temperatur öffnen',
+    hint: 'Wenn das ein echter Link war, ist er wahrscheinlich während eines Refactors umgezogen.',
+  },
+
   // Home page
   home: {
     heroTitle1: 'KI-Konzepte meistern',

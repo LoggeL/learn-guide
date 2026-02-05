@@ -22,6 +22,20 @@ export const en = {
     backToAllTopics: 'Back to all topics',
   },
 
+  // 404 page
+  notFound: {
+    badge: '404: Plot Twist',
+    title: 'This page went rogue.',
+    description: 'Either the link is broken, or this page escaped into another branch.',
+    joke1: 'I checked three agents. Two blamed caching, one blamed mercury retrograde.',
+    joke2: 'Tried adding more context. The page still said: "Nah."',
+    joke3: 'Good news: your wallet is safe here. No tokens burned on this URL.',
+    goHome: 'Back to home',
+    exploreFavorite: "Open Logge's Favourite Model",
+    exploreTemperature: 'Open Temperature',
+    hint: 'If this was a real link, it probably moved during a refactor.',
+  },
+
   // Home page
   home: {
     heroTitle1: 'Master AI Concepts',
