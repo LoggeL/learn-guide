@@ -278,9 +278,9 @@ export const topics: Topic[] = [
             path: '/ai/industry/open-source',
           },
           {
-            id: 'opus-4-5',
+            id: 'logges-favourite-model',
             name: "Logge's Favourite Model",
-            path: '/ai/industry/opus-4-5',
+            path: '/ai/industry/logges-favourite-model',
           },
         ],
       },

@@ -122,7 +122,7 @@ export const de: Dictionary = {
     // Industry
     'european-ai': 'KI aus Europa',
     'open-source': 'Open-Source-Vorteile',
-    'opus-4-5': 'Logges Lieblingsmodell',
+    'logges-favourite-model': 'Logges Lieblingsmodell',
   },
 
   // Temperature page
@@ -3600,7 +3600,30 @@ export const de: Dictionary = {
     title: 'Logges Lieblingsmodell',
     description: 'Eine völlig objektive und überhaupt nicht voreingenommene Analyse, warum Claude Opus 4.5 das beste KI-Modell aller Zeiten ist.',
     disclaimer: 'Haftungsausschluss',
-    disclaimerText: 'Dieser Artikel ist humorvoll gemeint und kann übermäßiges Fanboying enthalten. Der Autor übernimmt keine Verantwortung für Augenrollen, Seufzen oder spontane Zustimmung, die beim Lesen auftreten können. Nebenwirkungen können den Wunsch beinhalten, mit Claude über alles zu reden.',
+    disclaimerText: 'Dieser Artikel ist humorvoll gemeint und kann übermäßiges Fanboying enthalten. Der Autor übernimmt keine Verantwortung für Augenrollen, Seufzen oder spontane Zustimmung, die beim Lesen auftreten können. Nebenwirkungen können den Wunsch beinhalten, mit Claude über alles zu reden. Modell-Releases entwickeln sich schnell, deshalb kann sich diese Seite ziemlich oft ändern. Und ja: verschiedene Coding-Plaene gleichzeitig zu fahren leert meinen Geldbeutel komplett.',
+
+    // Frontier-Updates (recherchiert)
+    frontierTitle: 'Aktuelles Frontier-Update',
+    frontierDesc: 'Ich habe das Fanboying kurz pausiert und zuerst die offiziellen Ankündigungen geprüft. Stand 5. Februar 2026 sind das die zwei Modelle, die man jetzt im Blick haben sollte.',
+    frontierDate: 'Recherche-Zeitpunkt: 5. Februar 2026',
+
+    opus46Name: 'Claude Opus 4.6',
+    opus46Source: 'Anthropic',
+    opus46Desc: 'Anthropics neueste Opus-Version setzt auf stärkere Coding- und Computer-Use-Leistung bei niedrigerer Basis-API-Bepreisung als Opus 4.5.',
+    opus46Fact1: 'Veröffentlicht am 5. Februar 2026 mit Model-ID claude-opus-4-6',
+    opus46Fact2: '1M Token Kontextfenster mit bis zu 128K Output-Tokens',
+    opus46Fact3: 'Standard-API-Preise starten bei $5 Input / $25 Output pro Million Tokens',
+    opus46Fact4: 'Veröffentlichte Benchmark-Highlights: 65,4% (Terminal-Bench 2) und 72,7% (OSWorld)',
+    opus46LinkLabel: 'Quelle: Anthropic Opus-Seite',
+
+    gpt53Name: 'GPT-5.3-Codex',
+    gpt53Source: 'OpenAI',
+    gpt53Desc: 'OpenAI positioniert GPT-5.3-Codex als bestes Coding-Modell, optimiert für echte Entwicklungs-Workflows in App, CLI, IDE und Web.',
+    gpt53Fact1: 'Veröffentlicht am 5. Februar 2026 mit Rollout für kostenpflichtige ChatGPT-Pläne',
+    gpt53Fact2: 'Verfügbar in der Codex-App, CLI, IDE-Erweiterung und in ChatGPT im Web',
+    gpt53Fact3: 'OpenAI berichtet von bis zu 25% schnellerer Iterationsgeschwindigkeit für Codex-Nutzer',
+    gpt53Fact4: 'Appendix-Benchmarks: 56,8% SWE-Bench Pro, 77,3% Terminal-Bench 2, 64,7% OSWorld',
+    gpt53LinkLabel: 'Quelle: OpenAI GPT-5.3-Codex Launch',
 
     // Einleitung
     intro: 'Warum Opus 4.5 objektiv perfekt ist',

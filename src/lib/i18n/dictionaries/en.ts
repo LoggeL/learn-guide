@@ -120,7 +120,7 @@ export const en = {
     // Industry
     'european-ai': 'AI Made in Europe',
     'open-source': 'Open Source Advantages',
-    'opus-4-5': "Logge's Favourite Model",
+    'logges-favourite-model': "Logge's Favourite Model",
   },
 
   // Temperature page
@@ -3610,7 +3610,30 @@ export const en = {
     title: "Logge's Favourite Model",
     description: "A totally objective and not-at-all biased analysis of why Claude Opus 4.5 is the greatest AI model ever created.",
     disclaimer: "Disclaimer",
-    disclaimerText: "This article is intended to be humorous and may contain excessive fanboying. The author accepts no responsibility for any eye-rolling, sighing, or spontaneous agreement that may occur while reading. Side effects may include wanting to talk to Claude about everything.",
+    disclaimerText: "This article is intended to be humorous and may contain excessive fanboying. The author accepts no responsibility for any eye-rolling, sighing, or spontaneous agreement that may occur while reading. Side effects may include wanting to talk to Claude about everything. Model releases move fast, so this page may change pretty often. Also, running different coding plans at the same time absolutely drains my wallet.",
+
+    // Frontier updates (researched)
+    frontierTitle: "Fresh Frontier Update",
+    frontierDesc: "I paused the fanboying and checked official announcements first. As of February 5, 2026, these are the two models worth tracking right now.",
+    frontierDate: "Research timestamp: February 5, 2026",
+
+    opus46Name: "Claude Opus 4.6",
+    opus46Source: "Anthropic",
+    opus46Desc: "Anthropic's newest Opus release focuses on stronger coding and computer-use performance at lower base API pricing than Opus 4.5.",
+    opus46Fact1: "Released on February 5, 2026 with model ID claude-opus-4-6",
+    opus46Fact2: "1M token context window with output up to 128K tokens",
+    opus46Fact3: "Standard API pricing starts at $5 input / $25 output per million tokens",
+    opus46Fact4: "Published benchmark highlights include 65.4% (Terminal-Bench 2) and 72.7% (OSWorld)",
+    opus46LinkLabel: "Source: Anthropic Opus page",
+
+    gpt53Name: "GPT-5.3-Codex",
+    gpt53Source: "OpenAI",
+    gpt53Desc: "OpenAI positions GPT-5.3-Codex as its best coding model, optimized for real development workflows across app, CLI, IDE, and web.",
+    gpt53Fact1: "Released on February 5, 2026 with rollout to paid ChatGPT plans",
+    gpt53Fact2: "Available in Codex app, CLI, IDE extension, and ChatGPT web experience",
+    gpt53Fact3: "OpenAI reports Codex users see up to 25% faster iteration speed",
+    gpt53Fact4: "Appendix benchmarks: 56.8% SWE-Bench Pro, 77.3% Terminal-Bench 2, 64.7% OSWorld",
+    gpt53LinkLabel: "Source: OpenAI GPT-5.3-Codex launch",
 
     // Introduction
     intro: "Why Opus 4.5 is Objectively Perfect",

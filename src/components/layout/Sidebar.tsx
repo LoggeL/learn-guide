@@ -141,7 +141,7 @@ const topicTree: Topic[] = [
         children: [
           { id: 'european-ai', nameKey: 'european-ai', path: '/ai/industry/european-ai' },
           { id: 'open-source', nameKey: 'open-source', path: '/ai/industry/open-source' },
-          { id: 'opus-4-5', nameKey: 'opus-4-5', path: '/ai/industry/opus-4-5' },
+          { id: 'logges-favourite-model', nameKey: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model' },
         ],
       },
     ],
@@ -179,7 +179,7 @@ function TopicNode({
   const hasChildren = topic.children && topic.children.length > 0
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
   const isActive = localePath === pathname
-  const isFavourite = topic.id === 'opus-4-5'
+  const isFavourite = topic.id === 'logges-favourite-model'
 
   const rowClasses = clsx(
     'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
