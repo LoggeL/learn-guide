@@ -1,124 +1,8 @@
 'use client'
 
-import { useState } from 'react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { DistillationVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
-
-function DistributionBar({ label, value, color, highlight }: { label: string; value: number; color: string; highlight?: boolean }) {
-  return (
-    <div className="flex items-center gap-3">
-      <span className={`w-16 text-xs font-mono ${highlight ? `text-${color}-400 font-bold` : 'text-muted'}`}>{label}</span>
-      <div className="flex-1 h-6 bg-background rounded-lg overflow-hidden">
-        <div
-          className={`h-full rounded-lg bg-${color}-500/60 transition-all duration-500`}
-          style={{ width: `${value}%` }}
-        />
-      </div>
-      <span className={`w-12 text-xs font-mono text-right ${highlight ? `text-${color}-400` : 'text-muted'}`}>
-        {value.toFixed(1)}%
-      </span>
-    </div>
-  )
-}
-
-function DistillationVisualizer({ t }: { t: ReturnType<typeof useTranslation>['t'] }) {
-  const [temperature, setTemperature] = useState(3)
-
-  const teacherLogits = [5.2, 3.8, 2.1, 0.9, 0.3]
-  const tokens = [
-    t.distillation.vizToken1,
-    t.distillation.vizToken2,
-    t.distillation.vizToken3,
-    t.distillation.vizToken4,
-    t.distillation.vizToken5,
-  ]
-
-  const softmax = (logits: number[], temp: number) => {
-    const scaled = logits.map((l) => Math.exp(l / temp))
-    const sum = scaled.reduce((a, b) => a + b, 0)
-    return scaled.map((s) => (s / sum) * 100)
-  }
-
-  const hardProbs = softmax(teacherLogits, 1)
-  const softProbs = softmax(teacherLogits, temperature)
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-xl font-bold font-heading text-gradient">{t.distillation.vizTitle}</h3>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Hard Labels (T=1) */}
-        <div className="p-5 rounded-xl bg-background border border-border">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-red-500" />
-            <h4 className="font-semibold text-text">{t.distillation.hardLabels} (T=1)</h4>
-          </div>
-          <div className="space-y-2">
-            {tokens.map((token, i) => (
-              <DistributionBar
-                key={i}
-                label={token}
-                value={hardProbs[i]}
-                color="red"
-                highlight={i === 0}
-              />
-            ))}
-          </div>
-          <p className="text-xs text-muted mt-3 italic">{t.distillation.hardLabelsDesc}</p>
-        </div>
-
-        {/* Soft Labels (T=variable) */}
-        <div className="p-5 rounded-xl bg-background border border-primary/30">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-cyan-500" />
-            <h4 className="font-semibold text-text">{t.distillation.softLabels} (T={temperature})</h4>
-          </div>
-          <div className="space-y-2">
-            {tokens.map((token, i) => (
-              <DistributionBar
-                key={i}
-                label={token}
-                value={softProbs[i]}
-                color="cyan"
-                highlight={i === 0}
-              />
-            ))}
-          </div>
-          <p className="text-xs text-muted mt-3 italic">{t.distillation.softLabelsDesc}</p>
-        </div>
-      </div>
-
-      {/* Temperature Slider */}
-      <div className="p-5 rounded-xl bg-surface border border-border">
-        <label className="text-sm font-semibold text-text mb-3 block">
-          {t.distillation.distillTemp}: T = {temperature}
-        </label>
-        <input
-          type="range"
-          min={1}
-          max={10}
-          step={0.5}
-          value={temperature}
-          onChange={(e) => setTemperature(parseFloat(e.target.value))}
-          className="w-full accent-primary"
-        />
-        <div className="flex justify-between text-xs text-muted mt-1">
-          <span>T=1 ({t.distillation.tempSharp})</span>
-          <span>T=10 ({t.distillation.tempSmooth})</span>
-        </div>
-        <p className="text-sm text-muted mt-3">
-          {temperature <= 2
-            ? t.distillation.tempExplainLow
-            : temperature <= 5
-              ? t.distillation.tempExplainMid
-              : t.distillation.tempExplainHigh}
-        </p>
-      </div>
-    </div>
-  )
-}
 
 export default function DistillationPage() {
   const { t } = useTranslation()
@@ -245,7 +129,7 @@ export default function DistillationPage() {
 
       {/* Interactive Visualizer */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <DistillationVisualizer t={t} />
+        <DistillationVisualizer />
       </section>
 
       {/* Why Distillation Works */}
