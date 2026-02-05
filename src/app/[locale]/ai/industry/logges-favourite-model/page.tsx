@@ -340,6 +340,13 @@ export default function FavouriteModelsPage() {
               <Brain size={20} className="text-orange-400" />
               <h3 className="font-bold font-heading text-text">{f.whenOpusTitle}</h3>
             </div>
+            <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-orange-500/10 to-amber-500/5 border border-orange-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Terminal size={14} className="text-orange-400" />
+                <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">{f.whenOpusToolLabel}</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{f.whenOpusToolDesc}</p>
+            </div>
             <ul className="space-y-3">
               {[f.whenOpus1, f.whenOpus2, f.whenOpus3, f.whenOpus4, f.whenOpus5].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-muted">
@@ -360,6 +367,13 @@ export default function FavouriteModelsPage() {
             <div className="flex items-center gap-2 mb-4">
               <Terminal size={20} className="text-cyan-400" />
               <h3 className="font-bold font-heading text-text">{f.whenCodexTitle}</h3>
+            </div>
+            <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-cyan-500/10 to-blue-500/5 border border-cyan-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Code size={14} className="text-cyan-400" />
+                <span className="text-xs font-bold text-cyan-400 uppercase tracking-wide">{f.whenCodexToolLabel}</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{f.whenCodexToolDesc}</p>
             </div>
             <ul className="space-y-3">
               {[f.whenCodex1, f.whenCodex2, f.whenCodex3, f.whenCodex4, f.whenCodex5].map((item, i) => (

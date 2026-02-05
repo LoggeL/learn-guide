@@ -3727,6 +3727,8 @@ export const en = {
     whenSubtitle: "Theory is nice. Here's my actual workflow after using both daily since launch.",
 
     whenOpusTitle: "I reach for Opus 4.6 when...",
+    whenOpusToolLabel: "My tool: Claude Code (CLI)",
+    whenOpusToolDesc: "Opus 4.6 lives in my terminal via Claude Code. Agent teams, multi-file edits, deep reasoning — all from the command line. This entire site was built with it.",
     whenOpus1: "I need deep architectural reasoning across a large codebase — the 1M context window is unmatched",
     whenOpus2: "Writing complex multi-file features where the model needs to hold a lot of state",
     whenOpus3: "Code review and refactoring — Adaptive Thinking makes it genuinely careful",
@@ -3734,6 +3736,8 @@ export const en = {
     whenOpus5: "Anything that benefits from extended thinking and careful step-by-step reasoning",
 
     whenCodexTitle: "I reach for GPT-5.3-Codex when...",
+    whenCodexToolLabel: "My tool: Codex (App + CLI)",
+    whenCodexToolDesc: "GPT-5.3-Codex powers the Codex app and CLI. Interactive steering mid-task, personality modes, and blazing speed make it perfect for rapid iteration.",
     whenCodex1: "Quick iteration on terminal-heavy workflows — it's blazing fast and Terminal-Bench scores show why",
     whenCodex2: "Interactive pair programming where I want to steer mid-task",
     whenCodex3: "High-volume tasks where token efficiency matters for cost",

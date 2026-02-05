@@ -3717,6 +3717,8 @@ export const de: Dictionary = {
     whenSubtitle: 'Theorie ist nett. Hier ist mein tatsächlicher Workflow, nachdem ich beide seit Launch täglich nutze.',
 
     whenOpusTitle: 'Ich greife zu Opus 4.6 wenn...',
+    whenOpusToolLabel: 'Mein Tool: Claude Code (CLI)',
+    whenOpusToolDesc: 'Opus 4.6 lebt in meinem Terminal via Claude Code. Agent Teams, Multi-Datei-Edits, tiefes Reasoning — alles von der Kommandozeile. Diese gesamte Seite wurde damit gebaut.',
     whenOpus1: 'Ich tiefes architektonisches Reasoning über eine große Codebase brauche — das 1M Kontextfenster ist unübertroffen',
     whenOpus2: 'Ich komplexe Multi-Datei-Features schreibe, bei denen das Modell viel State halten muss',
     whenOpus3: 'Code Review und Refactoring — Adaptive Thinking macht es wirklich sorgfältig',
@@ -3724,6 +3726,8 @@ export const de: Dictionary = {
     whenOpus5: 'Alles, was von erweitertem Denken und sorgfältigem schrittweisem Reasoning profitiert',
 
     whenCodexTitle: 'Ich greife zu GPT-5.3-Codex wenn...',
+    whenCodexToolLabel: 'Mein Tool: Codex (App + CLI)',
+    whenCodexToolDesc: 'GPT-5.3-Codex treibt die Codex-App und CLI an. Interactive Steering mid-task, Persönlichkeitsmodi und blitzschnelle Geschwindigkeit machen es perfekt für schnelle Iteration.',
     whenCodex1: 'Schnelle Iteration bei Terminal-lastigen Workflows — es ist blitzschnell und die Terminal-Bench-Scores zeigen warum',
     whenCodex2: 'Interaktives Pair Programming, bei dem ich mid-task lenken will',
     whenCodex3: 'Aufgaben mit hohem Volumen, bei denen Token-Effizienz kostenmäßig zählt',
