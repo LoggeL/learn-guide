@@ -55,3 +55,6 @@ export { DistillationVisualizer } from './DistillationVisualizer'
 
 // Speculative Decoding components
 export { SpeculativeDecodingVisualizer } from './SpeculativeDecodingVisualizer'
+
+// Nested Learning components
+export { ForgettingDemo, NestedLoopsDemo, ComparisonDemo, HopeDiagram } from './NestedLearningVisualizer'
