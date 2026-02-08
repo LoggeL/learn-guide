@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /* ─── 1. Catastrophic Forgetting Demo ─── */
@@ -234,39 +234,45 @@ export function ComparisonDemo({ labels }: ComparisonDemoProps) {
   const [phase, setPhase] = useState(0) // 0=idle, 1=taskA, 2=taskB, 3=taskC, 4=done
   const [trad, setTrad] = useState([0, 0, 0])
   const [nested, setNested] = useState([0, 0, 0])
+  const tradRef = useRef([0, 0, 0])
+  const nestedRef = useRef([0, 0, 0])
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (phase === 0 || phase === 4) return
     const taskIdx = phase - 1
     const interval = setInterval(() => {
-      let tradDone = false, nestedDone = false
+      const t = [...tradRef.current]
+      t[taskIdx] = Math.min(90, t[taskIdx] + 5)
+      for (let i = 0; i < taskIdx; i++) t[i] = Math.max(5, t[i] - 3)
+      tradRef.current = t
+      setTrad(t)
 
-      setTrad(prev => {
-        const next = [...prev]
-        next[taskIdx] = Math.min(90, next[taskIdx] + 5)
-        // Traditional: previous tasks decay
-        for (let i = 0; i < taskIdx; i++) next[i] = Math.max(5, next[i] - 3)
-        if (next[taskIdx] >= 90) tradDone = true
-        return next
-      })
+      const n = [...nestedRef.current]
+      n[taskIdx] = Math.min(85, n[taskIdx] + 5)
+      for (let i = 0; i < taskIdx; i++) n[i] = Math.max(n[i] - 0.5, 60)
+      nestedRef.current = n
+      setNested(n)
 
-      setNested(prev => {
-        const next = [...prev]
-        next[taskIdx] = Math.min(85, next[taskIdx] + 5)
-        // Nested: previous tasks only slightly decay
-        for (let i = 0; i < taskIdx; i++) next[i] = Math.max(next[i] - 0.5, 60)
-        if (next[taskIdx] >= 85) nestedDone = true
-        return next
-      })
-
-      if (tradDone && nestedDone) {
-        setTimeout(() => setPhase(p => p < 3 ? p + 1 : 4), 400)
+      if (t[taskIdx] >= 90 && n[taskIdx] >= 85) {
+        clearInterval(interval)
+        timeoutRef.current = setTimeout(() => setPhase(p => p === 0 ? 0 : p < 3 ? p + 1 : 4), 400)
       }
     }, 80)
-    return () => clearInterval(interval)
+    return () => {
+      clearInterval(interval)
+      if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
+    }
   }, [phase])
 
-  const reset = () => { setPhase(0); setTrad([0, 0, 0]); setNested([0, 0, 0]) }
+  const reset = () => {
+    if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
+    setPhase(0)
+    tradRef.current = [0, 0, 0]
+    nestedRef.current = [0, 0, 0]
+    setTrad([0, 0, 0])
+    setNested([0, 0, 0])
+  }
   const taskLabels = [labels.taskA, labels.taskB, labels.taskC]
   const taskColors = ['#22d3ee', '#a78bfa', '#f59e0b']
 
@@ -333,11 +339,12 @@ interface HopeDiagramProps {
 export function HopeDiagram({ labels }: HopeDiagramProps) {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null)
 
+  const W = 110, H = 44
   const nodes = [
-    { id: 'input', x: 50, y: 100, label: labels.input, color: '#94a3b8' },
-    { id: 'self', x: 200, y: 60, label: labels.selfModifying, color: '#a78bfa' },
-    { id: 'memory', x: 200, y: 140, label: labels.memory, color: '#22d3ee' },
-    { id: 'output', x: 350, y: 100, label: labels.output, color: '#34d399' },
+    { id: 'input', x: 80, y: 125, label: labels.input, color: '#94a3b8' },
+    { id: 'self', x: 260, y: 65, label: labels.selfModifying, color: '#a78bfa' },
+    { id: 'memory', x: 260, y: 185, label: labels.memory, color: '#22d3ee' },
+    { id: 'output', x: 440, y: 125, label: labels.output, color: '#34d399' },
   ]
 
   const edges = [
@@ -353,36 +360,44 @@ export function HopeDiagram({ labels }: HopeDiagramProps) {
   return (
     <div className="bg-surface border border-border rounded-2xl p-6">
       <h3 className="text-lg font-bold text-text mb-4">{labels.title}</h3>
-      <svg viewBox="0 0 400 200" className="w-full max-w-[500px] mx-auto">
+      <svg viewBox="0 0 520 250" className="w-full max-w-[580px] mx-auto">
+        <defs>
+          <marker id="hope-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+          </marker>
+        </defs>
         {edges.map((e, i) => {
           const from = getNode(e.from)
           const to = getNode(e.to)
+          const isVertical = from.x === to.x
+          const x1 = isVertical ? from.x : from.x + W / 2
+          const y1 = isVertical ? from.y + H / 2 : from.y
+          const x2 = isVertical ? to.x : to.x - W / 2
+          const y2 = isVertical ? to.y - H / 2 : to.y
           return (
             <g key={i}>
-              <line x1={from.x + 40} y1={from.y} x2={to.x - 40} y2={to.y}
-                stroke="#475569" strokeWidth="1.5" markerEnd="url(#arrow)" />
+              <line x1={x1} y1={y1} x2={x2} y2={y2}
+                stroke="#475569" strokeWidth="1.5" markerEnd="url(#hope-arrow)" />
               {e.label && (
-                <text x={(from.x + to.x) / 2 + 20} y={(from.y + to.y) / 2 - 6}
-                  textAnchor="middle" fill="#94a3b8" fontSize="7">{e.label}</text>
+                <text x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 10}
+                  textAnchor="middle" fill="#94a3b8" fontSize="10">{e.label}</text>
               )}
             </g>
           )
         })}
-        <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
-          </marker>
-        </defs>
         {nodes.map(n => (
-          <g key={n.id} onMouseEnter={() => setHoveredNode(n.id)} onMouseLeave={() => setHoveredNode(null)}>
-            <motion.rect
-              x={n.x - 35} y={n.y - 18} width="70" height="36" rx="8"
-              fill={hoveredNode === n.id ? n.color + '40' : n.color + '20'}
-              stroke={n.color} strokeWidth="1.5"
-              animate={{ scale: hoveredNode === n.id ? 1.05 : 1 }}
-              style={{ transformOrigin: `${n.x}px ${n.y}px` }}
+          <g key={n.id}
+            onMouseEnter={() => setHoveredNode(n.id)}
+            onMouseLeave={() => setHoveredNode(null)}
+            style={{ cursor: 'pointer' }}
+          >
+            <rect
+              x={n.x - W / 2} y={n.y - H / 2} width={W} height={H} rx={12}
+              fill={hoveredNode === n.id ? n.color + '30' : n.color + '15'}
+              stroke={n.color} strokeWidth={hoveredNode === n.id ? 2 : 1.5}
+              style={{ transition: 'fill 0.2s, stroke-width 0.2s' }}
             />
-            <text x={n.x} y={n.y + 4} textAnchor="middle" fill={n.color} fontSize="8" fontWeight="600">
+            <text x={n.x} y={n.y + 5} textAnchor="middle" fill={n.color} fontSize="12" fontWeight="600">
               {n.label}
             </text>
           </g>
