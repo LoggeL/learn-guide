@@ -560,7 +560,7 @@ export function Sidebar() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center gap-4 p-5 border-b border-border">
-                <Search size={20} className="text-muted shrink-0" />
+                <div className="p-2 shrink-0"><Search size={20} className="text-muted" /></div>
                 <input
                   autoFocus
                   type="text"
