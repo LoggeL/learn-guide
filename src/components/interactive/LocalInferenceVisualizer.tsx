@@ -27,15 +27,25 @@ const SPEED_ESTIMATE: Record<string, number[]> = {
 }
 
 const GPUS = [
-  { name: 'RTX 3060',         vram: 12 },
-  { name: 'RTX 3080',         vram: 10 },
-  { name: 'RTX 3090',         vram: 24 },
-  { name: 'RTX 4070 Ti',      vram: 12 },
-  { name: 'RTX 4090',         vram: 24 },
-  { name: 'M1/M2 Pro (16GB)', vram: 16 },
-  { name: 'M2/M3 Max (32GB)', vram: 32 },
-  { name: 'M2/M3 Max (64GB)', vram: 64 },
-  { name: 'M4 Max (128GB)',   vram: 128 },
+  // Consumer - Previous Gen
+  { name: 'RTX 3060',          vram: 12 },
+  { name: 'RTX 3090',          vram: 24 },
+  // Consumer - Current Gen
+  { name: 'RTX 4070 Ti Super', vram: 16 },
+  { name: 'RTX 4090',          vram: 24 },
+  // Consumer - Next Gen
+  { name: 'RTX 5070 Ti',       vram: 16 },
+  { name: 'RTX 5080',          vram: 16 },
+  { name: 'RTX 5090',          vram: 32 },
+  // Pro / Workstation
+  { name: 'RTX 6000 Pro',      vram: 96 },
+  { name: 'RTX PRO 6000',      vram: 96 },
+  // Apple Silicon
+  { name: 'M3 Pro (18GB)',     vram: 18 },
+  { name: 'M3 Max (36GB)',     vram: 36 },
+  { name: 'M4 Pro (24GB)',     vram: 24 },
+  { name: 'M4 Max (64GB)',     vram: 64 },
+  { name: 'M4 Max (128GB)',    vram: 128 },
 ]
 
 const TOOLS = [
