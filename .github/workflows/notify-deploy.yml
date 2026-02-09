@@ -1,0 +1,34 @@
+name: Notify Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    # Wait for Dokploy build to finish (~3 min)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      
+      - name: Get commit info
+        id: info
+        run: |
+          echo "msg=$(git log -1 --pretty=format:'%s')" >> $GITHUB_OUTPUT
+          echo "author=$(git log -1 --pretty=format:'%an')" >> $GITHUB_OUTPUT
+      
+      - name: Wait for deploy
+        run: sleep 180
+      
+      - name: Notify OpenClaw
+        env:
+          HOOK_TOKEN: ${{ secrets.OPENCLAW_HOOK_TOKEN }}
+          HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
+        run: |
+          curl -sf -X POST "$HOOK_URL/hooks/agent" \
+            -H "Authorization: Bearer $HOOK_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n \
+              --arg msg "New deploy on Learn Guide (learn.logge.top). Commit: '${{ steps.info.outputs.msg }}'. Post a brief update to the Telegram channel (use message tool: action=send, channel=telegram, target=-1003432427444). Use emoji, 2-3 sentences max, include link https://learn.logge.top. Mention what changed based on the commit message." \
+              '{message: $msg, name: "Deploy", sessionKey: "hook:deploy:learn-guide", wakeMode: "now", deliver: false}')"
