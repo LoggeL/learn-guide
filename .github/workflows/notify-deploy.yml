@@ -32,5 +32,5 @@ jobs:
             -H "Authorization: Bearer $HOOK_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
-              --arg msg "New content deployed on Learn Guide (learn.logge.top). Commit: '${{ steps.info.outputs.msg }}'. Post a brief update to the Telegram channel (use message tool: action=send, channel=telegram, target=-1003432427444). Use emoji, 2-3 sentences max, include link https://learn.logge.top. Mention what changed based on the commit message." \
+              --arg msg "New content deployed on Learn Guide (learn.logge.top). Commit: '${{ steps.info.outputs.msg }}'. Post a brief update to the Telegram channel (use message tool: action=send, channel=telegram, target=-1003432427444). Use emoji, 2-3 sentences max, include the full link https://learn.logge.top but wrap it in angle brackets like <https://learn.logge.top> to prevent link preview/embed. Mention what changed based on the commit message." \
               '{message: $msg, name: "Deploy", sessionKey: "hook:deploy:learn-guide", wakeMode: "now", deliver: false}')"
