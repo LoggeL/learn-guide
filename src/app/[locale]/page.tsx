@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper } from 'lucide-react'
+import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock } from 'lucide-react'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
@@ -313,6 +313,63 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Recently Updated */}
+        <motion.section variants={itemVariants} className="mb-16">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-500 p-0.5">
+              <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+                <Clock size={18} className="text-emerald-400" />
+              </div>
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold font-heading text-text">{t.common.recentlyUpdated}</h2>
+              <p className="text-sm text-muted">{t.common.whatsNew}</p>
+            </div>
+          </div>
+          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
+            {(() => {
+              // Build a flat lookup of id → path from topicData
+              const pathMap: Record<string, string> = {}
+              for (const root of topicData) {
+                for (const cat of root.children) {
+                  for (const item of cat.children) {
+                    if (hasPath(item)) {
+                      pathMap[item.id] = item.path
+                    } else {
+                      for (const sub of (item as TopicSubcategory).children) {
+                        if ('path' in sub) pathMap[sub.id] = (sub as TopicItem).path
+                      }
+                    }
+                  }
+                }
+              }
+              const recent = Object.entries(TOPIC_DATES)
+                .sort(([, a], [, b]) => b.localeCompare(a))
+                .slice(0, 5)
+              return recent.map(([id, date]) => (
+                <Link
+                  key={id}
+                  href={`/${locale}${pathMap[id] || ''}`}
+                  className="group flex-shrink-0 w-64 p-4 rounded-xl bg-gradient-to-br from-surface to-surface-elevated border border-border hover:border-primary/40 transition-all duration-200"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <DifficultyBadge topicId={id} />
+                    <span className="text-[10px] text-subtle">{formatTopicDate(date, locale)}</span>
+                  </div>
+                  <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block mb-1">
+                    {t.topicNames[id as keyof typeof t.topicNames] || id}
+                  </span>
+                  {t.topicDescriptions?.[id as keyof typeof t.topicDescriptions] && (
+                    <span className="text-xs text-muted block line-clamp-2">
+                      {t.topicDescriptions[id as keyof typeof t.topicDescriptions]}
+                    </span>
+                  )}
+                </Link>
+              ))
+            })()}
+          </div>
+        </motion.section>
+
         {/* Topic Cards */}
         <motion.section variants={itemVariants} id="topics" className="scroll-mt-8">
           <div className="flex items-center gap-3 mb-8">
@@ -412,6 +469,11 @@ export default function Home() {
                                       {t.topicDescriptions?.[item.id as keyof typeof t.topicDescriptions] && (
                                         <span className="text-xs text-muted block mt-0.5 line-clamp-1">
                                           {t.topicDescriptions[item.id as keyof typeof t.topicDescriptions]}
+                                        </span>
+                                      )}
+                                      {TOPIC_DATES[item.id] && (
+                                        <span className="text-[10px] text-subtle block mt-0.5">
+                                          {formatTopicDate(TOPIC_DATES[item.id], locale)}
                                         </span>
                                       )}
                                     </div>

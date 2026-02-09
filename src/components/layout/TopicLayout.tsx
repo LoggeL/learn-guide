@@ -4,10 +4,12 @@ import { ReactNode } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
+import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 
 interface TopicLayoutProps {
   title: string
   description: string
+  topicId?: string
   breadcrumbs: { label: string; href?: string }[]
   prevTopic?: { label: string; href: string }
   nextTopic?: { label: string; href: string }
@@ -17,6 +19,7 @@ interface TopicLayoutProps {
 export function TopicLayout({
   title,
   description,
+  topicId,
   breadcrumbs,
   prevTopic,
   nextTopic,
@@ -61,6 +64,11 @@ export function TopicLayout({
         <p className="text-lg text-muted leading-relaxed max-w-3xl">
           {description}
         </p>
+        {topicId && TOPIC_DATES[topicId] && (
+          <p className="text-xs text-subtle mt-3">
+            {t.common.lastUpdated}: {formatTopicDate(TOPIC_DATES[topicId], locale)}
+          </p>
+        )}
       </header>
 
       {/* Content */}
