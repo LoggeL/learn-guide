@@ -110,6 +110,13 @@ const topicTree: Topic[] = [
         ],
       },
       {
+        id: 'llm-inference',
+        nameKey: 'llm-inference',
+        children: [
+          { id: 'kv-cache', nameKey: 'kv-cache', path: '/ai/llm-inference/kv-cache' },
+        ],
+      },
+      {
         id: 'ml-fundamentals',
         nameKey: 'ml-fundamentals',
         children: [

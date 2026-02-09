@@ -206,6 +206,22 @@ export const topics: Topic[] = [
         ],
       },
       {
+        id: 'llm-inference',
+        name: 'LLM Inference',
+        children: [
+          {
+            id: 'kv-cache',
+            name: 'KV Cache',
+            path: '/ai/llm-inference/kv-cache',
+          },
+          {
+            id: 'batching',
+            name: 'Batching & Throughput',
+            path: '/ai/llm-inference/batching',
+          },
+        ],
+      },
+      {
         id: 'ml-fundamentals',
         name: 'ML Fundamentals',
         children: [

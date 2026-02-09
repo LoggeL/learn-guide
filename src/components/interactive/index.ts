@@ -47,6 +47,9 @@ export { SkillComposerDemo } from './SkillComposerDemo'
 // Quantization components
 export { QuantizationVisualizer } from './QuantizationVisualizer'
 
+// KV Cache components
+export { KVCacheVisualizer } from './KVCacheVisualizer'
+
 // Multimodality components
 export { MultimodalityVisualizer } from './MultimodalityVisualizer'
 
@@ -58,3 +61,6 @@ export { SpeculativeDecodingVisualizer } from './SpeculativeDecodingVisualizer'
 
 // Nested Learning components
 export { ForgettingDemo, NestedLoopsDemo, ComparisonDemo, HopeDiagram } from './NestedLearningVisualizer'
+
+// Batching components
+export { BatchingVisualizer } from './BatchingVisualizer'
