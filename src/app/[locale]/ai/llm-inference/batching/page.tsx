@@ -70,6 +70,7 @@ export default function BatchingPage() {
             <p className="text-sm text-muted">{t.batching.prefillDecodeSubtitle}</p>
           </div>
         </div>
+        <p className="text-muted mb-8 leading-relaxed">{t.batching.prefillDecodeExplain}</p>
         <BatchingVisualizer section="prefill" t={t.batching as unknown as Record<string, string>} />
       </section>
 
@@ -96,7 +97,25 @@ export default function BatchingPage() {
             <p className="text-sm text-muted">{t.batching.continuousSubtitle}</p>
           </div>
         </div>
+        <p className="text-muted mb-8 leading-relaxed">{t.batching.continuousExplain}</p>
         <BatchingVisualizer section="continuous" t={t.batching as unknown as Record<string, string>} />
+      </section>
+
+      {/* Section 6: Per-User vs System Throughput */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 p-0.5">
+            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+              <span className="text-lg">👥</span>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.batching.perUserTitle}</h2>
+            <p className="text-sm text-muted">{t.batching.perUserSubtitle}</p>
+          </div>
+        </div>
+        <p className="text-muted mb-8 leading-relaxed">{t.batching.perUserExplain}</p>
+        <BatchingVisualizer section="peruser" t={t.batching as unknown as Record<string, string>} />
       </section>
 
       {/* Key Takeaways */}
@@ -109,6 +128,7 @@ export default function BatchingPage() {
               t.batching.takeaway2,
               t.batching.takeaway3,
               t.batching.takeaway4,
+              t.batching.takeaway5,
             ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">

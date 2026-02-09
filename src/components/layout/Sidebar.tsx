@@ -18,10 +18,6 @@ interface Topic {
 
 // Topic structure with translation keys
 const topicTree: Topic[] = [
-  {
-    id: 'ai',
-    nameKey: 'ai',
-    children: [
       {
         id: 'agents',
         nameKey: 'agents',
@@ -152,8 +148,6 @@ const topicTree: Topic[] = [
           { id: 'logges-favourite-model', nameKey: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model' },
         ],
       },
-    ],
-  },
 ]
 
 function flattenTopics(topicList: Topic[]): Topic[] {
