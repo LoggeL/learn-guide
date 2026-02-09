@@ -15,7 +15,7 @@ export default function LocalInferencePage() {
       description={li.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories['llm-inference'], href: '/ai/llm-inference' },
+        { label: t.categories.llmInference, href: '/ai/llm-inference' },
         { label: li.title },
       ]}
       prevTopic={{ label: t.topicNames['batching'], href: '/ai/llm-inference/batching' }}
