@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers } from 'lucide-react'
+import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 
 // Type definitions for topic structure
@@ -434,9 +434,26 @@ export default function Home() {
                 </span>
               </div>
             </a>
-            <p className="text-xs text-subtle">
-              {t.common.guidesDescription}
-            </p>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://github.com/LoggeL/learn-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-subtle hover:text-text transition-colors group"
+              >
+                <Github size={16} className="group-hover:text-primary-light transition-colors" />
+                <span className="text-sm">Open Source</span>
+              </a>
+              <span className="text-border">|</span>
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-subtle hover:text-text transition-colors"
+              >
+                Report a Bug
+              </a>
+            </div>
           </div>
         </motion.footer>
       </motion.div>
