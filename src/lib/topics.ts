@@ -197,6 +197,11 @@ export const topics: Topic[] = [
                 path: '/ai/llm/distillation',
               },
               {
+                id: 'lora',
+                name: 'Fine-Tuning & LoRA',
+                path: '/ai/llm/lora',
+              },
+              {
                 id: 'speculative-decoding',
                 name: 'Speculative Decoding',
                 path: '/ai/llm/speculative-decoding',

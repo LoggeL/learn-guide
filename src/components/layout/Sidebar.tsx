@@ -102,6 +102,7 @@ const topicTree: Topic[] = [
               { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization', difficulty: 'expert' },
               { id: 'nested-learning', nameKey: 'nested-learning', path: '/ai/llm/nested-learning', difficulty: 'expert' },
               { id: 'distillation', nameKey: 'distillation', path: '/ai/llm/distillation', difficulty: 'intermediate' },
+              { id: 'lora', nameKey: 'lora', path: '/ai/llm/lora', difficulty: 'intermediate' },
               { id: 'speculative-decoding', nameKey: 'speculative-decoding', path: '/ai/llm/speculative-decoding', difficulty: 'expert' },
             ],
           },

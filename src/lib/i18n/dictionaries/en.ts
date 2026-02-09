@@ -123,6 +123,7 @@ export const en = {
     'quantization': 'Quantization',
     'nested-learning': 'Nested Learning',
     'distillation': 'Distillation',
+    'lora': 'Fine-Tuning & LoRA',
     'speculative-decoding': 'Speculative Decoding',
     // LLM Inference
     'llm-inference': 'LLM Inference',
@@ -174,6 +175,7 @@ export const en = {
     'quantization': 'Shrink model size by reducing numerical precision',
     'nested-learning': 'Learning algorithms that operate at multiple levels',
     'distillation': 'Transfer knowledge from a large model to a smaller one',
+    'lora': 'Adapt large models efficiently by training only tiny low-rank matrices',
     'speculative-decoding': 'Speed up inference by drafting tokens with a smaller model',
     'kv-cache': 'Store computed keys and values to avoid redundant work',
     'batching': 'Process multiple requests simultaneously for higher throughput',
@@ -4140,6 +4142,110 @@ export const en = {
     takeaway3: 'Prefill is compute-bound and 1000× faster per token than decode, which is memory-bandwidth bound',
     takeaway4: 'Continuous batching eliminates idle GPU time by dynamically filling slots as requests complete',
     takeaway5: 'Per-user speed always decreases with more concurrent users — the system trades individual speed for total capacity',
+  },
+
+  // LoRA page
+  lora: {
+    title: 'Fine-Tuning & LoRA',
+    description: 'How LoRA lets you adapt massive language models to specific tasks by training only tiny low-rank matrices — saving memory, time, and money.',
+
+    // 1. What is Fine-Tuning?
+    whatIs: 'What is Fine-Tuning?',
+    whatIsDesc: 'You have a pre-trained language model with billions of parameters that knows a lot about the world. But you want it to be great at a specific task — writing legal briefs, coding in Rust, or speaking like your brand. Fine-tuning adapts the model by continuing training on your specialized data.',
+    problem: '"The problem: full fine-tuning means updating ALL parameters."',
+    problemDesc: 'For a 70B parameter model, that means storing and updating 70 billion weights. You need a full copy of the model in memory, plus optimizer states (2-3x the model size). That\'s hundreds of gigabytes of VRAM — expensive, slow, and impractical for most teams.',
+
+    // 2. The LoRA Insight
+    insightTitle: 'The LoRA Insight',
+    insightDesc: 'LoRA (Low-Rank Adaptation) is based on a key observation: when you fine-tune a model, the weight updates tend to be low-rank. Instead of updating a huge d×d weight matrix W directly, you decompose the update as ΔW = A × B, where A is d×r and B is r×d, with r much smaller than d.',
+
+    // Visualizer translation keys
+    matrixTitle: 'LoRA Matrix Decomposition',
+    matrixDesc: 'Adjust the rank r to see how LoRA decomposes a large weight update into two small matrices.',
+    rankLabel: 'Rank',
+    matrix: 'matrix',
+    fullParams: 'Full Parameters',
+    loraParams: 'LoRA Parameters',
+    savings: 'Parameter Savings',
+    onlyPct: 'Only {pct}% of original',
+    params: 'params',
+
+    // 3. Why LoRA is Easy to Train
+    whyEasyTitle: 'Why LoRA is Easy to Train',
+    whyEasyDesc: 'By only training the small A and B matrices while keeping the base model frozen, LoRA dramatically reduces memory, compute, and storage requirements.',
+    memoryTitle: 'VRAM & Storage Comparison',
+    memoryDesc: 'Select a model size to compare GPU VRAM needed for full fine-tuning vs LoRA.',
+    fullFineTune: 'Full Fine-Tuning',
+    loraFineTune: 'LoRA Fine-Tuning',
+    vramNeeded: 'GPU VRAM needed',
+    adapterStorage: 'Storage: Full Model vs LoRA Adapter',
+    fullModel: 'Full Model Copy',
+    loraAdapter: 'LoRA Adapter',
+    storageSavings: '~{x}× smaller — you can store hundreds of adapters for different tasks!',
+    memoryBenefit: 'Less Memory',
+    memoryBenefitDesc: 'Only the small A and B matrices need gradients and optimizer states.',
+    speedBenefit: 'Faster Training',
+    speedBenefitDesc: 'Far fewer parameters to update means faster iterations.',
+    swapBenefit: 'Hot-Swappable',
+    swapBenefitDesc: 'Keep one base model, swap tiny adapters at inference time for different tasks.',
+    frozenTitle: 'No Catastrophic Forgetting',
+    frozenDesc: 'Because the base model weights stay completely frozen, LoRA can\'t destroy the model\'s existing knowledge. The adapter only adds to what the model already knows — it never subtracts. This is a huge advantage over full fine-tuning, where aggressive training can cause the model to forget its general capabilities.',
+
+    // 4. Use Cases
+    useCasesTitle: 'Use Cases',
+    useCasesDesc: 'LoRA adapters are used everywhere to specialize foundation models:',
+    useCase1Title: 'Task-Specific Adaptation',
+    useCase1Desc: 'Train adapters for coding, medical diagnosis, legal analysis, or customer support. Each domain gets its own small adapter.',
+    useCase2Title: 'Style & Tone Adaptation',
+    useCase2Desc: 'Match a specific brand voice, switch between formal and casual, or adapt writing style without retraining the whole model.',
+    useCase3Title: 'Language Adaptation',
+    useCase3Desc: 'Improve performance in underrepresented languages by training a LoRA on language-specific data.',
+    useCase4Title: 'Instruction Following',
+    useCase4Desc: 'Make a base model follow instructions better by training an adapter on instruction-response pairs.',
+
+    // 5. Why Not for Pre-Training
+    whyNotTitle: 'Why LoRA Isn\'t Used for Pre-Training',
+    whyNotDesc: 'LoRA is fantastic for adaptation, but it\'s fundamentally limited for learning brand-new knowledge from scratch. Here\'s why:',
+    whyNot1Title: 'Low-Rank Constraint',
+    whyNot1Desc: 'LoRA constrains updates to a low-rank subspace. Fine-tuning changes are empirically low-rank (small adaptations), but pre-training needs to learn fundamental representations that are full-rank.',
+    whyNot2Title: 'Limited Expressiveness',
+    whyNot2Desc: 'A rank-8 update to a 4096×4096 matrix can only capture a tiny fraction of possible changes. Pre-training needs the full expressiveness of unconstrained weight updates.',
+    whyNot3Title: 'Diminishing Returns',
+    whyNot3Desc: 'As you increase the rank to capture more complex changes, you approach the cost of full fine-tuning anyway — at that point, LoRA offers no advantage.',
+    rankQualityTitle: 'Rank vs Approximation Quality',
+    rankQualityDesc: 'See how increasing rank improves task-specific adaptation but struggles with general knowledge.',
+    taskSpecific: 'Task-Specific Quality',
+    taskSpecificHint: 'Adapting to a specific domain — saturates quickly at moderate rank',
+    generalKnowledge: 'General Knowledge Learning',
+    generalKnowledgeHint: 'Learning fundamentally new knowledge — needs full-rank updates',
+    reconstructionQuality: 'Matrix Reconstruction Quality',
+    reconstructionHint: 'How well the low-rank approximation captures arbitrary weight updates',
+    overkillTitle: 'Diminishing Returns!',
+    overkillDesc: 'At this rank, you\'re using so many parameters that full fine-tuning would be more efficient. The low-rank constraint adds overhead without meaningful savings.',
+    sweetSpotTitle: 'Sweet Spot',
+    sweetSpotDesc: 'Ranks 8-64 typically offer the best tradeoff: excellent task adaptation with minimal parameters. Most practitioners use r=8 or r=16.',
+    lowRankDesc: 'Very low ranks are extremely parameter-efficient but may miss important adaptation patterns. Good for very simple tasks.',
+
+    // 6. Variants
+    variantsTitle: 'LoRA Variants & Evolution',
+    variantsDesc: 'The original LoRA paper spawned a family of improvements. Click each card to learn more.',
+    qloraTitle: 'QLoRA',
+    qloraDesc: 'Quantized base model + LoRA adapters = fine-tuning on consumer GPUs.',
+    qloraDetail: 'QLoRA quantizes the frozen base model to 4-bit precision (NF4 format), reducing its memory footprint by 4×. The LoRA adapters are still trained in 16-bit. This means you can fine-tune a 65B model on a single 48GB GPU — something that would normally require multiple A100s. It introduced paged optimizers and double quantization for further savings.',
+    doraTitle: 'DoRA (Weight-Decomposed LoRA)',
+    doraDesc: 'Separates weight magnitude from direction for better training dynamics.',
+    doraDetail: 'DoRA decomposes the weight update into magnitude and direction components, then applies LoRA only to the direction. This mimics how full fine-tuning actually behaves — it changes direction more than magnitude. DoRA consistently outperforms standard LoRA across tasks with the same number of trainable parameters.',
+    loraPlusTitle: 'LoRA+',
+    loraPlusDesc: 'Different learning rates for A and B matrices = faster convergence.',
+    loraPlusDetail: 'LoRA+ observes that the A and B matrices have different optimal learning rates. By setting the learning rate of B about 2-4× higher than A, convergence speed improves significantly. This is a simple change that costs nothing extra and consistently improves results.',
+
+    // 7. Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'LoRA decomposes weight updates into two small matrices (A×B), reducing trainable parameters by 99%+ while maintaining quality',
+    takeaway2: 'The base model stays frozen — no catastrophic forgetting, and you can swap tiny adapters for different tasks at inference time',
+    takeaway3: 'LoRA works because fine-tuning changes are empirically low-rank: you don\'t need full-rank updates for task adaptation',
+    takeaway4: 'QLoRA extends this further by quantizing the base model, enabling fine-tuning of 70B+ models on consumer hardware',
+    takeaway5: 'LoRA is not suitable for pre-training — learning fundamental knowledge requires full-rank, unconstrained weight updates',
   },
 }
 

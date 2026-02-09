@@ -1,4 +1,5 @@
 export const TOPIC_DATES: Record<string, string> = {
+  'lora': '2026-02-09',
   'kv-cache': '2026-02-09',
   'batching': '2026-02-09',
   'logges-favourite-model': '2026-02-09',

@@ -38,6 +38,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'quantization': 'expert',
   'nested-learning': 'expert',
   'distillation': 'intermediate',
+  'lora': 'intermediate',
   'speculative-decoding': 'expert',
   // LLM Inference
   'kv-cache': 'expert',

@@ -64,3 +64,6 @@ export { ForgettingDemo, NestedLoopsDemo, ComparisonDemo, HopeDiagram } from './
 
 // Batching components
 export { BatchingVisualizer } from './BatchingVisualizer'
+
+// LoRA components
+export { LoraVisualizer } from './LoraVisualizer'
