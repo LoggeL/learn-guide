@@ -22,7 +22,7 @@ export default function ContextRotPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="context-rot"
       title={t.contextRot.title}
       description={t.contextRot.description}
       breadcrumbs={[

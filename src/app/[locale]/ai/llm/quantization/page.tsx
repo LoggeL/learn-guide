@@ -36,7 +36,7 @@ export default function QuantizationPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="quantization"
       title={t.quantization.title}
       description={t.quantization.description}
       breadcrumbs={[

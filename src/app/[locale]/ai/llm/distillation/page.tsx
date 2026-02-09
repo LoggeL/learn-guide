@@ -22,7 +22,7 @@ export default function DistillationPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="distillation"
       title={t.distillation.title}
       description={t.distillation.description}
       breadcrumbs={[

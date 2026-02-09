@@ -8,7 +8,7 @@ export default function GradientDescentPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="gradient-descent"
       title={t.gradientDescent.title}
       description={t.gradientDescent.description}
       breadcrumbs={[

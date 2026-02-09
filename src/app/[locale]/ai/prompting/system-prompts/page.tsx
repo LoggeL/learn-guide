@@ -8,7 +8,7 @@ export default function SystemPromptsPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="system-prompts"
       title={t.systemPrompts.title}
       description={t.systemPrompts.description}
       breadcrumbs={[

@@ -29,7 +29,7 @@ export default function MCPPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="mcp"
       title={t.mcp.title}
       description={t.mcp.description}
       breadcrumbs={[

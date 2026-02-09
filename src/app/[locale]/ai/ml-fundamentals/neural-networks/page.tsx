@@ -8,7 +8,7 @@ export default function NeuralNetworksPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="neural-networks"
       title={t.neuralNetworks.title}
       description={t.neuralNetworks.description}
       breadcrumbs={[

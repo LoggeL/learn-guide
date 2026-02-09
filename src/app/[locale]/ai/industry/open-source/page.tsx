@@ -222,7 +222,7 @@ export default function OpenSourcePage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="open-source"
       title={t.openSource.title}
       description={t.openSource.description}
       breadcrumbs={[

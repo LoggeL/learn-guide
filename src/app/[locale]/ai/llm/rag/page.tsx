@@ -8,7 +8,7 @@ export default function RAGPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="rag"
       title={t.rag.title}
       description={t.rag.description}
       breadcrumbs={[

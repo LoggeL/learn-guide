@@ -9,7 +9,7 @@ export default function TemperaturePage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="temperature"
       title={t.temperature.title}
       description={t.temperature.description}
       breadcrumbs={[

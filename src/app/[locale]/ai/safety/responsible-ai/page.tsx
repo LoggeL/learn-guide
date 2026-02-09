@@ -7,7 +7,7 @@ export default function ResponsibleAIPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="responsible-ai"
       title={t.responsibleAi.title}
       description={t.responsibleAi.description}
       breadcrumbs={[

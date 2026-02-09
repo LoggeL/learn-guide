@@ -8,7 +8,7 @@ export default function TokenizationPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="tokenization"
       title={t.tokenization.title}
       description={t.tokenization.description}
       breadcrumbs={[

@@ -172,7 +172,7 @@ export default function EuropeanAiPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="european-ai"
       title={t.europeanAi.title}
       description={t.europeanAi.description}
       breadcrumbs={[

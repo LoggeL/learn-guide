@@ -7,7 +7,7 @@ export default function EvaluationPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="evaluation"
       title={t.evaluation.title}
       description={t.evaluation.description}
       breadcrumbs={[

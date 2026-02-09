@@ -15,7 +15,7 @@ export default function AgentLoopPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agent-loop"
       title={t.agentLoop.title}
       description={t.agentLoop.description}
       breadcrumbs={[

@@ -8,7 +8,7 @@ export default function AgentSecurityPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agent-security"
       title={t.agentSecurity.title}
       description={t.agentSecurity.description}
       breadcrumbs={[

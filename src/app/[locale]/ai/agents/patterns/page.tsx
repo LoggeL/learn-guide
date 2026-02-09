@@ -15,7 +15,7 @@ export default function AgenticPatternsPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agentic-patterns"
       title={t.agenticPatterns.title}
       description={t.agenticPatterns.description}
       breadcrumbs={[

@@ -107,7 +107,7 @@ export default function AgenticVisionPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agentic-vision"
       title={t.agenticVision.title}
       description={t.agenticVision.description}
       breadcrumbs={[

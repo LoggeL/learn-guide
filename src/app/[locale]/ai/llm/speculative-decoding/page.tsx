@@ -8,7 +8,7 @@ export default function SpeculativeDecodingPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="speculative-decoding"
       title={t.speculativeDecoding.title}
       description={t.speculativeDecoding.description}
       breadcrumbs={[

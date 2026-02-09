@@ -8,7 +8,7 @@ export default function OrchestrationPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="orchestration"
       title={t.orchestration.title}
       description={t.orchestration.description}
       breadcrumbs={[

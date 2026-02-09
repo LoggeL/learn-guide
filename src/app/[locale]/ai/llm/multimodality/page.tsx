@@ -9,7 +9,7 @@ export default function MultimodalityPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="multimodality"
       title={t.multimodality.title}
       description={t.multimodality.description}
       breadcrumbs={[

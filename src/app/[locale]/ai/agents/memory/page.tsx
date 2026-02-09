@@ -8,7 +8,7 @@ export default function MemoryPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="memory"
       title={t.memorySystems.title}
       description={t.memorySystems.description}
       breadcrumbs={[

@@ -52,7 +52,7 @@ export default function FavouriteModelsPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="logges-favourite-model"
       title={f.title}
       description={f.description}
       breadcrumbs={[

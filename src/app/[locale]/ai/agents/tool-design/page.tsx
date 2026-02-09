@@ -8,7 +8,7 @@ export default function ToolDesignPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="tool-design"
       title={t.toolDesign.title}
       description={t.toolDesign.description}
       breadcrumbs={[

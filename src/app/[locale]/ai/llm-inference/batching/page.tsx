@@ -8,7 +8,7 @@ export default function BatchingPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="batching"
       title={t.batching.title}
       description={t.batching.description}
       breadcrumbs={[

@@ -15,7 +15,7 @@ export default function AgentProblemsPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agent-problems"
       title={t.agentProblems.title}
       description={t.agentProblems.description}
       breadcrumbs={[

@@ -8,7 +8,7 @@ export default function VisionPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="vision"
       title={t.vision.title}
       description={t.vision.description}
       breadcrumbs={[

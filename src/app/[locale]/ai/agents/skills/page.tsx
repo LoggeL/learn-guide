@@ -28,7 +28,7 @@ export default function AgentSkillsPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="skills"
       title={t.agentSkills.title}
       description={t.agentSkills.description}
       breadcrumbs={[

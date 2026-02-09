@@ -27,7 +27,7 @@ export default function MoEPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="moe"
       title={t.moe.title}
       description={t.moe.description}
       breadcrumbs={[

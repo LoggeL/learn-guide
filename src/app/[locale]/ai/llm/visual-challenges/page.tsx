@@ -8,7 +8,7 @@ export default function VisualChallengesPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="visual-challenges"
       title={t.visualChallenges.title}
       description={t.visualChallenges.description}
       breadcrumbs={[

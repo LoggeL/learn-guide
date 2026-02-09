@@ -8,7 +8,7 @@ export default function TrainingPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="training"
       title={t.training.title}
       description={t.training.description}
       breadcrumbs={[

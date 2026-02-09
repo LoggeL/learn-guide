@@ -20,7 +20,7 @@ export default function AttentionPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="attention"
       title={t.attention.title}
       description={t.attention.description}
       breadcrumbs={[

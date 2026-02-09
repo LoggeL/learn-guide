@@ -7,7 +7,7 @@ export default function LLMTrainingPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="llm-training"
       title={t.llmTraining.title}
       description={t.llmTraining.description}
       breadcrumbs={[

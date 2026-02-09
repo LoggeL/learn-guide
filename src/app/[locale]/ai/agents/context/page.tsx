@@ -15,7 +15,7 @@ export default function AgentContextPage() {
   ]
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="agent-context"
       title={t.agentContext.title}
       description={t.agentContext.description}
       breadcrumbs={[

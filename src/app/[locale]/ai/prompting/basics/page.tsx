@@ -8,7 +8,7 @@ export default function PromptBasicsPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="prompt-basics"
       title={t.promptBasics.title}
       description={t.promptBasics.description}
       breadcrumbs={[

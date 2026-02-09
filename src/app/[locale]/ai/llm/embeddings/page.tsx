@@ -8,7 +8,7 @@ export default function EmbeddingsPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="embeddings"
       title={t.embeddings.title}
       description={t.embeddings.description}
       breadcrumbs={[

@@ -10,7 +10,7 @@ export default function NestedLearningPage() {
   const nl = t.nestedLearning
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="nested-learning"
       title={nl.title}
       description={nl.description}
       breadcrumbs={[

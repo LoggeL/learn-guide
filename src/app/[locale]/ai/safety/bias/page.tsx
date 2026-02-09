@@ -8,7 +8,7 @@ export default function BiasPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="bias"
       title={t.bias.title}
       description={t.bias.description}
       breadcrumbs={[

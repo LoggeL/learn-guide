@@ -8,7 +8,7 @@ export default function KVCachePage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="kv-cache"
       title={t.kvCache.title}
       description={t.kvCache.description}
       breadcrumbs={[

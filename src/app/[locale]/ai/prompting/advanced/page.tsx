@@ -8,7 +8,7 @@ export default function AdvancedPromptingPage() {
   const { t } = useTranslation()
 
   return (
-    <TopicLayout
+    <TopicLayout topicId="advanced-prompting"
       title={t.advancedPrompting.title}
       description={t.advancedPrompting.description}
       breadcrumbs={[
