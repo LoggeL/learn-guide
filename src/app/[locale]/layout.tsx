@@ -78,6 +78,8 @@ export default function LocaleLayout({
             {children}
           </main>
         </LocaleProvider>
+        {/* Cloudflare Web Analytics */}
+        <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "6c4d6e2bf331427b9c62c4951a8d2346"}' />
       </body>
     </html>
   )
