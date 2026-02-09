@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github } from 'lucide-react'
+import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 
 // Type definitions for topic structure
@@ -184,6 +185,17 @@ const topicData: TopicRoot[] = [
   },
 ]
 
+function DifficultyBadge({ topicId }: { topicId: string }) {
+  const d = TOPIC_DIFFICULTY[topicId]
+  if (!d) return null
+  const s = DIFFICULTY_STYLES[d]
+  return (
+    <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0 ${s.color} ${s.bg} ${s.border}`}>
+      {s.label}
+    </span>
+  )
+}
+
 export default function Home() {
   const { t } = useTranslation()
   const { locale } = useLocale()
@@ -341,6 +353,7 @@ export default function Home() {
                                   </span>
                                 )}
                               </div>
+                              <DifficultyBadge topicId={subtopic.id} />
                               <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
                             </Link>
                           ))}
@@ -375,6 +388,7 @@ export default function Home() {
                                         </span>
                                       )}
                                     </div>
+                                    <DifficultyBadge topicId={item.id} />
                                     <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
                                   </Link>
                                 ))}

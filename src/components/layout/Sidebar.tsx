@@ -8,8 +8,7 @@ import { ChevronRight, Search, Sparkles, X, Command, Heart, Github } from 'lucid
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
-
-type Difficulty = 'beginner' | 'intermediate' | 'expert'
+import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
 
 interface Topic {
   id: string
@@ -17,12 +16,6 @@ interface Topic {
   path?: string
   difficulty?: Difficulty
   children?: Topic[]
-}
-
-const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; color: string; bg: string; border: string }> = {
-  beginner:     { label: 'B', color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30' },
-  intermediate: { label: 'I', color: 'text-amber-400',   bg: 'bg-amber-500/15',   border: 'border-amber-500/30' },
-  expert:       { label: 'E', color: 'text-red-400',     bg: 'bg-red-500/15',     border: 'border-red-500/30' },
 }
 
 // Topic structure with translation keys
@@ -241,11 +234,11 @@ function TopicNode({
       {topic.difficulty && !isActive && (
         <span className={clsx(
           'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none',
-          DIFFICULTY_CONFIG[topic.difficulty].color,
-          DIFFICULTY_CONFIG[topic.difficulty].bg,
-          DIFFICULTY_CONFIG[topic.difficulty].border,
+          DIFFICULTY_STYLES[topic.difficulty].color,
+          DIFFICULTY_STYLES[topic.difficulty].bg,
+          DIFFICULTY_STYLES[topic.difficulty].border,
         )}>
-          {DIFFICULTY_CONFIG[topic.difficulty].label}
+          {DIFFICULTY_STYLES[topic.difficulty].label}
         </span>
       )}
     </>

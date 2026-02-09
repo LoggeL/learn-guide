@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Sparkles, ChevronRight } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { findCategory, flattenTopics, type Topic } from '@/lib/topics'
+import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
 
 interface CategoryPageProps {
   categoryId: string
@@ -170,6 +171,14 @@ function TopicCard({
           </span>
         )}
       </div>
+      {TOPIC_DIFFICULTY[topic.id] && (() => {
+        const s = DIFFICULTY_STYLES[TOPIC_DIFFICULTY[topic.id]]
+        return (
+          <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0 ${s.color} ${s.bg} ${s.border}`}>
+            {s.label}
+          </span>
+        )
+      })()}
       <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
     </Link>
   )
