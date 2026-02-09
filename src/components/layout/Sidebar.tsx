@@ -9,11 +9,20 @@ import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 
+type Difficulty = 'beginner' | 'intermediate' | 'expert'
+
 interface Topic {
   id: string
   nameKey: string
   path?: string
+  difficulty?: Difficulty
   children?: Topic[]
+}
+
+const DIFFICULTY_CONFIG: Record<Difficulty, { label: string; color: string; bg: string; border: string }> = {
+  beginner:     { label: 'B', color: 'text-emerald-400', bg: 'bg-emerald-500/15', border: 'border-emerald-500/30' },
+  intermediate: { label: 'I', color: 'text-amber-400',   bg: 'bg-amber-500/15',   border: 'border-amber-500/30' },
+  expert:       { label: 'E', color: 'text-red-400',     bg: 'bg-red-500/15',     border: 'border-red-500/30' },
 }
 
 // Topic structure with translation keys
@@ -26,35 +35,35 @@ const topicTree: Topic[] = [
             id: 'agents-core',
             nameKey: 'agents-core',
             children: [
-              { id: 'agent-loop', nameKey: 'agent-loop', path: '/ai/agents/loop' },
-              { id: 'agent-context', nameKey: 'agent-context', path: '/ai/agents/context' },
+              { id: 'agent-loop', nameKey: 'agent-loop', path: '/ai/agents/loop', difficulty: 'beginner' },
+              { id: 'agent-context', nameKey: 'agent-context', path: '/ai/agents/context', difficulty: 'intermediate' },
             ],
           },
           {
             id: 'agents-building',
             nameKey: 'agents-building',
             children: [
-              { id: 'tool-design', nameKey: 'tool-design', path: '/ai/agents/tool-design' },
-              { id: 'memory', nameKey: 'memory', path: '/ai/agents/memory' },
-              { id: 'skills', nameKey: 'skills', path: '/ai/agents/skills' },
-              { id: 'mcp', nameKey: 'mcp', path: '/ai/agents/mcp' },
+              { id: 'tool-design', nameKey: 'tool-design', path: '/ai/agents/tool-design', difficulty: 'intermediate' },
+              { id: 'memory', nameKey: 'memory', path: '/ai/agents/memory', difficulty: 'intermediate' },
+              { id: 'skills', nameKey: 'skills', path: '/ai/agents/skills', difficulty: 'intermediate' },
+              { id: 'mcp', nameKey: 'mcp', path: '/ai/agents/mcp', difficulty: 'intermediate' },
             ],
           },
           {
             id: 'agents-patterns',
             nameKey: 'agents-patterns',
             children: [
-              { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns' },
-              { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration' },
+              { id: 'agentic-patterns', nameKey: 'agentic-patterns', path: '/ai/agents/patterns', difficulty: 'expert' },
+              { id: 'orchestration', nameKey: 'orchestration', path: '/ai/agents/orchestration', difficulty: 'expert' },
             ],
           },
           {
             id: 'agents-quality',
             nameKey: 'agents-quality',
             children: [
-              { id: 'agent-problems', nameKey: 'agent-problems', path: '/ai/agents/problems' },
-              { id: 'agent-security', nameKey: 'agent-security', path: '/ai/agents/security' },
-              { id: 'evaluation', nameKey: 'evaluation', path: '/ai/agents/evaluation' },
+              { id: 'agent-problems', nameKey: 'agent-problems', path: '/ai/agents/problems', difficulty: 'intermediate' },
+              { id: 'agent-security', nameKey: 'agent-security', path: '/ai/agents/security', difficulty: 'expert' },
+              { id: 'evaluation', nameKey: 'evaluation', path: '/ai/agents/evaluation', difficulty: 'expert' },
             ],
           },
         ],
@@ -67,40 +76,40 @@ const topicTree: Topic[] = [
             id: 'llm-fundamentals',
             nameKey: 'llm-fundamentals',
             children: [
-              { id: 'tokenization', nameKey: 'tokenization', path: '/ai/llm/tokenization' },
-              { id: 'embeddings', nameKey: 'embeddings', path: '/ai/llm/embeddings' },
-              { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention' },
+              { id: 'tokenization', nameKey: 'tokenization', path: '/ai/llm/tokenization', difficulty: 'beginner' },
+              { id: 'embeddings', nameKey: 'embeddings', path: '/ai/llm/embeddings', difficulty: 'beginner' },
+              { id: 'attention', nameKey: 'attention', path: '/ai/llm/attention', difficulty: 'intermediate' },
             ],
           },
           {
             id: 'llm-behavior',
             nameKey: 'llm-behavior',
             children: [
-              { id: 'temperature', nameKey: 'temperature', path: '/ai/llm/temperature' },
-              { id: 'context-rot', nameKey: 'context-rot', path: '/ai/llm/context-rot' },
+              { id: 'temperature', nameKey: 'temperature', path: '/ai/llm/temperature', difficulty: 'beginner' },
+              { id: 'context-rot', nameKey: 'context-rot', path: '/ai/llm/context-rot', difficulty: 'intermediate' },
             ],
           },
           {
             id: 'llm-capabilities',
             nameKey: 'llm-capabilities',
             children: [
-              { id: 'rag', nameKey: 'rag', path: '/ai/llm/rag' },
-              { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision' },
-              { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges' },
-              { id: 'agentic-vision', nameKey: 'agentic-vision', path: '/ai/llm/agentic-vision' },
-              { id: 'multimodality', nameKey: 'multimodality', path: '/ai/llm/multimodality' },
+              { id: 'rag', nameKey: 'rag', path: '/ai/llm/rag', difficulty: 'intermediate' },
+              { id: 'vision', nameKey: 'vision', path: '/ai/llm/vision', difficulty: 'beginner' },
+              { id: 'visual-challenges', nameKey: 'visual-challenges', path: '/ai/llm/visual-challenges', difficulty: 'intermediate' },
+              { id: 'agentic-vision', nameKey: 'agentic-vision', path: '/ai/llm/agentic-vision', difficulty: 'expert' },
+              { id: 'multimodality', nameKey: 'multimodality', path: '/ai/llm/multimodality', difficulty: 'beginner' },
             ],
           },
           {
             id: 'llm-architecture',
             nameKey: 'llm-architecture',
             children: [
-              { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training' },
-              { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe' },
-              { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization' },
-              { id: 'nested-learning', nameKey: 'nested-learning', path: '/ai/llm/nested-learning' },
-              { id: 'distillation', nameKey: 'distillation', path: '/ai/llm/distillation' },
-              { id: 'speculative-decoding', nameKey: 'speculative-decoding', path: '/ai/llm/speculative-decoding' },
+              { id: 'llm-training', nameKey: 'llm-training', path: '/ai/llm/training', difficulty: 'intermediate' },
+              { id: 'moe', nameKey: 'moe', path: '/ai/llm/moe', difficulty: 'expert' },
+              { id: 'quantization', nameKey: 'quantization', path: '/ai/llm/quantization', difficulty: 'expert' },
+              { id: 'nested-learning', nameKey: 'nested-learning', path: '/ai/llm/nested-learning', difficulty: 'expert' },
+              { id: 'distillation', nameKey: 'distillation', path: '/ai/llm/distillation', difficulty: 'intermediate' },
+              { id: 'speculative-decoding', nameKey: 'speculative-decoding', path: '/ai/llm/speculative-decoding', difficulty: 'expert' },
             ],
           },
         ],
@@ -109,43 +118,43 @@ const topicTree: Topic[] = [
         id: 'llm-inference',
         nameKey: 'llm-inference',
         children: [
-          { id: 'kv-cache', nameKey: 'kv-cache', path: '/ai/llm-inference/kv-cache' },
-          { id: 'batching', nameKey: 'batching', path: '/ai/llm-inference/batching' },
+          { id: 'kv-cache', nameKey: 'kv-cache', path: '/ai/llm-inference/kv-cache', difficulty: 'expert' },
+          { id: 'batching', nameKey: 'batching', path: '/ai/llm-inference/batching', difficulty: 'intermediate' },
         ],
       },
       {
         id: 'ml-fundamentals',
         nameKey: 'ml-fundamentals',
         children: [
-          { id: 'neural-networks', nameKey: 'neural-networks', path: '/ai/ml-fundamentals/neural-networks' },
-          { id: 'gradient-descent', nameKey: 'gradient-descent', path: '/ai/ml-fundamentals/gradient-descent' },
-          { id: 'training', nameKey: 'training', path: '/ai/ml-fundamentals/training' },
+          { id: 'neural-networks', nameKey: 'neural-networks', path: '/ai/ml-fundamentals/neural-networks', difficulty: 'beginner' },
+          { id: 'gradient-descent', nameKey: 'gradient-descent', path: '/ai/ml-fundamentals/gradient-descent', difficulty: 'intermediate' },
+          { id: 'training', nameKey: 'training', path: '/ai/ml-fundamentals/training', difficulty: 'beginner' },
         ],
       },
       {
         id: 'prompting',
         nameKey: 'prompting',
         children: [
-          { id: 'prompt-basics', nameKey: 'prompt-basics', path: '/ai/prompting/basics' },
-          { id: 'advanced-prompting', nameKey: 'advanced-prompting', path: '/ai/prompting/advanced' },
-          { id: 'system-prompts', nameKey: 'system-prompts', path: '/ai/prompting/system-prompts' },
+          { id: 'prompt-basics', nameKey: 'prompt-basics', path: '/ai/prompting/basics', difficulty: 'beginner' },
+          { id: 'advanced-prompting', nameKey: 'advanced-prompting', path: '/ai/prompting/advanced', difficulty: 'intermediate' },
+          { id: 'system-prompts', nameKey: 'system-prompts', path: '/ai/prompting/system-prompts', difficulty: 'intermediate' },
         ],
       },
       {
         id: 'safety',
         nameKey: 'safety',
         children: [
-          { id: 'bias', nameKey: 'bias', path: '/ai/safety/bias' },
-          { id: 'responsible-ai', nameKey: 'responsible-ai', path: '/ai/safety/responsible-ai' },
+          { id: 'bias', nameKey: 'bias', path: '/ai/safety/bias', difficulty: 'beginner' },
+          { id: 'responsible-ai', nameKey: 'responsible-ai', path: '/ai/safety/responsible-ai', difficulty: 'beginner' },
         ],
       },
       {
         id: 'industry',
         nameKey: 'industry',
         children: [
-          { id: 'european-ai', nameKey: 'european-ai', path: '/ai/industry/european-ai' },
-          { id: 'open-source', nameKey: 'open-source', path: '/ai/industry/open-source' },
-          { id: 'logges-favourite-model', nameKey: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model' },
+          { id: 'european-ai', nameKey: 'european-ai', path: '/ai/industry/european-ai', difficulty: 'beginner' },
+          { id: 'open-source', nameKey: 'open-source', path: '/ai/industry/open-source', difficulty: 'beginner' },
+          { id: 'logges-favourite-model', nameKey: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model', difficulty: 'beginner' },
         ],
       },
 ]
@@ -229,6 +238,16 @@ function TopicNode({
       <span className={clsx('flex-1 text-sm', localePath ? 'font-medium' : 'font-semibold')}>
         {getTopicName(topic.nameKey)}
       </span>
+      {topic.difficulty && !isActive && (
+        <span className={clsx(
+          'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none',
+          DIFFICULTY_CONFIG[topic.difficulty].color,
+          DIFFICULTY_CONFIG[topic.difficulty].bg,
+          DIFFICULTY_CONFIG[topic.difficulty].border,
+        )}>
+          {DIFFICULTY_CONFIG[topic.difficulty].label}
+        </span>
+      )}
     </>
   )
 
