@@ -5,6 +5,13 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
+import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
+
+const DIFFICULTY_LABELS: Record<Difficulty, string> = {
+  beginner: 'Beginner',
+  intermediate: 'Intermediate',
+  expert: 'Expert',
+}
 
 interface TopicLayoutProps {
   title: string
@@ -58,9 +65,20 @@ export function TopicLayout({
 
       {/* Header */}
       <header className="mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold font-heading mb-4 leading-tight">
-          <span className="text-gradient">{title}</span>
-        </h1>
+        <div className="flex items-center gap-3 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold font-heading leading-tight">
+            <span className="text-gradient">{title}</span>
+          </h1>
+          {topicId && TOPIC_DIFFICULTY[topicId] && (() => {
+            const d = TOPIC_DIFFICULTY[topicId]
+            const s = DIFFICULTY_STYLES[d]
+            return (
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border shrink-0 ${s.color} ${s.bg} ${s.border}`}>
+                {DIFFICULTY_LABELS[d]}
+              </span>
+            )
+          })()}
+        </div>
         <p className="text-lg text-muted leading-relaxed max-w-3xl">
           {description}
         </p>
