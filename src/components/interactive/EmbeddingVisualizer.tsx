@@ -65,6 +65,9 @@ function cosineSimilarity(a: [number, number], b: [number, number]): number {
 
 function getEmbedding(word: string): [number, number] {
   const lower = word.toLowerCase()
+  if (WORD_EMBEDDINGS[word]) {
+    return WORD_EMBEDDINGS[word]
+  }
   if (WORD_EMBEDDINGS[lower]) {
     return WORD_EMBEDDINGS[lower]
   }
