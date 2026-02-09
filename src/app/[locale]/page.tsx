@@ -391,10 +391,53 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Contribute CTA */}
+        <motion.section variants={itemVariants} className="mt-16">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-surface to-secondary/10 border border-primary/20 p-8 md:p-10 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5 mx-auto mb-5">
+              <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center">
+                <Github size={24} className="text-primary-light" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold font-heading text-text mb-3">Help Make This Better</h2>
+            <p className="text-muted max-w-lg mx-auto mb-6 leading-relaxed">
+              This guide is open source. Got an idea for a new topic? Found a bug? Want to improve an explanation? Every contribution helps.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=topic_request.md&title=%5BTopic%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <MessageSquare size={16} />
+                Request a Topic
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=bug_report.md&title=%5BBug%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary inline-flex items-center gap-2"
+              >
+                Report a Bug
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted hover:text-text transition-colors"
+              >
+                <Github size={16} />
+                Star on GitHub
+              </a>
+            </div>
+          </div>
+        </motion.section>
+
         {/* Keyboard Shortcut Hint */}
         <motion.div 
           variants={itemVariants}
-          className="mt-16 text-center"
+          className="mt-8 text-center"
         >
           <div className="inline-flex items-center gap-3 px-5 py-3 rounded-full bg-surface border border-border text-sm text-muted">
             <span>{t.common.proTip}</span>
@@ -434,26 +477,15 @@ export default function Home() {
                 </span>
               </div>
             </a>
-            <div className="flex items-center gap-4">
-              <a
-                href="https://github.com/LoggeL/learn-guide"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-subtle hover:text-text transition-colors group"
-              >
-                <Github size={16} className="group-hover:text-primary-light transition-colors" />
-                <span className="text-sm">Open Source</span>
-              </a>
-              <span className="text-border">|</span>
-              <a
-                href="https://github.com/LoggeL/learn-guide/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-subtle hover:text-text transition-colors"
-              >
-                Report a Bug
-              </a>
-            </div>
+            <a
+              href="https://github.com/LoggeL/learn-guide"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-subtle hover:text-text transition-colors"
+            >
+              <Github size={14} />
+              <span className="text-xs">Open Source</span>
+            </a>
           </div>
         </motion.footer>
       </motion.div>
