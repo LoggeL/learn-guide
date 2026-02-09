@@ -4355,6 +4355,7 @@ export const en = {
     fullModel: 'Full Model Copy',
     loraAdapter: 'LoRA Adapter',
     storageSavings: '~{x}× smaller — you can store hundreds of adapters for different tasks!',
+    rankAffectsMemory: 'Higher rank → more trainable parameters → more VRAM and larger adapter files',
     memoryBenefit: 'Less Memory',
     memoryBenefitDesc: 'Only the small A and B matrices need gradients and optimizer states.',
     speedBenefit: 'Faster Training',
@@ -4375,6 +4376,18 @@ export const en = {
     useCase3Desc: 'Improve performance in underrepresented languages by training a LoRA on language-specific data.',
     useCase4Title: 'Instruction Following',
     useCase4Desc: 'Make a base model follow instructions better by training an adapter on instruction-response pairs.',
+
+    // Anti Use Cases
+    antiUseCasesTitle: 'When NOT to Use LoRA',
+    antiUseCasesDesc: 'LoRA is powerful, but it\'s not the right tool for every job:',
+    antiUseCase1Title: 'Prompt Engineering Would Suffice',
+    antiUseCase1Desc: 'If you can get the behavior you want with a good system prompt or few-shot examples, don\'t train an adapter. It\'s cheaper, faster, and easier to iterate on.',
+    antiUseCase2Title: 'You Need Broad New Knowledge',
+    antiUseCase2Desc: 'LoRA is great for style and behavior, but struggles to inject large amounts of factual knowledge. Use RAG (retrieval) instead for knowledge-heavy tasks.',
+    antiUseCase3Title: 'Your Dataset Is Tiny or Noisy',
+    antiUseCase3Desc: 'With fewer than ~100 quality examples, LoRA will overfit or barely learn anything. Clean, curated data is essential — garbage in, garbage out.',
+    antiUseCase4Title: 'You Need Real-Time Adaptation',
+    antiUseCase4Desc: 'LoRA requires a training step. If your use case needs the model to adapt on-the-fly to new information, use in-context learning or RAG instead.',
 
     // 5. Why Not for Pre-Training
     whyNotTitle: 'Why LoRA Isn\'t Used for Pre-Training',

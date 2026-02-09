@@ -84,6 +84,28 @@ export default function LoraPage() {
         </div>
       </section>
 
+      {/* Anti Use Cases */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.lora.antiUseCasesTitle}</h2>
+        <p className="text-muted mb-6">{t.lora.antiUseCasesDesc}</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            { icon: '💬', title: t.lora.antiUseCase1Title, desc: t.lora.antiUseCase1Desc, color: 'red' },
+            { icon: '📚', title: t.lora.antiUseCase2Title, desc: t.lora.antiUseCase2Desc, color: 'orange' },
+            { icon: '🗑️', title: t.lora.antiUseCase3Title, desc: t.lora.antiUseCase3Desc, color: 'amber' },
+            { icon: '⏱️', title: t.lora.antiUseCase4Title, desc: t.lora.antiUseCase4Desc, color: 'rose' },
+          ].map((uc) => (
+            <div key={uc.title} className={`p-5 rounded-xl bg-${uc.color}-500/5 border border-${uc.color}-500/20`}>
+              <div className={`w-10 h-10 rounded-lg bg-${uc.color}-500/20 flex items-center justify-center mb-3`}>
+                <span className="text-xl">{uc.icon}</span>
+              </div>
+              <h3 className={`text-${uc.color}-400 font-semibold font-heading mb-2`}>{uc.title}</h3>
+              <p className="text-muted text-sm leading-relaxed">{uc.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 5. Why Not Used for Pre-Training */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.lora.whyNotTitle}</h2>

@@ -149,20 +149,41 @@ interface ModelConfig {
   name: string
   params: string
   fullVram: number
-  loraVram: number
   fullStorage: number
-  loraStorage: number
+  hiddenDim: number
+  targetLayers: number
+  baseVramQ4: number // 4-bit quantized base model VRAM
 }
 
 const MODELS: ModelConfig[] = [
-  { name: '7B', params: '7B', fullVram: 28, loraVram: 8, fullStorage: 28, loraStorage: 0.05 },
-  { name: '13B', params: '13B', fullVram: 52, loraVram: 14, fullStorage: 52, loraStorage: 0.08 },
-  { name: '70B', params: '70B', fullVram: 280, loraVram: 48, fullStorage: 280, loraStorage: 0.2 },
+  { name: '7B', params: '7B', fullVram: 28, fullStorage: 28, hiddenDim: 4096, targetLayers: 64, baseVramQ4: 4.5 },
+  { name: '13B', params: '13B', fullVram: 52, fullStorage: 52, hiddenDim: 5120, targetLayers: 80, baseVramQ4: 8 },
+  { name: '70B', params: '70B', fullVram: 280, fullStorage: 280, hiddenDim: 8192, targetLayers: 160, baseVramQ4: 38 },
 ]
+
+const MEMORY_RANKS = [4, 8, 16, 32, 64, 128]
+
+function computeLoraStats(model: ModelConfig, rank: number) {
+  // Adapter storage: 2 matrices × hidden_dim × rank × target_layers × 2 bytes (fp16)
+  const adapterBytes = 2 * model.hiddenDim * rank * model.targetLayers * 2
+  const adapterGB = adapterBytes / 1e9
+
+  // VRAM: base (4-bit) + LoRA params (fp16) + optimizer states (8 bytes per param for AdamW) + activation overhead
+  const loraParams = 2 * model.hiddenDim * rank * model.targetLayers
+  const loraParamsGB = (loraParams * 2) / 1e9 // fp16
+  const optimizerGB = (loraParams * 8) / 1e9 // AdamW states
+  const activationOverhead = 1.5 + rank * 0.02 // rough estimate, scales slightly with rank
+  const loraVram = model.baseVramQ4 + loraParamsGB + optimizerGB + activationOverhead
+
+  return { adapterGB, loraVram: Math.round(loraVram * 10) / 10 }
+}
 
 function MemorySection({ t }: { t: Record<string, string> }) {
   const [modelIdx, setModelIdx] = useState(0)
+  const [rankIdx, setRankIdx] = useState(1) // default r=8
   const model = MODELS[modelIdx]
+  const rank = MEMORY_RANKS[rankIdx]
+  const { adapterGB, loraVram } = computeLoraStats(model, rank)
   const maxVram = 300
 
   return (
@@ -189,6 +210,22 @@ function MemorySection({ t }: { t: Record<string, string> }) {
         ))}
       </div>
 
+      {/* Rank slider */}
+      <div className="flex flex-col items-center gap-2">
+        <label className="text-sm text-muted font-medium">
+          {t.rankLabel}: <span className="font-bold text-cyan-400">r = {rank}</span>
+        </label>
+        <input
+          type="range" min={0} max={MEMORY_RANKS.length - 1} value={rankIdx}
+          onChange={e => setRankIdx(Number(e.target.value))}
+          className="w-full max-w-md accent-cyan-400"
+        />
+        <div className="flex justify-between w-full max-w-md text-xs text-muted">
+          <span>r=4</span><span>r=128</span>
+        </div>
+        <p className="text-xs text-muted">{t.rankAffectsMemory}</p>
+      </div>
+
       {/* VRAM comparison */}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
@@ -209,14 +246,19 @@ function MemorySection({ t }: { t: Record<string, string> }) {
 
         <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
           <div className="text-sm text-muted mb-1">{t.loraFineTune}</div>
-          <div className="text-3xl font-bold font-mono text-cyan-400">
-            {model.loraVram} GB
-          </div>
+          <motion.div
+            key={`${modelIdx}-${rank}`}
+            className="text-3xl font-bold font-mono text-cyan-400"
+            initial={{ scale: 1.2 }}
+            animate={{ scale: 1 }}
+          >
+            {loraVram} GB
+          </motion.div>
           <div className="mt-3 h-4 rounded-full bg-surface overflow-hidden border border-border">
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
               initial={false}
-              animate={{ width: `${(model.loraVram / maxVram) * 100}%` }}
+              animate={{ width: `${(loraVram / maxVram) * 100}%` }}
               transition={{ type: 'spring', stiffness: 120, damping: 20 }}
             />
           </div>
@@ -246,19 +288,19 @@ function MemorySection({ t }: { t: Record<string, string> }) {
           <div className="flex-1">
             <div className="flex justify-between text-sm mb-1">
               <span className="text-emerald-400">{t.loraAdapter}</span>
-              <span className="text-emerald-400 font-mono">{model.loraStorage} GB</span>
+              <span className="text-emerald-400 font-mono">{adapterGB < 0.01 ? adapterGB.toFixed(4) : adapterGB.toFixed(2)} GB</span>
             </div>
             <div className="h-6 rounded-full bg-surface overflow-hidden border border-border">
               <motion.div
                 className="h-full rounded-full bg-emerald-500/40"
                 initial={false}
-                animate={{ width: `${(model.loraStorage / model.fullStorage) * 100}%` }}
+                animate={{ width: `${Math.max(0.5, (adapterGB / model.fullStorage) * 100)}%` }}
                 transition={{ type: 'spring', stiffness: 120, damping: 20 }}
               />
             </div>
           </div>
         </div>
-        <p className="text-xs text-emerald-400 mt-3">{t.storageSavings.replace('{x}', Math.round(model.fullStorage / model.loraStorage).toLocaleString())}</p>
+        <p className="text-xs text-emerald-400 mt-3">{t.storageSavings.replace('{x}', Math.round(model.fullStorage / adapterGB).toLocaleString())}</p>
       </div>
 
       {/* Key advantages */}
