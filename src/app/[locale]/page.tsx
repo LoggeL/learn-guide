@@ -340,7 +340,7 @@ export default function Home() {
               <p className="text-sm text-muted">{t.common.whatsNew}</p>
             </div>
           </div>
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {(() => {
               // Build a flat lookup of id → path from canonical topics
               const pathMap: Record<string, string> = {}
@@ -354,7 +354,7 @@ export default function Home() {
                 <Link
                   key={id}
                   href={`/${locale}${pathMap[id] || ''}`}
-                  className="group flex-shrink-0 w-64 p-4 rounded-xl bg-gradient-to-br from-surface to-surface-elevated border border-border hover:border-primary/40 transition-all duration-200"
+                  className="group p-3 md:p-4 rounded-xl bg-gradient-to-br from-surface to-surface-elevated border border-border hover:border-primary/40 transition-all duration-200"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <DifficultyBadge topicId={id} />
