@@ -5,7 +5,8 @@ import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
 import { Heart, Brain, Zap, Shield, Sparkles, AlertTriangle, Server, Code, MessageSquare, Cpu, Trophy, ExternalLink, ChevronRight, Gauge, Users, Layers, Terminal, MousePointer, Calendar } from 'lucide-react'
 
-function SectionIcon({ icon: Icon, gradient }: { icon: React.ElementType; gradient: string }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function SectionIcon({ icon: Icon, gradient }: { icon: any; gradient: string }) {
   return (
     <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} p-0.5 shrink-0`}>
       <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">

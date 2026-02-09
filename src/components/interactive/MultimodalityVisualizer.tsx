@@ -6,7 +6,8 @@ import { Image, Music, Video, MessageSquare, ArrowRight, Sparkles, Layers, Light
 
 interface Modality {
   id: string
-  icon: React.ElementType
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any
   color: string
   bgColor: string
   borderColor: string
