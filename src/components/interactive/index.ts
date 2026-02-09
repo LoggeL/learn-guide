@@ -67,3 +67,9 @@ export { BatchingVisualizer } from './BatchingVisualizer'
 
 // LoRA components
 export { LoraVisualizer } from './LoraVisualizer'
+
+// Local Inference components
+export { LocalInferenceVisualizer } from './LocalInferenceVisualizer'
+
+// Transformer Architecture components
+export { TransformerVisualizer } from './TransformerVisualizer'

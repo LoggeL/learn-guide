@@ -33,6 +33,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'agentic-vision': 'expert',
   'multimodality': 'beginner',
   // LLM Architecture
+  'transformer-architecture': 'intermediate',
   'llm-training': 'intermediate',
   'moe': 'expert',
   'quantization': 'expert',
@@ -43,6 +44,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   // LLM Inference
   'kv-cache': 'expert',
   'batching': 'intermediate',
+  'local-inference': 'beginner',
   // ML Fundamentals
   'neural-networks': 'beginner',
   'gradient-descent': 'intermediate',

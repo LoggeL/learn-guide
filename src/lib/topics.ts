@@ -172,6 +172,11 @@ export const topics: Topic[] = [
             name: 'Architecture',
             children: [
               {
+                id: 'transformer-architecture',
+                name: 'Transformer Architecture',
+                path: '/ai/llm/transformer-architecture',
+              },
+              {
                 id: 'llm-training',
                 name: 'LLM Training',
                 path: '/ai/llm/training',
@@ -223,6 +228,11 @@ export const topics: Topic[] = [
             id: 'batching',
             name: 'Batching & Throughput',
             path: '/ai/llm-inference/batching',
+          },
+          {
+            id: 'local-inference',
+            name: 'Running Models Locally',
+            path: '/ai/llm-inference/local-inference',
           },
         ],
       },
