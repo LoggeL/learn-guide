@@ -164,6 +164,11 @@ function TopicCard({
         <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
           {t.topicNames[topic.id as keyof typeof t.topicNames] || topic.name}
         </span>
+        {t.topicDescriptions?.[topic.id as keyof typeof t.topicDescriptions] && (
+          <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+            {t.topicDescriptions[topic.id as keyof typeof t.topicDescriptions]}
+          </span>
+        )}
       </div>
       <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
     </Link>

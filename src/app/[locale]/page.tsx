@@ -332,9 +332,14 @@ export default function Home() {
                                 </span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
+                                <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
                                   {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
                                 </span>
+                                {t.topicDescriptions?.[subtopic.id as keyof typeof t.topicDescriptions] && (
+                                  <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+                                    {t.topicDescriptions[subtopic.id as keyof typeof t.topicDescriptions]}
+                                  </span>
+                                )}
                               </div>
                               <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
                             </Link>
@@ -361,9 +366,14 @@ export default function Home() {
                                       </span>
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors">
+                                      <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
                                         {t.topicNames[item.id as keyof typeof t.topicNames]}
                                       </span>
+                                      {t.topicDescriptions?.[item.id as keyof typeof t.topicDescriptions] && (
+                                        <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+                                          {t.topicDescriptions[item.id as keyof typeof t.topicDescriptions]}
+                                        </span>
+                                      )}
                                     </div>
                                     <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
                                   </Link>

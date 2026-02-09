@@ -621,10 +621,17 @@ export function Sidebar() {
                         index === selectedIndex ? "bg-surface-elevated" : "hover:bg-surface-elevated"
                       )}
                     >
-                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
                         <Sparkles size={14} className="text-primary-light" />
                       </div>
-                      <span className="font-medium">{getTopicName(topic.nameKey)}</span>
+                      <div className="flex-1 min-w-0">
+                        <span className="font-medium block">{getTopicName(topic.nameKey)}</span>
+                        {t.topicDescriptions?.[topic.id as keyof typeof t.topicDescriptions] && (
+                          <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+                            {t.topicDescriptions[topic.id as keyof typeof t.topicDescriptions]}
+                          </span>
+                        )}
+                      </div>
                     </Link>
                   ))
                 )}
