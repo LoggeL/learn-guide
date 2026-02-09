@@ -3,9 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/app/[locale]/ai/**'
-      - 'src/components/interactive/**'
-      - 'src/lib/i18n/dictionaries/**'
+      - 'src/app/[locale]/ai/**/page.tsx'
 
 jobs:
   notify:
@@ -15,15 +13,32 @@ jobs:
         with:
           fetch-depth: 2
       
+      - name: Check for new articles
+        id: check
+        run: |
+          # Only notify if a new page.tsx was ADDED (not modified)
+          NEW_PAGES=$(git diff --diff-filter=A --name-only HEAD~1 HEAD -- 'src/app/*/ai/**/page.tsx' || true)
+          if [ -z "$NEW_PAGES" ]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No new articles found, skipping notification"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "pages=$NEW_PAGES" >> $GITHUB_OUTPUT
+            echo "New articles: $NEW_PAGES"
+          fi
+
       - name: Get commit info
+        if: steps.check.outputs.skip != 'true'
         id: info
         run: |
           echo "msg=$(git log -1 --pretty=format:'%s')" >> $GITHUB_OUTPUT
       
       - name: Wait for deploy
+        if: steps.check.outputs.skip != 'true'
         run: sleep 180
       
       - name: Notify OpenClaw
+        if: steps.check.outputs.skip != 'true'
         env:
           HOOK_TOKEN: ${{ secrets.OPENCLAW_HOOK_TOKEN }}
           HOOK_URL: ${{ secrets.OPENCLAW_HOOK_URL }}
@@ -32,5 +47,5 @@ jobs:
             -H "Authorization: Bearer $HOOK_TOKEN" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
-              --arg msg "New content deployed on Learn Guide (learn.logge.top). Commit: '${{ steps.info.outputs.msg }}'. Post a brief update to the Telegram channel (use message tool: action=send, channel=telegram, target=-1003432427444). Use emoji, 2-3 sentences max, include the full link https://learn.logge.top but wrap it in angle brackets like <https://learn.logge.top> to prevent link preview/embed. Mention what changed based on the commit message." \
+              --arg msg "New article published on Learn Guide (learn.logge.top). Commit: '${{ steps.info.outputs.msg }}'. Post a brief update IN ENGLISH to the Telegram channel (use message tool: action=send, channel=telegram, target=-1003432427444). Use emoji, 2-3 sentences max, include the full link https://learn.logge.top but wrap it in angle brackets like <https://learn.logge.top> to prevent link preview/embed. Always write in English regardless of article language." \
               '{message: $msg, name: "Deploy", sessionKey: "hook:deploy:learn-guide", wakeMode: "now", deliver: false}')"
