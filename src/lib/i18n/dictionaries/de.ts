@@ -946,7 +946,7 @@ export const de: Dictionary = {
     similarityScore: 'Ähnlichkeits-Score',
     dimensions: 'Dimensionen',
     nearestNeighbors: 'Nächste Nachbarn',
-    vectorSpace: 'Vektorraum (2D-Projektion)',
+    vectorSpace: 'Vektorraum (3D)',
 
     // RAG Pipeline Visualizer
     enterQuery: 'Abfrage eingeben',

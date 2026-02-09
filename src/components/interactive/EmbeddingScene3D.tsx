@@ -80,7 +80,6 @@ function WordSphere({
           color={isSelected ? '#ffffff' : hovered ? '#e2e8f0' : '#94a3b8'}
           anchorX="center"
           anchorY="bottom"
-          font="/fonts/inter-medium.woff"
           outlineWidth={0.005}
           outlineColor="#000000"
         >

@@ -3468,7 +3468,7 @@ export const en = {
     similarityScore: 'Similarity Score',
     dimensions: 'Dimensions',
     nearestNeighbors: 'Nearest Neighbors',
-    vectorSpace: 'Vector Space (2D Projection)',
+    vectorSpace: 'Vector Space (3D)',
 
     // RAG Pipeline Visualizer
     enterQuery: 'Enter your query',
