@@ -6,6 +6,7 @@ import { ArrowRight, Sparkles, ChevronRight } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { findCategory, flattenTopics, type Topic } from '@/lib/topics'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
+import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 
 interface CategoryPageProps {
   categoryId: string
@@ -168,6 +169,11 @@ function TopicCard({
         {t.topicDescriptions?.[topic.id as keyof typeof t.topicDescriptions] && (
           <span className="text-xs text-muted block mt-0.5 line-clamp-1">
             {t.topicDescriptions[topic.id as keyof typeof t.topicDescriptions]}
+          </span>
+        )}
+        {TOPIC_DATES[topic.id] && (
+          <span className="text-[10px] text-subtle block mt-0.5">
+            {formatTopicDate(TOPIC_DATES[topic.id], locale)}
           </span>
         )}
       </div>

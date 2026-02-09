@@ -22,6 +22,9 @@ export const de: Dictionary = {
     interactiveAiLearning: 'Interaktives KI-Lernen',
     guidesDescription: 'Interaktive Anleitungen zum Verstehen von KI-Konzepten',
     backToAllTopics: 'Zurück zu allen Themen',
+    lastUpdated: 'Zuletzt aktualisiert',
+    recentlyUpdated: 'Zuletzt aktualisiert',
+    whatsNew: 'Was gibt\'s Neues',
   },
 
   // 404 Seite

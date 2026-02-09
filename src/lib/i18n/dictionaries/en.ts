@@ -20,6 +20,9 @@ export const en = {
     interactiveAiLearning: 'Interactive AI Learning',
     guidesDescription: 'Interactive guides to understand AI concepts',
     backToAllTopics: 'Back to all topics',
+    lastUpdated: 'Last updated',
+    recentlyUpdated: 'Recently Updated',
+    whatsNew: "What's New",
   },
 
   // 404 page

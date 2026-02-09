@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github } from 'lucide-react'
+import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper } from 'lucide-react'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
+import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 
 // Type definitions for topic structure
@@ -266,6 +267,27 @@ export default function Home() {
           </div>
         </motion.header>
 
+        {/* Blog Banner */}
+        <motion.section variants={itemVariants} className="mb-12">
+          <a
+            href="https://blog.logge.top"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#d90429]/10 via-surface to-[#d90429]/5 border border-[#d90429]/20 hover:border-[#d90429]/40 transition-all duration-300"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d90429] to-[#d90429]/70 p-0.5 shrink-0">
+              <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
+                <Newspaper size={20} className="text-[#d90429]" />
+              </div>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-base font-bold text-text group-hover:text-[#d90429] transition-colors font-heading">LMF Blog</h3>
+              <p className="text-sm text-muted">Latest AI news, model analysis, and deep dives</p>
+            </div>
+            <ArrowRight size={18} className="text-muted group-hover:text-[#d90429] transition-colors shrink-0 transform group-hover:translate-x-1 transition-transform" />
+          </a>
+        </motion.section>
+
         {/* Feature Cards */}
         <motion.section variants={itemVariants} className="mb-24">
           <div className="grid md:grid-cols-3 gap-6">
@@ -350,6 +372,11 @@ export default function Home() {
                                 {t.topicDescriptions?.[subtopic.id as keyof typeof t.topicDescriptions] && (
                                   <span className="text-xs text-muted block mt-0.5 line-clamp-1">
                                     {t.topicDescriptions[subtopic.id as keyof typeof t.topicDescriptions]}
+                                  </span>
+                                )}
+                                {TOPIC_DATES[subtopic.id] && (
+                                  <span className="text-[10px] text-subtle block mt-0.5">
+                                    {formatTopicDate(TOPIC_DATES[subtopic.id], locale)}
                                   </span>
                                 )}
                               </div>
