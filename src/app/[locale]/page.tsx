@@ -6,6 +6,7 @@ import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers,
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
+import { flattenTopics } from '@/lib/topics'
 
 // Type definitions for topic structure
 interface TopicItem {
@@ -139,13 +140,25 @@ const topicData: TopicRoot[] = [
             id: 'llm-architecture',
             nameKey: 'llm-architecture',
             children: [
+              { id: 'transformer-architecture', path: '/ai/llm/transformer-architecture' },
               { id: 'llm-training', path: '/ai/llm/training' },
               { id: 'moe', path: '/ai/llm/moe' },
               { id: 'quantization', path: '/ai/llm/quantization' },
               { id: 'nested-learning', path: '/ai/llm/nested-learning' },
               { id: 'distillation', path: '/ai/llm/distillation' },
+              { id: 'lora', path: '/ai/llm/lora' },
+              { id: 'speculative-decoding', path: '/ai/llm/speculative-decoding' },
             ],
           },
+        ],
+      },
+      {
+        id: 'llm-inference',
+        nameKey: 'llm-inference',
+        children: [
+          { id: 'kv-cache', path: '/ai/llm-inference/kv-cache' },
+          { id: 'batching', path: '/ai/llm-inference/batching' },
+          { id: 'local-inference', path: '/ai/llm-inference/local-inference' },
         ],
       },
       {
@@ -179,6 +192,7 @@ const topicData: TopicRoot[] = [
         nameKey: 'industry',
         children: [
           { id: 'european-ai', path: '/ai/industry/european-ai' },
+          { id: 'open-source', path: '/ai/industry/open-source' },
           { id: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model' },
         ],
       },
@@ -328,20 +342,10 @@ export default function Home() {
           </div>
           <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin">
             {(() => {
-              // Build a flat lookup of id → path from topicData
+              // Build a flat lookup of id → path from canonical topics
               const pathMap: Record<string, string> = {}
-              for (const root of topicData) {
-                for (const cat of root.children) {
-                  for (const item of cat.children) {
-                    if (hasPath(item)) {
-                      pathMap[item.id] = item.path
-                    } else {
-                      for (const sub of (item as TopicSubcategory).children) {
-                        if ('path' in sub) pathMap[sub.id] = (sub as TopicItem).path
-                      }
-                    }
-                  }
-                }
+              for (const topic of flattenTopics()) {
+                if (topic.path) pathMap[topic.id] = topic.path
               }
               const recent = Object.entries(TOPIC_DATES)
                 .sort(([, a], [, b]) => b.localeCompare(a))
