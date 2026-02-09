@@ -114,6 +114,7 @@ const topicTree: Topic[] = [
         nameKey: 'llm-inference',
         children: [
           { id: 'kv-cache', nameKey: 'kv-cache', path: '/ai/llm-inference/kv-cache' },
+          { id: 'batching', nameKey: 'batching', path: '/ai/llm-inference/batching' },
         ],
       },
       {
@@ -168,6 +169,15 @@ function flattenTopics(topicList: Topic[]): Topic[] {
   return result
 }
 
+function hasActivePath(topic: Topic, pathname: string, locale: string): boolean {
+  const localePath = topic.path ? `/${locale}${topic.path}` : undefined
+  if (localePath === pathname) return true
+  if (topic.children) {
+    return topic.children.some(child => hasActivePath(child, pathname, locale))
+  }
+  return false
+}
+
 function TopicNode({ 
   topic, 
   level = 0, 
@@ -182,11 +192,17 @@ function TopicNode({
   locale: string
 }) {
   const pathname = usePathname()
-  const [expanded, setExpanded] = useState(true)
+  const containsActive = useMemo(() => hasActivePath(topic, pathname, locale), [topic, pathname, locale])
+  const [expanded, setExpanded] = useState(containsActive)
   const hasChildren = topic.children && topic.children.length > 0
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
   const isActive = localePath === pathname
   const isFavourite = topic.id === 'logges-favourite-model'
+
+  // Update expanded state when active path changes (e.g. navigation)
+  useEffect(() => {
+    if (containsActive) setExpanded(true)
+  }, [containsActive])
 
   const rowClasses = clsx(
     'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
