@@ -20,6 +20,7 @@ interface Topic {
 
 // Topic structure with translation keys
 const topicTree: Topic[] = [
+      { id: 'getting-started', nameKey: 'getting-started', path: '/ai/getting-started', difficulty: 'beginner' },
       {
         id: 'agents',
         nameKey: 'agents',
