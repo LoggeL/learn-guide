@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2, ShieldCheck } from 'lucide-react'
+import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2, ShieldCheck, Clock, Cpu, MessageSquare, Hash } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
 type Provider = 'openrouter' | 'groq' | 'cerebras'
@@ -88,6 +88,14 @@ export function GettingStartedPlayground() {
   const [response, setResponse] = useState('')
   const [rawJson, setRawJson] = useState('')
   const [showRaw, setShowRaw] = useState(false)
+  const [responseTime, setResponseTime] = useState<number | null>(null)
+  const [responseMeta, setResponseMeta] = useState<{
+    model?: string
+    finishReason?: string
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+  } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [temperature, setTemperature] = useState(0.7)
@@ -113,8 +121,11 @@ export function GettingStartedPlayground() {
     setError('')
     setResponse('')
     setRawJson('')
+    setResponseTime(null)
+    setResponseMeta(null)
 
     abortRef.current = new AbortController()
+    const startTime = performance.now()
 
     const body = {
       model,
@@ -153,9 +164,18 @@ export function GettingStartedPlayground() {
       }
 
       const data = await res.json()
+      const elapsed = Math.round(performance.now() - startTime)
       const content = data.choices?.[0]?.message?.content || ''
       setResponse(content)
       setRawJson(JSON.stringify(data, null, 2))
+      setResponseTime(elapsed)
+      setResponseMeta({
+        model: data.model,
+        finishReason: data.choices?.[0]?.finish_reason,
+        promptTokens: data.usage?.prompt_tokens,
+        completionTokens: data.usage?.completion_tokens,
+        totalTokens: data.usage?.total_tokens,
+      })
     } catch (err: unknown) {
       if (err instanceof Error && err.name !== 'AbortError') {
         setError(err.message || 'Request failed')
@@ -353,35 +373,133 @@ console.log(data.choices[0].message.content);`
         </div>
       )}
 
-      {/* Response */}
+      {/* Response Breakdown */}
       {response && (
-        <div ref={responseRef} className="rounded-xl bg-surface/50 border border-border p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Zap className="w-4 h-4 text-accent" />
-            <span className="text-sm font-medium text-text">{gs.responseLabel}</span>
+        <div ref={responseRef} className="space-y-4">
+          {/* Main Response */}
+          <div className="rounded-xl bg-surface/50 border border-border p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-4 h-4 text-accent" />
+              <span className="text-sm font-medium text-text">{gs.responseLabel}</span>
+              {responseTime !== null && (
+                <span className="ml-auto text-xs font-mono text-muted bg-surface/50 px-2 py-0.5 rounded-full">
+                  {responseTime.toLocaleString()}ms
+                </span>
+              )}
+            </div>
+            <div className="prose prose-invert max-w-none text-sm text-muted leading-relaxed whitespace-pre-wrap">
+              {response}
+            </div>
           </div>
-          <div className="prose prose-invert max-w-none text-sm text-muted leading-relaxed whitespace-pre-wrap">
-            {response}
-          </div>
-        </div>
-      )}
 
-      {/* Raw JSON */}
-      {rawJson && (
-        <div className="rounded-xl bg-surface/30 border border-border overflow-hidden">
-          <button
-            onClick={() => setShowRaw(!showRaw)}
-            className="w-full flex items-center justify-between px-4 py-3 text-sm text-muted hover:text-text transition-colors"
-          >
-            <span>{gs.rawJsonLabel}</span>
-            {showRaw ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-          {showRaw && (
-            <div className="relative px-4 pb-4">
-              <CopyButton text={rawJson} />
-              <pre className="text-xs text-muted/80 overflow-x-auto max-h-80 font-mono bg-background rounded-lg p-3">
-                {rawJson}
-              </pre>
+          {/* Metadata Breakdown */}
+          {responseMeta && (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Model */}
+              {responseMeta.model && (
+                <div className="rounded-xl bg-surface/30 border border-border p-3">
+                  <div className="text-xs text-muted mb-1">{gs.modelUsed}</div>
+                  <div className="text-sm font-mono text-primary-light truncate" title={responseMeta.model}>
+                    {responseMeta.model}
+                  </div>
+                  <div className="text-xs text-muted/60 mt-1">{gs.understandModel}</div>
+                </div>
+              )}
+
+              {/* Finish Reason */}
+              {responseMeta.finishReason && (
+                <div className="rounded-xl bg-surface/30 border border-border p-3">
+                  <div className="text-xs text-muted mb-1">{gs.finishReason}</div>
+                  <div className="flex items-center gap-2">
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                      responseMeta.finishReason === 'stop'
+                        ? 'bg-emerald-500/15 text-emerald-400'
+                        : responseMeta.finishReason === 'length'
+                        ? 'bg-amber-500/15 text-amber-400'
+                        : 'bg-blue-500/15 text-blue-400'
+                    }`}>
+                      {responseMeta.finishReason}
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted/60 mt-1">
+                    {responseMeta.finishReason === 'stop' ? gs.finishStop
+                      : responseMeta.finishReason === 'length' ? gs.finishLength
+                      : responseMeta.finishReason}
+                  </div>
+                </div>
+              )}
+
+              {/* Response Time */}
+              {responseTime !== null && (
+                <div className="rounded-xl bg-surface/30 border border-border p-3">
+                  <div className="text-xs text-muted mb-1">{gs.responseTime}</div>
+                  <div className="text-sm font-mono text-primary-light">
+                    {responseTime < 1000 ? `${responseTime}ms` : `${(responseTime / 1000).toFixed(2)}s`}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Token Usage */}
+          {responseMeta?.totalTokens != null && (
+            <div className="rounded-xl bg-surface/30 border border-border p-4">
+              <div className="text-xs text-muted mb-3">{gs.tokenUsage}</div>
+              <div className="space-y-2.5">
+                {/* Prompt Tokens */}
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted">{gs.promptTokens}</span>
+                    <span className="font-mono text-blue-400">{responseMeta.promptTokens?.toLocaleString()}</span>
+                  </div>
+                  <div className="h-2 bg-background rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500/60 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(4, ((responseMeta.promptTokens || 0) / (responseMeta.totalTokens || 1)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+                {/* Completion Tokens */}
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-muted">{gs.completionTokens}</span>
+                    <span className="font-mono text-purple-400">{responseMeta.completionTokens?.toLocaleString()}</span>
+                  </div>
+                  <div className="h-2 bg-background rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-purple-500/60 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.max(4, ((responseMeta.completionTokens || 0) / (responseMeta.totalTokens || 1)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+                {/* Total */}
+                <div className="flex justify-between text-xs pt-1 border-t border-border">
+                  <span className="text-muted font-medium">{gs.totalTokens}</span>
+                  <span className="font-mono text-text">{responseMeta.totalTokens?.toLocaleString()}</span>
+                </div>
+              </div>
+              <div className="text-xs text-muted/60 mt-2">{gs.tokenExplain}</div>
+            </div>
+          )}
+
+          {/* Raw JSON (collapsible) */}
+          {rawJson && (
+            <div className="rounded-xl bg-surface/30 border border-border overflow-hidden">
+              <button
+                onClick={() => setShowRaw(!showRaw)}
+                className="w-full flex items-center justify-between px-4 py-3 text-sm text-muted hover:text-text transition-colors"
+              >
+                <span>{gs.rawJsonLabel}</span>
+                {showRaw ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {showRaw && (
+                <div className="relative px-4 pb-4">
+                  <CopyButton text={rawJson} />
+                  <pre className="text-xs text-muted/80 overflow-x-auto max-h-80 font-mono bg-background rounded-lg p-3">
+                    {rawJson}
+                  </pre>
+                </div>
+              )}
             </div>
           )}
         </div>
