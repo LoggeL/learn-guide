@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 
 interface Props {
-  section: 'hardware' | 'tools' | 'quickstart'
+  section: 'hardware' | 'tools' | 'quickstart' | 'moe'
   t: Record<string, string>
 }
 
