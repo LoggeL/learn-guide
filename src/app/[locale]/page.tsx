@@ -385,6 +385,49 @@ export default function Home() {
           </div>
         </motion.section>
 
+        {/* Contribute CTA */}
+        <motion.section variants={itemVariants} className="mb-16">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-surface to-secondary/10 border border-primary/20 p-8 md:p-10 text-center">
+            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5 mx-auto mb-5">
+              <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center">
+                <Github size={24} className="text-primary-light" />
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.common.helpMakeThisBetter}</h2>
+            <p className="text-muted max-w-lg mx-auto mb-6 leading-relaxed">
+              {t.common.helpMakeThisBetterDesc}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=topic_request.md&title=%5BTopic%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center gap-2"
+              >
+                <MessageSquare size={16} />
+                {t.common.requestATopic}
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=bug_report.md&title=%5BBug%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary inline-flex items-center gap-2"
+              >
+                {t.common.reportABug}
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted hover:text-text transition-colors"
+              >
+                <Github size={16} />
+                {t.common.starOnGithub}
+              </a>
+            </div>
+          </div>
+        </motion.section>
+
         {/* Topic Cards */}
         <motion.section variants={itemVariants} id="topics" className="scroll-mt-8">
           <div className="flex items-center gap-3 mb-8">
@@ -506,49 +549,6 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
-          </div>
-        </motion.section>
-
-        {/* Contribute CTA */}
-        <motion.section variants={itemVariants} className="mt-16">
-          <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-surface to-secondary/10 border border-primary/20 p-8 md:p-10 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary p-0.5 mx-auto mb-5">
-              <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center">
-                <Github size={24} className="text-primary-light" />
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.common.helpMakeThisBetter}</h2>
-            <p className="text-muted max-w-lg mx-auto mb-6 leading-relaxed">
-              {t.common.helpMakeThisBetterDesc}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <a
-                href="https://github.com/LoggeL/learn-guide/issues/new?template=topic_request.md&title=%5BTopic%5D+"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                <MessageSquare size={16} />
-                {t.common.requestATopic}
-              </a>
-              <a
-                href="https://github.com/LoggeL/learn-guide/issues/new?template=bug_report.md&title=%5BBug%5D+"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary inline-flex items-center gap-2"
-              >
-                {t.common.reportABug}
-              </a>
-              <a
-                href="https://github.com/LoggeL/learn-guide"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted hover:text-text transition-colors"
-              >
-                <Github size={16} />
-                {t.common.starOnGithub}
-              </a>
-            </div>
           </div>
         </motion.section>
 
