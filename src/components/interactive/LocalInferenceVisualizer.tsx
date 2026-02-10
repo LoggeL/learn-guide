@@ -330,14 +330,14 @@ function QuickstartSection({ t }: { t: Record<string, string> }) {
 
 const MOE_MODELS = [
   {
-    id: 'qwen-moe',
-    name: 'Qwen3-next 80B3A',
+    id: 'mixtral-8x7b',
+    name: 'Mixtral 8x7B',
     type: 'MoE' as const,
-    totalParams: 80,
-    activeParams: 3,
-    vram: 12,
-    speed: 90,
-    intelligence: 82,
+    totalParams: 46.7,
+    activeParams: 12.9,
+    vram: 26,
+    speed: 35,
+    intelligence: 75,
     color: 'cyan',
   },
   {
@@ -347,25 +347,25 @@ const MOE_MODELS = [
     totalParams: 70,
     activeParams: 70,
     vram: 40,
-    speed: 17,
+    speed: 10,
     intelligence: 85,
     color: 'purple',
   },
   {
-    id: 'llama-3b',
-    name: 'Llama 3.2 3B',
+    id: 'mistral-7b',
+    name: 'Mistral 7B',
     type: 'Dense' as const,
-    totalParams: 3,
-    activeParams: 3,
-    vram: 2,
-    speed: 110,
-    intelligence: 35,
+    totalParams: 7.2,
+    activeParams: 7.2,
+    vram: 5,
+    speed: 100,
+    intelligence: 45,
     color: 'orange',
   },
 ]
 
 function MoESection({ t }: { t: Record<string, string> }) {
-  const [highlighted, setHighlighted] = useState<string | null>('qwen-moe')
+  const [highlighted, setHighlighted] = useState<string | null>('mixtral-8x7b')
 
   const maxVram = 48
   const maxSpeed = 130
