@@ -4460,6 +4460,8 @@ export const de: Dictionary = {
     getKey: 'API-Key holen →',
     apiKeyLabel: 'API-Key',
     keyDisclaimer: 'Dein Key wird nur im localStorage deines Browsers gespeichert. Er verlässt nie unsere Server.',
+    keyPrivacyNote: 'Dein API-Key verlässt niemals deinen Browser — alle Anfragen gehen direkt von deinem Browser an die API des Anbieters. Der Key wird nur im Arbeitsspeicher gehalten und automatisch gelöscht, wenn du die Seite verlässt oder neu lädst.',
+    keyPrivacyVerify: 'Im Quellcode überprüfen',
     modelLabel: 'Modell',
     temperatureLabel: 'Temperatur',
     maxTokensLabel: 'Max Tokens',

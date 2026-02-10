@@ -4491,6 +4491,8 @@ export const en = {
     getKey: 'Get API Key →',
     apiKeyLabel: 'API Key',
     keyDisclaimer: 'Your key is stored only in your browser\'s localStorage. It never touches our servers.',
+    keyPrivacyNote: 'Your API key never leaves your browser — all requests go directly from your browser to the provider\'s API. The key is only kept in memory and is automatically cleared when you leave or refresh the page.',
+    keyPrivacyVerify: 'Verify in source code',
     modelLabel: 'Model',
     temperatureLabel: 'Temperature',
     maxTokensLabel: 'Max Tokens',
