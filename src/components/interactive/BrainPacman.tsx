@@ -136,16 +136,25 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
 export function useBrainPacman() {
   const [active, setActive] = useState(false)
   const [clickCount, setClickCount] = useState(0)
+  const [showHint, setShowHint] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout>>()
+  const hintTimerRef = useRef<ReturnType<typeof setTimeout>>()
 
   const handleTriggerClick = useCallback(() => {
     setClickCount(prev => {
       const next = prev + 1
-      // Reset after 2 seconds of no clicks
+      // Reset after 3 seconds of no clicks
       if (timerRef.current) clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setClickCount(0), 2000)
-      if (next >= 5) {
+      timerRef.current = setTimeout(() => setClickCount(0), 3000)
+      // Show subtle hint after first click
+      if (next === 1) {
+        setShowHint(true)
+        if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
+        hintTimerRef.current = setTimeout(() => setShowHint(false), 1500)
+      }
+      if (next >= 3) {
         setActive(true)
+        setShowHint(false)
         return 0
       }
       return next
@@ -156,7 +165,7 @@ export function useBrainPacman() {
     <BrainPacmanOverlay onComplete={() => setActive(false)} />
   ) : null
 
-  return { overlay, handleTriggerClick, clickCount }
+  return { overlay, handleTriggerClick, clickCount, showHint }
 }
 
 export default BrainPacmanOverlay

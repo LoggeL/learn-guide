@@ -215,7 +215,7 @@ function DifficultyBadge({ topicId }: { topicId: string }) {
 export default function Home() {
   const { t } = useTranslation()
   const { locale } = useLocale()
-  const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick } = useBrainPacman()
+  const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick, showHint } = useBrainPacman()
 
   const features = [
     {
@@ -252,12 +252,19 @@ export default function Home() {
       >
         {/* Hero Section */}
         <motion.header variants={itemVariants} className="text-center mb-20">
-          <div
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border mb-8 cursor-default select-none"
-            onClick={handleBrainClick}
-          >
-            <Sparkles size={14} className="text-primary" />
-            <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
+          <div className="relative inline-flex items-center mb-8">
+            <div
+              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border cursor-default select-none transition-transform duration-300 ${showHint ? 'animate-[wobble_0.5s_ease-in-out]' : ''}`}
+              onClick={handleBrainClick}
+            >
+              <Sparkles size={14} className="text-primary" />
+              <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
+            </div>
+            {showHint && (
+              <span className="absolute -right-7 top-1/2 -translate-y-1/2 text-base animate-bounce opacity-80 pointer-events-none">
+                🧠
+              </span>
+            )}
           </div>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 leading-[1.1] tracking-tight">
@@ -512,9 +519,9 @@ export default function Home() {
                 <Github size={24} className="text-primary-light" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold font-heading text-text mb-3">Help Make This Better</h2>
+            <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.common.helpMakeThisBetter}</h2>
             <p className="text-muted max-w-lg mx-auto mb-6 leading-relaxed">
-              This guide is open source. Got an idea for a new topic? Found a bug? Want to improve an explanation? Every contribution helps.
+              {t.common.helpMakeThisBetterDesc}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
@@ -524,7 +531,7 @@ export default function Home() {
                 className="btn-primary inline-flex items-center gap-2"
               >
                 <MessageSquare size={16} />
-                Request a Topic
+                {t.common.requestATopic}
               </a>
               <a
                 href="https://github.com/LoggeL/learn-guide/issues/new?template=bug_report.md&title=%5BBug%5D+"
@@ -532,7 +539,7 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="btn-secondary inline-flex items-center gap-2"
               >
-                Report a Bug
+                {t.common.reportABug}
               </a>
               <a
                 href="https://github.com/LoggeL/learn-guide"
@@ -541,7 +548,7 @@ export default function Home() {
                 className="inline-flex items-center gap-2 px-4 py-2 text-sm text-muted hover:text-text transition-colors"
               >
                 <Github size={16} />
-                Star on GitHub
+                {t.common.starOnGithub}
               </a>
             </div>
           </div>
