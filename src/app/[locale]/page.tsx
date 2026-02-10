@@ -4,34 +4,10 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock } from 'lucide-react'
 import { useBrainPacman } from '@/components/interactive/BrainPacman'
-import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
+import { DIFFICULTY_STYLES, TOPIC_DIFFICULTY } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
-import { flattenTopics } from '@/lib/topics'
-
-// Type definitions for topic structure
-interface TopicItem {
-  id: string
-  path: string
-}
-
-interface TopicSubcategory {
-  id: string
-  nameKey: string
-  children: TopicItem[]
-}
-
-interface TopicCategory {
-  id: string
-  nameKey: string
-  children: (TopicItem | TopicSubcategory)[]
-}
-
-interface TopicRoot {
-  id: string
-  categoryKey: string
-  children: TopicCategory[]
-}
+import { flattenTopics, getTopicCategories, type Topic } from '@/lib/topics'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,163 +29,21 @@ const itemVariants = {
   },
 }
 
-// Type guard to check if item has a path (is a TopicItem)
-function hasPath(item: TopicItem | TopicSubcategory): item is TopicItem {
-  return 'path' in item
+// Helper: check if a topic is a leaf (has a path, no children)
+function isLeafTopic(topic: Topic): boolean {
+  return !!topic.path && !topic.children?.length
 }
 
-// Topic structure with paths
-const topicData: TopicRoot[] = [
-  {
-    id: 'ai',
-    categoryKey: 'ai',
-    children: [
-      {
-        id: 'getting-started-section',
-        nameKey: 'getting-started-section',
-        children: [
-          { id: 'getting-started', path: '/ai/getting-started' },
-        ],
-      },
-      {
-        id: 'agents',
-        nameKey: 'agents',
-        children: [
-          {
-            id: 'agents-core',
-            nameKey: 'agents-core',
-            children: [
-              { id: 'agent-loop', path: '/ai/agents/loop' },
-              { id: 'agent-context', path: '/ai/agents/context' },
-            ],
-          },
-          {
-            id: 'agents-building',
-            nameKey: 'agents-building',
-            children: [
-              { id: 'tool-design', path: '/ai/agents/tool-design' },
-              { id: 'memory', path: '/ai/agents/memory' },
-              { id: 'skills', path: '/ai/agents/skills' },
-              { id: 'mcp', path: '/ai/agents/mcp' },
-            ],
-          },
-          {
-            id: 'agents-patterns',
-            nameKey: 'agents-patterns',
-            children: [
-              { id: 'agentic-patterns', path: '/ai/agents/patterns' },
-              { id: 'orchestration', path: '/ai/agents/orchestration' },
-            ],
-          },
-          {
-            id: 'agents-quality',
-            nameKey: 'agents-quality',
-            children: [
-              { id: 'agent-problems', path: '/ai/agents/problems' },
-              { id: 'agent-security', path: '/ai/agents/security' },
-              { id: 'evaluation', path: '/ai/agents/evaluation' },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'llm',
-        nameKey: 'llm',
-        children: [
-          {
-            id: 'llm-fundamentals',
-            nameKey: 'llm-fundamentals',
-            children: [
-              { id: 'tokenization', path: '/ai/llm/tokenization' },
-              { id: 'embeddings', path: '/ai/llm/embeddings' },
-              { id: 'attention', path: '/ai/llm/attention' },
-            ],
-          },
-          {
-            id: 'llm-behavior',
-            nameKey: 'llm-behavior',
-            children: [
-              { id: 'temperature', path: '/ai/llm/temperature' },
-              { id: 'context-rot', path: '/ai/llm/context-rot' },
-            ],
-          },
-          {
-            id: 'llm-capabilities',
-            nameKey: 'llm-capabilities',
-            children: [
-              { id: 'rag', path: '/ai/llm/rag' },
-              { id: 'vision', path: '/ai/llm/vision' },
-              { id: 'visual-challenges', path: '/ai/llm/visual-challenges' },
-              { id: 'agentic-vision', path: '/ai/llm/agentic-vision' },
-              { id: 'multimodality', path: '/ai/llm/multimodality' },
-            ],
-          },
-          {
-            id: 'llm-architecture',
-            nameKey: 'llm-architecture',
-            children: [
-              { id: 'transformer-architecture', path: '/ai/llm/transformer-architecture' },
-              { id: 'llm-training', path: '/ai/llm/training' },
-              { id: 'moe', path: '/ai/llm/moe' },
-              { id: 'quantization', path: '/ai/llm/quantization' },
-              { id: 'nested-learning', path: '/ai/llm/nested-learning' },
-              { id: 'distillation', path: '/ai/llm/distillation' },
-              { id: 'lora', path: '/ai/llm/lora' },
-              { id: 'speculative-decoding', path: '/ai/llm/speculative-decoding' },
-            ],
-          },
-        ],
-      },
-      {
-        id: 'llm-inference',
-        nameKey: 'llm-inference',
-        children: [
-          { id: 'kv-cache', path: '/ai/llm-inference/kv-cache' },
-          { id: 'batching', path: '/ai/llm-inference/batching' },
-          { id: 'local-inference', path: '/ai/llm-inference/local-inference' },
-        ],
-      },
-      {
-        id: 'ml-fundamentals',
-        nameKey: 'ml-fundamentals',
-        children: [
-          { id: 'neural-networks', path: '/ai/ml-fundamentals/neural-networks' },
-          { id: 'gradient-descent', path: '/ai/ml-fundamentals/gradient-descent' },
-          { id: 'training', path: '/ai/ml-fundamentals/training' },
-        ],
-      },
-      {
-        id: 'prompting',
-        nameKey: 'prompting',
-        children: [
-          { id: 'prompt-basics', path: '/ai/prompting/basics' },
-          { id: 'advanced-prompting', path: '/ai/prompting/advanced' },
-          { id: 'system-prompts', path: '/ai/prompting/system-prompts' },
-        ],
-      },
-      {
-        id: 'safety',
-        nameKey: 'safety',
-        children: [
-          { id: 'bias', path: '/ai/safety/bias' },
-          { id: 'responsible-ai', path: '/ai/safety/responsible-ai' },
-        ],
-      },
-      {
-        id: 'industry',
-        nameKey: 'industry',
-        children: [
-          { id: 'european-ai', path: '/ai/industry/european-ai' },
-          { id: 'open-source', path: '/ai/industry/open-source' },
-          { id: 'logges-favourite-model', path: '/ai/industry/logges-favourite-model' },
-        ],
-      },
-    ],
-  },
-]
+// Helper: check if children are all leaves (flat category) or have subcategories (nested)
+function hasSubcategories(topic: Topic): boolean {
+  return !!topic.children?.some((c) => c.children?.length)
+}
 
-function DifficultyBadge({ topicId }: { topicId: string }) {
-  const d = TOPIC_DIFFICULTY[topicId]
+// Get the canonical topic categories from the single source of truth
+const topicCategories = getTopicCategories()
+
+function DifficultyBadge({ topicId, difficulty }: { topicId: string; difficulty?: string }) {
+  const d = (difficulty ?? TOPIC_DIFFICULTY[topicId]) as import('@/lib/difficulty').Difficulty | undefined
   if (!d) return null
   const s = DIFFICULTY_STYLES[d]
   return (
@@ -450,112 +284,146 @@ export default function Home() {
           </div>
 
           <div className="space-y-6">
-            {topicData.map((category, categoryIndex) => (
               <motion.div
-                key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + categoryIndex * 0.1 }}
+                transition={{ delay: 0.4 }}
                 className="rounded-2xl bg-surface/50 border border-border overflow-hidden"
               >
                 {/* Category Header */}
                 <div className="px-6 py-4 bg-surface-elevated border-b border-border flex items-center gap-3">
                   <Cpu size={18} className="text-primary" />
-                  <h3 className="font-semibold text-text font-heading">{t.categories[category.categoryKey as keyof typeof t.categories]}</h3>
+                  <h3 className="font-semibold text-text font-heading">{t.categories['ai' as keyof typeof t.categories]}</h3>
                 </div>
                 
                 {/* Topics Grid */}
                 <div className="p-4">
-                  {category.children?.map((topic) => (
-                    <div key={topic.id} className="mb-6 last:mb-0">
-                      <div className="flex items-center gap-2 px-3 py-2 text-muted text-sm font-semibold">
-                        <MessageSquare size={14} />
-                        <span>{t.categories[topic.nameKey as keyof typeof t.categories]}</span>
-                      </div>
-                      {/* Check if children have paths (flat) or more children (nested) */}
-                      {topic.children?.[0] && hasPath(topic.children[0]) ? (
-                        // Flat structure - render directly
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
-                          {topic.children?.filter(hasPath).map((subtopic, idx) => (
+                  {topicCategories.map((topic) => {
+                    // Leaf topics (like getting-started) — render as a simple card
+                    if (isLeafTopic(topic)) {
+                      return (
+                        <div key={topic.id} className="mb-6 last:mb-0">
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
                             <Link
-                              key={subtopic.id}
-                              href={`/${locale}${subtopic.path}`}
+                              href={`/${locale}${topic.path}`}
                               className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
                             >
                               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
-                                <span className="text-xs font-mono text-primary-light font-medium">
-                                  {String(idx + 1).padStart(2, '0')}
-                                </span>
+                                <span className="text-xs font-mono text-primary-light font-medium">01</span>
                               </div>
                               <div className="flex-1 min-w-0">
                                 <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
-                                  {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
+                                  {t.topicNames[topic.id as keyof typeof t.topicNames]}
                                 </span>
-                                {t.topicDescriptions?.[subtopic.id as keyof typeof t.topicDescriptions] && (
+                                {t.topicDescriptions?.[topic.id as keyof typeof t.topicDescriptions] && (
                                   <span className="text-xs text-muted block mt-0.5 line-clamp-1">
-                                    {t.topicDescriptions[subtopic.id as keyof typeof t.topicDescriptions]}
+                                    {t.topicDescriptions[topic.id as keyof typeof t.topicDescriptions]}
                                   </span>
                                 )}
-                                {TOPIC_DATES[subtopic.id] && (
+                                {TOPIC_DATES[topic.id] && (
                                   <span className="text-[10px] text-subtle block mt-0.5">
-                                    {formatTopicDate(TOPIC_DATES[subtopic.id], locale)}
+                                    {formatTopicDate(TOPIC_DATES[topic.id], locale)}
                                   </span>
                                 )}
                               </div>
-                              <DifficultyBadge topicId={subtopic.id} />
+                              <DifficultyBadge topicId={topic.id} difficulty={topic.difficulty} />
                               <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
                             </Link>
-                          ))}
+                          </div>
                         </div>
-                      ) : (
-                        // Nested structure - render subcategories
-                        <div className="space-y-4 pl-3">
-                          {(topic.children as TopicSubcategory[])?.map((subcategory) => (
-                            <div key={subcategory.id}>
-                              <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-subtle uppercase tracking-wide">
-                                <span>{t.topicNames[subcategory.nameKey as keyof typeof t.topicNames]}</span>
-                              </div>
-                              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                                {subcategory.children?.map((item, idx) => (
-                                  <Link
-                                    key={item.id}
-                                    href={`/${locale}${item.path}`}
-                                    className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
-                                  >
-                                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
-                                      <span className="text-xs font-mono text-primary-light font-medium">
-                                        {String(idx + 1).padStart(2, '0')}
-                                      </span>
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                      <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
-                                        {t.topicNames[item.id as keyof typeof t.topicNames]}
-                                      </span>
-                                      {t.topicDescriptions?.[item.id as keyof typeof t.topicDescriptions] && (
-                                        <span className="text-xs text-muted block mt-0.5 line-clamp-1">
-                                          {t.topicDescriptions[item.id as keyof typeof t.topicDescriptions]}
-                                        </span>
-                                      )}
-                                      {TOPIC_DATES[item.id] && (
-                                        <span className="text-[10px] text-subtle block mt-0.5">
-                                          {formatTopicDate(TOPIC_DATES[item.id], locale)}
-                                        </span>
-                                      )}
-                                    </div>
-                                    <DifficultyBadge topicId={item.id} />
-                                    <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
-                                  </Link>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
+                      )
+                    }
+
+                    // Category topics with children
+                    return (
+                      <div key={topic.id} className="mb-6 last:mb-0">
+                        <div className="flex items-center gap-2 px-3 py-2 text-muted text-sm font-semibold">
+                          <MessageSquare size={14} />
+                          <span>{t.categories[topic.id as keyof typeof t.categories]}</span>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        {!hasSubcategories(topic) ? (
+                          // Flat structure - children are all leaves
+                          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 pl-3">
+                            {topic.children?.filter(c => c.path).map((subtopic, idx) => (
+                              <Link
+                                key={subtopic.id}
+                                href={`/${locale}${subtopic.path}`}
+                                className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
+                              >
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
+                                  <span className="text-xs font-mono text-primary-light font-medium">
+                                    {String(idx + 1).padStart(2, '0')}
+                                  </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
+                                    {t.topicNames[subtopic.id as keyof typeof t.topicNames]}
+                                  </span>
+                                  {t.topicDescriptions?.[subtopic.id as keyof typeof t.topicDescriptions] && (
+                                    <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+                                      {t.topicDescriptions[subtopic.id as keyof typeof t.topicDescriptions]}
+                                    </span>
+                                  )}
+                                  {TOPIC_DATES[subtopic.id] && (
+                                    <span className="text-[10px] text-subtle block mt-0.5">
+                                      {formatTopicDate(TOPIC_DATES[subtopic.id], locale)}
+                                    </span>
+                                  )}
+                                </div>
+                                <DifficultyBadge topicId={subtopic.id} difficulty={subtopic.difficulty} />
+                                <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
+                              </Link>
+                            ))}
+                          </div>
+                        ) : (
+                          // Nested structure - render subcategories
+                          <div className="space-y-4 pl-3">
+                            {topic.children?.filter(c => c.children?.length).map((subcategory) => (
+                              <div key={subcategory.id}>
+                                <div className="flex items-center gap-2 px-2 py-1.5 text-xs text-subtle uppercase tracking-wide">
+                                  <span>{t.topicNames[subcategory.id as keyof typeof t.topicNames]}</span>
+                                </div>
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                  {subcategory.children?.filter(c => c.path).map((item, idx) => (
+                                    <Link
+                                      key={item.id}
+                                      href={`/${locale}${item.path}`}
+                                      className="group relative flex items-center gap-3 p-4 rounded-xl bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all duration-200"
+                                    >
+                                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 group-hover:from-primary/30 group-hover:to-secondary/30 transition-colors">
+                                        <span className="text-xs font-mono text-primary-light font-medium">
+                                          {String(idx + 1).padStart(2, '0')}
+                                        </span>
+                                      </div>
+                                      <div className="flex-1 min-w-0">
+                                        <span className="text-sm font-medium text-text group-hover:text-primary-light transition-colors block">
+                                          {t.topicNames[item.id as keyof typeof t.topicNames]}
+                                        </span>
+                                        {t.topicDescriptions?.[item.id as keyof typeof t.topicDescriptions] && (
+                                          <span className="text-xs text-muted block mt-0.5 line-clamp-1">
+                                            {t.topicDescriptions[item.id as keyof typeof t.topicDescriptions]}
+                                          </span>
+                                        )}
+                                        {TOPIC_DATES[item.id] && (
+                                          <span className="text-[10px] text-subtle block mt-0.5">
+                                            {formatTopicDate(TOPIC_DATES[item.id], locale)}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <DifficultyBadge topicId={item.id} difficulty={item.difficulty} />
+                                      <ArrowRight size={14} className="text-muted group-hover:text-primary transition-colors shrink-0 opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all" />
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </motion.div>
-            ))}
           </div>
         </motion.section>
 

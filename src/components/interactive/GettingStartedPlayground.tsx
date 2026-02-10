@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2 } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
@@ -97,26 +97,12 @@ export function GettingStartedPlayground() {
   const abortRef = useRef<AbortController | null>(null)
   const responseRef = useRef<HTMLDivElement>(null)
 
-  // Load API key from localStorage
-  useEffect(() => {
-    const saved = localStorage.getItem(`llm-key-${provider}`)
-    if (saved) setApiKey(saved)
-  }, [provider])
-
-  // Save API key to localStorage
-  const saveKey = useCallback((key: string) => {
-    setApiKey(key)
-    if (key) localStorage.setItem(`llm-key-${provider}`, key)
-    else localStorage.removeItem(`llm-key-${provider}`)
-  }, [provider])
-
   // Switch provider
   const switchProvider = (p: Provider) => {
     setProvider(p)
     setModel(PROVIDERS[p].models[0].id)
     setError('')
-    const saved = localStorage.getItem(`llm-key-${p}`)
-    setApiKey(saved || '')
+    setApiKey('')
   }
 
   const config = PROVIDERS[provider]
@@ -135,7 +121,6 @@ export function GettingStartedPlayground() {
       messages: [{ role: 'user' as const, content: message }],
       temperature,
       max_tokens: maxTokens,
-      stream: true,
     }
 
     const headers: Record<string, string> = {
@@ -167,32 +152,10 @@ export function GettingStartedPlayground() {
         return
       }
 
-      const reader = res.body?.getReader()
-      if (!reader) { setError('No response stream'); setLoading(false); return }
-      const decoder = new TextDecoder()
-      let full = ''
-      let fullChunks: unknown[] = []
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        const lines = chunk.split('\n').filter(l => l.startsWith('data: '))
-        for (const line of lines) {
-          const data = line.slice(6).trim()
-          if (data === '[DONE]') continue
-          try {
-            const parsed = JSON.parse(data)
-            fullChunks.push(parsed)
-            const delta = parsed.choices?.[0]?.delta?.content
-            if (delta) {
-              full += delta
-              setResponse(full)
-            }
-          } catch { /* skip */ }
-        }
-      }
-      setRawJson(JSON.stringify(fullChunks.length === 1 ? fullChunks[0] : fullChunks, null, 2))
+      const data = await res.json()
+      const content = data.choices?.[0]?.message?.content || ''
+      setResponse(content)
+      setRawJson(JSON.stringify(data, null, 2))
     } catch (err: unknown) {
       if (err instanceof Error && err.name !== 'AbortError') {
         setError(err.message || 'Request failed')
@@ -282,7 +245,7 @@ console.log(data.choices[0].message.content);`
             <input
               type={showKey ? 'text' : 'password'}
               value={apiKey}
-              onChange={e => saveKey(e.target.value)}
+              onChange={e => setApiKey(e.target.value)}
               placeholder={`${config.keyPrefix}...`}
               className="w-full px-3 py-2 rounded-lg bg-background border border-border text-text text-sm placeholder:text-muted/50 focus:outline-none focus:border-primary/50"
             />
