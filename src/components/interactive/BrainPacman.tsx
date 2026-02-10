@@ -5,18 +5,19 @@ import { createPortal } from 'react-dom'
 
 interface Document {
   id: number
-  x: number // percentage across screen
-  y: number // percentage down screen
+  x: number
+  y: number
   eaten: boolean
 }
 
 function generateDocs(): Document[] {
   const docs: Document[] = []
-  for (let i = 0; i < 12; i++) {
+  const count = 12
+  for (let i = 0; i < count; i++) {
     docs.push({
       id: i,
-      x: 8 + i * 7.5,
-      y: 45 + Math.sin(i * 0.8) * 15,
+      x: 5 + (i * 90) / (count - 1), // evenly spaced across 5%-95%
+      y: 50, // straight horizontal line
       eaten: false,
     })
   }
@@ -26,26 +27,23 @@ function generateDocs(): Document[] {
 function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
   const [brainX, setBrainX] = useState(-8)
   const [docs, setDocs] = useState(generateDocs)
-  const [mouthOpen, setMouthOpen] = useState(true)
+  const [mouthDeg, setMouthDeg] = useState(0)
   const frameRef = useRef<number>()
   const startTime = useRef(Date.now())
 
   useEffect(() => {
-    // Chomp animation
-    const chompInterval = setInterval(() => setMouthOpen(v => !v), 150)
-    return () => clearInterval(chompInterval)
-  }, [])
-
-  useEffect(() => {
-    const duration = 4000 // ms to cross screen
+    const duration = 4500
     const animate = () => {
       const elapsed = Date.now() - startTime.current
-      const progress = elapsed / duration
-      const currentX = -8 + progress * 116 // from -8% to 108%
+      const progress = Math.min(elapsed / duration, 1)
+      const currentX = -8 + progress * 116
+
+      // Smooth chomp: oscillate mouth angle
+      const chomp = Math.abs(Math.sin(elapsed * 0.012)) * 35
 
       setBrainX(currentX)
+      setMouthDeg(chomp)
 
-      // Check for eating
       setDocs(prev =>
         prev.map(doc =>
           !doc.eaten && Math.abs(currentX - doc.x) < 4
@@ -66,12 +64,20 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
     }
   }, [onComplete])
 
+  // Build clip-path for pac-man mouth
+  const mouthRad = (mouthDeg * Math.PI) / 180
+  const topY = 50 - Math.sin(mouthRad) * 50
+  const topX = 50 + Math.cos(mouthRad) * 50
+  const botY = 50 + Math.sin(mouthRad) * 50
+  const botX = 50 + Math.cos(mouthRad) * 50
+  const clipPath = `polygon(${topX}% ${topY}%, 50% 50%, ${botX}% ${botY}%, 100% 75%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 25%)`
+
   return createPortal(
     <div
       className="fixed inset-0 z-[9999] pointer-events-none overflow-hidden"
       aria-hidden="true"
     >
-      {/* Documents */}
+      {/* Documents in a straight line */}
       {docs.map(doc => (
         <div
           key={doc.id}
@@ -80,8 +86,8 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
             left: `${doc.x}%`,
             top: `${doc.y}%`,
             opacity: doc.eaten ? 0 : 1,
-            transform: doc.eaten ? 'scale(0) rotate(180deg)' : 'scale(1) rotate(0deg)',
-            fontSize: '2rem',
+            transform: `translate(-50%, -50%) ${doc.eaten ? 'scale(0) rotate(180deg)' : 'scale(1)'}`,
+            fontSize: '1.8rem',
           }}
         >
           📄
@@ -93,24 +99,15 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
         className="absolute"
         style={{
           left: `${brainX}%`,
-          top: '45%',
+          top: '50%',
           transform: 'translate(-50%, -50%)',
-          fontSize: '3.5rem',
+          fontSize: '3rem',
           filter: 'drop-shadow(0 0 12px rgba(168, 85, 247, 0.5))',
         }}
       >
-        {/* Pac-Man mouth effect via clip-path */}
-        <div
-          style={{
-            clipPath: mouthOpen
-              ? 'polygon(100% 0%, 100% 100%, 50% 50%, 100% 0%, 0% 0%, 0% 100%, 100% 100%, 50% 65%, 50% 35%)'
-              : 'polygon(100% 0%, 100% 100%, 50% 50%, 100% 0%, 0% 0%, 0% 100%, 100% 100%, 50% 52%, 50% 48%)',
-            transition: 'clip-path 0.15s ease',
-          }}
-        >
+        <div style={{ clipPath, transition: 'clip-path 0.05s linear' }}>
           🧠
         </div>
-        {/* Particles behind when eating */}
         {docs.some(d => d.eaten) && (
           <div
             className="absolute -left-6 top-1/2 -translate-y-1/2 flex gap-1"
@@ -135,37 +132,16 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
 
 export function useBrainPacman() {
   const [active, setActive] = useState(false)
-  const [clickCount, setClickCount] = useState(0)
-  const [showHint, setShowHint] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout>>()
-  const hintTimerRef = useRef<ReturnType<typeof setTimeout>>()
 
   const handleTriggerClick = useCallback(() => {
-    setClickCount(prev => {
-      const next = prev + 1
-      // Reset after 3 seconds of no clicks
-      if (timerRef.current) clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => setClickCount(0), 3000)
-      // Show subtle hint after first click
-      if (next === 1) {
-        setShowHint(true)
-        if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
-        hintTimerRef.current = setTimeout(() => setShowHint(false), 1500)
-      }
-      if (next >= 3) {
-        setActive(true)
-        setShowHint(false)
-        return 0
-      }
-      return next
-    })
-  }, [])
+    if (!active) setActive(true)
+  }, [active])
 
   const overlay = active ? (
     <BrainPacmanOverlay onComplete={() => setActive(false)} />
   ) : null
 
-  return { overlay, handleTriggerClick, clickCount, showHint }
+  return { overlay, handleTriggerClick }
 }
 
 export default BrainPacmanOverlay

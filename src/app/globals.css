@@ -320,6 +320,12 @@ pre {
   --tw-prose-code: var(--primary);
 }
 
+/* Brain Pac-Man trigger glow */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(168, 85, 247, 0.2); }
+  50% { box-shadow: 0 0 16px rgba(168, 85, 247, 0.45), 0 0 4px rgba(168, 85, 247, 0.2); }
+}
+
 /* Sidebar responsive behavior */
 /* Default: sidebar open, content has margin */
 .main-content {

@@ -215,7 +215,7 @@ function DifficultyBadge({ topicId }: { topicId: string }) {
 export default function Home() {
   const { t } = useTranslation()
   const { locale } = useLocale()
-  const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick, showHint } = useBrainPacman()
+  const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick } = useBrainPacman()
 
   const features = [
     {
@@ -254,17 +254,15 @@ export default function Home() {
         <motion.header variants={itemVariants} className="text-center mb-20">
           <div className="relative inline-flex items-center mb-8">
             <div
-              className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border cursor-default select-none transition-transform duration-300 ${showHint ? 'animate-[wobble_0.5s_ease-in-out]' : ''}`}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border cursor-pointer select-none transition-all duration-300 animate-[glow-pulse_2s_ease-in-out_infinite]"
               onClick={handleBrainClick}
+              style={{
+                animationName: 'glow-pulse',
+              }}
             >
               <Sparkles size={14} className="text-primary" />
               <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
             </div>
-            {showHint && (
-              <span className="absolute -right-7 top-1/2 -translate-y-1/2 text-base animate-bounce opacity-80 pointer-events-none">
-                🧠
-              </span>
-            )}
           </div>
           
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 leading-[1.1] tracking-tight">
