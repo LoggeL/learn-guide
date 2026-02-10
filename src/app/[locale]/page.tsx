@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock } from 'lucide-react'
+import { useBrainPacman } from '@/components/interactive/BrainPacman'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
@@ -214,6 +215,7 @@ function DifficultyBadge({ topicId }: { topicId: string }) {
 export default function Home() {
   const { t } = useTranslation()
   const { locale } = useLocale()
+  const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick } = useBrainPacman()
 
   const features = [
     {
@@ -238,6 +240,7 @@ export default function Home() {
 
   return (
     <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto relative px-4 md:px-0 overflow-x-clip">
+      {brainPacmanOverlay}
       {/* Ambient background glow */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl pointer-events-none" />
       
@@ -249,7 +252,10 @@ export default function Home() {
       >
         {/* Hero Section */}
         <motion.header variants={itemVariants} className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border mb-8">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border mb-8 cursor-default select-none"
+            onClick={handleBrainClick}
+          >
             <Sparkles size={14} className="text-primary" />
             <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
           </div>
