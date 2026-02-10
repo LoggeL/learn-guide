@@ -219,7 +219,7 @@ export function MemorySystemVisualizer() {
                         className="h-full bg-cyan-500/50 rounded-full"
                       />
                     </div>
-                    <span className="text-[10px] text-muted font-mono">
+                    <span className="text-xs sm:text-[10px] text-muted font-mono">
                       {(memory.relevance * 100).toFixed(0)}%
                     </span>
                   </div>
@@ -278,7 +278,7 @@ export function MemorySystemVisualizer() {
                         className="h-full bg-purple-500/50 rounded-full"
                       />
                     </div>
-                    <span className="text-[10px] text-muted font-mono">
+                    <span className="text-xs sm:text-[10px] text-muted font-mono">
                       {(memory.relevance * 100).toFixed(0)}%
                     </span>
                   </div>

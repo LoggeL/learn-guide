@@ -134,13 +134,13 @@ export function MemoryFadeVisualizer({
                         {config.label}
                       </span>
                       {isFirst && !isTruncated && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-medium">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-xs sm:text-[10px] font-medium">
                           <Sparkles size={10} />
                           Your instruction
                         </span>
                       )}
                       {isTruncated && isFirst && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 text-[10px] font-medium">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/20 text-red-300 text-xs sm:text-[10px] font-medium">
                           <X size={10} />
                           LOST!
                         </span>

@@ -258,7 +258,7 @@ export function NeuralNetworkVisualizer() {
                     x={x}
                     y={y + 4}
                     textAnchor="middle"
-                    className="text-[10px] fill-white font-mono"
+                    className="text-xs sm:text-[10px] fill-white font-mono"
                   >
                     {intensity.toFixed(2)}
                   </text>
@@ -273,7 +273,7 @@ export function NeuralNetworkVisualizer() {
                 x={(i + 1) * layerSpacing}
                 y={canvasHeight - 10}
                 textAnchor="middle"
-                className="text-[10px] fill-gray-400"
+                className="text-xs sm:text-[10px] fill-gray-400"
               >
                 {getLayerLabel(i)}
               </text>

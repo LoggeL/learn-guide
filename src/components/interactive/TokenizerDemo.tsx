@@ -211,7 +211,7 @@ export function TokenizerDemo() {
                         {formatted.wsType === 'leading' ? token.token.slice(1) : formatted.display}
                       </span>
                     )}
-                    <span className={`${showIdsOnly ? 'text-sm' : 'text-[10px] opacity-60'}`}>
+                    <span className={`${showIdsOnly ? 'text-sm' : 'text-xs sm:text-[10px] opacity-60'}`}>
                       {token.id}
                     </span>
                   </motion.span>

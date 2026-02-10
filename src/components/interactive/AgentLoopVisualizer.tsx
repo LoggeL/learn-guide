@@ -184,8 +184,14 @@ export function AgentLoopVisualizer() {
           </AnimatePresence>
 
           {visibleMessages.length === 0 && (
-            <div className="flex items-center justify-center h-[200px] text-muted">
-              <p>{t.interactive.startLoop}</p>
+            <div className="flex items-center justify-center h-[200px]">
+              <button
+                onClick={() => { setCurrentStep(1); setIsPlaying(true) }}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary/20 border border-primary/40 text-primary-light hover:bg-primary/30 cursor-pointer transition-all font-medium"
+              >
+                <Play size={16} />
+                {t.interactive.startLoop}
+              </button>
             </div>
           )}
         </div>

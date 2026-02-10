@@ -142,7 +142,7 @@ export function TemperatureDemo() {
               />
             </div>
             
-            <div className="flex justify-between text-[10px] text-subtle font-mono uppercase">
+            <div className="flex justify-between text-xs sm:text-[10px] text-subtle font-mono uppercase">
               <span>{t.interactive.deterministic}</span>
               <span>{t.interactive.balanced}</span>
               <span>{t.interactive.creative}</span>
@@ -168,7 +168,7 @@ export function TemperatureDemo() {
                 }`}
               >
                 <span className="block text-sm font-mono font-medium">{preset.label}</span>
-                <span className="block text-[10px] text-subtle truncate px-1">{preset.desc}</span>
+                <span className="block text-xs sm:text-[10px] text-subtle truncate px-1">{preset.desc}</span>
               </button>
             ))}
           </div>

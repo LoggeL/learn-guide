@@ -145,7 +145,7 @@ function KVCacheStepDemo() {
         <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-surface-elevated border-b border-border text-[10px] uppercase tracking-widest text-muted">
+              <tr className="bg-surface-elevated border-b border-border text-xs sm:text-[10px] uppercase tracking-widest text-muted">
                 <th className="py-3 px-4 text-left">Pos</th>
                 <th className="py-3 px-4 text-left">Token</th>
                 <th className="py-3 px-4 text-left">Key Vector</th>

@@ -315,7 +315,7 @@ export function AgenticVisionDemo() {
                     >
                       {isComplete ? <CheckCircle size={16} /> : step.icon}
                     </motion.div>
-                    <span className={`text-[10px] font-medium ${
+                    <span className={`text-xs sm:text-[10px] font-medium ${
                       isComplete ? 'text-emerald-400' : isActive ? colorMap[step.color].label : 'text-muted/50'
                     }`}>
                       {step.label}
@@ -651,7 +651,7 @@ export function AgenticVisionDemo() {
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
                 <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
-                <span className="ml-2 text-[10px] text-muted/40 font-mono">agent-vision.log</span>
+                <span className="ml-2 text-xs sm:text-[10px] text-muted/40 font-mono">agent-vision.log</span>
               </div>
               <div
                 ref={logContainerRef}
@@ -674,7 +674,7 @@ export function AgenticVisionDemo() {
                         >
                           <div className="flex items-center gap-2 mb-1">
                             {getActionIcon(log.action)}
-                            <span className={`text-[10px] font-semibold uppercase tracking-wider ${
+                            <span className={`text-xs sm:text-[10px] font-semibold uppercase tracking-wider ${
                               log.action === 'think' ? 'text-purple-400/70' :
                               log.action === 'act' ? 'text-cyan-400/70' :
                               'text-emerald-400/70'

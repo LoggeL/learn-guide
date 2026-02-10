@@ -290,6 +290,27 @@ input:focus, textarea:focus, select:focus, button:focus-visible {
   box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
 }
 
+/* Code block mobile overflow */
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  pre {
+    max-width: calc(100vw - 2rem);
+  }
+}
+
+/* Hide scrollbar for breadcrumbs */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* Prose customization */
 .prose {
   --tw-prose-body: var(--text-muted);

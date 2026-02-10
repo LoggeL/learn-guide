@@ -235,13 +235,13 @@ export function GradientDescentVisualizer() {
 
             {/* Global minimum marker */}
             <circle cx={xScale(-1.1)} cy={yScale(lossFunction(-1.1))} r={5} fill="none" stroke="#22c55e" strokeWidth="2" strokeDasharray="4" />
-            <text x={xScale(-1.1)} y={yScale(lossFunction(-1.1)) - 15} textAnchor="middle" className="text-[10px] fill-green-400">
+            <text x={xScale(-1.1)} y={yScale(lossFunction(-1.1)) - 15} textAnchor="middle" className="text-xs sm:text-[10px] fill-green-400">
               {t.interactive.globalMinimum}
             </text>
 
             {/* Local minimum marker */}
             <circle cx={xScale(1.0)} cy={yScale(lossFunction(1.0))} r={5} fill="none" stroke="#eab308" strokeWidth="2" strokeDasharray="4" />
-            <text x={xScale(1.0)} y={yScale(lossFunction(1.0)) - 15} textAnchor="middle" className="text-[10px] fill-yellow-400">
+            <text x={xScale(1.0)} y={yScale(lossFunction(1.0)) - 15} textAnchor="middle" className="text-xs sm:text-[10px] fill-yellow-400">
               {t.interactive.localMinimum}
             </text>
           </svg>

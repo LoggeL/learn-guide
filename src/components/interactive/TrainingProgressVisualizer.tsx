@@ -246,9 +246,9 @@ export function TrainingProgressVisualizer() {
 
             {/* Legend */}
             <circle cx={width - 120} cy={20} r={4} fill="#22d3ee" />
-            <text x={width - 110} y={24} className="text-[10px] fill-gray-400">Train Loss</text>
+            <text x={width - 110} y={24} className="text-xs sm:text-[10px] fill-gray-400">Train Loss</text>
             <circle cx={width - 120} cy={38} r={4} fill={overfitting ? '#ef4444' : '#a78bfa'} />
-            <text x={width - 110} y={42} className="text-[10px] fill-gray-400">Val Loss</text>
+            <text x={width - 110} y={42} className="text-xs sm:text-[10px] fill-gray-400">Val Loss</text>
           </svg>
         </div>
       </div>
@@ -266,8 +266,8 @@ export function TrainingProgressVisualizer() {
             {accPath && <path d={accPath} fill="none" stroke="#22c55e" strokeWidth="2" />}
 
             {/* Y-axis labels */}
-            <text x={padding - 5} y={height - padding + 4} textAnchor="end" className="text-[10px] fill-gray-400">0%</text>
-            <text x={padding - 5} y={padding + 4} textAnchor="end" className="text-[10px] fill-gray-400">100%</text>
+            <text x={padding - 5} y={height - padding + 4} textAnchor="end" className="text-xs sm:text-[10px] fill-gray-400">0%</text>
+            <text x={padding - 5} y={padding + 4} textAnchor="end" className="text-xs sm:text-[10px] fill-gray-400">100%</text>
           </svg>
         </div>
       </div>

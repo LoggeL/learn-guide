@@ -44,20 +44,20 @@ export function TopicLayout({
       <div className="absolute -top-40 right-0 w-[500px] h-[500px] bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none" />
       
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-sm text-muted mb-8">
-        <BookOpen size={14} className="text-subtle" />
+      <nav className="flex items-center gap-2 text-sm text-muted mb-8 overflow-x-auto scrollbar-none">
+        <BookOpen size={14} className="text-subtle shrink-0" />
         {breadcrumbs.map((crumb, i) => (
-          <span key={i} className="flex items-center gap-2">
+          <span key={i} className="flex items-center gap-2 shrink-0">
             {i > 0 && <ChevronRight size={12} className="text-subtle" />}
             {crumb.href ? (
               <Link 
                 href={localizeHref(crumb.href)} 
-                className="hover:text-primary-light transition-colors"
+                className="hover:text-primary-light transition-colors max-w-[150px] sm:max-w-none truncate"
               >
                 {crumb.label}
               </Link>
             ) : (
-              <span className="text-text font-medium">{crumb.label}</span>
+              <span className="text-text font-medium max-w-[150px] sm:max-w-none truncate">{crumb.label}</span>
             )}
           </span>
         ))}
