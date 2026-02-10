@@ -16,8 +16,8 @@ function generateDocs(): Document[] {
   for (let i = 0; i < count; i++) {
     docs.push({
       id: i,
-      x: 5 + (i * 90) / (count - 1), // evenly spaced across 5%-95%
-      y: 50, // straight horizontal line
+      x: 5 + (i * 90) / (count - 1),
+      y: 50,
       eaten: false,
     })
   }
@@ -27,7 +27,7 @@ function generateDocs(): Document[] {
 function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
   const [brainX, setBrainX] = useState(-8)
   const [docs, setDocs] = useState(generateDocs)
-  const [mouthDeg, setMouthDeg] = useState(0)
+  const [mouthOpen, setMouthOpen] = useState(0) // 0-1 range
   const frameRef = useRef<number>()
   const startTime = useRef(Date.now())
 
@@ -38,11 +38,15 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
       const progress = Math.min(elapsed / duration, 1)
       const currentX = -8 + progress * 116
 
-      // Smooth chomp: oscillate mouth angle
-      const chomp = Math.abs(Math.sin(elapsed * 0.012)) * 35
+      // Satisfying chomp: fast open, snap shut with easing
+      // Use a saw-tooth-ish wave that opens fast and closes with a snap
+      const chompCycle = (elapsed * 0.008) % (Math.PI * 2)
+      const rawChomp = Math.sin(chompCycle)
+      // Make it snap shut faster: use power curve
+      const chomp = rawChomp > 0 ? Math.pow(rawChomp, 0.6) : 0
 
       setBrainX(currentX)
-      setMouthDeg(chomp)
+      setMouthOpen(chomp)
 
       setDocs(prev =>
         prev.map(doc =>
@@ -64,13 +68,25 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
     }
   }, [onComplete])
 
-  // Build clip-path for pac-man mouth
-  const mouthRad = (mouthDeg * Math.PI) / 180
-  const topY = 50 - Math.sin(mouthRad) * 50
-  const topX = 50 + Math.cos(mouthRad) * 50
-  const botY = 50 + Math.sin(mouthRad) * 50
-  const botX = 50 + Math.cos(mouthRad) * 50
-  const clipPath = `polygon(${topX}% ${topY}%, 50% 50%, ${botX}% ${botY}%, 100% 75%, 100% 100%, 0% 100%, 0% 0%, 100% 0%, 100% 25%)`
+  // SVG arc-based clip path for smooth wedge mouth
+  // Mouth opens on the right side, wedge angle from center
+  const maxAngle = 45 // max half-angle in degrees
+  const angle = mouthOpen * maxAngle
+  const angleRad = (angle * Math.PI) / 180
+  const radius = 50
+  const cx = 50
+  const cy = 50
+
+  // Points on the circle edge for the mouth opening
+  const topX = cx + radius * Math.cos(angleRad)
+  const topY = cy - radius * Math.sin(angleRad)
+  const botX = cx + radius * Math.cos(angleRad)
+  const botY = cy + radius * Math.sin(angleRad)
+
+  // SVG clip-path: full circle minus a wedge on the right
+  // Draw: arc from top mouth edge, around the back, to bottom mouth edge, then lines to center
+  const largeArc = 1 // always the large arc (going around the back)
+  const clipId = 'brain-pacman-clip'
 
   return createPortal(
     <div
@@ -101,13 +117,58 @@ function BrainPacmanOverlay({ onComplete }: { onComplete: () => void }) {
           left: `${brainX}%`,
           top: '50%',
           transform: 'translate(-50%, -50%)',
-          fontSize: '3rem',
+          width: '64px',
+          height: '64px',
           filter: 'drop-shadow(0 0 12px rgba(168, 85, 247, 0.5))',
         }}
       >
-        <div style={{ clipPath, transition: 'clip-path 0.05s linear' }}>
-          🧠
-        </div>
+        <svg
+          viewBox="0 0 100 100"
+          width="64"
+          height="64"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        >
+          <defs>
+            <clipPath id={clipId}>
+              {angle < 0.5 ? (
+                // Mouth basically closed — full circle
+                <circle cx={cx} cy={cy} r={radius} />
+              ) : (
+                // Wedge cut-out: arc from top to bottom (going around back), then lines to center
+                <path
+                  d={`M ${cx} ${cy} L ${topX} ${topY} A ${radius} ${radius} 0 ${largeArc} 0 ${botX} ${botY} Z`}
+                />
+              )}
+            </clipPath>
+          </defs>
+
+          {/* Brain emoji rendered as text, clipped */}
+          <g clipPath={`url(#${clipId})`}>
+            <text
+              x="50"
+              y="50"
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize="72"
+              style={{ userSelect: 'none' }}
+            >
+              🧠
+            </text>
+          </g>
+
+          {/* Eye dot */}
+          <circle
+            cx="58"
+            cy="30"
+            r="4"
+            fill="white"
+            stroke="#1e1e2e"
+            strokeWidth="1.5"
+          />
+          <circle cx="59" cy="29" r="1.8" fill="#1e1e2e" />
+        </svg>
+
+        {/* Sparkle trail */}
         {docs.some(d => d.eaten) && (
           <div
             className="absolute -left-6 top-1/2 -translate-y-1/2 flex gap-1"
