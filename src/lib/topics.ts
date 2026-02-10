@@ -14,8 +14,8 @@ export const topics: Topic[] = [
     name: 'Artificial Intelligence',
     children: [
       {
-        id: 'start-here',
-        name: 'Start Here',
+        id: 'hands-on',
+        name: 'Hands-On',
         children: [
           {
             id: 'getting-started',
