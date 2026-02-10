@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Sparkles, ChevronRight } from 'lucide-react'
+import { ArrowRight, Sparkles, ChevronRight, Github, MessageSquare } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { findCategory, flattenTopics, type Topic } from '@/lib/topics'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES } from '@/lib/difficulty'
@@ -84,6 +84,49 @@ export function CategoryPage({ categoryId }: CategoryPageProps) {
             </p>
           )}
         </motion.header>
+
+        {/* Contribute CTA */}
+        <motion.section variants={itemVariants} className="mb-10">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-surface to-secondary/10 border border-primary/20 p-6 md:p-8 text-center">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5 mx-auto mb-4">
+              <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+                <Github size={20} className="text-primary-light" />
+              </div>
+            </div>
+            <h2 className="text-xl font-bold font-heading text-text mb-2">{t.common.helpMakeThisBetter}</h2>
+            <p className="text-sm text-muted max-w-lg mx-auto mb-4 leading-relaxed">
+              {t.common.helpMakeThisBetterDesc}
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=topic_request.md&title=%5BTopic%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary inline-flex items-center gap-2 text-sm"
+              >
+                <MessageSquare size={14} />
+                {t.common.requestATopic}
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide/issues/new?template=bug_report.md&title=%5BBug%5D+"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary inline-flex items-center gap-2 text-sm"
+              >
+                {t.common.reportABug}
+              </a>
+              <a
+                href="https://github.com/LoggeL/learn-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-1.5 text-sm text-muted hover:text-text transition-colors"
+              >
+                <Github size={14} />
+                {t.common.starOnGithub}
+              </a>
+            </div>
+          </div>
+        </motion.section>
 
         {/* Topics Grid */}
         <motion.section variants={itemVariants}>
