@@ -649,6 +649,16 @@ export function Sidebar() {
                           </span>
                         )}
                       </div>
+                      {topic.difficulty && (
+                        <span className={clsx(
+                          'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0',
+                          DIFFICULTY_STYLES[topic.difficulty].color,
+                          DIFFICULTY_STYLES[topic.difficulty].bg,
+                          DIFFICULTY_STYLES[topic.difficulty].border,
+                        )}>
+                          {DIFFICULTY_STYLES[topic.difficulty].label}
+                        </span>
+                      )}
                     </Link>
                   ))
                 )}
