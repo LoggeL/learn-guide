@@ -50,6 +50,33 @@ export default function LocalInferencePage() {
         </div>
       </section>
 
+      {/* 2.5. MoE Advantage */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.moeTitle}</h2>
+        <p className="text-muted mb-4 leading-relaxed text-lg">{li.moeDesc}</p>
+        <div className="grid sm:grid-cols-3 gap-4 mb-6">
+          {[
+            { title: li.moeBenefit1, desc: li.moeBenefit1Desc, color: 'cyan' },
+            { title: li.moeBenefit2, desc: li.moeBenefit2Desc, color: 'emerald' },
+            { title: li.moeBenefit3, desc: li.moeBenefit3Desc, color: 'purple' },
+          ].map((item) => (
+            <div key={item.title} className={`p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
+              <h3 className={`text-${item.color}-400 font-semibold font-heading mb-2`}>{item.title}</h3>
+              <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          <LocalInferenceVisualizer section="moe" t={li as unknown as Record<string, string>} />
+        </div>
+        <div className="mt-4 p-5 rounded-xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20">
+          <p className="text-text leading-relaxed mb-3">{li.moeLinkDesc}</p>
+          <Link href="/ai/llm/moe" className="text-primary-light hover:underline font-medium">
+            {li.moeLinkText} &rarr;
+          </Link>
+        </div>
+      </section>
+
       {/* 3. Popular Tools */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.toolsTitle}</h2>

@@ -328,6 +328,171 @@ function QuickstartSection({ t }: { t: Record<string, string> }) {
   )
 }
 
+const MOE_MODELS = [
+  {
+    id: 'qwen-moe',
+    name: 'Qwen3-next 80B3A',
+    type: 'MoE' as const,
+    totalParams: 80,
+    activeParams: 3,
+    vram: 12,
+    speed: 90,
+    intelligence: 82,
+    color: 'cyan',
+  },
+  {
+    id: 'llama-70b',
+    name: 'Llama 3.1 70B',
+    type: 'Dense' as const,
+    totalParams: 70,
+    activeParams: 70,
+    vram: 40,
+    speed: 17,
+    intelligence: 85,
+    color: 'purple',
+  },
+  {
+    id: 'llama-3b',
+    name: 'Llama 3.2 3B',
+    type: 'Dense' as const,
+    totalParams: 3,
+    activeParams: 3,
+    vram: 2,
+    speed: 110,
+    intelligence: 35,
+    color: 'orange',
+  },
+]
+
+function MoESection({ t }: { t: Record<string, string> }) {
+  const [highlighted, setHighlighted] = useState<string | null>('qwen-moe')
+
+  const maxVram = 48
+  const maxSpeed = 130
+  const maxIntel = 100
+
+  return (
+    <div className="space-y-6">
+      {/* Model selector tabs */}
+      <div className="flex flex-wrap gap-2">
+        {MOE_MODELS.map((m) => (
+          <button
+            key={m.id}
+            onClick={() => setHighlighted(m.id)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              highlighted === m.id
+                ? `bg-${m.color}-500/20 text-${m.color}-400 border border-${m.color}-500/40`
+                : 'bg-surface/50 text-muted border border-border hover:border-primary/30'
+            }`}
+          >
+            {m.name}
+            <span className={`ml-2 text-xs px-1.5 py-0.5 rounded ${
+              m.type === 'MoE' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-gray-500/20 text-gray-400'
+            }`}>{m.type}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* Comparison bars */}
+      <div className="space-y-5">
+        {/* Intelligence */}
+        <div>
+          <div className="text-sm font-medium text-muted mb-2">{t.moeIntelligence || 'Intelligence'}</div>
+          <div className="space-y-2">
+            {MOE_MODELS.map((m) => (
+              <div key={m.id} className={`flex items-center gap-3 transition-opacity ${highlighted && highlighted !== m.id ? 'opacity-40' : ''}`}>
+                <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
+                <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
+                  <div
+                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    style={{ width: `${(m.intelligence / maxIntel) * 100}%` }}
+                  >
+                    <span className="text-xs font-medium text-white/80">{m.intelligence}/100</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Speed */}
+        <div>
+          <div className="text-sm font-medium text-muted mb-2">{t.moeSpeed || 'Speed (tokens/sec, RTX 4090)'}</div>
+          <div className="space-y-2">
+            {MOE_MODELS.map((m) => (
+              <div key={m.id} className={`flex items-center gap-3 transition-opacity ${highlighted && highlighted !== m.id ? 'opacity-40' : ''}`}>
+                <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
+                <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
+                  <div
+                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    style={{ width: `${(m.speed / maxSpeed) * 100}%` }}
+                  >
+                    <span className="text-xs font-medium text-white/80">~{m.speed} tok/s</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* VRAM */}
+        <div>
+          <div className="text-sm font-medium text-muted mb-2">{t.moeVram || 'VRAM Usage (Q4)'}</div>
+          <div className="space-y-2">
+            {MOE_MODELS.map((m) => (
+              <div key={m.id} className={`flex items-center gap-3 transition-opacity ${highlighted && highlighted !== m.id ? 'opacity-40' : ''}`}>
+                <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
+                <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
+                  <div
+                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    style={{ width: `${(m.vram / maxVram) * 100}%` }}
+                  >
+                    <span className="text-xs font-medium text-white/80">{m.vram} GB</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Active vs Total params insight */}
+      <div className="grid sm:grid-cols-3 gap-3">
+        {MOE_MODELS.map((m) => (
+          <div key={m.id}
+            className={`p-4 rounded-xl border transition-all cursor-pointer ${
+              highlighted === m.id
+                ? `bg-${m.color}-500/10 border-${m.color}-500/30`
+                : 'bg-surface/30 border-border'
+            }`}
+            onClick={() => setHighlighted(m.id)}
+          >
+            <div className={`text-sm font-semibold text-${m.color}-400 mb-2`}>{m.name}</div>
+            <div className="text-xs text-muted space-y-1">
+              <div>{t.moeTotalParams || 'Total'}: <span className="text-text font-medium">{m.totalParams}B</span></div>
+              <div>{t.moeActiveParams || 'Active'}: <span className="text-text font-medium">{m.activeParams}B</span></div>
+              <div>VRAM (Q4): <span className="text-text font-medium">{m.vram} GB</span></div>
+            </div>
+            {m.type === 'MoE' && (
+              <div className="mt-2 text-xs px-2 py-1 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 inline-block">
+                {t.moeSweetSpot || '✨ Sweet spot'}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Key insight callout */}
+      <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20">
+        <p className="text-text text-sm leading-relaxed">
+          <span className="font-semibold text-cyan-400">{t.moeInsightLabel || 'The insight:'}</span>{' '}
+          {t.moeInsight || 'Qwen MoE activates only 3B of its 80B parameters per token — giving you 70B-class intelligence at 3B-class speed, fitting comfortably in 12 GB VRAM.'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function LocalInferenceVisualizer({ section, t }: Props) {
   switch (section) {
     case 'hardware':
@@ -336,6 +501,8 @@ export function LocalInferenceVisualizer({ section, t }: Props) {
       return <ToolsSection />
     case 'quickstart':
       return <QuickstartSection t={t} />
+    case 'moe':
+      return <MoESection t={t} />
     default:
       return null
   }
