@@ -1,0 +1,428 @@
+'use client'
+
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2 } from 'lucide-react'
+import { useTranslation } from '@/lib/i18n/context'
+
+type Provider = 'openrouter' | 'groq' | 'cerebras'
+
+interface ProviderConfig {
+  name: string
+  endpoint: string
+  models: { id: string; name: string }[]
+  keyPrefix: string
+}
+
+const PROVIDERS: Record<Provider, ProviderConfig> = {
+  openrouter: {
+    name: 'OpenRouter',
+    endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+    models: [
+      { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B' },
+      { id: 'google/gemma-2-9b-it:free', name: 'Gemma 2 9B' },
+      { id: 'mistralai/mistral-7b-instruct:free', name: 'Mistral 7B' },
+    ],
+    keyPrefix: 'sk-or-',
+  },
+  groq: {
+    name: 'Groq',
+    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
+    models: [
+      { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B' },
+      { id: 'gemma2-9b-it', name: 'Gemma 2 9B' },
+      { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B' },
+    ],
+    keyPrefix: 'gsk_',
+  },
+  cerebras: {
+    name: 'Cerebras',
+    endpoint: 'https://api.cerebras.ai/v1/chat/completions',
+    models: [
+      { id: 'llama3.1-8b', name: 'Llama 3.1 8B' },
+      { id: 'llama-3.3-70b', name: 'Llama 3.3 70B' },
+    ],
+    keyPrefix: 'csk-',
+  },
+}
+
+function CodeTab({ label, code, active, onClick }: { label: string; code: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
+        active ? 'bg-surface/80 text-text border-b-2 border-primary' : 'text-muted hover:text-text'
+      }`}
+    >
+      {label}
+    </button>
+  )
+}
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+  const copy = () => {
+    navigator.clipboard.writeText(text)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+  return (
+    <button onClick={copy} className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+      {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-muted" />}
+    </button>
+  )
+}
+
+export function GettingStartedPlayground() {
+  const { t } = useTranslation()
+  const gs = t.gettingStarted
+
+  const [provider, setProvider] = useState<Provider>('groq')
+  const [apiKey, setApiKey] = useState('')
+  const [model, setModel] = useState(PROVIDERS.groq.models[0].id)
+  const [message, setMessage] = useState('')
+  const [response, setResponse] = useState('')
+  const [rawJson, setRawJson] = useState('')
+  const [showRaw, setShowRaw] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [temperature, setTemperature] = useState(0.7)
+  const [maxTokens, setMaxTokens] = useState(256)
+  const [codeTab, setCodeTab] = useState<'python' | 'javascript' | 'curl'>('curl')
+  const [showKey, setShowKey] = useState(false)
+  const abortRef = useRef<AbortController | null>(null)
+  const responseRef = useRef<HTMLDivElement>(null)
+
+  // Load API key from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(`llm-key-${provider}`)
+    if (saved) setApiKey(saved)
+  }, [provider])
+
+  // Save API key to localStorage
+  const saveKey = useCallback((key: string) => {
+    setApiKey(key)
+    if (key) localStorage.setItem(`llm-key-${provider}`, key)
+    else localStorage.removeItem(`llm-key-${provider}`)
+  }, [provider])
+
+  // Switch provider
+  const switchProvider = (p: Provider) => {
+    setProvider(p)
+    setModel(PROVIDERS[p].models[0].id)
+    setError('')
+    const saved = localStorage.getItem(`llm-key-${p}`)
+    setApiKey(saved || '')
+  }
+
+  const config = PROVIDERS[provider]
+
+  const sendMessage = async () => {
+    if (!apiKey || !message.trim()) return
+    setLoading(true)
+    setError('')
+    setResponse('')
+    setRawJson('')
+
+    abortRef.current = new AbortController()
+
+    const body = {
+      model,
+      messages: [{ role: 'user' as const, content: message }],
+      temperature,
+      max_tokens: maxTokens,
+      stream: true,
+    }
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    }
+    if (provider === 'openrouter') {
+      headers['HTTP-Referer'] = window.location.origin
+      headers['X-Title'] = 'Learn AI Guide'
+    }
+
+    try {
+      const res = await fetch(config.endpoint, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+        signal: abortRef.current.signal,
+      })
+
+      if (!res.ok) {
+        const errBody = await res.text()
+        let msg = `HTTP ${res.status}`
+        try {
+          const parsed = JSON.parse(errBody)
+          msg = parsed.error?.message || parsed.message || msg
+        } catch { /* use status */ }
+        setError(msg)
+        setLoading(false)
+        return
+      }
+
+      const reader = res.body?.getReader()
+      if (!reader) { setError('No response stream'); setLoading(false); return }
+      const decoder = new TextDecoder()
+      let full = ''
+      let fullChunks: unknown[] = []
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n').filter(l => l.startsWith('data: '))
+        for (const line of lines) {
+          const data = line.slice(6).trim()
+          if (data === '[DONE]') continue
+          try {
+            const parsed = JSON.parse(data)
+            fullChunks.push(parsed)
+            const delta = parsed.choices?.[0]?.delta?.content
+            if (delta) {
+              full += delta
+              setResponse(full)
+            }
+          } catch { /* skip */ }
+        }
+      }
+      setRawJson(JSON.stringify(fullChunks.length === 1 ? fullChunks[0] : fullChunks, null, 2))
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        setError(err.message || 'Request failed')
+      }
+    }
+    setLoading(false)
+  }
+
+  const stop = () => { abortRef.current?.abort(); setLoading(false) }
+
+  // Generate code snippets
+  const curlCode = `curl ${config.endpoint} \\
+  -H "Content-Type: application/json" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -d '{
+    "model": "${model}",
+    "messages": [{"role": "user", "content": "${message || 'Hello, who are you?'}"}],
+    "temperature": ${temperature},
+    "max_tokens": ${maxTokens}
+  }'`
+
+  const pythonCode = `import requests
+
+response = requests.post(
+    "${config.endpoint}",
+    headers={
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "${model}",
+        "messages": [{"role": "user", "content": "${message || 'Hello, who are you?'}"}],
+        "temperature": ${temperature},
+        "max_tokens": ${maxTokens},
+    },
+)
+
+data = response.json()
+print(data["choices"][0]["message"]["content"])`
+
+  const jsCode = `const response = await fetch("${config.endpoint}", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "${model}",
+    messages: [{ role: "user", content: "${message || 'Hello, who are you?'}" }],
+    temperature: ${temperature},
+    max_tokens: ${maxTokens},
+  }),
+});
+
+const data = await response.json();
+console.log(data.choices[0].message.content);`
+
+  const codeSnippets = { curl: curlCode, python: pythonCode, javascript: jsCode }
+
+  return (
+    <div className="space-y-6">
+      {/* Provider Selector */}
+      <div className="flex flex-wrap gap-3">
+        {(Object.keys(PROVIDERS) as Provider[]).map(p => (
+          <button
+            key={p}
+            onClick={() => switchProvider(p)}
+            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
+              provider === p
+                ? 'bg-primary/20 text-primary-light border border-primary/40'
+                : 'bg-surface/50 text-muted border border-border hover:border-primary/30 hover:text-text'
+            }`}
+          >
+            {PROVIDERS[p].name}
+          </button>
+        ))}
+      </div>
+
+      {/* API Key Input */}
+      <div className="rounded-xl bg-surface/50 border border-border p-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Key className="w-4 h-4 text-primary-light" />
+          <span className="text-sm font-medium text-text">{gs.apiKeyLabel}</span>
+        </div>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type={showKey ? 'text' : 'password'}
+              value={apiKey}
+              onChange={e => saveKey(e.target.value)}
+              placeholder={`${config.keyPrefix}...`}
+              className="w-full px-3 py-2 rounded-lg bg-background border border-border text-text text-sm placeholder:text-muted/50 focus:outline-none focus:border-primary/50"
+            />
+            <button
+              onClick={() => setShowKey(!showKey)}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-muted hover:text-text"
+            >
+              {showKey ? '🙈' : '👁️'}
+            </button>
+          </div>
+        </div>
+        <p className="text-xs text-muted/60 mt-2 flex items-center gap-1">
+          <AlertTriangle className="w-3 h-3" />
+          {gs.keyDisclaimer}
+        </p>
+      </div>
+
+      {/* Model Selector */}
+      <div className="flex flex-wrap items-center gap-3">
+        <span className="text-sm text-muted">{gs.modelLabel}:</span>
+        {config.models.map(m => (
+          <button
+            key={m.id}
+            onClick={() => setModel(m.id)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              model === m.id
+                ? 'bg-accent/20 text-accent border border-accent/40'
+                : 'bg-surface/30 text-muted border border-border hover:text-text'
+            }`}
+          >
+            {m.name}
+          </button>
+        ))}
+      </div>
+
+      {/* Sliders */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="rounded-xl bg-surface/30 border border-border p-4">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm text-muted">{gs.temperatureLabel}</span>
+            <span className="text-sm font-mono text-primary-light">{temperature.toFixed(1)}</span>
+          </div>
+          <input
+            type="range" min="0" max="2" step="0.1"
+            value={temperature}
+            onChange={e => setTemperature(parseFloat(e.target.value))}
+            className="w-full accent-primary"
+          />
+        </div>
+        <div className="rounded-xl bg-surface/30 border border-border p-4">
+          <div className="flex justify-between mb-2">
+            <span className="text-sm text-muted">{gs.maxTokensLabel}</span>
+            <span className="text-sm font-mono text-primary-light">{maxTokens}</span>
+          </div>
+          <input
+            type="range" min="32" max="1024" step="32"
+            value={maxTokens}
+            onChange={e => setMaxTokens(parseInt(e.target.value))}
+            className="w-full accent-primary"
+          />
+        </div>
+      </div>
+
+      {/* Message Input & Send */}
+      <div className="rounded-xl bg-surface/50 border border-border p-4">
+        <textarea
+          value={message}
+          onChange={e => setMessage(e.target.value)}
+          onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
+          placeholder={gs.messagePlaceholder}
+          rows={3}
+          className="w-full px-3 py-2 rounded-lg bg-background border border-border text-text text-sm placeholder:text-muted/50 focus:outline-none focus:border-primary/50 resize-none"
+        />
+        <div className="flex justify-end mt-3 gap-2">
+          {loading && (
+            <button onClick={stop} className="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-sm font-medium hover:bg-red-500/30 transition-colors">
+              {gs.stopButton}
+            </button>
+          )}
+          <button
+            onClick={sendMessage}
+            disabled={loading || !apiKey || !message.trim()}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary/20 text-primary-light text-sm font-medium hover:bg-primary/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {gs.sendButton}
+          </button>
+        </div>
+      </div>
+
+      {/* Error */}
+      {error && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/30 p-4 text-red-400 text-sm">
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+
+      {/* Response */}
+      {response && (
+        <div ref={responseRef} className="rounded-xl bg-surface/50 border border-border p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Zap className="w-4 h-4 text-accent" />
+            <span className="text-sm font-medium text-text">{gs.responseLabel}</span>
+          </div>
+          <div className="prose prose-invert max-w-none text-sm text-muted leading-relaxed whitespace-pre-wrap">
+            {response}
+          </div>
+        </div>
+      )}
+
+      {/* Raw JSON */}
+      {rawJson && (
+        <div className="rounded-xl bg-surface/30 border border-border overflow-hidden">
+          <button
+            onClick={() => setShowRaw(!showRaw)}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm text-muted hover:text-text transition-colors"
+          >
+            <span>{gs.rawJsonLabel}</span>
+            {showRaw ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          {showRaw && (
+            <div className="relative px-4 pb-4">
+              <CopyButton text={rawJson} />
+              <pre className="text-xs text-muted/80 overflow-x-auto max-h-80 font-mono bg-background rounded-lg p-3">
+                {rawJson}
+              </pre>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Code Snippets */}
+      <div className="rounded-xl bg-surface/30 border border-border overflow-hidden">
+        <div className="flex border-b border-border">
+          <CodeTab label="curl" code="" active={codeTab === 'curl'} onClick={() => setCodeTab('curl')} />
+          <CodeTab label="Python" code="" active={codeTab === 'python'} onClick={() => setCodeTab('python')} />
+          <CodeTab label="JavaScript" code="" active={codeTab === 'javascript'} onClick={() => setCodeTab('javascript')} />
+        </div>
+        <div className="relative p-4">
+          <CopyButton text={codeSnippets[codeTab]} />
+          <pre className="text-xs text-muted/80 overflow-x-auto font-mono leading-relaxed">
+            {codeSnippets[codeTab]}
+          </pre>
+        </div>
+      </div>
+    </div>
+  )
+}

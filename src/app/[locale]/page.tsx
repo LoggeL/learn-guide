@@ -65,6 +65,13 @@ const topicData: TopicRoot[] = [
     categoryKey: 'ai',
     children: [
       {
+        id: 'getting-started-section',
+        nameKey: 'getting-started-section',
+        children: [
+          { id: 'getting-started', path: '/ai/getting-started' },
+        ],
+      },
+      {
         id: 'agents',
         nameKey: 'agents',
         children: [

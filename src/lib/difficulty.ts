@@ -7,6 +7,8 @@ export const DIFFICULTY_STYLES: Record<Difficulty, { label: string; color: strin
 }
 
 export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
+  // Getting Started
+  'getting-started': 'beginner',
   // Agents
   'agent-loop': 'beginner',
   'agent-context': 'intermediate',

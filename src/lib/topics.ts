@@ -11,6 +11,11 @@ export const topics: Topic[] = [
     name: 'Artificial Intelligence',
     children: [
       {
+        id: 'getting-started',
+        name: 'Getting Started',
+        path: '/ai/getting-started',
+      },
+      {
         id: 'agents',
         name: 'AI Agents',
         children: [

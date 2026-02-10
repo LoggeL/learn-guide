@@ -73,3 +73,6 @@ export { LocalInferenceVisualizer } from './LocalInferenceVisualizer'
 
 // Transformer Architecture components
 export { TransformerVisualizer } from './TransformerVisualizer'
+
+// Getting Started components
+export { GettingStartedPlayground } from './GettingStartedPlayground'

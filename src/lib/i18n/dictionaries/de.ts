@@ -92,6 +92,9 @@ export const de: Dictionary = {
 
   // Topic names
   topicNames: {
+    // Getting Started
+    'getting-started': 'Erste Schritte',
+    'getting-started-section': 'Hier starten',
     // Agent subcategories
     'agents-core': 'Kernkonzepte',
     'agents-building': 'Bausteine',
@@ -158,6 +161,7 @@ export const de: Dictionary = {
 
   // Topic-Beschreibungen (kurz, für Karten und Suchergebnisse)
   topicDescriptions: {
+    'getting-started': 'Dein erster LLM-API-Aufruf in 10 Minuten — kostenlos',
     'agent-loop': 'Der Beobachten-Denken-Handeln-Zyklus autonomer Agenten',
     'agent-context': 'Wie Agenten ihr Kontextfenster strukturieren und verwalten',
     'tool-design': 'Prinzipien für Tools, die Agenten zuverlässig nutzen können',
@@ -4439,5 +4443,42 @@ export const de: Dictionary = {
     takeaway3: 'LoRA funktioniert, weil Fine-Tuning-Änderungen empirisch niedrigrangig sind: Man braucht keine vollrangigen Updates für Aufgabenanpassung',
     takeaway4: 'QLoRA erweitert dies durch Quantisierung des Basismodells und ermöglicht Fine-Tuning von 70B+-Modellen auf Consumer-Hardware',
     takeaway5: 'LoRA ist nicht geeignet für Pre-Training — das Erlernen fundamentalen Wissens erfordert vollrangige, unbeschränkte Gewichtsupdates',
+  },
+
+  // Getting Started page
+  gettingStarted: {
+    title: 'Erste Schritte',
+    description: 'Dein erster LLM-API-Aufruf in 10 Minuten — komplett kostenlos. Keine Kreditkarte nötig.',
+    whyTitle: 'Warum hier starten?',
+    whyDesc: 'Large Language Models sind mächtig, aber der Einstieg kann überwältigend wirken. Dieser Guide kommt auf den Punkt: Du wählst einen kostenlosen API-Anbieter, gibst deinen Key ein und sprichst mit einem KI-Modell — alles in deinem Browser.',
+    whyPromise: '⏱️ Du hast in unter 10 Minuten einen funktionierenden LLM-Aufruf. Keine Kreditkarte nötig.',
+    getKeyTitle: 'Kostenlosen API-Key holen',
+    getKeyDesc: 'Alle drei Anbieter bieten kostenlose Tarife — keine Kreditkarte nötig. Wähle den, der dich anspricht (du kannst die anderen später ausprobieren):',
+    openrouterDesc: 'Größte Modellauswahl. Zugriff auf kostenlose Modelle von Meta, Google, Mistral und mehr über eine API. Ideal zum Erkunden.',
+    groqDesc: 'Blitzschnelle Inferenz auf spezieller LPU-Hardware. Kostenloses Kontingent mit großzügigen Rate-Limits. Antworten kommen fast sofort.',
+    cerebrasDesc: 'Die schnellste verfügbare Inferenz. Wafer-Scale-Chips liefern unglaubliche Geschwindigkeit. Kostenloses Kontingent zum Experimentieren.',
+    getKey: 'API-Key holen →',
+    apiKeyLabel: 'API-Key',
+    keyDisclaimer: 'Dein Key wird nur im localStorage deines Browsers gespeichert. Er verlässt nie unsere Server.',
+    modelLabel: 'Modell',
+    temperatureLabel: 'Temperatur',
+    maxTokensLabel: 'Max Tokens',
+    messagePlaceholder: 'Nachricht eingeben... z.B. "Erkläre Quantencomputing in einfachen Worten"',
+    sendButton: 'Senden',
+    stopButton: 'Stopp',
+    responseLabel: 'Antwort',
+    rawJsonLabel: 'Rohe JSON-Antwort anzeigen',
+    playgroundTitle: 'Dein erster LLM-Aufruf',
+    playgroundDesc: 'Gib oben deinen API-Key ein, schreibe eine Nachricht und klicke auf Senden',
+    understandTitle: 'Die Antwort verstehen',
+    understandContent: 'Der eigentliche Text, den das Modell generiert hat. Das würdest du einem Nutzer zeigen.',
+    understandTokens: 'Wie viele Tokens verwendet wurden. Prompt-Tokens = deine Eingabe, Completion-Tokens = die Ausgabe des Modells. So funktioniert die Abrechnung (kostenlose Tarife berechnen nichts).',
+    understandFinish: '"stop" bedeutet, das Modell hat natürlich geendet. "length" bedeutet, es hat das max_tokens-Limit erreicht und wurde abgeschnitten.',
+    understandModel: 'Das genaue Modell, das deine Anfrage verarbeitet hat. Einige Anbieter können an verschiedene Versionen weiterleiten.',
+    nextStepsTitle: 'Nächste Schritte',
+    nextStepsDesc: 'Jetzt, wo du deinen ersten LLM-Aufruf gemacht hast, erkunde diese Themen:',
+    nextTemperature: 'Lerne, wie Temperatur Kreativität vs. Vorhersagbarkeit steuert',
+    nextSystemPrompts: 'Setze die Persönlichkeit und Regeln für deine KI',
+    nextTokenization: 'Verstehe, wie Text zu Zahlen wird, die das Modell verarbeiten kann',
   },
 }

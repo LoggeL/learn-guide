@@ -90,6 +90,9 @@ export const en = {
 
   // Topic names
   topicNames: {
+    // Getting Started
+    'getting-started': 'Getting Started',
+    'getting-started-section': 'Start Here',
     // Agent subcategories
     'agents-core': 'Core Concepts',
     'agents-building': 'Building Blocks',
@@ -156,6 +159,7 @@ export const en = {
 
   // Topic descriptions (short, for cards and search results)
   topicDescriptions: {
+    'getting-started': 'Make your first LLM API call in 10 minutes — for free',
     'agent-loop': 'The observe-think-act cycle that powers autonomous agents',
     'agent-context': 'How agents structure and manage their context window',
     'tool-design': 'Principles for building tools that agents can use reliably',
@@ -4470,6 +4474,43 @@ export const en = {
     takeaway3: 'LoRA works because fine-tuning changes are empirically low-rank: you don\'t need full-rank updates for task adaptation',
     takeaway4: 'QLoRA extends this further by quantizing the base model, enabling fine-tuning of 70B+ models on consumer hardware',
     takeaway5: 'LoRA is not suitable for pre-training — learning fundamental knowledge requires full-rank, unconstrained weight updates',
+  },
+
+  // Getting Started page
+  gettingStarted: {
+    title: 'Getting Started',
+    description: 'Make your first LLM API call in 10 minutes — completely free. No credit card needed.',
+    whyTitle: 'Why Start Here?',
+    whyDesc: 'Large Language Models are powerful, but getting started can feel overwhelming. This guide cuts through the noise: you\'ll pick a free API provider, paste in your key, and talk to an AI model — all in your browser.',
+    whyPromise: '⏱️ You\'ll have a working LLM call in under 10 minutes. No credit card required.',
+    getKeyTitle: 'Get a Free API Key',
+    getKeyDesc: 'All three providers offer free tiers — no credit card needed. Pick whichever appeals to you (you can always try the others later):',
+    openrouterDesc: 'Widest model selection. Access free models from Meta, Google, Mistral, and more through one API. Great for exploring.',
+    groqDesc: 'Blazing fast inference on custom LPU hardware. Free tier with generous rate limits. Responses come back almost instantly.',
+    cerebrasDesc: 'The fastest inference available. Wafer-scale chips deliver incredible speed. Free tier for experimentation.',
+    getKey: 'Get API Key →',
+    apiKeyLabel: 'API Key',
+    keyDisclaimer: 'Your key is stored only in your browser\'s localStorage. It never touches our servers.',
+    modelLabel: 'Model',
+    temperatureLabel: 'Temperature',
+    maxTokensLabel: 'Max Tokens',
+    messagePlaceholder: 'Type a message... e.g. "Explain quantum computing in simple terms"',
+    sendButton: 'Send',
+    stopButton: 'Stop',
+    responseLabel: 'Response',
+    rawJsonLabel: 'Show Raw JSON Response',
+    playgroundTitle: 'Your First LLM Call',
+    playgroundDesc: 'Enter your API key above, type a message, and hit Send',
+    understandTitle: 'Understanding the Response',
+    understandContent: 'The actual text the model generated. This is what you\'d show to a user.',
+    understandTokens: 'How many tokens were used. Prompt tokens = your input, completion tokens = the model\'s output. This is how billing works (though free tiers don\'t charge).',
+    understandFinish: '"stop" means the model finished naturally. "length" means it hit the max_tokens limit and was cut off.',
+    understandModel: 'The exact model that processed your request. Some providers may route to different versions.',
+    nextStepsTitle: 'Next Steps',
+    nextStepsDesc: 'Now that you\'ve made your first LLM call, explore these topics to go deeper:',
+    nextTemperature: 'Learn how temperature controls creativity vs. predictability',
+    nextSystemPrompts: 'Set the personality and rules for your AI',
+    nextTokenization: 'Understand how text becomes numbers the model can process',
   },
 }
 
