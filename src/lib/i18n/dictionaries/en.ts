@@ -91,6 +91,7 @@ export const en = {
   // Topic names
   topicNames: {
     // Getting Started
+    'hands-on': 'Hands-On',
     'getting-started': 'Getting Started',
     'getting-started-section': 'Start Here',
     // Agent subcategories

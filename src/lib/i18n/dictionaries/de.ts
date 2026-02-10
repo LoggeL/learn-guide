@@ -93,6 +93,7 @@ export const de: Dictionary = {
   // Topic names
   topicNames: {
     // Getting Started
+    'hands-on': 'Hands-On',
     'getting-started': 'Erste Schritte',
     'getting-started-section': 'Hier starten',
     // Agent subcategories
