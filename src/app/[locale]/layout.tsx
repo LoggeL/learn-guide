@@ -4,6 +4,7 @@ import '../globals.css'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { getDictionary, isValidLocale, type Locale } from '@/lib/i18n'
 import { LocaleProvider } from '@/lib/i18n/context'
+import { getHomepageJsonLd } from '@/lib/seo'
 
 export async function generateMetadata({
   params,
@@ -22,10 +23,20 @@ export async function generateMetadata({
     icons: {
       icon: '/favicon.svg',
     },
+    alternates: {
+      canonical: `https://learn.logge.top/${locale}`,
+      languages: {
+        en: 'https://learn.logge.top/en',
+        de: 'https://learn.logge.top/de',
+      },
+    },
     openGraph: {
       title: dict.metadata.title,
       description: dict.metadata.description,
       type: 'website',
+      url: `https://learn.logge.top/${locale}`,
+      locale: locale === 'de' ? 'de_DE' : 'en_US',
+      alternateLocale: locale === 'de' ? 'en_US' : 'de_DE',
       images: [
         {
           url: '/og-image.png',
@@ -63,9 +74,18 @@ export default function LocaleLayout({
 
   const dictionary = getDictionary(locale)
 
+  const jsonLdItems = getHomepageJsonLd(locale)
+
   return (
     <html lang={locale} className="dark overflow-x-hidden">
       <body className="bg-background text-text min-h-screen antialiased overflow-x-hidden">
+        {jsonLdItems.map((item, i) => (
+          <script
+            key={i}
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
+          />
+        ))}
         {/* Ambient background gradient */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
           <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
