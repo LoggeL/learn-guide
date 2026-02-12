@@ -18,9 +18,10 @@ const PROVIDERS: Record<Provider, ProviderConfig> = {
     name: 'OpenRouter',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
     models: [
+      { id: 'openrouter/free', name: 'Auto (Free)' },
       { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B' },
       { id: 'google/gemma-3-12b-it:free', name: 'Gemma 3 12B' },
-      { id: 'mistralai/mistral-small-3.1-24b-instruct:free', name: 'Mistral Small 3.1 24B' },
+      { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B' },
     ],
     keyPrefix: 'sk-or-',
   },
