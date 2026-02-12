@@ -172,6 +172,16 @@ export function LearningPath() {
                       <Link
                         key={topic.id}
                         href={topic.href}
+                        onClick={() => {
+                          if (!isDone) {
+                            setCompleted(prev => {
+                              const next = new Set(prev)
+                              next.add(topic.id)
+                              try { localStorage.setItem('learning-path-completed', JSON.stringify(Array.from(next))) } catch {}
+                              return next
+                            })
+                          }
+                        }}
                         className={`group flex items-start gap-3 p-3 rounded-lg border transition-all hover:bg-surface/50 ${
                           isDone ? 'border-border/50 opacity-75' : `border-border hover:${stage.accentBorder}`
                         }`}
