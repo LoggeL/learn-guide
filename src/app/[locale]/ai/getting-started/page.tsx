@@ -1,7 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { GettingStartedPlayground } from '@/components/interactive'
+import { GettingStartedPlayground, LearningPath } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 import { Globe, Zap, Cpu, ExternalLink, Clock, Code, Lightbulb, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
@@ -134,6 +134,9 @@ export default function GettingStartedPage() {
           </div>
         </div>
       </section>
+
+      {/* Learning Path */}
+      <LearningPath />
 
       {/* Next Steps */}
       <section className="rounded-2xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20 p-6 md:p-8">

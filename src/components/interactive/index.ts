@@ -76,3 +76,4 @@ export { TransformerVisualizer } from './TransformerVisualizer'
 
 // Getting Started components
 export { GettingStartedPlayground } from './GettingStartedPlayground'
+export { LearningPath } from './LearningPath'
