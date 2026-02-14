@@ -2460,6 +2460,62 @@ export const de: Dictionary = {
     postTrainingDef: 'Post-Training',
     postTrainingDefDesc: 'Der Oberbegriff für alles nach dem Pretraining: SFT, RLHF, spezialisiertes Fine-Tuning, Sicherheitstraining, etc.',
 
+    // Pipeline Visualizer
+    pipelineVisualizer: 'Interaktive Trainingspipeline',
+    pipelineVisualizerDesc: 'Erkunden Sie die vollständige LLM-Trainingspipeline von der Datensammlung bis zur Bereitstellung. Klicken Sie auf eine beliebige Stufe, um detaillierte Informationen über Datenanforderungen, Rechenkosten und Zeitpläne zu erhalten.',
+
+    // Detaillierte Pipeline-Stufen
+    detailedPipeline: 'Vollständige Trainingspipeline (8 Stufen)',
+    detailedPipelineDesc: 'Modernes LLM-Training umfasst 8 Hauptstufen, jede mit unterschiedlichen Zielen, Datenanforderungen und Rechenkosten. Das Verständnis dieser Pipeline ist entscheidend, um die Komplexität und Kosten des Trainings von Frontier-Modellen zu erfassen.',
+
+    stage1Title: 'Datensammlung & Kuration',
+    stage1Desc: 'Sammeln massiver Textkorpora aus vielfältigen Quellen einschließlich Web-Crawls, Büchern, Code-Repositories und wissenschaftlichen Papers.',
+    stage1Data: 'Common Crawl-Snapshots (Petabytes), The Pile, GitHub, Wikipedia, Books3, akademische Papers',
+    stage1Volume: '1-15 Billionen Tokens roh (vor Bereinigung)',
+    stage1Cost: '$50K-500K (Speicher, Bandbreite, Kurations-Tools)',
+
+    stage2Title: 'Datenbereinigung & Deduplizierung',
+    stage2Desc: 'Duplikate entfernen, minderwertige Inhalte filtern, Sprachen erkennen, PII entfernen und Formatierung normalisieren.',
+    stage2Data: 'MinHash LSH Deduplizierung, Perplexitäts-basierte Qualitätsfilterung, Spracherkennung, Toxizitätsfilterung',
+    stage2Techniques: 'Exakte & Fuzzy-Deduplizierung (MinHash), Qualitätsbewertung (KenLM-Perplexität), PII-Entfernung, toxische Inhaltsfilterung',
+    stage2Cost: '$100K-1M (CPU-Cluster, Tausende von Kernen für Wochen)',
+
+    stage3Title: 'Tokenisierung',
+    stage3Desc: 'Bereinigten Text in numerische Token-Sequenzen mit BPE, SentencePiece oder Unigram-Tokenizern konvertieren.',
+    stage3Methods: 'BPE (GPT), SentencePiece (Llama), Unigram (T5)',
+    stage3Vocab: 'Vokabulargröße: ~32K-100K Tokens',
+    stage3Duration: '1-2 Wochen (Tokenizer trainieren, Korpus tokenisieren, Sequenzen packen)',
+
+    stage4Title: 'Pre-training',
+    stage4Desc: 'Das Basismodell auf Billionen von Tokens mit Next-Token-Prediction-Ziel trainieren. Dies ist die teuerste und rechenintensivste Stufe.',
+    stage4Compute: '10K-30K GPUs (H100/A100), 1-6 Monate Training',
+    stage4Examples: 'Llama 3 70B: 15T Tokens, max 24K GPUs, ~$20M. GPT-4: angeblich $100M+',
+    stage4Cost: '$2M-$200M abhängig von der Modellgröße (70B-Modell: ~$10-20M)',
+
+    stage5Title: 'Supervised Fine-Tuning (SFT)',
+    stage5Desc: 'Das Basismodell auf kuratierten Anweisung-Antwort-Paaren feintunen, um ihm beizubringen, Anweisungen zu befolgen und hilfreich zu antworten.',
+    stage5Data: '10K-100K hochwertige (Prompt, Vervollständigung)-Paare (von Menschen geschrieben oder synthetisch)',
+    stage5Compute: '100-1000 GPUs, 1-4 Wochen',
+    stage5Cost: '$50K-2M (einschließlich menschlicher Annotation oder Generierung synthetischer Daten)',
+
+    stage6Title: 'RLHF / Präferenz-Tuning',
+    stage6Desc: 'Modellausgaben mit menschlichen Präferenzen durch Reinforcement Learning (PPO) oder Direct Preference Optimization (DPO) alignieren.',
+    stage6Methods: 'PPO (Proximal Policy Optimization) oder DPO (Direct Preference Optimization)',
+    stage6Data: '10K-100K menschliche Präferenzvergleiche (A vs B Rankings)',
+    stage6Cost: '$200K-10M (PPO erfordert 500-5000 GPUs; DPO ist 5-10x günstiger)',
+
+    stage7Title: 'Sicherheit & Evaluation',
+    stage7Desc: 'Red-Team das Modell, führe adversarielle Tests durch, wende Constitutional AI-Prinzipien an und benchmarke auf Standard-Evaluations-Suites.',
+    stage7Methods: 'Red-Teaming, adversarielle Prompts, Constitutional AI Selbst-Kritik, Sicherheitsklassifizierer',
+    stage7Benchmarks: 'MMLU, HumanEval, TruthfulQA, BBH, Sicherheits-Benchmarks',
+    stage7Ongoing: 'Kontinuierlicher Prozess während und nach der Bereitstellung ($100K-5M fortlaufend)',
+
+    stage8Title: 'Bereitstellungsoptimierung',
+    stage8Desc: 'Das Modell für Produktions-Deployment durch Quantisierung, Destillation und Inferenz-Infrastruktur-Setup optimieren.',
+    stage8Techniques: 'Quantisierung (GPTQ, AWQ, GGUF), Wissensdestillation zu kleineren Modellen',
+    stage8Optimization: 'KV-Cache-Optimierung, Batching-Strategien, Serving-Infrastruktur (TensorRT, vLLM)',
+    stage8Cost: '$50K-1M (GPU-Zeit für Quantisierung + Infrastruktur-Setup)',
+
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'LLM-Training hat distinkte Stufen: Pretraining → SFT → RLHF → spezialisiertes Alignment',
     takeaway2: 'Das RL-Paradigma (z.B. DeepSeek R1-Zero) zeigt, dass Denken aus reinem RL ohne menschliche Demonstrationen entstehen kann',

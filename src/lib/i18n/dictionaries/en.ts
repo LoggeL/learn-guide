@@ -2649,6 +2649,62 @@ export const en = {
     postTrainingDef: 'Post-Training',
     postTrainingDefDesc: 'The umbrella term for everything after pretraining: SFT, RLHF, specialized fine-tuning, safety training, etc.',
 
+    // Pipeline Visualizer
+    pipelineVisualizer: 'Interactive Training Pipeline',
+    pipelineVisualizerDesc: 'Explore the complete LLM training pipeline from data collection to deployment. Click any stage to see detailed information about data requirements, compute costs, and timelines.',
+
+    // Detailed Pipeline Stages
+    detailedPipeline: 'Complete Training Pipeline (8 Stages)',
+    detailedPipelineDesc: 'Modern LLM training involves 8 major stages, each with different objectives, data requirements, and compute costs. Understanding this pipeline is essential for grasping the complexity and expense of training frontier models.',
+
+    stage1Title: 'Data Collection & Curation',
+    stage1Desc: 'Gather massive text corpora from diverse sources including web crawls, books, code repositories, and scientific papers.',
+    stage1Data: 'Common Crawl snapshots (petabytes), The Pile, GitHub, Wikipedia, Books3, academic papers',
+    stage1Volume: '1-15 trillion tokens raw (before cleaning)',
+    stage1Cost: '$50K-500K (storage, bandwidth, curation tools)',
+
+    stage2Title: 'Data Cleaning & Deduplication',
+    stage2Desc: 'Remove duplicates, filter low-quality content, detect languages, remove PII, and normalize formatting.',
+    stage2Data: 'MinHash LSH deduplication, perplexity-based quality filtering, language detection, toxicity filtering',
+    stage2Techniques: 'Exact & fuzzy deduplication (MinHash), quality scoring (KenLM perplexity), PII removal, toxic content filtering',
+    stage2Cost: '$100K-1M (CPU clusters, thousands of cores for weeks)',
+
+    stage3Title: 'Tokenization',
+    stage3Desc: 'Convert cleaned text into numerical token sequences using BPE, SentencePiece, or Unigram tokenizers.',
+    stage3Methods: 'BPE (GPT), SentencePiece (Llama), Unigram (T5)',
+    stage3Vocab: 'Vocabulary size: ~32K-100K tokens',
+    stage3Duration: '1-2 weeks (train tokenizer, tokenize corpus, pack sequences)',
+
+    stage4Title: 'Pre-training',
+    stage4Desc: 'Train the base model on trillions of tokens using next-token prediction objective. This is the most expensive and compute-intensive stage.',
+    stage4Compute: '10K-30K GPUs (H100/A100), 1-6 months of training',
+    stage4Examples: 'Llama 3 70B: 15T tokens, 24K GPUs max, ~$20M. GPT-4: rumored $100M+',
+    stage4Cost: '$2M-$200M depending on model size (70B model: ~$10-20M)',
+
+    stage5Title: 'Supervised Fine-Tuning (SFT)',
+    stage5Desc: 'Fine-tune the base model on curated instruction-response pairs to teach it to follow instructions and respond helpfully.',
+    stage5Data: '10K-100K high-quality (prompt, completion) pairs (human-written or synthetic)',
+    stage5Compute: '100-1000 GPUs, 1-4 weeks',
+    stage5Cost: '$50K-2M (includes human annotation or synthetic data generation)',
+
+    stage6Title: 'RLHF / Preference Tuning',
+    stage6Desc: 'Align model outputs with human preferences using reinforcement learning (PPO) or direct preference optimization (DPO).',
+    stage6Methods: 'PPO (Proximal Policy Optimization) or DPO (Direct Preference Optimization)',
+    stage6Data: '10K-100K human preference comparisons (A vs B rankings)',
+    stage6Cost: '$200K-10M (PPO requires 500-5000 GPUs; DPO is 5-10x cheaper)',
+
+    stage7Title: 'Safety & Evaluation',
+    stage7Desc: 'Red-team the model, run adversarial tests, apply Constitutional AI principles, and benchmark on standard evaluation suites.',
+    stage7Methods: 'Red-teaming, adversarial prompts, Constitutional AI self-critique, safety classifiers',
+    stage7Benchmarks: 'MMLU, HumanEval, TruthfulQA, BBH, safety benchmarks',
+    stage7Ongoing: 'Continuous process throughout and after deployment ($100K-5M ongoing)',
+
+    stage8Title: 'Deployment Optimization',
+    stage8Desc: 'Optimize the model for production deployment through quantization, distillation, and inference infrastructure setup.',
+    stage8Techniques: 'Quantization (GPTQ, AWQ, GGUF), knowledge distillation to smaller models',
+    stage8Optimization: 'KV cache optimization, batching strategies, serving infrastructure (TensorRT, vLLM)',
+    stage8Cost: '$50K-1M (GPU time for quantization + infrastructure setup)',
+
     keyTakeaways: 'Key Takeaways',
     takeaway1: 'LLM training has distinct stages: pretraining → SFT → RLHF → specialized alignment',
     takeaway2: 'The RL paradigm (e.g., DeepSeek R1-Zero) shows reasoning can emerge from pure RL without human demonstrations',

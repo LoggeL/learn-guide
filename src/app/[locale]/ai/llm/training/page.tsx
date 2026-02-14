@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { TrainingPipelineVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function LLMTrainingPage() {
@@ -34,7 +35,155 @@ export default function LLMTrainingPage() {
         </p>
       </section>
 
-      {/* LLM Training Pipeline */}
+      {/* Interactive Pipeline Visualizer - NEW! */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.llmTraining.pipelineVisualizer}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.llmTraining.pipelineVisualizerDesc}
+        </p>
+        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          <TrainingPipelineVisualizer />
+        </div>
+      </section>
+
+      {/* Detailed Pipeline Stages - NEW ENHANCED SECTION */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.llmTraining.detailedPipeline}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.llmTraining.detailedPipelineDesc}
+        </p>
+        <div className="space-y-4">
+          {/* Stage 1: Data Collection */}
+          <div className="p-5 bg-gradient-to-br from-slate-500/10 to-gray-500/10 border border-slate-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center shrink-0">
+                <span className="text-slate-400 text-sm font-bold">1</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-slate-300">{t.llmTraining.stage1Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage1Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-slate-400 font-medium">→</span> {t.llmTraining.stage1Data}</p>
+              <p><span className="text-slate-400 font-medium">→</span> {t.llmTraining.stage1Volume}</p>
+              <p><span className="text-slate-400 font-medium">→</span> {t.llmTraining.stage1Cost}</p>
+            </div>
+          </div>
+
+          {/* Stage 2: Data Cleaning */}
+          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center shrink-0">
+                <span className="text-blue-400 text-sm font-bold">2</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-blue-300">{t.llmTraining.stage2Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage2Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-blue-400 font-medium">→</span> {t.llmTraining.stage2Data}</p>
+              <p><span className="text-blue-400 font-medium">→</span> {t.llmTraining.stage2Techniques}</p>
+              <p><span className="text-blue-400 font-medium">→</span> {t.llmTraining.stage2Cost}</p>
+            </div>
+          </div>
+
+          {/* Stage 3: Tokenization */}
+          <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0">
+                <span className="text-cyan-400 text-sm font-bold">3</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-cyan-300">{t.llmTraining.stage3Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage3Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-cyan-400 font-medium">→</span> {t.llmTraining.stage3Methods}</p>
+              <p><span className="text-cyan-400 font-medium">→</span> {t.llmTraining.stage3Vocab}</p>
+              <p><span className="text-cyan-400 font-medium">→</span> {t.llmTraining.stage3Duration}</p>
+            </div>
+          </div>
+
+          {/* Stage 4: Pre-training */}
+          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+                <span className="text-purple-400 text-sm font-bold">4</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-purple-300">{t.llmTraining.stage4Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage4Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-purple-400 font-medium">→</span> {t.llmTraining.stage4Compute}</p>
+              <p><span className="text-purple-400 font-medium">→</span> {t.llmTraining.stage4Examples}</p>
+              <p><span className="text-purple-400 font-medium">→</span> {t.llmTraining.stage4Cost}</p>
+            </div>
+          </div>
+
+          {/* Stage 5: SFT */}
+          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
+                <span className="text-emerald-400 text-sm font-bold">5</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-emerald-300">{t.llmTraining.stage5Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage5Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-emerald-400 font-medium">→</span> {t.llmTraining.stage5Data}</p>
+              <p><span className="text-emerald-400 font-medium">→</span> {t.llmTraining.stage5Compute}</p>
+              <p><span className="text-emerald-400 font-medium">→</span> {t.llmTraining.stage5Cost}</p>
+            </div>
+          </div>
+
+          {/* Stage 6: RLHF/DPO */}
+          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center shrink-0">
+                <span className="text-orange-400 text-sm font-bold">6</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-orange-300">{t.llmTraining.stage6Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage6Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-orange-400 font-medium">→</span> {t.llmTraining.stage6Methods}</p>
+              <p><span className="text-orange-400 font-medium">→</span> {t.llmTraining.stage6Data}</p>
+              <p><span className="text-orange-400 font-medium">→</span> {t.llmTraining.stage6Cost}</p>
+            </div>
+          </div>
+
+          {/* Stage 7: Safety & Evaluation */}
+          <div className="p-5 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0">
+                <span className="text-red-400 text-sm font-bold">7</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-red-300">{t.llmTraining.stage7Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage7Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-red-400 font-medium">→</span> {t.llmTraining.stage7Methods}</p>
+              <p><span className="text-red-400 font-medium">→</span> {t.llmTraining.stage7Benchmarks}</p>
+              <p><span className="text-red-400 font-medium">→</span> {t.llmTraining.stage7Ongoing}</p>
+            </div>
+          </div>
+
+          {/* Stage 8: Deployment Optimization */}
+          <div className="p-5 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 border border-teal-500/20 rounded-xl">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="w-8 h-8 rounded-lg bg-teal-500/20 flex items-center justify-center shrink-0">
+                <span className="text-teal-400 text-sm font-bold">8</span>
+              </span>
+              <h3 className="text-lg font-bold font-heading text-teal-300">{t.llmTraining.stage8Title}</h3>
+            </div>
+            <p className="text-sm text-muted mb-3">{t.llmTraining.stage8Desc}</p>
+            <div className="space-y-1 text-xs text-muted/80">
+              <p><span className="text-teal-400 font-medium">→</span> {t.llmTraining.stage8Techniques}</p>
+              <p><span className="text-teal-400 font-medium">→</span> {t.llmTraining.stage8Optimization}</p>
+              <p><span className="text-teal-400 font-medium">→</span> {t.llmTraining.stage8Cost}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Original Training Pipeline Section - Keep for context */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.llmTraining.trainingPipeline}</h2>
         <p className="text-muted leading-relaxed mb-6">
