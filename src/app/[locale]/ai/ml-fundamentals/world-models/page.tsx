@@ -15,7 +15,7 @@ export default function WorldModelsPage() {
         { label: t.categories.mlFundamentals, href: '/ai/ml-fundamentals' },
         { label: t.worldModels.title },
       ]}
-      previousTopic={{ label: t.topicNames['training'], href: '/ai/ml-fundamentals/training' }}
+      prevTopic={{ label: t.topicNames['training'], href: '/ai/ml-fundamentals/training' }}
     >
       {/* What are World Models */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
