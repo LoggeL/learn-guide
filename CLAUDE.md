@@ -29,6 +29,16 @@ Next.js 14 App Router with locale-based routing (`/[locale]/...`). All pages are
 
 Middleware auto-redirects `/ai/llm/tokenization` → `/en/ai/llm/tokenization` based on browser language. Links in code use paths without locale prefix (e.g., `/ai/llm/tokenization`); `TopicLayout.localizeHref()` adds the prefix.
 
+### Topic Metadata Requirements
+
+Every leaf topic in `topics.ts` **MUST** have:
+- `difficulty: Difficulty` — one of `'beginner' | 'intermediate' | 'expert'` (NO `'advanced'`)
+- `lastUpdated: string` — ISO date `'YYYY-MM-DD'` of the last content change
+
+These are enforced by TypeScript (the `TopicLeaf` type). The build will fail if either is missing.
+
+When modifying a topic page, **always update its `lastUpdated` date** in `topics.ts`.
+
 ### Adding New Topics - Five Files Must Stay In Sync
 
 When adding new topics/pages, update ALL FIVE:

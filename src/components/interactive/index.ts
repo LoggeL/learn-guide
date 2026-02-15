@@ -80,3 +80,6 @@ export { LearningPath } from './LearningPath'
 
 // Training Pipeline components
 export { TrainingPipelineVisualizer } from './TrainingPipelineVisualizer'
+
+// World Model components
+export { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from './WorldModelVisualizer'

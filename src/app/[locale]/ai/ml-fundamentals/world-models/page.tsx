@@ -1,576 +1,601 @@
 'use client'
 
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
-/* ─── World Model Pipeline SVG ─── */
-function WorldModelPipelineSVG() {
-  return (
-    <svg viewBox="0 0 900 220" className="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Background glow */}
-      <defs>
-        <linearGradient id="pipeGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#a855f7" stopOpacity="0.6" />
-          <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.6" />
-          <stop offset="100%" stopColor="#10b981" stopOpacity="0.6" />
-        </linearGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="4" result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-        </filter>
-      </defs>
-
-      {/* Connecting arrows */}
-      <line x1="170" y1="110" x2="230" y2="110" stroke="url(#pipeGrad)" strokeWidth="3" markerEnd="url(#arrowP)" filter="url(#glow)" />
-      <line x1="370" y1="110" x2="430" y2="110" stroke="url(#pipeGrad)" strokeWidth="3" markerEnd="url(#arrowP)" filter="url(#glow)" />
-      <line x1="570" y1="110" x2="630" y2="110" stroke="url(#pipeGrad)" strokeWidth="3" markerEnd="url(#arrowP)" filter="url(#glow)" />
-      <line x1="770" y1="110" x2="830" y2="110" stroke="url(#pipeGrad)" strokeWidth="3" />
-      <defs>
-        <marker id="arrowP" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#06b6d4" />
-        </marker>
-      </defs>
-
-      {/* Step 1: Input */}
-      <rect x="20" y="50" width="150" height="120" rx="16" fill="#a855f7" fillOpacity="0.12" stroke="#a855f7" strokeWidth="2" />
-      <text x="95" y="95" textAnchor="middle" fill="#c084fc" fontSize="14" fontWeight="bold">📷 Sensor</text>
-      <text x="95" y="115" textAnchor="middle" fill="#c084fc" fontSize="14" fontWeight="bold">Input</text>
-      <text x="95" y="145" textAnchor="middle" fill="#a78bfa" fontSize="11">Video, LiDAR,</text>
-      <text x="95" y="160" textAnchor="middle" fill="#a78bfa" fontSize="11">Actions</text>
-
-      {/* Step 2: Encoder */}
-      <rect x="230" y="50" width="140" height="120" rx="16" fill="#06b6d4" fillOpacity="0.12" stroke="#06b6d4" strokeWidth="2" />
-      <text x="300" y="95" textAnchor="middle" fill="#22d3ee" fontSize="14" fontWeight="bold">🔬 Encoder</text>
-      <text x="300" y="125" textAnchor="middle" fill="#67e8f9" fontSize="11">Compress to</text>
-      <text x="300" y="140" textAnchor="middle" fill="#67e8f9" fontSize="11">Latent Space</text>
-
-      {/* Step 3: Latent World Model */}
-      <rect x="430" y="30" width="140" height="160" rx="16" fill="#10b981" fillOpacity="0.15" stroke="#10b981" strokeWidth="2.5" />
-      <text x="500" y="75" textAnchor="middle" fill="#34d399" fontSize="14" fontWeight="bold">🌍 Latent</text>
-      <text x="500" y="95" textAnchor="middle" fill="#34d399" fontSize="14" fontWeight="bold">World Model</text>
-      <text x="500" y="125" textAnchor="middle" fill="#6ee7b7" fontSize="11">Predict next</text>
-      <text x="500" y="140" textAnchor="middle" fill="#6ee7b7" fontSize="11">state, physics,</text>
-      <text x="500" y="155" textAnchor="middle" fill="#6ee7b7" fontSize="11">interactions</text>
-
-      {/* Step 4: Decoder */}
-      <rect x="630" y="50" width="140" height="120" rx="16" fill="#f59e0b" fillOpacity="0.12" stroke="#f59e0b" strokeWidth="2" />
-      <text x="700" y="95" textAnchor="middle" fill="#fbbf24" fontSize="14" fontWeight="bold">📤 Decoder</text>
-      <text x="700" y="125" textAnchor="middle" fill="#fcd34d" fontSize="11">Reconstruct</text>
-      <text x="700" y="140" textAnchor="middle" fill="#fcd34d" fontSize="11">predictions</text>
-
-      {/* Step 5: Output */}
-      <rect x="810" y="60" width="80" height="100" rx="14" fill="#ef4444" fillOpacity="0.1" stroke="#ef4444" strokeWidth="2" />
-      <text x="850" y="105" textAnchor="middle" fill="#f87171" fontSize="13" fontWeight="bold">🎯</text>
-      <text x="850" y="125" textAnchor="middle" fill="#f87171" fontSize="12" fontWeight="bold">Output</text>
-      <text x="850" y="145" textAnchor="middle" fill="#fca5a5" fontSize="10">Future</text>
-    </svg>
-  )
-}
-
-/* ─── Sim-to-Real Gap SVG ─── */
-function SimToRealSVG() {
-  return (
-    <svg viewBox="0 0 700 200" className="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="gapGrad" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#06b6d4" />
-          <stop offset="100%" stopColor="#f59e0b" />
-        </linearGradient>
-      </defs>
-
-      {/* Simulation side */}
-      <rect x="20" y="20" width="260" height="160" rx="20" fill="#06b6d4" fillOpacity="0.08" stroke="#06b6d4" strokeWidth="2" />
-      <text x="150" y="55" textAnchor="middle" fill="#22d3ee" fontSize="16" fontWeight="bold">🖥️ Simulation</text>
-      <text x="150" y="85" textAnchor="middle" fill="#67e8f9" fontSize="12">✓ Fast (1000x realtime)</text>
-      <text x="150" y="105" textAnchor="middle" fill="#67e8f9" fontSize="12">✓ Safe (no damage)</text>
-      <text x="150" y="125" textAnchor="middle" fill="#67e8f9" fontSize="12">✓ Parallelizable</text>
-      <text x="150" y="150" textAnchor="middle" fill="#67e8f9" fontSize="12">✗ Simplified physics</text>
-
-      {/* Gap */}
-      <rect x="310" y="55" width="80" height="90" rx="12" fill="#ef4444" fillOpacity="0.15" stroke="#ef4444" strokeWidth="2" strokeDasharray="6 3" />
-      <text x="350" y="95" textAnchor="middle" fill="#f87171" fontSize="12" fontWeight="bold">GAP</text>
-      <text x="350" y="115" textAnchor="middle" fill="#fca5a5" fontSize="10">Transfer</text>
-      <text x="350" y="130" textAnchor="middle" fill="#fca5a5" fontSize="10">Challenge</text>
-
-      {/* Arrows */}
-      <line x1="280" y1="100" x2="310" y2="100" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2" />
-      <line x1="390" y1="100" x2="420" y2="100" stroke="#ef4444" strokeWidth="2" strokeDasharray="4 2" />
-
-      {/* Real World side */}
-      <rect x="420" y="20" width="260" height="160" rx="20" fill="#f59e0b" fillOpacity="0.08" stroke="#f59e0b" strokeWidth="2" />
-      <text x="550" y="55" textAnchor="middle" fill="#fbbf24" fontSize="16" fontWeight="bold">🌎 Real World</text>
-      <text x="550" y="85" textAnchor="middle" fill="#fcd34d" fontSize="12">✓ True physics</text>
-      <text x="550" y="105" textAnchor="middle" fill="#fcd34d" fontSize="12">✓ Real sensor noise</text>
-      <text x="550" y="125" textAnchor="middle" fill="#fcd34d" fontSize="12">✗ Slow (1x realtime)</text>
-      <text x="550" y="150" textAnchor="middle" fill="#fcd34d" fontSize="12">✗ Expensive & risky</text>
-    </svg>
-  )
-}
-
-/* ─── Robotics Training Loop SVG ─── */
-function RoboticsTrainingLoopSVG() {
-  return (
-    <svg viewBox="0 0 500 340" className="w-full max-w-lg mx-auto h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <marker id="arrowLoop" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#a855f7" />
-        </marker>
-      </defs>
-
-      {/* Center label */}
-      <circle cx="250" cy="170" r="50" fill="#a855f7" fillOpacity="0.1" stroke="#a855f7" strokeWidth="2" />
-      <text x="250" y="165" textAnchor="middle" fill="#c084fc" fontSize="13" fontWeight="bold">Training</text>
-      <text x="250" y="182" textAnchor="middle" fill="#c084fc" fontSize="13" fontWeight="bold">Loop</text>
-
-      {/* Node 1: World Model */}
-      <rect x="170" y="10" width="160" height="50" rx="12" fill="#10b981" fillOpacity="0.12" stroke="#10b981" strokeWidth="2" />
-      <text x="250" y="40" textAnchor="middle" fill="#34d399" fontSize="13" fontWeight="bold">🌍 World Model</text>
-
-      {/* Node 2: Generate Scenarios */}
-      <rect x="350" y="90" width="140" height="50" rx="12" fill="#06b6d4" fillOpacity="0.12" stroke="#06b6d4" strokeWidth="2" />
-      <text x="420" y="120" textAnchor="middle" fill="#22d3ee" fontSize="12" fontWeight="bold">🎬 Simulate</text>
-
-      {/* Node 3: Train Policy */}
-      <rect x="350" y="200" width="140" height="50" rx="12" fill="#f59e0b" fillOpacity="0.12" stroke="#f59e0b" strokeWidth="2" />
-      <text x="420" y="230" textAnchor="middle" fill="#fbbf24" fontSize="12" fontWeight="bold">🧠 Train Policy</text>
-
-      {/* Node 4: Evaluate */}
-      <rect x="170" y="280" width="160" height="50" rx="12" fill="#ef4444" fillOpacity="0.12" stroke="#ef4444" strokeWidth="2" />
-      <text x="250" y="310" textAnchor="middle" fill="#f87171" fontSize="12" fontWeight="bold">📊 Evaluate</text>
-
-      {/* Node 5: Refine Model */}
-      <rect x="10" y="200" width="140" height="50" rx="12" fill="#8b5cf6" fillOpacity="0.12" stroke="#8b5cf6" strokeWidth="2" />
-      <text x="80" y="230" textAnchor="middle" fill="#a78bfa" fontSize="12" fontWeight="bold">🔧 Refine</text>
-
-      {/* Node 6: Collect Data */}
-      <rect x="10" y="90" width="140" height="50" rx="12" fill="#ec4899" fillOpacity="0.12" stroke="#ec4899" strokeWidth="2" />
-      <text x="80" y="120" textAnchor="middle" fill="#f472b6" fontSize="12" fontWeight="bold">📦 Collect Data</text>
-
-      {/* Arrows connecting the loop */}
-      <line x1="330" y1="45" x2="365" y2="90" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-      <line x1="430" y1="140" x2="430" y2="200" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-      <line x1="365" y1="240" x2="330" y2="285" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-      <line x1="170" y1="300" x2="135" y2="250" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-      <line x1="70" y1="200" x2="70" y2="140" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-      <line x1="135" y1="100" x2="170" y2="55" stroke="#a855f7" strokeWidth="2" markerEnd="url(#arrowLoop)" />
-    </svg>
-  )
-}
-
-/* ─── Training Comparison Interactive Toggle ─── */
-function TrainingComparisonToggle({ t }: { t: Record<string, string> }) {
-  const [mode, setMode] = useState<'real' | 'world'>('real')
-
-  const realData = [
-    { label: t.compSpeed || 'Speed', value: '1x realtime', icon: '🐌', color: 'red' },
-    { label: t.compCost || 'Cost', value: t.compCostReal || '$100k+ per robot', icon: '💸', color: 'red' },
-    { label: t.compParallel || 'Parallelization', value: t.compParallelReal || '1 robot = 1 instance', icon: '1️⃣', color: 'red' },
-    { label: t.compSafety || 'Safety', value: t.compSafetyReal || 'Risk of damage', icon: '⚠️', color: 'red' },
-    { label: t.compDiversity || 'Scenario Diversity', value: t.compDiversityReal || 'Limited by reality', icon: '📉', color: 'yellow' },
-  ]
-  const worldData = [
-    { label: t.compSpeed || 'Speed', value: t.compSpeedWorld || '1000x+ realtime', icon: '⚡', color: 'emerald' },
-    { label: t.compCost || 'Cost', value: t.compCostWorld || 'GPU compute only', icon: '💰', color: 'emerald' },
-    { label: t.compParallel || 'Parallelization', value: t.compParallelWorld || '1000s of instances', icon: '🚀', color: 'emerald' },
-    { label: t.compSafety || 'Safety', value: t.compSafetyWorld || 'Zero risk', icon: '✅', color: 'emerald' },
-    { label: t.compDiversity || 'Scenario Diversity', value: t.compDiversityWorld || 'Unlimited generation', icon: '📈', color: 'emerald' },
-  ]
-
-  const data = mode === 'real' ? realData : worldData
+// ─── Latent Space Mini Viz (inline SVG) ─────────────────────────────────────
+function LatentSpaceViz() {
+  const [compressed, setCompressed] = useState(false)
 
   return (
-    <div className="space-y-4">
-      {/* Toggle */}
-      <div className="flex items-center justify-center gap-2 p-1 bg-background rounded-xl border border-border max-w-md mx-auto">
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-muted">
+          {compressed ? 'Compact latent representation (z)' : 'Raw high-dimensional input'}
+        </p>
         <button
-          onClick={() => setMode('real')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${
-            mode === 'real'
-              ? 'bg-gradient-to-r from-red-500/20 to-orange-500/20 text-red-400 border border-red-500/30'
-              : 'text-muted hover:text-text'
-          }`}
+          onClick={() => setCompressed(!compressed)}
+          className="px-3 py-1 rounded-lg text-xs font-medium border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors"
         >
-          🏭 {t.realWorldTraining || 'Real World Training'}
-        </button>
-        <button
-          onClick={() => setMode('world')}
-          className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all ${
-            mode === 'world'
-              ? 'bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 text-emerald-400 border border-emerald-500/30'
-              : 'text-muted hover:text-text'
-          }`}
-        >
-          🌍 {t.worldModelTraining || 'World Model Training'}
+          {compressed ? 'Show Input' : 'Compress →'}
         </button>
       </div>
-
-      {/* Comparison items */}
-      <div className="grid gap-3 transition-all duration-300">
-        {data.map((item, i) => (
-          <div
-            key={item.label}
-            className={`flex items-center gap-4 p-4 rounded-xl border transition-all duration-300 ${
-              mode === 'real'
-                ? 'bg-gradient-to-r from-red-500/5 to-orange-500/5 border-red-500/20'
-                : 'bg-gradient-to-r from-emerald-500/5 to-cyan-500/5 border-emerald-500/20'
-            }`}
-            style={{ animationDelay: `${i * 50}ms` }}
-          >
-            <span className="text-2xl">{item.icon}</span>
-            <div className="flex-1">
-              <div className="text-sm font-bold text-text">{item.label}</div>
-              <div className={`text-sm ${mode === 'real' ? 'text-red-400' : 'text-emerald-400'}`}>
-                {item.value}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <svg viewBox="0 0 400 100" className="w-full h-auto">
+        <AnimatePresence mode="wait">
+          {!compressed ? (
+            <motion.g key="input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {Array.from({ length: 16 }).map((_, row) =>
+                Array.from({ length: 20 }).map((_, col) => {
+                  const hue = (row * 20 + col * 13) % 360
+                  return (
+                    <motion.rect
+                      key={`p-${row}-${col}`}
+                      x={col * 20 + 2}
+                      y={row * 6 + 2}
+                      width={18}
+                      height={4.5}
+                      rx={1}
+                      fill={`hsla(${hue}, 60%, 50%, 0.4)`}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: (row * 20 + col) * 0.003 }}
+                    />
+                  )
+                })
+              )}
+              <text x="200" y="96" textAnchor="middle" fill="#9ca3af" className="text-[9px]">
+                320 dimensions
+              </text>
+            </motion.g>
+          ) : (
+            <motion.g key="latent" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <motion.circle
+                  key={`z-${i}`}
+                  cx={120 + i * 22}
+                  cy={50}
+                  r={8}
+                  fill={`hsla(${270 + i * 12}, 70%, 60%, 0.6)`}
+                  stroke={`hsla(${270 + i * 12}, 70%, 60%, 0.9)`}
+                  strokeWidth={1}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: i * 0.06, type: 'spring' }}
+                />
+              ))}
+              <text x="200" y="80" textAnchor="middle" fill="#a78bfa" className="text-[10px] font-semibold">
+                8 latent dimensions
+              </text>
+              <text x="200" y="92" textAnchor="middle" fill="#6b7280" className="text-[8px]">
+                40× compression — essential features preserved
+              </text>
+            </motion.g>
+          )}
+        </AnimatePresence>
+      </svg>
     </div>
   )
 }
 
-/* ─── Example Card Component ─── */
-function ExampleCard({ emoji, name, desc, tags, gradient, borderColor }: {
-  emoji: string; name: string; desc: string; tags: string[]; gradient: string; borderColor: string
-}) {
-  return (
-    <div className={`p-6 rounded-xl ${gradient} border ${borderColor} hover:scale-[1.02] transition-transform duration-200`}>
-      <div className="flex items-start gap-4">
-        <span className="text-3xl">{emoji}</span>
-        <div className="flex-1">
-          <h3 className="text-lg font-bold font-heading text-text mb-2">{name}</h3>
-          <p className="text-sm text-muted leading-relaxed mb-3">{desc}</p>
-          <div className="flex flex-wrap gap-2">
-            {tags.map(tag => (
-              <span key={tag} className="px-2 py-0.5 text-xs rounded-full bg-white/5 text-muted border border-white/10">
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-/* ─── Info Box Component ─── */
-function InfoBox({ icon, title, children, color }: {
-  icon: string; title: string; children: React.ReactNode; color: 'purple' | 'cyan' | 'emerald' | 'orange' | 'red' | 'blue'
-}) {
-  const colors = {
-    purple: 'from-purple-500/10 to-pink-500/10 border-purple-500/20',
-    cyan: 'from-cyan-500/10 to-blue-500/10 border-cyan-500/20',
-    emerald: 'from-emerald-500/10 to-teal-500/10 border-emerald-500/20',
-    orange: 'from-orange-500/10 to-red-500/10 border-orange-500/20',
-    red: 'from-red-500/10 to-pink-500/10 border-red-500/20',
-    blue: 'from-blue-500/10 to-indigo-500/10 border-blue-500/20',
-  }
-  const titleColors = {
-    purple: 'text-purple-400', cyan: 'text-cyan-400', emerald: 'text-emerald-400',
-    orange: 'text-orange-400', red: 'text-red-400', blue: 'text-blue-400',
-  }
-
-  return (
-    <div className={`p-5 bg-gradient-to-br ${colors[color]} border rounded-xl`}>
-      <div className="flex items-center gap-2 mb-2">
-        <span className="text-xl">{icon}</span>
-        <h3 className={`text-lg font-bold font-heading ${titleColors[color]}`}>{title}</h3>
-      </div>
-      <div className="text-sm text-muted leading-relaxed">{children}</div>
-    </div>
-  )
-}
-
-/* ─── Main Page ─── */
+// ─── Main Page ──────────────────────────────────────────────────────────────
 export default function WorldModelsPage() {
   const { t } = useTranslation()
-  const wm = t.worldModels
+  const [expandedExample, setExpandedExample] = useState<string | null>(null)
+
+  const examples = [
+    {
+      id: 'cosmos',
+      name: t.worldModels.nvidiaCosmos,
+      desc: t.worldModels.nvidiaCosmosDesc,
+      detail: t.worldModels.nvidiaCosmosDetail,
+      company: 'NVIDIA',
+      color: '#34d399',
+      gradient: 'from-emerald-500/15 to-teal-500/10',
+      border: 'border-emerald-500/25',
+      tag: t.worldModels.tagAutonomous,
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="1.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+      ),
+    },
+    {
+      id: 'genie',
+      name: t.worldModels.googleGenie,
+      desc: t.worldModels.googleGenieDesc,
+      detail: t.worldModels.googleGenieDetail,
+      company: 'Google DeepMind',
+      color: '#a78bfa',
+      gradient: 'from-purple-500/15 to-violet-500/10',
+      border: 'border-purple-500/25',
+      tag: t.worldModels.tag3DWorlds,
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="3" />
+          <path d="M9 12l2 2 4-4" />
+        </svg>
+      ),
+    },
+    {
+      id: 'genesis',
+      name: t.worldModels.genesis,
+      desc: t.worldModels.genesisDesc,
+      detail: t.worldModels.genesisDetail,
+      company: 'Open Source',
+      color: '#22d3ee',
+      gradient: 'from-cyan-500/15 to-blue-500/10',
+      border: 'border-cyan-500/25',
+      tag: t.worldModels.tagPhysics,
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="9" />
+          <ellipse cx="12" cy="12" rx="9" ry="4" />
+          <line x1="12" y1="3" x2="12" y2="21" />
+        </svg>
+      ),
+    },
+    {
+      id: 'unisim',
+      name: t.worldModels.uniSim,
+      desc: t.worldModels.uniSimDesc,
+      detail: t.worldModels.uniSimDetail,
+      company: 'Google Research',
+      color: '#fbbf24',
+      gradient: 'from-yellow-500/15 to-amber-500/10',
+      border: 'border-yellow-500/25',
+      tag: t.worldModels.tagUniversal,
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M8 12a4 4 0 018 0" />
+          <circle cx="12" cy="8" r="1.5" fill="#fbbf24" />
+        </svg>
+      ),
+    },
+    {
+      id: 'gaia',
+      name: t.worldModels.gaia1,
+      desc: t.worldModels.gaia1Desc,
+      detail: t.worldModels.gaia1Detail,
+      company: 'Wayve',
+      color: '#f472b6',
+      gradient: 'from-pink-500/15 to-rose-500/10',
+      border: 'border-pink-500/25',
+      tag: t.worldModels.tagDriving,
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f472b6" strokeWidth="1.5">
+          <path d="M5 17h14M7 17l1-8h8l1 8" />
+          <circle cx="9" cy="17" r="2" />
+          <circle cx="15" cy="17" r="2" />
+        </svg>
+      ),
+    },
+  ]
 
   return (
-    <TopicLayout topicId="world-models"
-      title={wm.title}
-      description={wm.description}
+    <TopicLayout
+      topicId="world-models"
+      title={t.worldModels.title}
+      description={t.worldModels.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.mlFundamentals, href: '/ai/ml-fundamentals' },
-        { label: wm.title },
+        { label: t.worldModels.title },
       ]}
       prevTopic={{ label: t.topicNames['training'], href: '/ai/ml-fundamentals/training' }}
     >
-      {/* ─── Hero: What are World Models? ─── */}
+      {/* ── Hero: What are World Models ── */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{wm.whatIs}</h2>
-        <p className="text-muted leading-relaxed text-lg mb-4">{wm.whatIsDesc}</p>
-        <p className="text-muted leading-relaxed mb-6">{wm.whatIsDesc2}</p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.worldModels.whatIs}</h2>
+        <p className="text-muted leading-relaxed text-lg mb-4">
+          {t.worldModels.whatIsDesc}
+        </p>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.worldModels.whatIsDesc2}
+        </p>
 
         {/* Key insight box */}
-        <div className="p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
-          <p className="text-lg text-text italic font-heading">
-            &ldquo;{wm.keyInsightQuote}&rdquo;
-          </p>
-          <p className="text-sm text-muted mt-2">{wm.keyInsightAttribution}</p>
+        <div className="p-5 rounded-xl bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2">
+                <path d="M12 2a7 7 0 017 7c0 3-2 5.5-4 7.5L12 22l-3-5.5C7 14.5 5 12 5 9a7 7 0 017-7z" />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-purple-400 mb-1">{t.worldModels.keyInsight}</p>
+              <p className="text-sm text-muted leading-relaxed italic">
+                {t.worldModels.keyInsightDesc}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── The Big Picture: Why World Models? ─── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{wm.whyNeeded}</h2>
-        <p className="text-muted leading-relaxed mb-6">{wm.whyNeededIntro}</p>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          <InfoBox icon="🐢" title={wm.slowExpensive} color="red">
-            {wm.slowExpensiveDesc}
-          </InfoBox>
-          <InfoBox icon="🚀" title={wm.parallelTraining} color="emerald">
-            {wm.parallelTrainingDesc}
-          </InfoBox>
-          <InfoBox icon="🧠" title={wm.physicsUnderstanding} color="purple">
-            {wm.physicsUnderstandingDesc}
-          </InfoBox>
-        </div>
-      </section>
-
-      {/* ─── How World Models Work ─── */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{wm.howTheyWork}</h2>
-        <p className="text-muted leading-relaxed mb-6">{wm.howTheyWorkDesc}</p>
-
-        {/* Pipeline Visualization */}
-        <div className="mb-8 p-4 rounded-xl bg-background border border-border overflow-x-auto">
-          <h3 className="text-sm font-bold text-muted uppercase tracking-wide mb-4 text-center">{wm.pipelineTitle}</h3>
-          <WorldModelPipelineSVG />
-        </div>
-
-        {/* Technique cards */}
-        <div className="grid md:grid-cols-2 gap-4">
-          <InfoBox icon="🗜️" title={wm.latentSpace} color="purple">{wm.latentSpaceDesc}</InfoBox>
-          <InfoBox icon="🎬" title={wm.videoPrediction} color="cyan">{wm.videoPredictionDesc}</InfoBox>
-          <InfoBox icon="⚛️" title={wm.physicsAware} color="emerald">{wm.physicsAwareDesc}</InfoBox>
-          <InfoBox icon="🌊" title={wm.diffusion} color="orange">{wm.diffusionDesc}</InfoBox>
-        </div>
-      </section>
-
-      {/* ─── Interactive: Training Comparison ─── */}
+      {/* ── Interactive Pipeline ── */}
       <section>
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 p-0.5">
             <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <span className="text-lg">⚡</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2">
+                <circle cx="5" cy="12" r="3" />
+                <circle cx="19" cy="12" r="3" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{wm.comparisonTitle}</h2>
-            <p className="text-sm text-muted">{wm.comparisonSubtitle}</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.worldModels.pipelineTitle}</h2>
+            <p className="text-sm text-muted">{t.worldModels.pipelineDesc}</p>
           </div>
         </div>
         <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <TrainingComparisonToggle t={wm as unknown as Record<string, string>} />
+          <WorldModelPipeline />
         </div>
       </section>
 
-      {/* ─── Robotics Training Loop ─── */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{wm.trainingLoopTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{wm.trainingLoopDesc}</p>
-        <div className="p-4 rounded-xl bg-background border border-border">
-          <RoboticsTrainingLoopSVG />
-        </div>
-      </section>
-
-      {/* ─── Sim-to-Real Gap Visualization ─── */}
+      {/* ── How They Work: Core Techniques ── */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{wm.simToRealTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{wm.simToRealIntro}</p>
-        <div className="p-4 rounded-xl bg-surface/50 border border-border overflow-x-auto">
-          <SimToRealSVG />
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.worldModels.howTheyWork}</h2>
+        <p className="text-muted leading-relaxed mb-6">
+          {t.worldModels.howTheyWorkDesc}
+        </p>
+
+        {/* Latent Space with inline visualizer */}
+        <div className="space-y-4">
+          <div className="p-6 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.worldModels.latentSpace}</h3>
+            <p className="text-sm text-muted mb-4">{t.worldModels.latentSpaceDesc}</p>
+            <LatentSpaceViz />
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2">
+                  <rect x="2" y="2" width="20" height="20" rx="3" />
+                  <path d="M7 8h10M7 12h6M7 16h8" />
+                </svg>
+                <h3 className="text-base font-bold font-heading text-cyan-400">{t.worldModels.videoPrediction}</h3>
+              </div>
+              <p className="text-sm text-muted">{t.worldModels.videoPredictionDesc}</p>
+            </div>
+            <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2">
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 8v4l3 3" />
+                </svg>
+                <h3 className="text-base font-bold font-heading text-emerald-400">{t.worldModels.physicsAware}</h3>
+              </div>
+              <p className="text-sm text-muted">{t.worldModels.physicsAwareDesc}</p>
+            </div>
+            <div className="p-5 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl">
+              <div className="flex items-center gap-2 mb-2">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2">
+                  <path d="M12 3v18M3 12h18" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+                <h3 className="text-base font-bold font-heading text-orange-400">{t.worldModels.diffusion}</h3>
+              </div>
+              <p className="text-sm text-muted">{t.worldModels.diffusionDesc}</p>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ─── Notable Examples ─── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{wm.examples}</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          <ExampleCard
-            emoji="🚗"
-            name={wm.nvidiaCosmos}
-            desc={wm.nvidiaCosmosDesc}
-            tags={['NVIDIA', 'Autonomous Driving', 'Robotics', 'Open Source']}
-            gradient="bg-gradient-to-br from-emerald-500/10 to-cyan-500/10"
-            borderColor="border-emerald-500/20"
-          />
-          <ExampleCard
-            emoji="🎮"
-            name={wm.googleGenie}
-            desc={wm.googleGenieDesc}
-            tags={['Google DeepMind', '3D Worlds', 'Interactive', 'Text-to-World']}
-            gradient="bg-gradient-to-br from-purple-500/10 to-pink-500/10"
-            borderColor="border-purple-500/20"
-          />
-          <ExampleCard
-            emoji="🌐"
-            name={wm.uniSim}
-            desc={wm.uniSimDesc}
-            tags={['Google Research', 'Universal Simulator', 'Multi-Domain']}
-            gradient="bg-gradient-to-br from-blue-500/10 to-indigo-500/10"
-            borderColor="border-blue-500/20"
-          />
-          <ExampleCard
-            emoji="🚙"
-            name={wm.gaia1}
-            desc={wm.gaia1Desc}
-            tags={['Wayve', 'Autonomous Driving', 'London Streets']}
-            gradient="bg-gradient-to-br from-orange-500/10 to-yellow-500/10"
-            borderColor="border-orange-500/20"
-          />
-          <ExampleCard
-            emoji="⚡"
-            name={wm.genesis}
-            desc={wm.genesisDesc}
-            tags={['Physics Engine', 'Generative AI', 'Ultra-Fast Sim']}
-            gradient="bg-gradient-to-br from-cyan-500/10 to-teal-500/10"
-            borderColor="border-cyan-500/20"
-          />
-          <ExampleCard
-            emoji="🤖"
-            name={wm.dreamerV3}
-            desc={wm.dreamerV3Desc}
-            tags={['Reinforcement Learning', 'General Purpose', 'Dream-Based']}
-            gradient="bg-gradient-to-br from-pink-500/10 to-rose-500/10"
-            borderColor="border-pink-500/20"
-          />
-        </div>
-      </section>
-
-      {/* ─── Use Cases ─── */}
+      {/* ── Why Needed: Sim vs Real ── */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{wm.useCases}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.worldModels.whyNeeded}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.worldModels.whyNeededIntro}</p>
+
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
+          {[
+            {
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fb923c" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <path d="M12 6v6l4 2" />
+                </svg>
+              ),
+              title: t.worldModels.slowExpensive,
+              desc: t.worldModels.slowExpensiveDesc,
+              color: '#fb923c',
+            },
+            {
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="2">
+                  <rect x="2" y="3" width="20" height="14" rx="2" />
+                  <path d="M8 21h8M12 17v4" />
+                </svg>
+              ),
+              title: t.worldModels.parallelTraining,
+              desc: t.worldModels.parallelTrainingDesc,
+              color: '#22d3ee',
+            },
+            {
+              icon: (
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2">
+                  <path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7z" />
+                  <circle cx="12" cy="9" r="2" />
+                </svg>
+              ),
+              title: t.worldModels.physicsUnderstanding,
+              desc: t.worldModels.physicsUnderstandingDesc,
+              color: '#a78bfa',
+            },
+          ].map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="p-5 bg-background rounded-xl border border-border"
+            >
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${item.color}15` }}>
+                  {item.icon}
+                </div>
+                <h4 className="font-bold text-text text-sm">{item.title}</h4>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Interactive comparison */}
+        <div>
+          <h3 className="text-lg font-bold font-heading text-text mb-4">{t.worldModels.simVsRealTitle}</h3>
+          <SimToRealToggle />
+        </div>
+      </section>
+
+      {/* ── Training Loop Interactive ── */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 p-0.5">
+            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="2">
+                <path d="M21 12a9 9 0 11-6.2-8.6" />
+                <path d="M21 3v5h-5" />
+              </svg>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.worldModels.trainingLoopTitle}</h2>
+            <p className="text-sm text-muted">{t.worldModels.trainingLoopDesc}</p>
+          </div>
+        </div>
+        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          <TrainingLoopViz />
+        </div>
+      </section>
+
+      {/* ── Examples: Model Cards ── */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-2">{t.worldModels.examples}</h2>
+        <p className="text-muted mb-6">{t.worldModels.examplesIntro}</p>
+
+        <div className="space-y-3">
+          {examples.map((ex) => {
+            const isExpanded = expandedExample === ex.id
+            return (
+              <motion.div
+                key={ex.id}
+                layout
+                className={`rounded-xl border bg-gradient-to-r ${ex.gradient} ${ex.border} overflow-hidden cursor-pointer transition-colors`}
+                onClick={() => setExpandedExample(isExpanded ? null : ex.id)}
+              >
+                <div className="p-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                      style={{ backgroundColor: `${ex.color}15` }}
+                    >
+                      {ex.icon}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <h3 className="text-lg font-bold font-heading" style={{ color: ex.color }}>{ex.name}</h3>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+                          style={{ backgroundColor: `${ex.color}20`, color: ex.color }}
+                        >
+                          {ex.tag}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted mb-1">{ex.company}</p>
+                      <p className="text-sm text-muted leading-relaxed">{ex.desc}</p>
+                    </div>
+                    <motion.div
+                      animate={{ rotate: isExpanded ? 180 : 0 }}
+                      className="shrink-0 mt-1"
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </motion.div>
+                  </div>
+                </div>
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 pt-0">
+                        <div className="p-4 rounded-lg bg-background/50 border border-border">
+                          <p className="text-sm text-muted leading-relaxed">{ex.detail}</p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* ── Use Cases ── */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.worldModels.useCases}</h2>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-6 bg-background rounded-xl border border-border text-center hover:border-cyan-500/30 transition-colors">
-            <span className="text-4xl mb-3 block">🚙</span>
-            <h4 className="font-bold text-text mb-2">{wm.autonomousDriving}</h4>
-            <p className="text-sm text-muted">{wm.autonomousDrivingDesc}</p>
-          </div>
-          <div className="p-6 bg-background rounded-xl border border-border text-center hover:border-purple-500/30 transition-colors">
-            <span className="text-4xl mb-3 block">🦾</span>
-            <h4 className="font-bold text-text mb-2">{wm.robotics}</h4>
-            <p className="text-sm text-muted">{wm.roboticsDesc}</p>
-          </div>
-          <div className="p-6 bg-background rounded-xl border border-border text-center hover:border-emerald-500/30 transition-colors">
-            <span className="text-4xl mb-3 block">🎬</span>
-            <h4 className="font-bold text-text mb-2">{wm.videoGeneration}</h4>
-            <p className="text-sm text-muted">{wm.videoGenerationDesc}</p>
-          </div>
-        </div>
-
-        {/* Additional use cases */}
-        <div className="grid md:grid-cols-2 gap-4 mt-4">
-          <div className="p-4 bg-background rounded-xl border border-border flex items-center gap-3 hover:border-orange-500/30 transition-colors">
-            <span className="text-2xl">🏭</span>
-            <div>
-              <h4 className="font-bold text-text text-sm">{wm.industrialSim}</h4>
-              <p className="text-xs text-muted">{wm.industrialSimDesc}</p>
-            </div>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border flex items-center gap-3 hover:border-blue-500/30 transition-colors">
-            <span className="text-2xl">🎮</span>
-            <div>
-              <h4 className="font-bold text-text text-sm">{wm.gameWorlds}</h4>
-              <p className="text-xs text-muted">{wm.gameWorldsDesc}</p>
-            </div>
-          </div>
+          {[
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#34d399" strokeWidth="1.5">
+                  <path d="M5 17h14M7 17l1-8h8l1 8" />
+                  <circle cx="9" cy="17" r="2" />
+                  <circle cx="15" cy="17" r="2" />
+                  <path d="M10 9h4" />
+                </svg>
+              ),
+              title: t.worldModels.autonomousDriving,
+              desc: t.worldModels.autonomousDrivingDesc,
+              color: '#34d399',
+              stat: t.worldModels.autonomousDrivingStat,
+            },
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="1.5">
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M8 14l-2 8M16 14l2 8M10 14v8M14 14v8" />
+                  <path d="M8 18h8" />
+                </svg>
+              ),
+              title: t.worldModels.robotics,
+              desc: t.worldModels.roboticsDesc,
+              color: '#a78bfa',
+              stat: t.worldModels.roboticsStat,
+            },
+            {
+              icon: (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" strokeWidth="1.5">
+                  <rect x="3" y="3" width="18" height="14" rx="2" />
+                  <path d="M10 10l4-3v6l-4-3z" fill="#22d3ee" opacity="0.3" />
+                  <path d="M8 21h8M12 17v4" />
+                </svg>
+              ),
+              title: t.worldModels.videoGeneration,
+              desc: t.worldModels.videoGenerationDesc,
+              color: '#22d3ee',
+              stat: t.worldModels.videoGenerationStat,
+            },
+          ].map((uc, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="p-5 bg-background rounded-xl border border-border hover:border-opacity-60 transition-colors group"
+              style={{ borderColor: `${uc.color}20` }}
+            >
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3"
+                style={{ backgroundColor: `${uc.color}15` }}
+              >
+                {uc.icon}
+              </div>
+              <h4 className="font-bold text-text mb-2">{uc.title}</h4>
+              <p className="text-sm text-muted leading-relaxed mb-3">{uc.desc}</p>
+              <div className="px-3 py-1.5 rounded-lg text-xs font-medium"
+                style={{ backgroundColor: `${uc.color}10`, color: uc.color }}
+              >
+                {uc.stat}
+              </div>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* ─── Challenges ─── */}
+      {/* ── Challenges ── */}
       <section>
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500/20 to-orange-500/20 p-0.5">
             <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <span className="text-lg">⚠️</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <circle cx="12" cy="17" r="0.5" fill="#ef4444" />
+              </svg>
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{wm.challenges}</h2>
-            <p className="text-sm text-muted">{wm.challengesDesc}</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.worldModels.challenges}</h2>
+            <p className="text-sm text-muted">{t.worldModels.challengesDesc}</p>
           </div>
         </div>
+
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-6 bg-gradient-to-br from-red-500/5 to-orange-500/5 border border-red-500/20 rounded-xl">
-            <span className="text-2xl mb-2 block">💻</span>
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{wm.computeIntensive}</h3>
-            <p className="text-sm text-muted">{wm.computeIntensiveDesc}</p>
-          </div>
-          <div className="p-6 bg-gradient-to-br from-yellow-500/5 to-orange-500/5 border border-yellow-500/20 rounded-xl">
-            <span className="text-2xl mb-2 block">🔀</span>
-            <h3 className="text-lg font-bold font-heading text-yellow-400 mb-2">{wm.simToReal}</h3>
-            <p className="text-sm text-muted">{wm.simToRealDesc}</p>
-          </div>
-          <div className="p-6 bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 rounded-xl">
-            <span className="text-2xl mb-2 block">🌐</span>
-            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{wm.generalization}</h3>
-            <p className="text-sm text-muted">{wm.generalizationDesc}</p>
-          </div>
-        </div>
-
-        {/* Additional challenges */}
-        <div className="grid md:grid-cols-2 gap-4 mt-4">
-          <div className="p-5 bg-gradient-to-br from-blue-500/5 to-cyan-500/5 border border-blue-500/20 rounded-xl">
-            <span className="text-xl mb-1 block">📊</span>
-            <h3 className="font-bold text-blue-400 mb-1">{wm.dataHunger}</h3>
-            <p className="text-sm text-muted">{wm.dataHungerDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 rounded-xl">
-            <span className="text-xl mb-1 block">📏</span>
-            <h3 className="font-bold text-emerald-400 mb-1">{wm.evaluation}</h3>
-            <p className="text-sm text-muted">{wm.evaluationDesc}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── The Future of World Models ─── */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{wm.futureTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{wm.futureDesc}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-4 bg-background rounded-xl border border-border flex items-start gap-3">
-            <span className="text-xl">🔮</span>
-            <div>
-              <h4 className="font-bold text-text mb-1">{wm.futureMultimodal}</h4>
-              <p className="text-xs text-muted">{wm.futureMultimodalDesc}</p>
-            </div>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border flex items-start gap-3">
-            <span className="text-xl">🧩</span>
-            <div>
-              <h4 className="font-bold text-text mb-1">{wm.futureComposable}</h4>
-              <p className="text-xs text-muted">{wm.futureComposableDesc}</p>
-            </div>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border flex items-start gap-3">
-            <span className="text-xl">🌍</span>
-            <div>
-              <h4 className="font-bold text-text mb-1">{wm.futureFoundation}</h4>
-              <p className="text-xs text-muted">{wm.futureFoundationDesc}</p>
-            </div>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border flex items-start gap-3">
-            <span className="text-xl">🤝</span>
-            <div>
-              <h4 className="font-bold text-text mb-1">{wm.futureLLMIntegration}</h4>
-              <p className="text-xs text-muted">{wm.futureLLMIntegrationDesc}</p>
-            </div>
-          </div>
+          {[
+            {
+              title: t.worldModels.computeIntensive,
+              desc: t.worldModels.computeIntensiveDesc,
+              color: '#ef4444',
+              gradient: 'from-red-500/5 to-orange-500/5',
+              border: 'border-red-500/20',
+              severity: t.worldModels.severityHigh,
+            },
+            {
+              title: t.worldModels.simToReal,
+              desc: t.worldModels.simToRealDesc,
+              color: '#fbbf24',
+              gradient: 'from-yellow-500/5 to-orange-500/5',
+              border: 'border-yellow-500/20',
+              severity: t.worldModels.severityMedium,
+            },
+            {
+              title: t.worldModels.generalization,
+              desc: t.worldModels.generalizationDesc,
+              color: '#a78bfa',
+              gradient: 'from-purple-500/5 to-pink-500/5',
+              border: 'border-purple-500/20',
+              severity: t.worldModels.severityOpen,
+            },
+          ].map((c, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`p-5 bg-gradient-to-br ${c.gradient} border ${c.border} rounded-xl`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-lg font-bold font-heading" style={{ color: c.color }}>{c.title}</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+                  style={{ backgroundColor: `${c.color}20`, color: c.color }}
+                >
+                  {c.severity}
+                </span>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">{c.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
-      {/* ─── Key Takeaways ─── */}
+      {/* ── Key Takeaways ── */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{wm.keyTakeaways}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.worldModels.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[wm.takeaway1, wm.takeaway2, wm.takeaway3, wm.takeaway4, wm.takeaway5, wm.takeaway6].map((item, i) => (
+            {[
+              t.worldModels.takeaway1,
+              t.worldModels.takeaway2,
+              t.worldModels.takeaway3,
+              t.worldModels.takeaway4,
+              t.worldModels.takeaway5,
+            ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-primary-light text-sm font-bold">{i + 1}</span>
