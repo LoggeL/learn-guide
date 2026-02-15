@@ -130,6 +130,7 @@ export const topics: Topic[] = [
           { id: 'neural-networks', name: 'Neural Networks', path: '/ai/ml-fundamentals/neural-networks', difficulty: 'beginner' },
           { id: 'gradient-descent', name: 'Gradient Descent', path: '/ai/ml-fundamentals/gradient-descent', difficulty: 'intermediate' },
           { id: 'training', name: 'Training Process', path: '/ai/ml-fundamentals/training', difficulty: 'beginner' },
+          { id: 'world-models', name: 'World Models', path: '/ai/ml-fundamentals/world-models', difficulty: 'advanced' },
         ],
       },
       {
