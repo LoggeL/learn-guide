@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run check-translations && next build",
+    "build": "npm run check-translations && npm run check-topic-metadata && next build",
     "start": "next start",
     "lint": "next lint",
     "check-translations": "tsx scripts/check-translations.ts",
     "check-hardcoded": "tsx scripts/check-hardcoded-strings.ts",
+    "check-topic-metadata": "tsx scripts/check-topic-metadata.ts",
     "check-i18n": "npm run check-translations && npm run check-hardcoded"
   },
   "dependencies": {

@@ -207,6 +207,7 @@ export const de: Dictionary = {
     'european-ai': 'Das wachsende europäische KI-Ökosystem und seine Stärken',
     'open-source': 'Warum offene Gewichte für Innovation und Transparenz wichtig sind',
     'logges-favourite-model': 'Kuratierte Auswahl der besten Modelle für verschiedene Aufgaben',
+    'world-models': 'Interne Simulatoren, mit denen KI in virtuellen Welten vorhersagen und planen kann',
   },
 
   // Temperature page

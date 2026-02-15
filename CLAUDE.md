@@ -7,11 +7,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 npm install          # Install dependencies
 npm run dev          # Start dev server (http://localhost:3000)
-npm run build        # Full i18n checks + Next.js build (fails on any i18n issues)
-npm start            # Start production server
-npm run lint         # Run ESLint
+npm run build               # Full checks + Next.js build (fails on any issues)
+npm start                   # Start production server
+npm run lint                # Run ESLint
 npm run check-translations  # Verify EN/DE translation key parity
 npm run check-hardcoded     # Detect hardcoded English text in pages/components
+npm run check-topic-metadata # Verify every topic has dates, difficulty, descriptions
 npm run check-i18n          # Run both i18n checks (translations + hardcoded)
 ```
 

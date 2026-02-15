@@ -205,6 +205,7 @@ export const en = {
     'european-ai': 'The growing European AI ecosystem and its unique strengths',
     'open-source': 'Why open weights matter for innovation and transparency',
     'logges-favourite-model': "Curated picks of the best models for different tasks",
+    'world-models': 'Internal simulators that let AI predict and plan in virtual worlds',
   },
 
   // Temperature page

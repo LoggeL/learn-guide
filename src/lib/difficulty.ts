@@ -51,6 +51,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'neural-networks': 'beginner',
   'gradient-descent': 'intermediate',
   'training': 'beginner',
+  'world-models': 'expert',
   // Prompting
   'prompt-basics': 'beginner',
   'advanced-prompting': 'intermediate',
