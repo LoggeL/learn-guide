@@ -66,6 +66,31 @@ All text in pages and components MUST use the translation system:
 <p>{t.context.clickToSee}</p>
 ```
 
+## Git Commits
+
+**Every commit MUST have a proper message with description and context.**
+
+```bash
+# ❌ WRONG - lazy one-liner
+git commit -m "update world models page"
+
+# ✅ CORRECT - title + body with what changed and why
+git commit -m "feat: overhaul World Models page with rich SVGs and interactive toggle
+
+- Add 3 SVG visualizations (Pipeline, Sim-to-Real, Training Loop)
+- Add interactive Training Comparison toggle (real vs simulated)
+- Expand examples to 6 cards (Cosmos, Genie 2, UniSim, GAIA-1, Genesis, DreamerV3)
+- Add Future of World Models section with Yann LeCun quote
+- Update EN and DE i18n dictionaries with all new keys
+- Remove old emoji-based InfoBox/ExampleCard components"
+```
+
+Rules:
+- **Title**: `type: short summary` (feat/fix/refactor/docs/chore)
+- **Body**: bullet list of key changes (what + why)
+- **Always run `npm run build`** before committing to catch i18n/type errors
+- **Never force-push** to main
+
 ## Styling
 
 Tailwind CSS with custom theme. Key classes:
