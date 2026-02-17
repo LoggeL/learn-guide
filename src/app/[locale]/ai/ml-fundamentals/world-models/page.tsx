@@ -6,76 +6,260 @@ import { TopicLayout } from '@/components/layout/TopicLayout'
 import { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
-// ─── Latent Space Mini Viz (inline SVG) ─────────────────────────────────────
+// ─── Latent Space Interactive Viz ─────────────────────────────────────────────
+// Shows how 4 latent dimensions each control a complex visual concept
 function LatentSpaceViz() {
-  const [compressed, setCompressed] = useState(false)
+  const { t } = useTranslation()
+  const [z, setZ] = useState([0.65, 0.3, 0.5, 0.1])
+
+  const updateZ = (i: number, v: number) => {
+    setZ(prev => {
+      const next = [...prev]
+      next[i] = v
+      return next
+    })
+  }
+
+  const lerp = (a: number, b: number, t: number) => Math.round(a + (b - a) * t)
+
+  // ── z₁: Time of Day (sky color, sun/moon, stars) ──
+  const time = z[0]
+  let stR: number, stG: number, stB: number // sky top
+  let sbR: number, sbG: number, sbB: number // sky bottom
+  if (time < 0.5) {
+    const p = time * 2
+    stR = lerp(15, 30, p); stG = lerp(23, 64, p); stB = lerp(42, 175, p)
+    sbR = lerp(30, 56, p); sbG = lerp(41, 189, p); sbB = lerp(59, 248, p)
+  } else {
+    const p = (time - 0.5) * 2
+    stR = lerp(30, 124, p); stG = lerp(64, 45, p); stB = lerp(175, 18, p)
+    sbR = lerp(56, 251, p); sbG = lerp(189, 146, p); sbB = lerp(248, 60, p)
+  }
+  const starsOpacity = Math.max(0, 1 - time * 4)
+  const sunY = 95 - Math.sin(time * Math.PI) * 55
+  const sunOpacity = time > 0.1 ? Math.min(1, (time - 0.1) * 4) : 0
+  const sunColor = time > 0.7 ? '#fb923c' : '#facc15'
+  const moonOpacity = time < 0.15 ? 1 : Math.max(0, 1 - (time - 0.15) * 8)
+  const groundLight = lerp(15, 26, Math.min(1, time * 2))
+
+  // ── z₂: Road Curvature ──
+  const curveOffset = (z[1] - 0.5) * 120
+
+  // ── z₃: Traffic Density ──
+  const carCount = Math.round(z[2] * 4)
+  const carDefs = [
+    { xBase: 120, color: '#ef4444' },
+    { xBase: 245, color: '#3b82f6' },
+    { xBase: 75, color: '#f59e0b' },
+    { xBase: 320, color: '#10b981' },
+  ]
+
+  // ── z₄: Weather ──
+  const rainCount = Math.round(z[3] * 30)
+  const cloudOpacity = Math.min(1, z[3] * 1.5)
+  const rainDrops = Array.from({ length: 30 }, (_, i) => ({
+    x: (i * 143 + 37) % 400,
+    y: (i * 97 + 13) % 160,
+  }))
+
+  const stars = [
+    { x: 45, y: 18 }, { x: 95, y: 32 }, { x: 150, y: 12 },
+    { x: 210, y: 28 }, { x: 270, y: 15 }, { x: 320, y: 38 },
+    { x: 365, y: 20 }, { x: 55, y: 50 }, { x: 175, y: 42 },
+    { x: 295, y: 48 }, { x: 130, y: 55 }, { x: 340, y: 55 },
+  ]
+
+  const dims = [
+    { label: t.worldModels.latentZ1, color: '#fbbf24' },
+    { label: t.worldModels.latentZ2, color: '#22d3ee' },
+    { label: t.worldModels.latentZ3, color: '#a78bfa' },
+    { label: t.worldModels.latentZ4, color: '#34d399' },
+  ]
+
+  // Road bezier helper: compute y for a given x
+  const roadCpY = 120 + Math.abs(curveOffset) * 0.12
+  const roadYAt = (x: number) => {
+    const p = x / 400
+    return (1 - p) * (1 - p) * 160 + 2 * (1 - p) * p * roadCpY + p * p * 155
+  }
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-muted">
-          {compressed ? 'Compact latent representation (z)' : 'Raw high-dimensional input'}
-        </p>
-        <button
-          onClick={() => setCompressed(!compressed)}
-          className="px-3 py-1 rounded-lg text-xs font-medium border border-purple-500/30 text-purple-400 hover:bg-purple-500/10 transition-colors"
-        >
-          {compressed ? 'Show Input' : 'Compress →'}
-        </button>
-      </div>
-      <svg viewBox="0 0 400 100" className="w-full h-auto">
-        <AnimatePresence mode="wait">
-          {!compressed ? (
-            <motion.g key="input" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {Array.from({ length: 16 }).map((_, row) =>
-                Array.from({ length: 20 }).map((_, col) => {
-                  const hue = (row * 20 + col * 13) % 360
-                  return (
-                    <motion.rect
-                      key={`p-${row}-${col}`}
-                      x={col * 20 + 2}
-                      y={row * 6 + 2}
-                      width={18}
-                      height={4.5}
-                      rx={1}
-                      fill={`hsla(${hue}, 60%, 50%, 0.4)`}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: (row * 20 + col) * 0.003 }}
-                    />
-                  )
-                })
-              )}
-              <text x="200" y="96" textAnchor="middle" fill="#9ca3af" className="text-[9px]">
-                320 dimensions
-              </text>
-            </motion.g>
-          ) : (
-            <motion.g key="latent" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <motion.circle
-                  key={`z-${i}`}
-                  cx={120 + i * 22}
-                  cy={50}
-                  r={8}
-                  fill={`hsla(${270 + i * 12}, 70%, 60%, 0.6)`}
-                  stroke={`hsla(${270 + i * 12}, 70%, 60%, 0.9)`}
-                  strokeWidth={1}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: i * 0.06, type: 'spring' }}
+    <div className="space-y-4">
+      <p className="text-xs text-muted italic">
+        {t.worldModels.latentDimInstruction}
+      </p>
+
+      {/* ── Generated Scene ── */}
+      <div className="rounded-xl overflow-hidden border border-purple-500/20">
+        <svg viewBox="0 0 400 180" className="w-full h-auto block" style={{ background: '#0a0a0f' }}>
+          <defs>
+            <linearGradient id="ls-sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={`rgb(${stR},${stG},${stB})`} />
+              <stop offset="100%" stopColor={`rgb(${sbR},${sbG},${sbB})`} />
+            </linearGradient>
+            <linearGradient id="ls-ground" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={`rgb(${groundLight},${groundLight + 20},${groundLight})`} />
+              <stop offset="100%" stopColor={`rgb(${groundLight - 5},${groundLight + 8},${groundLight - 5})`} />
+            </linearGradient>
+          </defs>
+
+          {/* Sky */}
+          <rect width="400" height="120" fill="url(#ls-sky)" />
+
+          {/* Stars */}
+          {starsOpacity > 0 && (
+            <g opacity={starsOpacity}>
+              {stars.map((s, i) => (
+                <circle key={i} cx={s.x} cy={s.y} r={i % 3 === 0 ? 1.5 : 1} fill="white" opacity={0.8} />
+              ))}
+            </g>
+          )}
+
+          {/* Moon */}
+          {moonOpacity > 0 && (
+            <g opacity={moonOpacity}>
+              <circle cx="330" cy="30" r="14" fill="#e2e8f0" />
+              <circle cx="337" cy="25" r="12" fill={`rgb(${stR},${stG},${stB})`} />
+            </g>
+          )}
+
+          {/* Sun + glow */}
+          {sunOpacity > 0 && (
+            <g opacity={sunOpacity}>
+              <circle cx="300" cy={sunY} r="28" fill={sunColor} opacity={0.12} />
+              <circle cx="300" cy={sunY} r="18" fill={sunColor} />
+            </g>
+          )}
+
+          {/* Clouds */}
+          {cloudOpacity > 0 && (
+            <g opacity={cloudOpacity}>
+              <ellipse cx="80" cy="40" rx="55" ry="18" fill="#374151" />
+              <ellipse cx="115" cy="32" rx="40" ry="14" fill="#374151" />
+              <ellipse cx="230" cy="35" rx="65" ry="22" fill="#374151" />
+              <ellipse cx="275" cy="28" rx="45" ry="15" fill="#374151" />
+              <ellipse cx="360" cy="45" rx="45" ry="16" fill="#374151" />
+            </g>
+          )}
+
+          {/* Distant hills */}
+          <path
+            d="M0,115 Q40,95 80,108 Q120,88 160,102 Q200,85 240,98 Q280,80 320,95 Q360,85 400,105 L400,125 L0,125Z"
+            fill={`rgb(${groundLight - 3},${groundLight + 10},${groundLight - 3})`}
+            opacity={0.8}
+          />
+
+          {/* Ground */}
+          <rect x="0" y="120" width="400" height="60" fill="url(#ls-ground)" />
+
+          {/* Road surface */}
+          <path
+            d={`M -10,160 Q ${200 + curveOffset},${roadCpY} 410,155`}
+            stroke="#2a2a30"
+            strokeWidth="40"
+            fill="none"
+            strokeLinecap="round"
+          />
+
+          {/* Road center dashes */}
+          <path
+            d={`M -10,160 Q ${200 + curveOffset},${roadCpY} 410,155`}
+            stroke="#fbbf24"
+            strokeWidth="1.5"
+            strokeDasharray="10 7"
+            fill="none"
+            opacity={0.4}
+          />
+
+          {/* Road edges */}
+          <path
+            d={`M -10,142 Q ${200 + curveOffset},${roadCpY - 18} 410,137`}
+            stroke="#4a4a50" strokeWidth="1" fill="none" opacity={0.3}
+          />
+          <path
+            d={`M -10,178 Q ${200 + curveOffset},${roadCpY + 18} 410,173`}
+            stroke="#4a4a50" strokeWidth="1" fill="none" opacity={0.3}
+          />
+
+          {/* Cars */}
+          {carDefs.slice(0, carCount).map((car, i) => {
+            const cy = roadYAt(car.xBase)
+            const yOff = i % 2 === 0 ? -5 : 5
+            return (
+              <g key={i}>
+                <rect
+                  x={car.xBase - 12} y={cy + yOff - 5}
+                  width={24} height={10} rx={3}
+                  fill={car.color} opacity={0.85}
+                />
+                <rect
+                  x={car.xBase + 4} y={cy + yOff - 3}
+                  width={6} height={6} rx={1}
+                  fill="white" opacity={0.15}
+                />
+              </g>
+            )
+          })}
+
+          {/* Rain */}
+          {rainCount > 0 && (
+            <g>
+              {rainDrops.slice(0, rainCount).map((d, i) => (
+                <line
+                  key={i}
+                  x1={d.x} y1={d.y}
+                  x2={d.x - 4} y2={d.y + 10}
+                  stroke="#60a5fa" strokeWidth={1}
+                  opacity={0.35 + z[3] * 0.3}
                 />
               ))}
-              <text x="200" y="80" textAnchor="middle" fill="#a78bfa" className="text-[10px] font-semibold">
-                8 latent dimensions
-              </text>
-              <text x="200" y="92" textAnchor="middle" fill="#6b7280" className="text-[8px]">
-                40× compression — essential features preserved
-              </text>
-            </motion.g>
+            </g>
           )}
-        </AnimatePresence>
-      </svg>
+        </svg>
+      </div>
+
+      {/* ── Latent Vector Display ── */}
+      <div className="flex items-center justify-center gap-1.5 py-1">
+        <span className="text-xs font-mono font-bold text-purple-400">z</span>
+        <span className="text-xs text-muted">=</span>
+        <code className="px-2.5 py-1 rounded-lg bg-background border border-border font-mono text-[11px] tracking-wide">
+          [{z.map((v, i) => (
+            <span key={i}>
+              <span style={{ color: dims[i].color }}>{v.toFixed(2)}</span>
+              {i < 3 && <span className="text-zinc-600">, </span>}
+            </span>
+          ))}]
+        </code>
+        <span className="text-muted text-xs mx-0.5">&rarr;</span>
+        <span className="text-xs text-muted">{t.worldModels.latentSceneLabel}</span>
+      </div>
+
+      {/* ── Dimension Sliders ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+        {dims.map((dim, i) => (
+          <div key={i} className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold" style={{ color: dim.color }}>
+                z<sub className="text-[9px]">{i + 1}</sub>
+                <span className="text-muted font-normal ml-1.5">{dim.label}</span>
+              </label>
+              <span className="text-[10px] font-mono text-muted tabular-nums">{z[i].toFixed(2)}</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={z[i]}
+              onChange={(e) => updateZ(i, parseFloat(e.target.value))}
+              className="w-full"
+              style={{
+                background: `linear-gradient(to right, ${dim.color} 0%, ${dim.color} ${z[i] * 100}%, var(--surface-elevated) ${z[i] * 100}%, var(--surface-elevated) 100%)`,
+              }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
