@@ -21,6 +21,8 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'agent-problems': 'intermediate',
   'agent-security': 'expert',
   'evaluation': 'expert',
+  // LLM Overview
+  'tier-list': 'beginner',
   // LLM Fundamentals
   'tokenization': 'beginner',
   'embeddings': 'beginner',

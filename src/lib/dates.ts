@@ -7,6 +7,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'kv-cache': '2026-02-09',
   'batching': '2026-02-09',
   'prompt-caching': '2026-02-19',
+  'tier-list': '2026-02-19',
   'logges-favourite-model': '2026-02-09',
   'nested-learning': '2026-02-08',
   'speculative-decoding': '2026-02-05',

@@ -78,6 +78,13 @@ export const topics: Topic[] = [
         name: 'Large Language Models',
         children: [
           {
+            id: 'llm-overview',
+            name: 'Overview',
+            children: [
+              { id: 'tier-list', name: 'LLM Tier List', path: '/ai/llm/tier-list', difficulty: 'beginner', lastUpdated: '2026-02-19' },
+            ],
+          },
+          {
             id: 'llm-fundamentals',
             name: 'Fundamentals',
             children: [
