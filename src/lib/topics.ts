@@ -78,13 +78,6 @@ export const topics: Topic[] = [
         name: 'Large Language Models',
         children: [
           {
-            id: 'llm-overview',
-            name: 'Overview',
-            children: [
-              { id: 'tier-list', name: 'LLM Tier List', path: '/ai/llm/tier-list', difficulty: 'beginner', lastUpdated: '2026-02-19' },
-            ],
-          },
-          {
             id: 'llm-fundamentals',
             name: 'Fundamentals',
             children: [
@@ -172,6 +165,7 @@ export const topics: Topic[] = [
           { id: 'european-ai', name: 'AI Made in Europe', path: '/ai/industry/european-ai', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'open-source', name: 'Open Source Advantages', path: '/ai/industry/open-source', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'logges-favourite-model', name: "Logge's Favourite Models", path: '/ai/industry/logges-favourite-model', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+          { id: 'tier-list', name: 'LLM Tier List', path: '/ai/industry/tier-list', difficulty: 'beginner', lastUpdated: '2026-02-19' },
         ],
       },
     ],

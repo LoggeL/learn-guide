@@ -61,6 +61,7 @@ export default function FavouriteModelsPage() {
         { label: f.title },
       ]}
       prevTopic={{ label: t.topicNames['open-source'], href: '/ai/industry/open-source' }}
+      nextTopic={{ label: t.topicNames['tier-list'], href: '/ai/industry/tier-list' }}
     >
       {/* Disclaimer */}
       <motion.section

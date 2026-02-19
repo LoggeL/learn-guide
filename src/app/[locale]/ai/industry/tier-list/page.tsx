@@ -100,7 +100,7 @@ export default function TierListPage() {
       description={tl.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/ai/llm' },
+        { label: t.categories.industry, href: '/ai/industry' },
         { label: tl.title },
       ]}
       prevTopic={{ label: t.topicNames['logges-favourite-model'], href: '/ai/industry/logges-favourite-model' }}
