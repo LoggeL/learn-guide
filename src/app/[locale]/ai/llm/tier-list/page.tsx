@@ -33,8 +33,8 @@ export default function TierListPage() {
       borderColor: 'border-purple-500/30',
       badgeBg: 'bg-purple-500/20',
       models: [
+        { name: tl.gpt53Codex, desc: tl.gpt53CodexDesc },
         { name: tl.claudeOpus46, desc: tl.claudeOpus46Desc },
-        { name: tl.kimi, desc: tl.kimiDesc },
       ],
     },
     {
@@ -45,9 +45,11 @@ export default function TierListPage() {
       borderColor: 'border-blue-500/30',
       badgeBg: 'bg-blue-500/20',
       models: [
-        { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc },
+        { name: tl.gemini3Flash, desc: tl.gemini3FlashDesc },
         { name: tl.deepseekV32, desc: tl.deepseekV32Desc },
         { name: tl.minimax25, desc: tl.minimax25Desc },
+        { name: tl.kimiK25, desc: tl.kimiK25Desc },
+        { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc },
       ],
     },
     {
@@ -58,11 +60,12 @@ export default function TierListPage() {
       borderColor: 'border-emerald-500/30',
       badgeBg: 'bg-emerald-500/20',
       models: [
+        { name: tl.glm47Flash, desc: tl.glm47FlashDesc },
+        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc },
+        { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc },
+        { name: tl.gptOss20b, desc: tl.gptOss20bDesc },
         { name: tl.glm5, desc: tl.glm5Desc },
         { name: tl.qwen35, desc: tl.qwen35Desc },
-        { name: tl.llama4Maverick, desc: tl.llama4MaverickDesc },
-        { name: tl.claudeHaiku45, desc: tl.claudeHaiku45Desc },
-        { name: tl.gpt5Mini, desc: tl.gpt5MiniDesc },
       ],
     },
     {
@@ -73,21 +76,19 @@ export default function TierListPage() {
       borderColor: 'border-yellow-500/30',
       badgeBg: 'bg-yellow-500/20',
       models: [
-        { name: tl.gpt52, desc: tl.gpt52Desc },
-        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc },
-        { name: tl.grok4, desc: tl.grok4Desc },
+        { name: tl.grok41, desc: tl.grok41Desc },
       ],
     },
     {
-      label: tl.dTier,
-      desc: tl.dTierDesc,
+      label: tl.fTier,
+      desc: tl.fTierDesc,
       color: 'text-red-400',
       bgGradient: 'from-red-500/10 to-rose-500/10',
       borderColor: 'border-red-500/30',
       badgeBg: 'bg-red-500/20',
       models: [
-        { name: tl.grok4Heavy, desc: tl.grok4HeavyDesc },
-        { name: tl.claudeOpus45, desc: tl.claudeOpus45Desc },
+        { name: tl.llamaMaverick, desc: tl.llamaMaverickDesc },
+        { name: tl.amazonNova, desc: tl.amazonNovaDesc },
       ],
     },
   ]
