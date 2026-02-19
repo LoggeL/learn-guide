@@ -46,6 +46,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   // LLM Inference
   'kv-cache': 'expert',
   'batching': 'intermediate',
+  'prompt-caching': 'intermediate',
   'local-inference': 'beginner',
   // ML Fundamentals
   'neural-networks': 'beginner',
