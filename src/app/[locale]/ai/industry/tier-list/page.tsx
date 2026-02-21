@@ -61,7 +61,6 @@ export default function TierListPage() {
       badgeBg: 'bg-emerald-500/20',
       models: [
         { name: tl.glm47Flash, desc: tl.glm47FlashDesc },
-        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc },
         { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc },
         { name: tl.gptOss20b, desc: tl.gptOss20bDesc },
         { name: tl.glm5, desc: tl.glm5Desc },
@@ -76,6 +75,7 @@ export default function TierListPage() {
       borderColor: 'border-yellow-500/30',
       badgeBg: 'bg-yellow-500/20',
       models: [
+        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc },
         { name: tl.grok41, desc: tl.grok41Desc },
       ],
     },
