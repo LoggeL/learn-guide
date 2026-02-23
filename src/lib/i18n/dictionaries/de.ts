@@ -61,7 +61,7 @@ export const de: Dictionary = {
   features: {
     interactiveDemos: 'Interaktive Demos',
     interactiveDemosDesc: 'Praktische Erkundungen, die abstrakte Konzepte greifbar und intuitiv machen.',
-    visualLearning: 'Visülles Lernen',
+    visualLearning: 'Visuelles Lernen',
     visualLearningDesc: 'Schöne Visualisierungen, die zeigen, wie KI-Systeme tatsächlich funktionieren.',
     buildIntuition: 'Intuition aufbauen',
     buildIntuitionDesc: 'Gehe über das Auswendiglernen hinaus – entwickle tiefes Verständnis durch Experimentieren.',
@@ -544,7 +544,7 @@ export const de: Dictionary = {
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'Bilder verbrauchen viel mehr Tokens als äquivalente Textbeschreibungen',
     takeaway2: 'Auflösung und Patch-Größe beeinflussen die Detailerkennung',
-    takeaway3: 'Visülles Verständnis ist ungefähr – Modelle können feine Details übersehen',
+    takeaway3: 'Visuelles Verständnis ist ungefähr – Modelle können feine Details übersehen',
     takeaway4: 'Die Kombination von Bild und Sprache ermöglicht leistungsstarke neue Anwendungen',
   },
 
@@ -3786,7 +3786,7 @@ export const de: Dictionary = {
     useCaseImageAudioTextDesc: 'Erstelle reichhaltige Bildungserlebnisse, die visülle Hilfsmittel, Erzählung und Texterklärungen kombinieren.',
     useCaseImageAudioTextExample: 'Erkläre dieses Diagramm, während ich beschreibe, was ich sehe.',
     useCaseVideoAudioText: 'Videoverständnis mit Dialog',
-    useCaseVideoAudioTextDesc: 'Vollständige Film-/Videoanalyse einschließlich Visülles, Dialogtranskription und Szenenbeschreibungen.',
+    useCaseVideoAudioTextDesc: 'Vollständige Film-/Videoanalyse einschließlich Visuelles, Dialogtranskription und Szenenbeschreibungen.',
     useCaseVideoAudioTextExample: 'Fasse dieses Interview zusammen, einschließlich wer was gesagt hat.',
     useCaseImageVideoText: 'Visüller Vergleich & Überwachung',
     useCaseImageVideoTextDesc: 'Vergleiche Referenzbilder mit Videofeeds, wie Qualitätskontrolle oder Sicherheitsüberwachung mit Textberichten.',
@@ -4224,7 +4224,7 @@ export const de: Dictionary = {
     step4Title: 'Fortfahren oder Neu-Samplen',
     step4Desc: 'Akzeptierte Token werden behalten. Bei der ersten Ablehnung sampelt das Zielmodell ein Korrektur-Token. Der Prozess wiederholt sich von der neuen Position.',
 
-    visualExample: 'Visülles Beispiel',
+    visualExample: 'Visuelles Beispiel',
     visualExampleDesc: 'So verarbeitet spekulatives Decoding eine einfache Fortsetzung:',
     examplePrompt: 'Prompt:',
     exampleDraft: 'Draft-Modell schlägt 4 Token vor:',
