@@ -16,7 +16,7 @@ export default function MemoryPage() {
         { label: t.categories.agents, href: '/ai/agents' },
         { label: t.memorySystems.title },
       ]}
-      prevTopic={{ label: t.topicNames['tool-design'], href: '/ai/agents/tool-design' }}
+      prevTopic={{ label: t.topicNames['programmatic-tools'], href: '/ai/agents/programmatic-tools' }}
       nextTopic={{ label: t.topicNames.orchestration, href: '/ai/agents/orchestration' }}
     >
       {/* What are Memory Systems */}

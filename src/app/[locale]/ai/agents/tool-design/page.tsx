@@ -17,7 +17,7 @@ export default function ToolDesignPage() {
         { label: t.toolDesign.title },
       ]}
       prevTopic={{ label: t.topicNames.mcp, href: '/ai/agents/mcp' }}
-      nextTopic={{ label: t.topicNames.memory, href: '/ai/agents/memory' }}
+      nextTopic={{ label: t.topicNames['programmatic-tools'], href: '/ai/agents/programmatic-tools' }}
     >
       {/* What Makes a Good Tool */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

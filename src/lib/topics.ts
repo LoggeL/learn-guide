@@ -49,6 +49,7 @@ export const topics: Topic[] = [
             name: 'Building Blocks',
             children: [
               { id: 'tool-design', name: 'Tool Design', path: '/ai/agents/tool-design', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
+              { id: 'programmatic-tools', name: 'Programmatic Tool Calling', path: '/ai/agents/programmatic-tools', difficulty: 'intermediate', lastUpdated: '2026-02-23' },
               { id: 'memory', name: 'Memory Systems', path: '/ai/agents/memory', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'skills', name: 'Agent Skills', path: '/ai/agents/skills', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'mcp', name: 'MCP (Model Context Protocol)', path: '/ai/agents/mcp', difficulty: 'intermediate', lastUpdated: '2026-02-09' },

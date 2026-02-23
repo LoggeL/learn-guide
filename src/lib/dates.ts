@@ -42,6 +42,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'temperature': '2026-01-24',
   'european-ai': '2026-01-24',
   'tool-design': '2026-01-24',
+  'programmatic-tools': '2026-02-23',
   'agent-problems': '2026-01-24',
   'agentic-patterns': '2026-01-24',
   'agent-loop': '2026-01-24',
