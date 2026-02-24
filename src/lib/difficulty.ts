@@ -40,6 +40,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   // LLM Architecture
   'transformer-architecture': 'intermediate',
   'llm-training': 'intermediate',
+  'training-data': 'intermediate',
   'moe': 'expert',
   'quantization': 'expert',
   'nested-learning': 'expert',

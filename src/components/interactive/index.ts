@@ -83,3 +83,6 @@ export { TrainingPipelineVisualizer } from './TrainingPipelineVisualizer'
 
 // World Model components
 export { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from './WorldModelVisualizer'
+
+// Training Data components
+export { DataSourceExplorer } from './DataSourceExplorer'

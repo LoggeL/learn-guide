@@ -17,7 +17,7 @@ export default function LLMTrainingPage() {
         { label: t.llmTraining.title },
       ]}
       prevTopic={{ label: t.topicNames['visual-challenges'], href: '/ai/llm/visual-challenges' }}
-      nextTopic={{ label: t.topicNames['neural-networks'], href: '/ai/ml-fundamentals/neural-networks' }}
+      nextTopic={{ label: t.topicNames['training-data'], href: '/ai/llm/training-data' }}
     >
       {/* Overview */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

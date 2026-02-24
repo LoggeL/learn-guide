@@ -23,6 +23,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'gradient-descent': '2026-01-29',
   'visual-challenges': '2026-01-29',
   'llm-training': '2026-01-29',
+  'training-data': '2026-02-24',
   'embeddings': '2026-01-29',
   'context-rot': '2026-01-29',
   'agentic-vision': '2026-01-29',

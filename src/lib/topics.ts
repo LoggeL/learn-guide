@@ -112,6 +112,7 @@ export const topics: Topic[] = [
             children: [
               { id: 'transformer-architecture', name: 'Transformer Architecture', path: '/ai/llm/transformer-architecture', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'llm-training', name: 'LLM Training', path: '/ai/llm/training', difficulty: 'intermediate', lastUpdated: '2026-02-14' },
+              { id: 'training-data', name: 'Training Data', path: '/ai/llm/training-data', difficulty: 'intermediate', lastUpdated: '2026-02-24' },
               { id: 'moe', name: 'Mixture of Experts', path: '/ai/llm/moe', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'quantization', name: 'Quantization', path: '/ai/llm/quantization', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'nested-learning', name: 'Nested Learning', path: '/ai/llm/nested-learning', difficulty: 'expert', lastUpdated: '2026-02-09' },
