@@ -124,6 +124,15 @@ export const topics: Topic[] = [
         ],
       },
       {
+        id: 'diffusion',
+        name: 'Diffusion Models',
+        children: [
+          { id: 'diffusion-fundamentals', name: 'How Diffusion Works', path: '/ai/diffusion/fundamentals', difficulty: 'intermediate', lastUpdated: '2026-02-25' },
+          { id: 'text-diffusion', name: 'Text Diffusion', path: '/ai/diffusion/text', difficulty: 'intermediate', lastUpdated: '2026-02-25' },
+          { id: 'image-diffusion', name: 'Image Diffusion', path: '/ai/diffusion/image', difficulty: 'intermediate', lastUpdated: '2026-02-25' },
+        ],
+      },
+      {
         id: 'llm-inference',
         name: 'LLM Inference',
         children: [

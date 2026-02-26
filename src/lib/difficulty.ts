@@ -28,6 +28,9 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'tokenization': 'beginner',
   'embeddings': 'beginner',
   'attention': 'intermediate',
+  'diffusion-fundamentals': 'intermediate',
+  'text-diffusion': 'intermediate',
+  'image-diffusion': 'intermediate',
   // LLM Behavior
   'temperature': 'beginner',
   'context-rot': 'intermediate',

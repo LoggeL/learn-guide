@@ -86,3 +86,7 @@ export { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from './WorldMod
 
 // Training Data components
 export { DataSourceExplorer } from './DataSourceExplorer'
+
+// Diffusion components
+export { DiffusionNoiseVisualizer } from './DiffusionNoiseVisualizer'
+export { TextDiffusionDemo } from './TextDiffusionDemo'
