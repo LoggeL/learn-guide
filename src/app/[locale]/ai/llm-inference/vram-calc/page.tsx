@@ -5,7 +5,7 @@ import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { models, gpuPresets, quantPresets, type ModelEntry, type GpuCategory } from '@/lib/models'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calculator, Cpu, Zap, Info, ChevronDown, MemoryStick } from 'lucide-react'
+import { Calculator, Cpu, Zap, Info, ChevronDown, MemoryStick, ArrowDownToLine, Brain } from 'lucide-react'
 import Link from 'next/link'
 
 // ── Derived data from shared models.ts ────────────────────────────────────────
@@ -86,6 +86,7 @@ export default function VramCalcPage() {
   const [gpuIdx, setGpuIdx] = useState(5) // RTX 4090
   const [showAdvanced, setShowAdvanced] = useState(false)
   const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
+  const [offloadPct, setOffloadPct] = useState(0)
 
   const quant = quantPresets[quantIdx]
   const gpu = gpuPresets[gpuIdx]
@@ -102,6 +103,26 @@ export default function VramCalcPage() {
   )
 
   const speed = speedLabel(tokPerSec, vc as unknown as Record<string, string>)
+
+  // Offloading simulation
+  const OFFLOAD_BANDWIDTHS = [
+    { key: 'offloadGpuLabel', bw: gpu.bandwidthGBs, color: 'text-emerald-400', barColor: 'bg-emerald-500' },
+    { key: 'offloadCpuLabel', bw: 70, color: 'text-yellow-400', barColor: 'bg-yellow-500' },
+    { key: 'offloadCpuDdr4Label', bw: 40, color: 'text-orange-400', barColor: 'bg-orange-500' },
+    { key: 'offloadNvmeLabel', bw: 6, color: 'text-red-400', barColor: 'bg-red-500' },
+    { key: 'offloadSataLabel', bw: 0.5, color: 'text-red-600', barColor: 'bg-red-700' },
+  ]
+
+  // Effective speed with partial offloading to CPU RAM (DDR5)
+  const offloadedTokPerSec = useMemo(() => {
+    if (offloadPct === 0) return tokPerSec
+    const gpuFrac = 1 - offloadPct / 100
+    const cpuFrac = offloadPct / 100
+    const activeModelGB = (activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9
+    const gpuTime = (gpuFrac * activeModelGB) / gpu.bandwidthGBs
+    const cpuTime = (cpuFrac * activeModelGB) / 70 // DDR5 ~70 GB/s
+    return 1 / (gpuTime + cpuTime)
+  }, [offloadPct, tokPerSec, activeParams, quant.bitsPerParam, gpu.bandwidthGBs])
   const modelSizeGB = (totalParams * 1e9 * quant.bitsPerParam) / 8 / 1e9
 
   function applyPreset(model: ModelEntry) {
@@ -477,7 +498,133 @@ export default function VramCalcPage() {
         </div>
       </section>
 
-      {/* ── How It Works ──────────────────────────────────────── */}
+      {/* ── Offloading Speed Cliff ─────────────────────────── */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
+            <ArrowDownToLine size={20} className="text-red-400" />
+          </div>
+          <h2 className="text-2xl font-bold font-heading text-gradient">{vc.offloadTitle}</h2>
+        </div>
+
+        <p className="text-muted mb-6">{vc.offloadDesc}</p>
+
+        {/* Bandwidth comparison bars */}
+        <div className="space-y-3 mb-8">
+          {OFFLOAD_BANDWIDTHS.map(({ key, bw, color, barColor }) => {
+            const maxBw = OFFLOAD_BANDWIDTHS[0].bw
+            const pct = Math.max((Math.log10(bw) / Math.log10(maxBw)) * 100, 2)
+            const speedAtBw = bw / ((activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9)
+            return (
+              <div key={key} className="flex items-center gap-3">
+                <span className={`text-xs font-medium w-32 text-right ${color}`}>
+                  {(vc as unknown as Record<string, string>)[key]}
+                </span>
+                <div className="flex-1 h-7 rounded-lg bg-background/80 border border-border overflow-hidden relative">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${pct}%` }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    className={`h-full rounded-lg ${barColor} opacity-50`}
+                  />
+                  <span className="absolute inset-0 flex items-center justify-center text-[11px] font-mono text-text">
+                    {bw >= 1 ? `${bw.toLocaleString()} GB/s` : `${(bw * 1000).toFixed(0)} MB/s`}
+                    {' → '}~{speedAtBw >= 1 ? `${speedAtBw.toFixed(0)} tok/s` : `${(speedAtBw * 60).toFixed(0)} tok/min`}
+                  </span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Interactive offloading slider */}
+        <div className="p-5 rounded-xl bg-gradient-to-br from-red-500/5 to-orange-500/5 border border-red-500/20">
+          <label className="block text-sm font-medium text-text mb-3">{vc.offloadSlider}</label>
+          <div className="flex items-center gap-4 mb-4">
+            <span className="text-xs text-emerald-400 font-mono w-24 text-right">{100 - offloadPct}% GPU</span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={offloadPct}
+              onChange={(e) => setOffloadPct(parseInt(e.target.value))}
+              className="flex-1 accent-red-500 h-2"
+            />
+            <span className="text-xs text-yellow-400 font-mono w-24">{offloadPct}% CPU</span>
+          </div>
+
+          {/* Stacked bar showing GPU vs CPU portion */}
+          <div className="h-4 rounded-full overflow-hidden flex mb-4">
+            <div className="bg-emerald-500/60 transition-all" style={{ width: `${100 - offloadPct}%` }} />
+            <div className="bg-yellow-500/60 transition-all" style={{ width: `${offloadPct}%` }} />
+          </div>
+
+          <div className="flex items-baseline gap-3">
+            <div className="text-3xl font-bold font-heading text-text">
+              ~{offloadedTokPerSec.toFixed(1)} <span className="text-base text-muted">tok/s</span>
+            </div>
+            {offloadPct > 0 && (
+              <span className="text-sm text-red-400 font-mono">
+                ({((1 - offloadedTokPerSec / tokPerSec) * -100).toFixed(0)}% vs full VRAM)
+              </span>
+            )}
+          </div>
+          {offloadPct === 0 && (
+            <p className="text-xs text-muted mt-1">{vc.offloadEstimate}: {tokPerSec.toFixed(0)} tok/s (100% VRAM)</p>
+          )}
+        </div>
+
+        <div className="mt-4 p-3 rounded-lg bg-yellow-500/5 border border-yellow-500/20 text-xs text-yellow-300">
+          ⚠️ {vc.offloadWarning}
+        </div>
+      </section>
+
+      {/* ── MoE Offloading Guide ─────────────────────────────── */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-fuchsia-500/20 flex items-center justify-center">
+            <Brain size={20} className="text-fuchsia-400" />
+          </div>
+          <h2 className="text-2xl font-bold font-heading text-gradient">{vc.moeOffloadTitle}</h2>
+        </div>
+
+        <p className="text-muted mb-6">{vc.moeOffloadDesc}</p>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          {[
+            { titleKey: 'moeStrategy1Title', descKey: 'moeStrategy1Desc', icon: '🎯', color: 'violet' },
+            { titleKey: 'moeStrategy2Title', descKey: 'moeStrategy2Desc', icon: '💤', color: 'cyan' },
+            { titleKey: 'moeStrategy3Title', descKey: 'moeStrategy3Desc', icon: '⚡', color: 'emerald' },
+            { titleKey: 'moeStrategy4Title', descKey: 'moeStrategy4Desc', icon: '🧮', color: 'fuchsia' },
+          ].map(({ titleKey, descKey, icon, color }) => (
+            <motion.div
+              key={titleKey}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`p-5 rounded-xl bg-${color}-500/5 border border-${color}-500/20`}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">{icon}</span>
+                <h3 className={`font-semibold font-heading text-${color}-400`}>
+                  {(vc as unknown as Record<string, string>)[titleKey]}
+                </h3>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">
+                {(vc as unknown as Record<string, string>)[descKey]}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Key insight callout */}
+        <div className="p-5 rounded-xl bg-gradient-to-br from-fuchsia-500/10 to-violet-500/10 border border-fuchsia-500/30">
+          <h3 className="text-fuchsia-400 font-bold font-heading mb-2">💡 {vc.moeKeyInsight}</h3>
+          <p className="text-text leading-relaxed">{vc.moeKeyInsightText}</p>
+        </div>
+      </section>
+
+            {/* ── How It Works ──────────────────────────────────────── */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">

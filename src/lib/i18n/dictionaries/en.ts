@@ -5308,6 +5308,34 @@ export const en = {
     caveat4: 'Actual speed depends on compute utilization, not just bandwidth. Batched inference, speculative decoding, and flash attention all change the picture.',
     caveat5: 'K-quant sizes (Q4_K_M, Q5_K_M, etc.) vary slightly by model architecture. The bits-per-param values here are typical averages.',
 
+    // Offloading
+    offloadTitle: 'The Offloading Speed Cliff',
+    offloadDesc: 'When a model doesn\'t fit in VRAM, layers can be offloaded to CPU RAM or even disk. But the speed penalty is brutal:',
+    offloadGpuLabel: 'GPU VRAM',
+    offloadCpuLabel: 'CPU RAM (DDR5)',
+    offloadCpuDdr4Label: 'CPU RAM (DDR4)',
+    offloadNvmeLabel: 'NVMe SSD',
+    offloadSataLabel: 'SATA SSD',
+    offloadLayersInVram: 'layers in VRAM',
+    offloadLayersInRam: 'layers in CPU RAM',
+    offloadSlider: 'Drag to simulate partial offloading',
+    offloadWarning: 'Even offloading 10% of layers to CPU RAM can cut your speed by 50%+. The bottleneck is the slowest link in the chain.',
+    offloadEstimate: 'Estimated with offloading',
+
+    // MoE Offloading Guide
+    moeOffloadTitle: 'Smart Offloading for MoE Models',
+    moeOffloadDesc: 'Mixture-of-Experts models are uniquely suited for offloading because only a fraction of experts activate per token. Here\'s how to maximize performance:',
+    moeStrategy1Title: 'Keep the hot path in VRAM',
+    moeStrategy1Desc: 'Attention layers, the router/gate network, and shared layers are used for every token. These must stay in VRAM. In llama.cpp, use --ngl to control how many layers are on GPU.',
+    moeStrategy2Title: 'Offload inactive experts to CPU RAM',
+    moeStrategy2Desc: 'Most MoE models activate 2-4 experts out of 64+. The inactive experts can live in CPU RAM with minimal impact — they\'re not read during inference anyway.',
+    moeStrategy3Title: 'Use expert prefetching',
+    moeStrategy3Desc: 'Advanced runtimes (like llama.cpp with --override-kv) can predict which experts the next token will need and prefetch them from CPU→GPU while the current token is processing.',
+    moeStrategy4Title: 'Example: Qwen3.5-35B-A3B at Q4',
+    moeStrategy4Desc: 'Total size: ~18 GB. But only ~3B params are active per token. With smart offloading, you can run this on a 12GB GPU: keep attention + active experts in VRAM (~6 GB), offload the rest to RAM. Speed: nearly the same as full VRAM, because inactive experts aren\'t read.',
+    moeKeyInsight: 'Key Insight',
+    moeKeyInsightText: 'For MoE models, VRAM determines which models you CAN run. For dense models, VRAM determines how FAST you can run them. A 35B MoE model with 3B active params on a 12GB GPU can be faster than a 14B dense model on the same GPU.',
+
     // Cross-links
     linkQuant: 'Learn how quantization reduces model size with minimal quality loss.',
     linkLocal: 'Complete guide to running models on your own hardware.',
