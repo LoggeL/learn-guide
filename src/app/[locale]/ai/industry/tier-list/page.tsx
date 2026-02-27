@@ -3,11 +3,15 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Cloud, Server, Monitor } from 'lucide-react'
+
+type HostingType = 'api' | 'server' | 'local'
 
 interface ModelEntry {
   name: string
   desc: string
+  hosting: HostingType
+  params?: string
 }
 
 interface TierConfig {
@@ -18,6 +22,12 @@ interface TierConfig {
   borderColor: string
   badgeBg: string
   models: ModelEntry[]
+}
+
+const hostingConfig: Record<HostingType, { icon: typeof Cloud; label: string; color: string; bg: string }> = {
+  api: { icon: Cloud, label: 'API only', color: 'text-sky-400', bg: 'bg-sky-500/15 border-sky-500/30' },
+  server: { icon: Server, label: '\u2264128GB RAM', color: 'text-amber-400', bg: 'bg-amber-500/15 border-amber-500/30' },
+  local: { icon: Monitor, label: 'Consumer GPU', color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/30' },
 }
 
 export default function TierListPage() {
@@ -33,8 +43,8 @@ export default function TierListPage() {
       borderColor: 'border-purple-500/30',
       badgeBg: 'bg-purple-500/20',
       models: [
-        { name: tl.gpt53Codex, desc: tl.gpt53CodexDesc },
-        { name: tl.claudeOpus46, desc: tl.claudeOpus46Desc },
+        { name: tl.gpt53Codex, desc: tl.gpt53CodexDesc, hosting: 'api' },
+        { name: tl.claudeOpus46, desc: tl.claudeOpus46Desc, hosting: 'api' },
       ],
     },
     {
@@ -45,13 +55,13 @@ export default function TierListPage() {
       borderColor: 'border-blue-500/30',
       badgeBg: 'bg-blue-500/20',
       models: [
-        { name: tl.gemini3Flash, desc: tl.gemini3FlashDesc },
-        { name: tl.deepseekV32, desc: tl.deepseekV32Desc },
-        { name: tl.minimax25, desc: tl.minimax25Desc },
-        { name: tl.kimiK25, desc: tl.kimiK25Desc },
-        { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc },
-        { name: tl.qwen35_35bA3b, desc: tl.qwen35_35bA3bDesc },
-        { name: tl.qwen35_27b, desc: tl.qwen35_27bDesc },
+        { name: tl.gemini3Flash, desc: tl.gemini3FlashDesc, hosting: 'api' },
+        { name: tl.deepseekV32, desc: tl.deepseekV32Desc, hosting: 'server', params: '685B MoE' },
+        { name: tl.minimax25, desc: tl.minimax25Desc, hosting: 'server', params: '~456B MoE' },
+        { name: tl.kimiK25, desc: tl.kimiK25Desc, hosting: 'api' },
+        { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc, hosting: 'api' },
+        { name: tl.qwen35_35bA3b, desc: tl.qwen35_35bA3bDesc, hosting: 'local', params: '35B MoE \u2192 3B active' },
+        { name: tl.qwen35_27b, desc: tl.qwen35_27bDesc, hosting: 'local', params: '27B dense' },
       ],
     },
     {
@@ -62,10 +72,10 @@ export default function TierListPage() {
       borderColor: 'border-emerald-500/30',
       badgeBg: 'bg-emerald-500/20',
       models: [
-        { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc },
-        { name: tl.gptOss20b, desc: tl.gptOss20bDesc },
-        { name: tl.glm5, desc: tl.glm5Desc },
-        { name: tl.qwen35, desc: tl.qwen35Desc },
+        { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc, hosting: 'local', params: '~32B' },
+        { name: tl.gptOss20b, desc: tl.gptOss20bDesc, hosting: 'local', params: '20B dense' },
+        { name: tl.glm5, desc: tl.glm5Desc, hosting: 'server', params: '~200B+' },
+        { name: tl.qwen35, desc: tl.qwen35Desc, hosting: 'server', params: '~110B+' },
       ],
     },
     {
@@ -76,8 +86,8 @@ export default function TierListPage() {
       borderColor: 'border-yellow-500/30',
       badgeBg: 'bg-yellow-500/20',
       models: [
-        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc },
-        { name: tl.grok41, desc: tl.grok41Desc },
+        { name: tl.gemini31Pro, desc: tl.gemini31ProDesc, hosting: 'api' },
+        { name: tl.grok41, desc: tl.grok41Desc, hosting: 'api' },
       ],
     },
     {
@@ -88,8 +98,8 @@ export default function TierListPage() {
       borderColor: 'border-red-500/30',
       badgeBg: 'bg-red-500/20',
       models: [
-        { name: tl.llamaMaverick, desc: tl.llamaMaverickDesc },
-        { name: tl.amazonNova, desc: tl.amazonNovaDesc },
+        { name: tl.llamaMaverick, desc: tl.llamaMaverickDesc, hosting: 'server', params: '400B+ MoE' },
+        { name: tl.amazonNova, desc: tl.amazonNovaDesc, hosting: 'api' },
       ],
     },
   ]
@@ -123,6 +133,21 @@ export default function TierListPage() {
         </div>
       </section>
 
+      {/* Hosting Legend */}
+      <section className="rounded-xl bg-surface/50 border border-border p-4">
+        <div className="flex flex-wrap gap-4 items-center justify-center text-xs">
+          {(Object.entries(hostingConfig) as [HostingType, typeof hostingConfig[HostingType]][]).map(([key, cfg]) => {
+            const Icon = cfg.icon
+            return (
+              <div key={key} className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border ${cfg.bg}`}>
+                <Icon size={12} className={cfg.color} />
+                <span className={cfg.color}>{cfg.label}</span>
+              </div>
+            )
+          })}
+        </div>
+      </section>
+
       {/* Tier Rows */}
       <section className="space-y-6">
         {tiers.map((tier, tierIdx) => (
@@ -143,19 +168,32 @@ export default function TierListPage() {
 
             {/* Model Cards */}
             <div className="p-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {tier.models.map((model) => (
-                <div
-                  key={model.name}
-                  className="p-4 rounded-xl bg-background/50 border border-white/5 hover:border-white/10 transition-colors"
-                >
-                  <h4 className={`font-semibold font-heading ${tier.color} mb-1`}>
-                    {model.name}
-                  </h4>
-                  <p className="text-sm text-muted leading-relaxed">
-                    {model.desc}
-                  </p>
-                </div>
-              ))}
+              {tier.models.map((model) => {
+                const hcfg = hostingConfig[model.hosting]
+                const HIcon = hcfg.icon
+                return (
+                  <div
+                    key={model.name}
+                    className="p-4 rounded-xl bg-background/50 border border-white/5 hover:border-white/10 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <h4 className={`font-semibold font-heading ${tier.color}`}>
+                        {model.name}
+                      </h4>
+                      <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] shrink-0 ${hcfg.bg}`} title={hcfg.label}>
+                        <HIcon size={10} className={hcfg.color} />
+                        <span className={hcfg.color}>{hcfg.label}</span>
+                      </div>
+                    </div>
+                    {model.params && (
+                      <p className="text-[10px] text-subtle font-mono mb-1.5">{model.params}</p>
+                    )}
+                    <p className="text-sm text-muted leading-relaxed">
+                      {model.desc}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </motion.div>
         ))}
