@@ -3,85 +3,47 @@
 import { useState, useMemo } from 'react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
+import { models, gpuPresets, quantPresets, type ModelEntry, type GpuCategory } from '@/lib/models'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calculator, Cpu, Zap, Info, ChevronDown, MemoryStick } from 'lucide-react'
 import Link from 'next/link'
 
-// ── Data ──────────────────────────────────────────────────────────────────────
+// ── Derived data from shared models.ts ────────────────────────────────────────
 
-interface QuantLevel {
-  label: string
-  bitsPerParam: number
+const CTX_OPTIONS = [2048, 4096, 8192, 16384, 32768, 65536, 131072]
+const GPU_TIERS = [8, 12, 16, 24, 32, 48, 80, 96, 128]
+
+/** Models with param data → usable as presets in calculator */
+const modelPresets = models.filter(m => m.totalParamsB != null)
+
+/** GPU category labels */
+const gpuCategoryLabels: Record<GpuCategory, string> = {
+  'nvidia-consumer': 'NVIDIA Consumer',
+  'nvidia-pro': 'NVIDIA Pro',
+  'apple': 'Apple Silicon',
+  'amd-apu': 'AMD APU',
+  'datacenter': 'Datacenter',
 }
 
-const QUANT_LEVELS: QuantLevel[] = [
-  { label: 'FP16', bitsPerParam: 16 },
-  { label: 'Q8', bitsPerParam: 8 },
-  { label: 'Q6_K', bitsPerParam: 6.5 },
-  { label: 'Q5_K_M', bitsPerParam: 5.5 },
-  { label: 'Q4_K_M', bitsPerParam: 4.8 },
-  { label: 'Q3_K_M', bitsPerParam: 3.9 },
-  { label: 'Q2_K', bitsPerParam: 3.0 },
-]
-
-const CTX_OPTIONS = [2048, 4096, 8192, 16384, 32768]
-
-interface GpuPreset {
-  name: string
-  bandwidthGBs: number
-  vramGB: number
-}
-
-const GPU_PRESETS: GpuPreset[] = [
-  { name: 'RTX 3060 12GB', bandwidthGBs: 360, vramGB: 12 },
-  { name: 'RTX 3090 24GB', bandwidthGBs: 936, vramGB: 24 },
-  { name: 'RTX 4070 Ti S 16GB', bandwidthGBs: 672, vramGB: 16 },
-  { name: 'RTX 4090 24GB', bandwidthGBs: 1008, vramGB: 24 },
-  { name: 'RTX 5090 32GB', bandwidthGBs: 1792, vramGB: 32 },
-  { name: 'M2 Pro (16GB)', bandwidthGBs: 200, vramGB: 16 },
-  { name: 'M4 Max (128GB)', bandwidthGBs: 546, vramGB: 128 },
-  { name: 'A100 80GB', bandwidthGBs: 2039, vramGB: 80 },
-]
-
-const GPU_TIERS = [8, 12, 16, 24, 32, 48, 80]
-
-interface ModelPreset {
-  name: string
-  totalParams: number
-  activeParams: number
-  isMoE: boolean
-  layers: number
-  dModel: number
-}
-
-const MODEL_PRESETS: ModelPreset[] = [
-  { name: 'Llama 3.1 8B', totalParams: 8, activeParams: 8, isMoE: false, layers: 32, dModel: 4096 },
-  { name: 'Mistral 7B', totalParams: 7, activeParams: 7, isMoE: false, layers: 32, dModel: 4096 },
-  { name: 'Qwen 2.5 14B', totalParams: 14, activeParams: 14, isMoE: false, layers: 48, dModel: 5120 },
-  { name: 'Qwen 3.5 27B', totalParams: 27, activeParams: 27, isMoE: false, layers: 64, dModel: 5120 },
-  { name: 'Qwen3.5 35B-A3B', totalParams: 35, activeParams: 3, isMoE: true, layers: 64, dModel: 2560 },
-  { name: 'Llama 3.3 70B', totalParams: 70, activeParams: 70, isMoE: false, layers: 80, dModel: 8192 },
-  { name: 'Llama 3.1 405B', totalParams: 405, activeParams: 405, isMoE: false, layers: 126, dModel: 16384 },
-]
+const gpuCategoryOrder: GpuCategory[] = ['nvidia-consumer', 'nvidia-pro', 'apple', 'amd-apu', 'datacenter']
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function estimateVram(
-  totalParams: number,
+  totalParamsB: number,
   bitsPerParam: number,
   layers: number,
   dModel: number,
   ctxLen: number,
 ): number {
-  const modelGB = (totalParams * 1e9 * bitsPerParam) / 8 / 1e9
-  // KV cache: 2 (K+V) * layers * dModel * ctxLen * 2 bytes (FP16)
+  const modelGB = (totalParamsB * 1e9 * bitsPerParam) / 8 / 1e9
   const kvCacheGB = (2 * layers * dModel * ctxLen * 2) / 1e9
   const overheadGB = 0.5
   return modelGB + kvCacheGB + overheadGB
 }
 
-function estimateSpeed(activeParams: number, bitsPerParam: number, bandwidthGBs: number): number {
-  const modelSizeGB = (activeParams * 1e9 * bitsPerParam) / 8 / 1e9
+function estimateSpeed(activeParamsB: number, bitsPerParam: number, bandwidthGBs: number): number {
+  const modelSizeGB = (activeParamsB * 1e9 * bitsPerParam) / 8 / 1e9
   if (modelSizeGB === 0) return 0
   return bandwidthGBs / modelSizeGB
 }
@@ -121,11 +83,12 @@ export default function VramCalcPage() {
   const [ctxLen, setCtxLen] = useState(8192)
   const [layers, setLayers] = useState(32)
   const [dModel, setDModel] = useState(4096)
-  const [gpuIdx, setGpuIdx] = useState(3) // RTX 4090
+  const [gpuIdx, setGpuIdx] = useState(5) // RTX 4090
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [selectedModelId, setSelectedModelId] = useState<string | null>(null)
 
-  const quant = QUANT_LEVELS[quantIdx]
-  const gpu = GPU_PRESETS[gpuIdx]
+  const quant = quantPresets[quantIdx]
+  const gpu = gpuPresets[gpuIdx]
 
   // Calculations
   const vramGB = useMemo(
@@ -141,12 +104,19 @@ export default function VramCalcPage() {
   const speed = speedLabel(tokPerSec, vc as unknown as Record<string, string>)
   const modelSizeGB = (totalParams * 1e9 * quant.bitsPerParam) / 8 / 1e9
 
-  function applyPreset(preset: ModelPreset) {
-    setTotalParams(preset.totalParams)
-    setActiveParams(preset.activeParams)
-    setIsMoE(preset.isMoE)
-    setLayers(preset.layers)
-    setDModel(preset.dModel)
+  function applyPreset(model: ModelEntry) {
+    setTotalParams(model.totalParamsB!)
+    setActiveParams(model.activeParamsB ?? model.totalParamsB!)
+    setIsMoE(!!model.isMoE)
+    if (model.nLayers) setLayers(model.nLayers)
+    if (model.dModel) setDModel(model.dModel)
+    setSelectedModelId(model.id)
+  }
+
+  // Get display name from i18n tierList keys
+  const tl = t.tierList as Record<string, string>
+  function modelDisplayName(m: ModelEntry): string {
+    return tl[m.nameKey] || m.id
   }
 
   return (
@@ -166,21 +136,24 @@ export default function VramCalcPage() {
         <h2 className="text-2xl font-bold font-heading text-gradient mb-2">{vc.presetsTitle}</h2>
         <p className="text-muted mb-5">{vc.presetsDesc}</p>
         <div className="flex flex-wrap gap-2">
-          {MODEL_PRESETS.map((p) => (
+          {modelPresets.map((m) => (
             <button
-              key={p.name}
-              onClick={() => applyPreset(p)}
+              key={m.id}
+              onClick={() => applyPreset(m)}
               className={`px-3.5 py-2 rounded-xl text-sm font-medium border transition-all
-                ${totalParams === p.totalParams && activeParams === p.activeParams
+                ${selectedModelId === m.id
                   ? 'bg-violet-500/20 border-violet-500/50 text-violet-300'
                   : 'bg-surface border-border text-muted hover:border-violet-500/30 hover:text-text'
                 }`}
             >
-              {p.name}
-              {p.isMoE && (
+              {modelDisplayName(m)}
+              {m.isMoE && (
                 <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/30">
                   MoE
                 </span>
+              )}
+              {m.params && (
+                <span className="ml-1.5 text-[10px] opacity-50">{m.params}</span>
               )}
             </button>
           ))}
@@ -206,7 +179,7 @@ export default function VramCalcPage() {
                 <input
                   type="number"
                   min={0.5}
-                  max={1000}
+                  max={2000}
                   step={0.5}
                   value={totalParams}
                   onChange={(e) => {
@@ -214,9 +187,10 @@ export default function VramCalcPage() {
                     if (!isNaN(v) && v > 0) {
                       setTotalParams(v)
                       if (!isMoE) setActiveParams(v)
+                      setSelectedModelId(null)
                     }
                   }}
-                  className="w-24 px-3 py-2 rounded-lg bg-background border border-border text-text text-center font-mono focus:border-violet-500/50 focus:outline-none"
+                  className="w-28 px-3 py-2 rounded-lg bg-background border border-border text-text text-center font-mono focus:border-violet-500/50 focus:outline-none"
                 />
                 <span className="text-muted text-sm">{vc.billion}</span>
               </div>
@@ -234,7 +208,7 @@ export default function VramCalcPage() {
                         const v = parseFloat(e.target.value)
                         if (!isNaN(v) && v > 0) setActiveParams(v)
                       }}
-                      className="w-24 px-3 py-2 rounded-lg bg-background border border-fuchsia-500/30 text-fuchsia-300 text-center font-mono focus:border-fuchsia-500/50 focus:outline-none"
+                      className="w-28 px-3 py-2 rounded-lg bg-background border border-fuchsia-500/30 text-fuchsia-300 text-center font-mono focus:border-fuchsia-500/50 focus:outline-none"
                     />
                     <span className="text-muted text-sm">{vc.billion}</span>
                   </div>
@@ -263,9 +237,9 @@ export default function VramCalcPage() {
             <div>
               <label className="block text-sm font-medium text-text mb-2">{vc.quantLabel}</label>
               <div className="flex flex-wrap gap-1.5">
-                {QUANT_LEVELS.map((q, i) => (
+                {quantPresets.map((q, i) => (
                   <button
-                    key={q.label}
+                    key={q.id}
                     onClick={() => setQuantIdx(i)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-all
                       ${i === quantIdx
@@ -379,7 +353,7 @@ export default function VramCalcPage() {
                 const barWidth = Math.min((vramGB / gpuGB) * 100, 100)
                 return (
                   <div key={gpuGB} className="flex items-center gap-3">
-                    <span className="text-xs text-muted font-mono w-12 text-right">{gpuGB}GB</span>
+                    <span className="text-xs text-muted font-mono w-14 text-right">{gpuGB} GB</span>
                     <div className="flex-1 h-5 rounded-full bg-background/80 border border-border overflow-hidden relative">
                       <motion.div
                         initial={{ width: 0 }}
@@ -406,25 +380,38 @@ export default function VramCalcPage() {
           <h2 className="text-2xl font-bold font-heading text-gradient">{vc.speedTitle}</h2>
         </div>
 
-        {/* GPU Select */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-text mb-2">{vc.gpuLabel}</label>
-          <div className="flex flex-wrap gap-1.5">
-            {GPU_PRESETS.map((g, i) => (
-              <button
-                key={g.name}
-                onClick={() => setGpuIdx(i)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all
-                  ${i === gpuIdx
-                    ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300'
-                    : 'bg-surface border-border text-muted hover:border-cyan-500/30 hover:text-text'
-                  }`}
-              >
-                {g.name}
-                <span className="ml-1 text-[10px] opacity-60">{g.bandwidthGBs}GB/s</span>
-              </button>
-            ))}
-          </div>
+        {/* GPU Select — grouped by category */}
+        <div className="mb-6 space-y-4">
+          <label className="block text-sm font-medium text-text">{vc.gpuLabel}</label>
+          {gpuCategoryOrder.map((cat) => {
+            const catGpus = gpuPresets.filter(g => g.category === cat)
+            if (catGpus.length === 0) return null
+            return (
+              <div key={cat}>
+                <span className="text-[10px] text-muted uppercase tracking-wider font-medium">{gpuCategoryLabels[cat]}</span>
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {catGpus.map((g) => {
+                    const idx = gpuPresets.indexOf(g)
+                    return (
+                      <button
+                        key={g.name}
+                        onClick={() => setGpuIdx(idx)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all
+                          ${idx === gpuIdx
+                            ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-300'
+                            : 'bg-surface border-border text-muted hover:border-cyan-500/30 hover:text-text'
+                          }`}
+                      >
+                        {g.name}
+                        <span className="ml-1 text-[10px] opacity-50">{g.vramGB}GB</span>
+                        <span className="ml-1 text-[10px] opacity-40">{g.bandwidthGBs}GB/s</span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
         </div>
 
         {/* Speed Result */}
@@ -438,6 +425,7 @@ export default function VramCalcPage() {
             <div className="flex items-center gap-2">
               <Cpu size={16} className="text-cyan-400" />
               <span className="text-sm font-medium text-cyan-300">{vc.estimatedSpeed}</span>
+              {gpu.note && <span className="text-[10px] text-muted px-1.5 py-0.5 rounded bg-surface border border-border">{gpu.note}</span>}
             </div>
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
               tokPerSec >= 30 ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400' :
@@ -499,7 +487,6 @@ export default function VramCalcPage() {
         </div>
 
         <div className="space-y-6">
-          {/* VRAM formula */}
           <div className="p-5 rounded-xl bg-violet-500/5 border border-violet-500/20">
             <h3 className="text-violet-400 font-semibold font-heading mb-3">{vc.formulaVramTitle}</h3>
             <div className="font-mono text-sm text-text bg-background/60 p-4 rounded-lg mb-3 overflow-x-auto">
@@ -508,7 +495,6 @@ export default function VramCalcPage() {
             <p className="text-muted text-sm leading-relaxed">{vc.formulaVramDesc}</p>
           </div>
 
-          {/* KV Cache formula */}
           <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
             <h3 className="text-cyan-400 font-semibold font-heading mb-3">{vc.formulaKvTitle}</h3>
             <div className="font-mono text-sm text-text bg-background/60 p-4 rounded-lg mb-3 overflow-x-auto">
@@ -517,7 +503,6 @@ export default function VramCalcPage() {
             <p className="text-muted text-sm leading-relaxed">{vc.formulaKvDesc}</p>
           </div>
 
-          {/* Speed formula */}
           <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
             <h3 className="text-emerald-400 font-semibold font-heading mb-3">{vc.formulaSpeedTitle}</h3>
             <div className="font-mono text-sm text-text bg-background/60 p-4 rounded-lg mb-3 overflow-x-auto">
