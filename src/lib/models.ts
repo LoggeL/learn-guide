@@ -256,8 +256,10 @@ export const gpuPresets: GpuPreset[] = [
   { name: 'RTX 5070 Ti', vramGB: 16, bandwidthGBs: 896, category: 'nvidia-consumer' },
   { name: 'RTX 5080', vramGB: 16, bandwidthGBs: 960, category: 'nvidia-consumer' },
   { name: 'RTX 5090', vramGB: 32, bandwidthGBs: 1792, category: 'nvidia-consumer' },
-  // NVIDIA Pro
-  { name: 'RTX PRO 6000 Blackwell', vramGB: 96, bandwidthGBs: 1792, category: 'nvidia-pro', note: 'GDDR7' },
+  // NVIDIA Pro / Workstation
+  { name: 'RTX PRO 6000 Blackwell', vramGB: 96, bandwidthGBs: 1800, category: 'nvidia-pro', note: '96GB GDDR7, 512-bit' },
+  // NVIDIA DGX Spark (desktop AI supercomputer)
+  { name: 'DGX Spark (GB10)', vramGB: 128, bandwidthGBs: 273, category: 'nvidia-pro', note: '128GB LPDDR5X unified' },
   // Apple Silicon (unified memory — shared with CPU)
   { name: 'M2 Pro', vramGB: 32, bandwidthGBs: 200, category: 'apple', note: 'Unified' },
   { name: 'M3 Max (40-core)', vramGB: 128, bandwidthGBs: 400, category: 'apple', note: 'Unified' },
@@ -268,6 +270,8 @@ export const gpuPresets: GpuPreset[] = [
   // Datacenter / Server
   { name: 'A100 80GB', vramGB: 80, bandwidthGBs: 2039, category: 'datacenter', note: 'HBM2e' },
   { name: 'H100 80GB', vramGB: 80, bandwidthGBs: 3350, category: 'datacenter', note: 'HBM3' },
+  { name: 'H200 141GB', vramGB: 141, bandwidthGBs: 4800, category: 'datacenter', note: 'HBM3e' },
+  { name: 'B200 192GB', vramGB: 192, bandwidthGBs: 8000, category: 'datacenter', note: 'HBM3e Blackwell' },
 ]
 
 /** Quantization presets with bits per parameter */
