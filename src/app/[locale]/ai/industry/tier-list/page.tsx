@@ -3,9 +3,9 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Cloud, Server, Monitor, Globe } from 'lucide-react'
+import { AlertTriangle, Cloud, Monitor, Globe } from 'lucide-react'
 
-type HostingType = 'api' | 'open-weight' | 'server' | 'local'
+type HostingType = 'api' | 'open-weight' | 'local'
 
 interface ModelEntry {
   name: string
@@ -27,7 +27,6 @@ interface TierConfig {
 const hostingConfig: Record<HostingType, { icon: typeof Cloud; label: string; color: string; bg: string }> = {
   api: { icon: Cloud, label: 'API only', color: 'text-sky-400', bg: 'bg-sky-500/15 border-sky-500/30' },
   'open-weight': { icon: Globe, label: 'Open Weight', color: 'text-violet-400', bg: 'bg-violet-500/15 border-violet-500/30' },
-  server: { icon: Server, label: '\u2264128GB RAM', color: 'text-amber-400', bg: 'bg-amber-500/15 border-amber-500/30' },
   local: { icon: Monitor, label: 'Consumer GPU', color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/30' },
 }
 

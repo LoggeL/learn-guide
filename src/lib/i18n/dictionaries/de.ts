@@ -153,6 +153,7 @@ export const de: Dictionary = {
     'prompt-caching': 'Prompt Caching',
     'batching': 'Batching & Durchsatz',
     'local-inference': 'Lokale Modellinferenz',
+    'vram-calc': 'VRAM-Rechner',
     // ML Fundamentals
     'ml-fundamentals': 'ML-Grundlagen',
     'neural-networks': 'Neuronale Netzwerke',

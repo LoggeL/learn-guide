@@ -151,6 +151,7 @@ export const en = {
     'prompt-caching': 'Prompt Caching',
     'batching': 'Batching & Throughput',
     'local-inference': 'Running Models Locally',
+    'vram-calc': 'VRAM Calculator',
     // ML Fundamentals
     'ml-fundamentals': 'ML Fundamentals',
     'neural-networks': 'Neural Networks',
@@ -212,6 +213,7 @@ export const en = {
     'prompt-caching': 'Reuse computed KV caches across API requests to save cost and latency',
     'batching': 'Process multiple requests simultaneously for higher throughput',
     'local-inference': 'Run LLMs on your own hardware for privacy, speed, and zero API costs',
+    'vram-calc': 'Estimate VRAM requirements and inference speed for running local LLMs',
     'neural-networks': 'Layers of connected neurons that learn patterns from data',
     'gradient-descent': 'The optimization algorithm that trains neural networks',
     'training': 'How models learn from data through forward and backward passes',
@@ -5240,6 +5242,70 @@ export const en = {
     llamaMaverickDesc: 'Meta\'s open model continues to underdeliver. Better alternatives exist everywhere.',
     amazonNova: 'Amazon Nova',
     amazonNovaDesc: 'Whatever Amazon is doing here, it\'s not working. Just avoid.',
+  },
+
+  // ── VRAM Calculator page ───────────────────────────────────────────────────
+  vramCalc: {
+    title: 'VRAM Calculator',
+    description: 'Estimate VRAM requirements and inference speed for running LLMs locally.',
+
+    // Presets
+    presetsTitle: 'Quick Model Presets',
+    presetsDesc: 'Click a model to auto-fill parameters. Adjust quantization and context length below.',
+
+    // Calculator
+    calcTitle: 'VRAM Estimator',
+    paramLabel: 'Total Parameters',
+    billion: 'billion',
+    activeParamLabel: 'Active Parameters (MoE)',
+    moeToggle: 'Mixture of Experts model',
+    quantLabel: 'Quantization Level',
+    ctxLabel: 'Context Length',
+    advanced: 'Advanced: Layers & Hidden Dimension',
+    layersLabel: 'Layers (n_layers)',
+    dModelLabel: 'Hidden Dim (d_model)',
+
+    // Results
+    totalVram: 'Estimated Total VRAM',
+    modelWeights: 'Model weights',
+    kvCache: 'KV cache',
+    overhead: 'Runtime overhead',
+    gpuFit: 'GPU Compatibility',
+    fits: 'Fits',
+    fitsTight: 'Tight fit',
+    doesNotFit: 'Won\'t fit',
+
+    // Speed
+    speedTitle: 'Speed Estimator',
+    gpuLabel: 'Select GPU',
+    estimatedSpeed: 'Estimated Generation Speed',
+    speedFast: 'Fast',
+    speedGood: 'Good',
+    speedUsable: 'Usable',
+    speedSlow: 'Slow',
+    moeNote: 'Speed uses active parameters only — MoE models are faster than their total size suggests.',
+    wontFitWarning: 'This model needs {vram} GB but the {gpu} GB GPU only has {gpu} GB. You would need CPU offloading or a larger GPU.',
+
+    // How it works
+    howTitle: 'How the Formulas Work',
+    formulaVramTitle: 'VRAM Formula',
+    formulaVramDesc: 'Each parameter is stored using the number of bits determined by quantization. FP16 uses 16 bits (2 bytes) per parameter, Q4_K_M uses roughly 4.8 bits. Divide by 8 to convert bits to bytes.',
+    formulaKvTitle: 'KV Cache Formula',
+    formulaKvDesc: 'During generation, each layer stores a Key and Value vector for every token in the context. With longer contexts, KV cache can use several GB — this is why 32K context costs much more VRAM than 4K.',
+    formulaSpeedTitle: 'Speed Formula (Roofline Model)',
+    formulaSpeedDesc: 'LLM inference is memory-bandwidth-bound: each token requires reading the entire model from VRAM. Speed ≈ how fast you can stream the model weights. For MoE models, only active parameters are read per token.',
+
+    // Caveats
+    caveatsTitle: 'Important Caveats',
+    caveat1: 'These are estimates. Real VRAM usage depends on the inference engine (llama.cpp, vLLM, Ollama), batch size, and implementation details.',
+    caveat2: 'Flash Attention and paged KV cache can significantly reduce memory usage in practice.',
+    caveat3: 'CPU offloading lets you run larger models than your GPU VRAM allows, at the cost of much slower speed.',
+    caveat4: 'Actual speed depends on compute utilization, not just bandwidth. Batched inference, speculative decoding, and flash attention all change the picture.',
+    caveat5: 'K-quant sizes (Q4_K_M, Q5_K_M, etc.) vary slightly by model architecture. The bits-per-param values here are typical averages.',
+
+    // Cross-links
+    linkQuant: 'Learn how quantization reduces model size with minimal quality loss.',
+    linkLocal: 'Complete guide to running models on your own hardware.',
   },
 }
 
