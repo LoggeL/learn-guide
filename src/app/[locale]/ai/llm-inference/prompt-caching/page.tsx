@@ -2,6 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
+import { CacheHitMissAnimation, PrefixMatchingDemo, CostSavingsCalculator, CacheTTLVisualization } from '@/components/interactive'
 
 export default function PromptCachingPage() {
   const { t } = useTranslation()
@@ -32,90 +33,19 @@ export default function PromptCachingPage() {
         </div>
       </section>
 
-      {/* Cache Hit vs Miss Visualization */}
+      {/* Cache Hit vs Miss — Interactive Animation */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.promptCaching.visualTitle}</h2>
         <p className="text-muted mb-6">{t.promptCaching.visualDesc}</p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Cache Miss */}
-          <div className="p-5 bg-gradient-to-br from-red-500/5 to-orange-500/5 border border-red-500/20 rounded-xl font-mono text-sm">
-            <h3 className="text-lg font-bold text-red-400 mb-4 font-heading">{t.promptCaching.cacheMiss}</h3>
-            <div className="space-y-2 text-muted">
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">→</span>
-                <span>{t.promptCaching.missStep1}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">→</span>
-                <span>{t.promptCaching.missStep2}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">→</span>
-                <span>{t.promptCaching.missStep3}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-red-400">→</span>
-                <span>{t.promptCaching.missStep4}</span>
-              </div>
-              <div className="mt-4 pt-3 border-t border-red-500/20">
-                <span className="text-red-400 font-bold">{t.promptCaching.missResult}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Cache Hit */}
-          <div className="p-5 bg-gradient-to-br from-green-500/5 to-emerald-500/5 border border-green-500/20 rounded-xl font-mono text-sm">
-            <h3 className="text-lg font-bold text-green-400 mb-4 font-heading">{t.promptCaching.cacheHit}</h3>
-            <div className="space-y-2 text-muted">
-              <div className="flex items-center gap-2">
-                <span className="text-green-400">→</span>
-                <span>{t.promptCaching.hitStep1}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-400">→</span>
-                <span>{t.promptCaching.hitStep2}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-green-400">→</span>
-                <span>{t.promptCaching.hitStep3}</span>
-              </div>
-              <div className="mt-4 pt-3 border-t border-green-500/20">
-                <span className="text-green-400 font-bold">{t.promptCaching.hitResult}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Flow diagram */}
-        <div className="mt-8 p-6 bg-background border border-border rounded-xl overflow-x-auto">
-          <pre className="text-xs md:text-sm text-muted leading-relaxed whitespace-pre font-mono">
-{`  Request arrives
-       │
-       ▼
-  ┌─────────────────┐
-  │  Hash the prompt │
-  │  prefix (system  │
-  │  + cached parts) │
-  └────────┬────────┘
-           │
-     ┌─────▼─────┐
-     │ Cache has  │──── Yes ──→ ⚡ Load KV cache from memory
-     │ this hash? │              │  Skip forward pass for
-     └─────┬─────┘              │  cached prefix tokens
-           │ No                 │
-           ▼                    ▼
-  🐢 Full forward pass    Process only new
-     for ALL tokens        (uncached) tokens
-           │                    │
-           ▼                    ▼
-  Store KV cache for       Generate response
-  future requests          (~3× faster, 90% cheaper)`}
-          </pre>
-        </div>
+        <CacheHitMissAnimation t={t.promptCaching} />
       </section>
 
-      {/* How it works */}
+      {/* Interactive Prefix Matching Demo */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <PrefixMatchingDemo t={t.promptCaching} />
+      </section>
+
+      {/* How Providers Implement It */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.promptCaching.howItWorks}</h2>
         <div className="space-y-4">
@@ -165,11 +95,12 @@ export default function PromptCachingPage() {
         </div>
       </section>
 
-      {/* Cost & Performance */}
+      {/* Cost & Performance — Interactive Calculator */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.promptCaching.costTitle}</h2>
         <p className="text-muted leading-relaxed mb-6">{t.promptCaching.costDesc}</p>
-        <div className="grid md:grid-cols-3 gap-4">
+
+        <div className="grid md:grid-cols-3 gap-4 mb-8">
           <div className="p-4 rounded-xl bg-gradient-to-br from-green-500/5 to-emerald-500/5 border border-green-500/20 text-center">
             <div className="text-3xl font-bold text-green-400 mb-1">90%</div>
             <p className="text-sm text-muted">{t.promptCaching.costSaving}</p>
@@ -184,7 +115,9 @@ export default function PromptCachingPage() {
           </div>
         </div>
 
-        <div className="mt-6 p-4 bg-background border border-border rounded-xl">
+        <CostSavingsCalculator t={t.promptCaching} />
+
+        <div className="mt-8 p-4 bg-background border border-border rounded-xl">
           <h3 className="text-sm font-bold text-text mb-3">{t.promptCaching.pricingComparison}</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -220,6 +153,12 @@ export default function PromptCachingPage() {
           </div>
           <p className="text-xs text-muted mt-3">{t.promptCaching.pricingNote}</p>
         </div>
+      </section>
+
+      {/* Cache TTL Visualization */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.promptCaching.cacheTTL}</h2>
+        <CacheTTLVisualization t={t.promptCaching} />
       </section>
 
       {/* Code Example */}

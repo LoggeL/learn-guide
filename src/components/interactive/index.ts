@@ -90,3 +90,9 @@ export { DataSourceExplorer } from './DataSourceExplorer'
 // Diffusion components
 export { DiffusionNoiseVisualizer } from './DiffusionNoiseVisualizer'
 export { TextDiffusionDemo } from './TextDiffusionDemo'
+
+// Prompt Caching components
+export { CacheHitMissAnimation } from './CacheHitMissAnimation'
+export { PrefixMatchingDemo } from './PrefixMatchingDemo'
+export { CostSavingsCalculator } from './CostSavingsCalculator'
+export { CacheTTLVisualization } from './CacheTTLVisualization'
