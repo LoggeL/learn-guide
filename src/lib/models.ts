@@ -140,17 +140,18 @@ export const models: ModelEntry[] = [
 
   // B-Tier
   {
-    id: 'qwen3-coder-next',
-    nameKey: 'qwen3CoderNext',
-    descKey: 'qwen3CoderNextDesc',
+    id: 'qwen3-next-80b',
+    nameKey: 'qwen3Next80b',
+    descKey: 'qwen3Next80bDesc',
     tier: 'B',
     hosting: 'local',
-    params: '~32B',
-    totalParamsB: 32,
-    activeParamsB: 32,
-    nLayers: 64,
-    dModel: 5120,
-    nKVHeads: 8,
+    params: '80B MoE \u2192 3B active',
+    totalParamsB: 80,
+    activeParamsB: 3,
+    isMoE: true,
+    nLayers: 80,
+    dModel: 2560,
+    nKVHeads: 4,
     headDim: 128,
   },
   {
