@@ -232,18 +232,43 @@ export const models: ModelEntry[] = [
 ]
 
 /** Common GPU presets for VRAM calculator */
-export const gpuPresets = [
-  { name: 'RTX 3060', vramGB: 12, bandwidthGBs: 360 },
-  { name: 'RTX 3090', vramGB: 24, bandwidthGBs: 936 },
-  { name: 'RTX 4070 Ti', vramGB: 16, bandwidthGBs: 504 },
-  { name: 'RTX 4090', vramGB: 24, bandwidthGBs: 1008 },
-  { name: 'RTX 5070 Ti', vramGB: 16, bandwidthGBs: 896 },
-  { name: 'RTX 5090', vramGB: 32, bandwidthGBs: 1792 },
-  { name: 'Titan V', vramGB: 12, bandwidthGBs: 652 },
-  { name: 'M2 Pro', vramGB: 32, bandwidthGBs: 200 },
-  { name: 'M4 Max', vramGB: 128, bandwidthGBs: 546 },
-  { name: 'A100 80GB', vramGB: 80, bandwidthGBs: 2039 },
-] as const
+export type GpuCategory = 'nvidia-consumer' | 'nvidia-pro' | 'apple' | 'amd-apu' | 'datacenter'
+
+export interface GpuPreset {
+  name: string
+  vramGB: number
+  bandwidthGBs: number
+  category: GpuCategory
+  note?: string
+}
+
+export const gpuPresets: GpuPreset[] = [
+  // NVIDIA Consumer — Previous Gen
+  { name: 'RTX 3060', vramGB: 12, bandwidthGBs: 360, category: 'nvidia-consumer' },
+  { name: 'RTX 3090', vramGB: 24, bandwidthGBs: 936, category: 'nvidia-consumer' },
+  { name: 'Titan V', vramGB: 12, bandwidthGBs: 652, category: 'nvidia-consumer', note: 'HBM2' },
+  // NVIDIA Consumer — RTX 40 Series
+  { name: 'RTX 4060 Ti 16GB', vramGB: 16, bandwidthGBs: 288, category: 'nvidia-consumer' },
+  { name: 'RTX 4070 Ti', vramGB: 16, bandwidthGBs: 504, category: 'nvidia-consumer' },
+  { name: 'RTX 4090', vramGB: 24, bandwidthGBs: 1008, category: 'nvidia-consumer' },
+  // NVIDIA Consumer — RTX 50 Series (Blackwell)
+  { name: 'RTX 5070', vramGB: 12, bandwidthGBs: 672, category: 'nvidia-consumer' },
+  { name: 'RTX 5070 Ti', vramGB: 16, bandwidthGBs: 896, category: 'nvidia-consumer' },
+  { name: 'RTX 5080', vramGB: 16, bandwidthGBs: 960, category: 'nvidia-consumer' },
+  { name: 'RTX 5090', vramGB: 32, bandwidthGBs: 1792, category: 'nvidia-consumer' },
+  // NVIDIA Pro
+  { name: 'RTX PRO 6000 Blackwell', vramGB: 96, bandwidthGBs: 1792, category: 'nvidia-pro', note: 'GDDR7' },
+  // Apple Silicon (unified memory — shared with CPU)
+  { name: 'M2 Pro', vramGB: 32, bandwidthGBs: 200, category: 'apple', note: 'Unified' },
+  { name: 'M3 Max (40-core)', vramGB: 128, bandwidthGBs: 400, category: 'apple', note: 'Unified' },
+  { name: 'M4 Pro', vramGB: 48, bandwidthGBs: 273, category: 'apple', note: 'Unified' },
+  { name: 'M4 Max (40-core)', vramGB: 128, bandwidthGBs: 546, category: 'apple', note: 'Unified' },
+  // AMD APU (unified memory — shared with CPU)
+  { name: 'Strix Halo (Max+ 395)', vramGB: 96, bandwidthGBs: 256, category: 'amd-apu', note: 'LPDDR5X unified' },
+  // Datacenter / Server
+  { name: 'A100 80GB', vramGB: 80, bandwidthGBs: 2039, category: 'datacenter', note: 'HBM2e' },
+  { name: 'H100 80GB', vramGB: 80, bandwidthGBs: 3350, category: 'datacenter', note: 'HBM3' },
+]
 
 /** Quantization presets with bits per parameter */
 export const quantPresets = [
