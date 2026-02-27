@@ -593,20 +593,20 @@ export default function VramCalcPage() {
 
         <div className="grid md:grid-cols-2 gap-4 mb-6">
           {[
-            { titleKey: 'moeStrategy1Title', descKey: 'moeStrategy1Desc', icon: '🎯', color: 'violet' },
-            { titleKey: 'moeStrategy2Title', descKey: 'moeStrategy2Desc', icon: '💤', color: 'cyan' },
-            { titleKey: 'moeStrategy3Title', descKey: 'moeStrategy3Desc', icon: '⚡', color: 'emerald' },
-            { titleKey: 'moeStrategy4Title', descKey: 'moeStrategy4Desc', icon: '🧮', color: 'fuchsia' },
-          ].map(({ titleKey, descKey, icon, color }) => (
+            { titleKey: 'moeStrategy1Title', descKey: 'moeStrategy1Desc', icon: '🎯', bg: 'bg-violet-500/5 border-violet-500/20', heading: 'text-violet-400' },
+            { titleKey: 'moeStrategy2Title', descKey: 'moeStrategy2Desc', icon: '💤', bg: 'bg-cyan-500/5 border-cyan-500/20', heading: 'text-cyan-400' },
+            { titleKey: 'moeStrategy3Title', descKey: 'moeStrategy3Desc', icon: '⚡', bg: 'bg-emerald-500/5 border-emerald-500/20', heading: 'text-emerald-400' },
+            { titleKey: 'moeStrategy4Title', descKey: 'moeStrategy4Desc', icon: '🧮', bg: 'bg-fuchsia-500/5 border-fuchsia-500/20', heading: 'text-fuchsia-400' },
+          ].map(({ titleKey, descKey, icon, bg, heading }) => (
             <motion.div
               key={titleKey}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`p-5 rounded-xl bg-${color}-500/5 border border-${color}-500/20`}
+              className={`p-5 rounded-xl border ${bg}`}
             >
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-lg">{icon}</span>
-                <h3 className={`font-semibold font-heading text-${color}-400`}>
+                <h3 className={`font-semibold font-heading ${heading}`}>
                   {(vc as unknown as Record<string, string>)[titleKey]}
                 </h3>
               </div>
