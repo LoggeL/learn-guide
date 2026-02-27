@@ -3446,6 +3446,8 @@ export const en = {
     takeaway4: 'GPTQ and AWQ are the leading techniques for LLM quantization, with GGUF as the standard format',
     takeaway5: 'Quantization democratizes AI by enabling frontier models on consumer hardware',
     takeaway6: 'For critical applications, prefer higher precision (INT8/FP16); for experimentation, Q4 is ideal',
+    vramCalcLink: 'VRAM Calculator',
+    vramCalcLinkDesc: 'See exactly how much VRAM different quantization levels need for any model size — try the interactive calculator.',
   },
 
   // Nested Learning page
@@ -4912,6 +4914,8 @@ export const en = {
     tip4: 'For 8 GB VRAM: stick to 7B Q4 models. For 12 GB: 7B Q8 or 13B Q4. For 24 GB: 13B Q8 or 70B Q4. For 32 GB+: 70B Q4-Q8 comfortably.',
     tip5: 'Llama 3.2, Mistral, Phi-3, and Qwen 2.5 are excellent choices for local inference. Each excels at different tasks -- experiment to find your best fit.',
     tip6: 'Run models as an API server (Ollama and LM Studio both support this) to integrate local models into your own applications, scripts, and workflows.',
+    vramCalcLink: 'VRAM Calculator',
+    vramCalcLinkDesc: 'Not sure if a model fits your GPU? Calculate VRAM requirements and estimated speed for any model and quantization level.',
   },
 
   // LoRA page
@@ -5242,6 +5246,7 @@ export const en = {
     llamaMaverickDesc: 'Meta\'s open model continues to underdeliver. Better alternatives exist everywhere.',
     amazonNova: 'Amazon Nova',
     amazonNovaDesc: 'Whatever Amazon is doing here, it\'s not working. Just avoid.',
+    vramCalcNote: 'Can your GPU run these models? Check the VRAM Calculator',
   },
 
   // ── VRAM Calculator page ───────────────────────────────────────────────────

@@ -215,6 +215,7 @@ export const de: Dictionary = {
     'prompt-caching': 'KV-Caches über API-Anfragen hinweg wiederverwenden, um Kosten und Latenz zu sparen',
     'batching': 'Mehrere Anfragen gleichzeitig für höheren Durchsatz verarbeiten',
     'local-inference': 'LLMs auf eigener Hardware ausführen -- Privatsphäre, Geschwindigkeit, keine API-Kosten',
+    'vram-calc': 'VRAM-Bedarf und Inferenzgeschwindigkeit für lokale LLMs abschätzen',
     'neural-networks': 'Schichten verbundener Neuronen, die Muster aus Daten lernen',
     'gradient-descent': 'Der Optimierungsalgorithmus, der neuronale Netze trainiert',
     'training': 'Wie Modelle durch Vorwärts- und Rückwärtsdurchläufe lernen',
@@ -3303,6 +3304,8 @@ export const de: Dictionary = {
     takeaway4: 'GPTQ und AWQ sind die führenden Techniken für LLM-Quantisierung, mit GGUF als Standardformat',
     takeaway5: 'Quantisierung demokratisiert KI, indem sie Frontier-Modelle auf Consumer-Hardware ermöglicht',
     takeaway6: 'Für kritische Anwendungen höhere Präzision (INT8/FP16) bevorzugen; für Experimente ist Q4 ideal',
+    vramCalcLink: 'VRAM-Rechner',
+    vramCalcLinkDesc: 'Sieh genau, wie viel VRAM verschiedene Quantisierungsstufen für jede Modellgröße brauchen — probiere den interaktiven Rechner aus.',
   },
 
   // Nested Learning page
@@ -4889,6 +4892,8 @@ export const de: Dictionary = {
     tip4: 'Für 8 GB VRAM: 7B Q4. Für 12 GB: 7B Q8 oder 13B Q4. Für 24 GB: 13B Q8 oder 70B Q4. Für 32 GB+: 70B Q4-Q8 komfortabel.',
     tip5: 'Llama 3.2, Mistral, Phi-3 und Qwen 2.5 sind hervorragend für lokale Inferenz. Jedes glänzt bei anderen Aufgaben -- experimentiere um das Beste für dich zu finden.',
     tip6: 'Betreibe Modelle als API-Server (Ollama und LM Studio unterstützen das) um lokale Modelle in eigene Anwendungen, Skripte und Workflows zu integrieren.',
+    vramCalcLink: 'VRAM-Rechner',
+    vramCalcLinkDesc: 'Nicht sicher, ob ein Modell auf deine GPU passt? Berechne VRAM-Bedarf und geschätzte Geschwindigkeit für jedes Modell und jede Quantisierungsstufe.',
   },
 
   // LoRA page
@@ -5210,5 +5215,70 @@ export const de: Dictionary = {
     llamaMaverickDesc: 'Metas offenes Modell enttäuscht weiterhin. Überall gibt es bessere Alternativen.',
     amazonNova: 'Amazon Nova',
     amazonNovaDesc: 'Was auch immer Amazon hier macht — es funktioniert nicht. Finger weg.',
+    vramCalcNote: 'Kann deine GPU diese Modelle ausführen? Prüfe den VRAM-Rechner',
+  },
+
+  // ── VRAM-Rechner Seite ─────────────────────────────────────────────────────
+  vramCalc: {
+    title: 'VRAM-Rechner',
+    description: 'VRAM-Bedarf und Inferenzgeschwindigkeit für lokale LLMs abschätzen.',
+
+    // Presets
+    presetsTitle: 'Schnelle Modell-Vorlagen',
+    presetsDesc: 'Klicke auf ein Modell, um die Parameter automatisch auszufüllen. Passe Quantisierung und Kontextlänge unten an.',
+
+    // Calculator
+    calcTitle: 'VRAM-Schätzer',
+    paramLabel: 'Gesamtparameter',
+    billion: 'Milliarden',
+    activeParamLabel: 'Aktive Parameter (MoE)',
+    moeToggle: 'Mixture-of-Experts-Modell',
+    quantLabel: 'Quantisierungsstufe',
+    ctxLabel: 'Kontextlänge',
+    advanced: 'Erweitert: Schichten & Hidden Dimension',
+    layersLabel: 'Schichten (n_layers)',
+    dModelLabel: 'Hidden Dim (d_model)',
+
+    // Results
+    totalVram: 'Geschätzter VRAM-Bedarf',
+    modelWeights: 'Modellgewichte',
+    kvCache: 'KV-Cache',
+    overhead: 'Laufzeit-Overhead',
+    gpuFit: 'GPU-Kompatibilität',
+    fits: 'Passt',
+    fitsTight: 'Knapp',
+    doesNotFit: 'Passt nicht',
+
+    // Speed
+    speedTitle: 'Geschwindigkeitsschätzer',
+    gpuLabel: 'GPU auswählen',
+    estimatedSpeed: 'Geschätzte Generierungsgeschwindigkeit',
+    speedFast: 'Schnell',
+    speedGood: 'Gut',
+    speedUsable: 'Nutzbar',
+    speedSlow: 'Langsam',
+    moeNote: 'Geschwindigkeit basiert nur auf aktiven Parametern — MoE-Modelle sind schneller als ihre Gesamtgröße vermuten lässt.',
+    wontFitWarning: 'Dieses Modell braucht {vram} GB, aber die GPU hat nur {gpu} GB. Du benötigst CPU-Offloading oder eine größere GPU.',
+
+    // How it works
+    howTitle: 'Wie die Formeln funktionieren',
+    formulaVramTitle: 'VRAM-Formel',
+    formulaVramDesc: 'Jeder Parameter wird mit der durch Quantisierung bestimmten Bitanzahl gespeichert. FP16 nutzt 16 Bit (2 Byte) pro Parameter, Q4_K_M etwa 4,8 Bit. Durch 8 teilen, um Bits in Bytes umzurechnen.',
+    formulaKvTitle: 'KV-Cache-Formel',
+    formulaKvDesc: 'Bei der Generierung speichert jede Schicht einen Key- und Value-Vektor für jeden Token im Kontext. Bei längeren Kontexten kann der KV-Cache mehrere GB verbrauchen — deshalb kostet 32K Kontext deutlich mehr VRAM als 4K.',
+    formulaSpeedTitle: 'Geschwindigkeitsformel (Roofline-Modell)',
+    formulaSpeedDesc: 'LLM-Inferenz ist speicherbandbreitengebunden: Jeder Token erfordert das Lesen des gesamten Modells aus dem VRAM. Geschwindigkeit ≈ wie schnell die Modellgewichte gestreamt werden können. Bei MoE-Modellen werden nur aktive Parameter pro Token gelesen.',
+
+    // Caveats
+    caveatsTitle: 'Wichtige Einschränkungen',
+    caveat1: 'Dies sind Schätzungen. Der tatsächliche VRAM-Verbrauch hängt von der Inferenz-Engine (llama.cpp, vLLM, Ollama), Batch-Größe und Implementierungsdetails ab.',
+    caveat2: 'Flash Attention und Paged KV-Cache können den Speicherverbrauch in der Praxis deutlich reduzieren.',
+    caveat3: 'CPU-Offloading ermöglicht größere Modelle als der GPU-VRAM zulässt, allerdings auf Kosten deutlich langsamerer Geschwindigkeit.',
+    caveat4: 'Die tatsächliche Geschwindigkeit hängt von der Rechenauslastung ab, nicht nur von der Bandbreite. Batched Inference, Speculative Decoding und Flash Attention ändern das Bild.',
+    caveat5: 'K-Quant-Größen (Q4_K_M, Q5_K_M, etc.) variieren leicht je nach Modellarchitektur. Die Bits-pro-Parameter-Werte hier sind typische Durchschnittswerte.',
+
+    // Cross-links
+    linkQuant: 'Erfahre, wie Quantisierung die Modellgröße bei minimalem Qualitätsverlust reduziert.',
+    linkLocal: 'Vollständiger Leitfaden zum Ausführen von Modellen auf eigener Hardware.',
   },
 }

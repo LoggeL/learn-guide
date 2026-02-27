@@ -3,6 +3,7 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { QuantizationVisualizer } from '@/components/interactive'
+import Link from 'next/link'
 
 export default function QuantizationPage() {
   const { t } = useTranslation()
@@ -177,6 +178,19 @@ export default function QuantizationPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* VRAM Calculator Link */}
+      <section>
+        <Link href="/ai/llm-inference/vram-calc" className="block p-5 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 hover:border-violet-500/40 transition-colors group">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🧮</span>
+            <div>
+              <h3 className="text-violet-400 font-semibold font-heading group-hover:text-violet-300">{t.quantization.vramCalcLink} &rarr;</h3>
+              <p className="text-muted text-sm">{t.quantization.vramCalcLinkDesc}</p>
+            </div>
+          </div>
+        </Link>
       </section>
 
       {/* Techniques */}

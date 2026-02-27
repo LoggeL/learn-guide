@@ -3,6 +3,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'getting-started': '2026-02-10',
   'transformer-architecture': '2026-02-09',
   'local-inference': '2026-02-09',
+  'vram-calc': '2026-02-27',
   'lora': '2026-02-09',
   'kv-cache': '2026-02-09',
   'batching': '2026-02-09',

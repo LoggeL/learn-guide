@@ -55,6 +55,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'batching': 'intermediate',
   'prompt-caching': 'intermediate',
   'local-inference': 'beginner',
+  'vram-calc': 'beginner',
   // ML Fundamentals
   'neural-networks': 'beginner',
   'gradient-descent': 'intermediate',

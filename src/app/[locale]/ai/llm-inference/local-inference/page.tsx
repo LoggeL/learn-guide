@@ -19,6 +19,7 @@ export default function LocalInferencePage() {
         { label: li.title },
       ]}
       prevTopic={{ label: t.topicNames['batching'], href: '/ai/llm-inference/batching' }}
+      nextTopic={{ label: t.topicNames['vram-calc'], href: '/ai/llm-inference/vram-calc' }}
     >
       {/* 1. Why Run Locally? */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -96,6 +97,19 @@ export default function LocalInferencePage() {
             {li.quantLink} &rarr;
           </Link>
         </div>
+      </section>
+
+      {/* 4.5 VRAM Calculator Link */}
+      <section>
+        <Link href="/ai/llm-inference/vram-calc" className="block p-5 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 hover:border-violet-500/40 transition-colors group">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🧮</span>
+            <div>
+              <h3 className="text-violet-400 font-semibold font-heading group-hover:text-violet-300">{li.vramCalcLink} &rarr;</h3>
+              <p className="text-muted text-sm">{li.vramCalcLinkDesc}</p>
+            </div>
+          </div>
+        </Link>
       </section>
 
       {/* 5. Getting Started */}
