@@ -50,6 +50,8 @@ export default function TierListPage() {
         { name: tl.minimax25, desc: tl.minimax25Desc },
         { name: tl.kimiK25, desc: tl.kimiK25Desc },
         { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc },
+        { name: tl.qwen35_35bA3b, desc: tl.qwen35_35bA3bDesc },
+        { name: tl.qwen35_27b, desc: tl.qwen35_27bDesc },
       ],
     },
     {
@@ -60,7 +62,6 @@ export default function TierListPage() {
       borderColor: 'border-emerald-500/30',
       badgeBg: 'bg-emerald-500/20',
       models: [
-        { name: tl.glm47Flash, desc: tl.glm47FlashDesc },
         { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc },
         { name: tl.gptOss20b, desc: tl.gptOss20bDesc },
         { name: tl.glm5, desc: tl.glm5Desc },
