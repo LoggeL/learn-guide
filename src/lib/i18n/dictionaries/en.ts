@@ -5298,7 +5298,7 @@ export const en = {
     formulaKvTitle: 'KV Cache Formula',
     formulaKvDesc: 'During generation, each layer stores a Key and Value vector for every token in the context. With longer contexts, KV cache can use several GB — this is why 32K context costs much more VRAM than 4K.',
     formulaSpeedTitle: 'Speed Formula (Roofline Model)',
-    formulaSpeedDesc: 'LLM inference is memory-bandwidth-bound: each token requires reading the entire model from VRAM. Speed ≈ how fast you can stream the model weights. For MoE models, only active parameters are read per token.',
+    formulaSpeedDesc: 'LLM inference is memory-bandwidth-bound: each token requires reading the entire model from VRAM. We apply a 55% efficiency factor based on real llama.cpp benchmarks — real-world speeds are lower than theoretical bandwidth due to memory controller overhead, kernel latency, and compute bottlenecks. For MoE models, only active parameters are read per token.',
 
     // Caveats
     caveatsTitle: 'Important Caveats',

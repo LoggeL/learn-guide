@@ -45,7 +45,11 @@ function estimateVram(
 function estimateSpeed(activeParamsB: number, bitsPerParam: number, bandwidthGBs: number): number {
   const modelSizeGB = (activeParamsB * 1e9 * bitsPerParam) / 8 / 1e9
   if (modelSizeGB === 0) return 0
-  return bandwidthGBs / modelSizeGB
+  // Real-world efficiency is ~50-65% of theoretical bandwidth (memory controller overhead,
+  // compute bottlenecks, kernel launch latency, GQA/MQA overhead).
+  // Based on llama.cpp CUDA benchmarks: RTX 4090 gets ~186 tok/s on 7B Q4 vs 288 theoretical.
+  const efficiency = 0.55
+  return (bandwidthGBs / modelSizeGB) * efficiency
 }
 
 function speedLabel(tokS: number, t: Record<string, string>): { text: string; color: string } {
@@ -119,8 +123,9 @@ export default function VramCalcPage() {
     const gpuFrac = 1 - offloadPct / 100
     const cpuFrac = offloadPct / 100
     const activeModelGB = (activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9
-    const gpuTime = (gpuFrac * activeModelGB) / gpu.bandwidthGBs
-    const cpuTime = (cpuFrac * activeModelGB) / 70 // DDR5 ~70 GB/s
+    const efficiency = 0.55
+    const gpuTime = (gpuFrac * activeModelGB) / (gpu.bandwidthGBs * efficiency)
+    const cpuTime = (cpuFrac * activeModelGB) / (70 * 0.4) // DDR5 ~70 GB/s, ~40% efficiency
     return 1 / (gpuTime + cpuTime)
   }, [offloadPct, tokPerSec, activeParams, quant.bitsPerParam, gpu.bandwidthGBs])
   const modelSizeGB = (totalParams * 1e9 * quant.bitsPerParam) / 8 / 1e9
@@ -466,7 +471,7 @@ export default function VramCalcPage() {
             </p>
           )}
           <p className="text-xs text-muted mt-2 font-mono">
-            {gpu.bandwidthGBs} GB/s &divide; {((activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9).toFixed(1)} GB = ~{tokPerSec.toFixed(0)} tok/s
+            {gpu.bandwidthGBs} GB/s &times; 0.55 &divide; {((activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9).toFixed(1)} GB = ~{tokPerSec.toFixed(0)} tok/s
           </p>
 
           {/* Will it fit? */}
@@ -514,7 +519,7 @@ export default function VramCalcPage() {
           {OFFLOAD_BANDWIDTHS.map(({ key, bw, color, barColor }) => {
             const maxBw = OFFLOAD_BANDWIDTHS[0].bw
             const pct = Math.max((Math.log10(bw) / Math.log10(maxBw)) * 100, 2)
-            const speedAtBw = bw / ((activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9)
+            const speedAtBw = (bw * 0.55) / ((activeParams * 1e9 * quant.bitsPerParam) / 8 / 1e9)
             return (
               <div key={key} className="flex items-center gap-3">
                 <span className={`text-xs font-medium w-32 text-right ${color}`}>
