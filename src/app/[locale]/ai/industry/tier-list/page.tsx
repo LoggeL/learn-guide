@@ -56,8 +56,8 @@ export default function TierListPage() {
       badgeBg: 'bg-blue-500/20',
       models: [
         { name: tl.gemini3Flash, desc: tl.gemini3FlashDesc, hosting: 'api' },
-        { name: tl.deepseekV32, desc: tl.deepseekV32Desc, hosting: 'server', params: '685B MoE' },
-        { name: tl.minimax25, desc: tl.minimax25Desc, hosting: 'server', params: '~456B MoE' },
+        { name: tl.deepseekV32, desc: tl.deepseekV32Desc, hosting: 'api', params: '685B MoE' },
+        { name: tl.minimax25, desc: tl.minimax25Desc, hosting: 'api', params: '~456B MoE' },
         { name: tl.kimiK25, desc: tl.kimiK25Desc, hosting: 'api' },
         { name: tl.claudeSonnet46, desc: tl.claudeSonnet46Desc, hosting: 'api' },
         { name: tl.qwen35_35bA3b, desc: tl.qwen35_35bA3bDesc, hosting: 'local', params: '35B MoE \u2192 3B active' },
@@ -74,7 +74,7 @@ export default function TierListPage() {
       models: [
         { name: tl.qwen3CoderNext, desc: tl.qwen3CoderNextDesc, hosting: 'local', params: '~32B' },
         { name: tl.gptOss20b, desc: tl.gptOss20bDesc, hosting: 'local', params: '20B dense' },
-        { name: tl.glm5, desc: tl.glm5Desc, hosting: 'server', params: '~200B+' },
+        { name: tl.glm5, desc: tl.glm5Desc, hosting: 'api', params: '~200B+' },
         { name: tl.qwen35, desc: tl.qwen35Desc, hosting: 'server', params: '~110B+' },
       ],
     },
@@ -98,7 +98,7 @@ export default function TierListPage() {
       borderColor: 'border-red-500/30',
       badgeBg: 'bg-red-500/20',
       models: [
-        { name: tl.llamaMaverick, desc: tl.llamaMaverickDesc, hosting: 'server', params: '400B+ MoE' },
+        { name: tl.llamaMaverick, desc: tl.llamaMaverickDesc, hosting: 'api', params: '400B+ MoE' },
         { name: tl.amazonNova, desc: tl.amazonNovaDesc, hosting: 'api' },
       ],
     },
