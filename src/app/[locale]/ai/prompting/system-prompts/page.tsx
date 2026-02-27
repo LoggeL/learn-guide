@@ -52,7 +52,119 @@ export default function SystemPromptsPage() {
         </div>
       </section>
 
-      {/* Structure */}
+      {/* Under the Hood */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.systemPrompts.underTheHood}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.systemPrompts.underTheHoodDesc}</p>
+        <div className="space-y-4 mb-6">
+          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-blue-400 mb-2">{t.systemPrompts.specialTokens}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.specialTokensDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">{t.systemPrompts.primacyBias}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.primacyBiasDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-rose-500/10 to-pink-500/10 border border-rose-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-rose-400 mb-2">{t.systemPrompts.stateless}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.statelessDesc}</p>
+          </div>
+        </div>
+        <div>
+          <h3 className="text-lg font-bold font-heading text-text mb-3">{t.systemPrompts.apiExample}</h3>
+          <pre className="p-4 bg-background rounded-xl border border-border overflow-x-auto text-sm text-muted font-mono">
+{`[
+  {"role": "system", "content": "You are a helpful assistant..."},
+  {"role": "user", "content": "Hello!"},
+  {"role": "assistant", "content": "Hi there!"},
+  {"role": "user", "content": "What's 2+2?"}
+]`}
+          </pre>
+        </div>
+      </section>
+
+      {/* How Models Learn */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.systemPrompts.howModelsLearn}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.systemPrompts.howModelsLearnDesc}</p>
+        <div className="space-y-4">
+          <div className="p-5 bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-green-400 mb-2">{t.systemPrompts.sftPhase}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.sftPhaseDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-violet-400 mb-2">{t.systemPrompts.rlhfPhase}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.rlhfPhaseDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-sky-500/10 to-cyan-500/10 border border-sky-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-sky-400 mb-2">{t.systemPrompts.gattPhase}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.gattPhaseDesc}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Instruction Hierarchy */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.systemPrompts.instructionHierarchy}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.systemPrompts.instructionHierarchyDesc}</p>
+        <div className="space-y-4 mb-6">
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-red-400 mb-2">{t.systemPrompts.hierarchyProblem}</h4>
+            <p className="text-sm text-muted">{t.systemPrompts.hierarchyProblemDesc}</p>
+          </div>
+          <div className="p-4 bg-background rounded-xl border border-border">
+            <h4 className="font-bold text-green-400 mb-2">{t.systemPrompts.hierarchySolution}</h4>
+            <p className="text-sm text-muted">{t.systemPrompts.hierarchySolutionDesc}</p>
+          </div>
+        </div>
+        <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl mb-4">
+          <p className="text-sm text-muted italic">{t.systemPrompts.hierarchyExample}</p>
+        </div>
+        <div className="p-4 bg-background rounded-xl border border-border">
+          <h4 className="font-bold text-emerald-400 mb-2">{t.systemPrompts.hierarchyResults}</h4>
+          <p className="text-sm text-muted">{t.systemPrompts.hierarchyResultsDesc}</p>
+        </div>
+      </section>
+
+      {/* Security & Prompt Injection */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.systemPrompts.security}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.systemPrompts.securityDesc}</p>
+        <div className="space-y-4 mb-6">
+          <div className="p-5 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.systemPrompts.notSecret}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.notSecretDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-orange-400 mb-2">{t.systemPrompts.directInjection}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.directInjectionDesc}</p>
+          </div>
+          <div className="p-5 bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl">
+            <h3 className="text-lg font-bold font-heading text-yellow-400 mb-2">{t.systemPrompts.indirectInjection}</h3>
+            <p className="text-sm text-muted">{t.systemPrompts.indirectInjectionDesc}</p>
+          </div>
+        </div>
+        <div className="p-6 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
+          <h3 className="text-lg font-bold font-heading text-text mb-4">{t.systemPrompts.securityBestPractices}</h3>
+          <ul className="space-y-3">
+            {[
+              t.systemPrompts.securityPractice1,
+              t.systemPrompts.securityPractice2,
+              t.systemPrompts.securityPractice3,
+              t.systemPrompts.securityPractice4,
+            ].map((practice, i) => (
+              <li key={i} className="flex gap-3 items-start">
+                <span className="w-6 h-6 rounded-lg bg-red-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-red-400 text-sm">🛡</span>
+                </span>
+                <span className="text-muted leading-relaxed">{practice}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+            {/* Structure */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.systemPrompts.structure}</h2>
         <p className="text-muted leading-relaxed mb-6">
