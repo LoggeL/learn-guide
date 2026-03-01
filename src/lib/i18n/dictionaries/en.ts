@@ -5290,7 +5290,7 @@ export const en = {
     description: 'A subjective ranking of current LLM models by quality and use case fit.',
     intro: 'This tier list reflects personal experience and testing across coding, reasoning, creative writing, and general chat. Your mileage may vary — every use case is different.',
     disclaimer: 'Disclaimer',
-    disclaimerText: 'This ranking is subjective and based on personal experience as of February 2026. Model quality changes rapidly with updates. Your results may differ depending on your use case.',
+    disclaimerText: 'This ranking only lists models I find relevant — not every model out there. The bottom tiers (D, F) are basically my wall of shame. Rankings are subjective and based on personal experience. Model quality changes rapidly, so this will evolve.',
     sTier: 'S-Tier',
     sTierDesc: 'Best in class — exceptional across the board',
     aTier: 'A-Tier',

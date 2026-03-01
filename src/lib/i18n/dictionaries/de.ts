@@ -5264,7 +5264,7 @@ export const de: Dictionary = {
     description: 'Eine subjektive Rangliste aktüller LLM-Modelle nach Qualität und Anwendungsfall.',
     intro: 'Diese Tier-Liste basiert auf persönlicher Erfahrung und Tests in den Bereichen Coding, Reasoning, kreatives Schreiben und allgemeiner Chat. Deine Ergebnisse können abweichen — jeder Anwendungsfall ist anders.',
     disclaimer: 'Hinweis',
-    disclaimerText: 'Diese Rangliste ist subjektiv und basiert auf persönlicher Erfahrung, Stand Februar 2026. Die Modellqualität ändert sich schnell durch Updates. Deine Ergebnisse können je nach Anwendungsfall abweichen.',
+    disclaimerText: 'Diese Liste enthält nur Modelle, die ich für relevant halte — nicht jedes Modell da draußen. Die unteren Tiers (D, F) sind meine Wall of Shame. Rankings sind subjektiv und basieren auf persönlicher Erfahrung. Modellqualität ändert sich schnell.',
     sTier: 'S-Tier',
     sTierDesc: 'Beste Klasse — herausragend in allen Bereichen',
     aTier: 'A-Tier',
