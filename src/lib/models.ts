@@ -4,7 +4,7 @@
  */
 
 export type HostingType = 'api' | 'open-weight' | 'local'
-export type TierLevel = 'S' | 'A' | 'B' | 'C' | 'F'
+export type TierLevel = 'S' | 'A' | 'B' | 'C' | 'D' | 'F'
 
 export interface ModelEntry {
   /** Unique identifier */
@@ -64,7 +64,7 @@ export const models: ModelEntry[] = [
     id: 'deepseek-v32',
     nameKey: 'deepseekV32',
     descKey: 'deepseekV32Desc',
-    tier: 'A',
+    tier: 'B',
     hosting: 'open-weight',
     params: '685B MoE \u2192 37B active',
     totalParamsB: 685,
@@ -105,7 +105,7 @@ export const models: ModelEntry[] = [
     id: 'claude-sonnet-46',
     nameKey: 'claudeSonnet46',
     descKey: 'claudeSonnet46Desc',
-    tier: 'A',
+    tier: 'S',
     hosting: 'api',
   },
   {
@@ -155,15 +155,6 @@ export const models: ModelEntry[] = [
     headDim: 256,
   },
   {
-    id: 'gpt-oss-20b',
-    nameKey: 'gptOss20b',
-    descKey: 'gptOss20bDesc',
-    tier: 'B',
-    hosting: 'local',
-    params: '20B dense',
-    totalParamsB: 20,
-    activeParamsB: 20,
-  },
   {
     id: 'glm-5',
     nameKey: 'glm5',
@@ -180,30 +171,20 @@ export const models: ModelEntry[] = [
     headDim: 128,
   },
   {
-    id: 'qwen35-full',
-    nameKey: 'qwen35',
-    descKey: 'qwen35Desc',
-    tier: 'B',
-    hosting: 'open-weight',
-    params: '397B MoE \u2192 17B active',
-    totalParamsB: 397,
-    activeParamsB: 17,
-    isMoE: true,
-  },
 
   // C-Tier
   {
     id: 'gemini-31-pro',
     nameKey: 'gemini31Pro',
     descKey: 'gemini31ProDesc',
-    tier: 'C',
+    tier: 'D',
     hosting: 'api',
   },
   {
-    id: 'grok-41',
-    nameKey: 'grok41',
-    descKey: 'grok41Desc',
-    tier: 'C',
+    id: 'grok-420',
+    nameKey: 'grok420',
+    descKey: 'grok420Desc',
+    tier: 'B',
     hosting: 'api',
   },
 
@@ -302,6 +283,7 @@ export const tierConfig: Record<TierLevel, { color: string; bgGradient: string; 
   A: { color: 'text-blue-400', bgGradient: 'from-blue-500/10 to-cyan-500/10', borderColor: 'border-blue-500/30', badgeBg: 'bg-blue-500/20' },
   B: { color: 'text-emerald-400', bgGradient: 'from-emerald-500/10 to-teal-500/10', borderColor: 'border-emerald-500/30', badgeBg: 'bg-emerald-500/20' },
   C: { color: 'text-yellow-400', bgGradient: 'from-yellow-500/10 to-amber-500/10', borderColor: 'border-yellow-500/30', badgeBg: 'bg-yellow-500/20' },
+  D: { color: 'text-orange-400', bgGradient: 'from-orange-500/10 to-amber-500/10', borderColor: 'border-orange-500/30', badgeBg: 'bg-orange-500/20' },
   F: { color: 'text-red-400', bgGradient: 'from-red-500/10 to-rose-500/10', borderColor: 'border-red-500/30', badgeBg: 'bg-red-500/20' },
 }
 

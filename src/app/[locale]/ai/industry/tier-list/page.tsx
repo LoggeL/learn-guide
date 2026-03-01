@@ -13,7 +13,7 @@ const hostingIcons: Record<HostingType, typeof Cloud> = {
   local: Monitor,
 }
 
-const tierOrder: TierLevel[] = ['S', 'A', 'B', 'C', 'F']
+const tierOrder: TierLevel[] = ['S', 'A', 'B', 'C', 'D', 'F']
 
 export default function TierListPage() {
   const { t } = useTranslation()
@@ -24,6 +24,7 @@ export default function TierListPage() {
     A: { label: tl.aTier, desc: tl.aTierDesc },
     B: { label: tl.bTier, desc: tl.bTierDesc },
     C: { label: tl.cTier, desc: tl.cTierDesc },
+    D: { label: tl.dTier, desc: tl.dTierDesc },
     F: { label: tl.fTier, desc: tl.fTierDesc },
   }
 
