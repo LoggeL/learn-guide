@@ -155,7 +155,6 @@ export const models: ModelEntry[] = [
     headDim: 256,
   },
   {
-  {
     id: 'glm-5',
     nameKey: 'glm5',
     descKey: 'glm5Desc',
