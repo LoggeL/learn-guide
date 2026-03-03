@@ -140,21 +140,6 @@ export const models: ModelEntry[] = [
 
   // B-Tier
   {
-    id: 'qwen3-next-80b',
-    nameKey: 'qwen3Next80b',
-    descKey: 'qwen3Next80bDesc',
-    tier: 'B',
-    hosting: 'local',
-    params: '80B MoE \u2192 3B active (512 experts, 10 active)',
-    totalParamsB: 80,
-    activeParamsB: 3,
-    isMoE: true,
-    nLayers: 48,
-    dModel: 2048,
-    nKVHeads: 2,
-    headDim: 256,
-  },
-  {
     id: 'glm-5',
     nameKey: 'glm5',
     descKey: 'glm5Desc',
