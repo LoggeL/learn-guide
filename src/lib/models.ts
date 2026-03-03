@@ -169,9 +169,8 @@ export const models: ModelEntry[] = [
     nKVHeads: 2, // MLA
     headDim: 128,
   },
-  {
 
-  // C-Tier
+  // D-Tier
   {
     id: 'gemini-31-pro',
     nameKey: 'gemini31Pro',
