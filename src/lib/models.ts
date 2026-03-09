@@ -45,6 +45,13 @@ export const models: ModelEntry[] = [
     hosting: 'api',
   },
   {
+    id: 'gpt-54',
+    nameKey: 'gpt54',
+    descKey: 'gpt54Desc',
+    tier: 'S',
+    hosting: 'api',
+  },
+  {
     id: 'claude-opus-46',
     nameKey: 'claudeOpus46',
     descKey: 'claudeOpus46Desc',

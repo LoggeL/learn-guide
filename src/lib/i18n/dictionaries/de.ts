@@ -5279,6 +5279,8 @@ export const de: Dictionary = {
     fTierDesc: 'Unterste Schublade — einfach nicht',
     gpt53Codex: 'GPT-5.3-Codex',
     gpt53CodexDesc: 'Intelligent, logisch und effizient. Das beste Coding-Modell auf dem Markt.',
+    gpt54: 'GPT-5.4',
+    gpt54Desc: '1M Kontext, 33% weniger Halluzinationen als 5.2, Tool Search System. Bestes Modell für komplexe professionelle Aufgaben.',
     claudeOpus46: 'Claude Opus 4.6',
     claudeOpus46Desc: 'Teür, aber es lohnt sich. Unübertroffenes UI/UX-Designgefühl und kreatives Instruktionsverständnis.',
     gemini3Flash: 'Gemini 3 Flash',

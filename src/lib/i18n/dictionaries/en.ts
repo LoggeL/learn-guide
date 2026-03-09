@@ -5305,6 +5305,8 @@ export const en = {
     fTierDesc: 'Bottom of the barrel — just don\'t',
     gpt53Codex: 'GPT-5.3-Codex',
     gpt53CodexDesc: 'Smart, logical, and efficient. The best coding model available right now.',
+    gpt54: 'GPT-5.4',
+    gpt54Desc: '1M context, 33% fewer hallucinations than 5.2, Tool Search system. Best for long-horizon professional work.',
     claudeOpus46: 'Claude Opus 4.6',
     claudeOpus46Desc: 'Expensive but worth it. Unmatched UI/UX design sense and creative instruction following.',
     gemini3Flash: 'Gemini 3 Flash',
