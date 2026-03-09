@@ -86,7 +86,7 @@ export const models: ModelEntry[] = [
     id: 'minimax-m25',
     nameKey: 'minimax25',
     descKey: 'minimax25Desc',
-    tier: 'A',
+    tier: 'B',
     hosting: 'open-weight',
     params: '230B MoE \u2192 10B active',
     totalParamsB: 230,
