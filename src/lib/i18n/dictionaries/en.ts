@@ -5307,6 +5307,8 @@ export const en = {
     gpt53CodexDesc: 'Smart, logical, and efficient. The best coding model available right now.',
     gpt54: 'GPT-5.4',
     gpt54Desc: '1M context, 33% fewer hallucinations than 5.2, Tool Search system. Best for long-horizon professional work.',
+    gemini31FlashLite: 'Gemini 3.1 Flash Lite',
+    gemini31FlashLiteDesc: 'Very fast but significantly pricier than Flash Lite 2.5. Still capable, but hard to justify the cost increase.',
     claudeOpus46: 'Claude Opus 4.6',
     claudeOpus46Desc: 'Expensive but worth it. Unmatched UI/UX design sense and creative instruction following.',
     gemini3Flash: 'Gemini 3 Flash',

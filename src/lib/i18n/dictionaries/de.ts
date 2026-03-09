@@ -5281,6 +5281,8 @@ export const de: Dictionary = {
     gpt53CodexDesc: 'Intelligent, logisch und effizient. Das beste Coding-Modell auf dem Markt.',
     gpt54: 'GPT-5.4',
     gpt54Desc: '1M Kontext, 33% weniger Halluzinationen als 5.2, Tool Search System. Bestes Modell für komplexe professionelle Aufgaben.',
+    gemini31FlashLite: 'Gemini 3.1 Flash Lite',
+    gemini31FlashLiteDesc: 'Sehr schnell, aber deutlich teurer als Flash Lite 2.5. Immer noch gut, aber der Preisanstieg ist schwer zu rechtfertigen.',
     claudeOpus46: 'Claude Opus 4.6',
     claudeOpus46Desc: 'Teür, aber es lohnt sich. Unübertroffenes UI/UX-Designgefühl und kreatives Instruktionsverständnis.',
     gemini3Flash: 'Gemini 3 Flash',

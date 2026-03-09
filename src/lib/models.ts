@@ -162,6 +162,15 @@ export const models: ModelEntry[] = [
     headDim: 128,
   },
 
+  // C-Tier
+  {
+    id: 'gemini-31-flash-lite',
+    nameKey: 'gemini31FlashLite',
+    descKey: 'gemini31FlashLiteDesc',
+    tier: 'C',
+    hosting: 'api',
+  },
+
   // D-Tier
   {
     id: 'gemini-31-pro',
