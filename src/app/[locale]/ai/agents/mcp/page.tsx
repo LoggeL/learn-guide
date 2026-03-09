@@ -1,8 +1,9 @@
 'use client'
 
+import React from 'react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
-import { AlertTriangle, Check, X, Server, Code, ArrowRight, Wrench, Database, FileText, PlayCircle, RefreshCw, Power, FolderOpen, Github, MessageSquare, HardDrive, Brain, GitBranch } from 'lucide-react'
+import { AlertTriangle, Check, X, Server, Code, ArrowRight, Wrench, Database, FileText, PlayCircle, RefreshCw, Power, FolderOpen, Github, MessageSquare, HardDrive, Brain, GitBranch, Terminal, Zap, Shield, Gauge } from 'lucide-react'
 
 export default function MCPPage() {
   const { t } = useTranslation()
@@ -358,6 +359,100 @@ export default function MCPPage() {
               <p className="text-text">{advice}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* MCP vs CLI Tools */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.vsCli}</h2>
+        <p className="text-muted mb-6">{t.mcp.vsCliDesc}</p>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          {/* MCP Approach */}
+          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
+            <div className="flex items-center gap-3 mb-4">
+              <Server className="w-6 h-6 text-purple-400" />
+              <h3 className="text-lg font-bold font-heading text-purple-400">{t.mcp.vsCliMcp}</h3>
+            </div>
+            <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs overflow-x-auto mb-4">
+              <pre className="text-muted">
+                <code>
+                  <span className="text-muted">{'// MCP: JSON-RPC over stdio/SSE'}</span>{'\n'}
+                  <span className="text-pink-400">{'{'}</span> <span className="text-green-400">"method"</span>: <span className="text-yellow-400">"tools/call"</span>,{'\n'}
+                  {'  '}<span className="text-green-400">"params"</span>: <span className="text-pink-400">{'{'}</span>{'\n'}
+                  {'    '}<span className="text-green-400">"name"</span>: <span className="text-yellow-400">"list_issues"</span>,{'\n'}
+                  {'    '}<span className="text-green-400">"arguments"</span>: <span className="text-pink-400">{'{'}</span> <span className="text-green-400">"repo"</span>: <span className="text-yellow-400">"org/app"</span> <span className="text-pink-400">{'}'}</span>{'\n'}
+                  {'  '}<span className="text-pink-400">{'}'}</span> <span className="text-pink-400">{'}'}</span>
+                </code>
+              </pre>
+            </div>
+            <ul className="space-y-2">
+              {[t.mcp.vsCliMcpPro1, t.mcp.vsCliMcpPro2, t.mcp.vsCliMcpPro3].map((pro, i) => (
+                <li key={i} className="flex gap-2 items-start text-sm">
+                  <Check className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
+                  <span className="text-muted">{pro}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* CLI Approach */}
+          <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+            <div className="flex items-center gap-3 mb-4">
+              <Terminal className="w-6 h-6 text-emerald-400" />
+              <h3 className="text-lg font-bold font-heading text-emerald-400">{t.mcp.vsCliCli}</h3>
+            </div>
+            <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs overflow-x-auto mb-4">
+              <pre className="text-muted">
+                <code>
+                  <span className="text-muted">{'// CLI: shell exec'}</span>{'\n'}
+                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">gh</span> issue list --repo org/app{'\n'}
+                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">git</span> log --oneline -10{'\n'}
+                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">curl</span> -s api.example.com/data{'\n'}
+                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">psql</span> -c "SELECT * FROM users"
+                </code>
+              </pre>
+            </div>
+            <ul className="space-y-2">
+              {[t.mcp.vsCliCliPro1, t.mcp.vsCliCliPro2, t.mcp.vsCliCliPro3].map((pro, i) => (
+                <li key={i} className="flex gap-2 items-start text-sm">
+                  <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                  <span className="text-muted">{pro}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Comparison Table */}
+        <div className="rounded-xl bg-surface border border-border overflow-hidden">
+          <div className="grid grid-cols-3 text-sm">
+            <div className="p-3 bg-background border-b border-border font-bold text-text"></div>
+            <div className="p-3 bg-purple-500/10 border-b border-border font-bold text-purple-400 text-center">MCP</div>
+            <div className="p-3 bg-emerald-500/10 border-b border-border font-bold text-emerald-400 text-center">CLI</div>
+            {[
+              { label: t.mcp.vsCliRowSetup, mcp: t.mcp.vsCliRowSetupMcp, cli: t.mcp.vsCliRowSetupCli },
+              { label: t.mcp.vsCliRowSpeed, mcp: t.mcp.vsCliRowSpeedMcp, cli: t.mcp.vsCliRowSpeedCli },
+              { label: t.mcp.vsCliRowSecurity, mcp: t.mcp.vsCliRowSecurityMcp, cli: t.mcp.vsCliRowSecurityCli },
+              { label: t.mcp.vsCliRowEcosystem, mcp: t.mcp.vsCliRowEcosystemMcp, cli: t.mcp.vsCliRowEcosystemCli },
+              { label: t.mcp.vsCliRowDebug, mcp: t.mcp.vsCliRowDebugMcp, cli: t.mcp.vsCliRowDebugCli },
+            ].map((row, i) => (
+              <React.Fragment key={i}>
+                <div className={`p-3 ${i % 2 === 0 ? 'bg-surface' : 'bg-background/50'} border-b border-border font-medium text-text text-sm`}>{row.label}</div>
+                <div className={`p-3 ${i % 2 === 0 ? 'bg-surface' : 'bg-background/50'} border-b border-border text-muted text-sm text-center`}>{row.mcp}</div>
+                <div className={`p-3 ${i % 2 === 0 ? 'bg-surface' : 'bg-background/50'} border-b border-border text-muted text-sm text-center`}>{row.cli}</div>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+
+        {/* Verdict */}
+        <div className="mt-6 p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+          <div className="flex items-center gap-3 mb-3">
+            <Zap className="w-6 h-6 text-cyan-400" />
+            <h3 className="text-lg font-bold font-heading text-cyan-400">{t.mcp.vsCliVerdict}</h3>
+          </div>
+          <p className="text-muted text-sm leading-relaxed">{t.mcp.vsCliVerdictDesc}</p>
         </div>
       </section>
 
