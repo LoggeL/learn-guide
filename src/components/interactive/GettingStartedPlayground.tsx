@@ -3,6 +3,25 @@
 import { useState, useRef } from 'react'
 import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2, ShieldCheck, Clock, Cpu, MessageSquare, Hash } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
+const codeStyle = {
+  ...vscDarkPlus,
+  'pre[class*="language-"]': {
+    ...vscDarkPlus['pre[class*="language-"]'],
+    background: 'transparent',
+    margin: 0,
+    padding: 0,
+    fontSize: '0.75rem',
+    lineHeight: '1.6',
+  },
+  'code[class*="language-"]': {
+    ...vscDarkPlus['code[class*="language-"]'],
+    background: 'transparent',
+    fontSize: '0.75rem',
+  },
+}
 
 type Provider = 'openrouter' | 'groq' | 'cerebras'
 
@@ -491,9 +510,16 @@ console.log(data.choices[0].message.content);`
               {showRaw && (
                 <div className="relative px-4 pb-4">
                   <CopyButton text={rawJson} />
-                  <pre className="text-xs text-muted/80 overflow-x-auto max-h-80 font-mono bg-background rounded-lg p-3">
-                    {rawJson}
-                  </pre>
+                  <div className="overflow-x-auto max-h-80 rounded-lg bg-[#1e1e1e] p-3">
+                    <SyntaxHighlighter
+                      language="json"
+                      style={codeStyle}
+                      customStyle={{ background: 'transparent', padding: 0, margin: 0, maxHeight: '20rem' }}
+                      wrapLongLines={false}
+                    >
+                      {rawJson}
+                    </SyntaxHighlighter>
+                  </div>
                 </div>
               )}
             </div>
@@ -510,9 +536,16 @@ console.log(data.choices[0].message.content);`
         </div>
         <div className="relative p-4">
           <CopyButton text={codeSnippets[codeTab]} />
-          <pre className="text-xs text-muted/80 overflow-x-auto font-mono leading-relaxed">
-            {codeSnippets[codeTab]}
-          </pre>
+          <div className="overflow-x-auto rounded-lg bg-[#1e1e1e] p-3">
+            <SyntaxHighlighter
+              language={codeTab === 'python' ? 'python' : codeTab === 'javascript' ? 'javascript' : 'bash'}
+              style={codeStyle}
+              customStyle={{ background: 'transparent', padding: 0, margin: 0 }}
+              wrapLongLines={false}
+            >
+              {codeSnippets[codeTab]}
+            </SyntaxHighlighter>
+          </div>
         </div>
       </div>
     </div>
