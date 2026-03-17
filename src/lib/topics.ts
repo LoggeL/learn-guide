@@ -100,7 +100,7 @@ export const topics: Topic[] = [
             name: 'Capabilities',
             children: [
               { id: 'rag', name: 'RAG', path: '/ai/llm/rag', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
-              { id: 'vision', name: 'Vision & Images', path: '/ai/llm/vision', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+              { id: 'vision', name: 'Vision & Images', path: '/ai/llm/vision', difficulty: 'beginner', lastUpdated: '2026-03-17' },
               { id: 'visual-challenges', name: 'Visual Challenges', path: '/ai/llm/visual-challenges', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'agentic-vision', name: 'Agentic Vision', path: '/ai/llm/agentic-vision', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'multimodality', name: 'Multimodality', path: '/ai/llm/multimodality', difficulty: 'beginner', lastUpdated: '2026-02-09' },
