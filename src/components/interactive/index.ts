@@ -1,4 +1,7 @@
 export { TokenCounter } from './TokenCounter'
+export { AttentionHeatmap } from './AttentionHeatmap'
+export { DistractorDemo } from './DistractorDemo'
+export { ScaleCalculator } from './ScaleCalculator'
 export { MemoryFadeVisualizer } from './MemoryFadeVisualizer'
 export { ContextRotSimulator } from './ContextRotSimulator'
 export { TemperatureDemo } from './TemperatureDemo'

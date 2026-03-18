@@ -92,7 +92,7 @@ export const topics: Topic[] = [
             name: 'Behavior',
             children: [
               { id: 'temperature', name: 'Temperature', path: '/ai/llm/temperature', difficulty: 'beginner', lastUpdated: '2026-02-09' },
-              { id: 'context-rot', name: 'Context Rot', path: '/ai/llm/context-rot', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
+              { id: 'context-rot', name: 'Context Rot', path: '/ai/llm/context-rot', difficulty: 'intermediate', lastUpdated: '2026-03-18' },
             ],
           },
           {
