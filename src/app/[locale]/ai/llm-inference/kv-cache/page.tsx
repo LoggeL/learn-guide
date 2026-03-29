@@ -114,6 +114,25 @@ export default function KVCachePage() {
             <h3 className="text-lg font-bold text-purple-400 mb-2">{t.kvCache.pagedAttentionTitle}</h3>
             <p className="text-sm text-muted leading-relaxed">{t.kvCache.pagedAttentionDesc}</p>
           </div>
+          {/* TurboQuant */}
+          <div className="p-5 rounded-xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20">
+            <h3 className="text-lg font-bold text-emerald-400 mb-2">{t.kvCache.turboQuantTitle}</h3>
+            <p className="text-sm text-muted leading-relaxed mb-3">{t.kvCache.turboQuantDesc}</p>
+            <div className="grid md:grid-cols-3 gap-3 text-xs">
+              <div className="rounded-lg border border-emerald-500/20 bg-background/60 p-3">
+                <div className="font-semibold text-emerald-300 mb-1">{t.kvCache.polarQuantTitle}</div>
+                <div className="text-muted">{t.kvCache.polarQuantDesc}</div>
+              </div>
+              <div className="rounded-lg border border-emerald-500/20 bg-background/60 p-3">
+                <div className="font-semibold text-emerald-300 mb-1">{t.kvCache.qjlTitle}</div>
+                <div className="text-muted">{t.kvCache.qjlDesc}</div>
+              </div>
+              <div className="rounded-lg border border-emerald-500/20 bg-background/60 p-3">
+                <div className="font-semibold text-emerald-300 mb-1">{t.kvCache.whyNewTitle}</div>
+                <div className="text-muted">{t.kvCache.whyNewDesc}</div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
