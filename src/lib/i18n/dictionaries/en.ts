@@ -4871,6 +4871,8 @@ export const en = {
     qjlTitle: 'QJL — the 1-bit error corrector',
     qjlDesc: 'After PolarQuant, a small residual error remains. QJL uses the Johnson-Lindenstrauss transform to project that residual into a single sign bit (+1/−1) per dimension — zero overhead. A special estimator then uses these bits to debias the dot product, recovering accurate attention scores. It\'s essentially a mathematical fact-checker that costs almost nothing.',
     whyNewTitle: 'Why it matters for inference',
+    turboQuantInteractiveTitle: 'Step-by-Step: How TurboQuant Compresses a Vector',
+    turboQuantInteractiveSubtitle: 'Watch a KV vector go from 96 bits to 32 bits with zero accuracy loss',
     whyNewDesc: 'A Llama 3 70B run at 128K context needs ~32 GB just for KV cache at FP16. With 4.2× compression that drops to ~7.6 GB — potentially the difference between fitting on one GPU or two. Tested on LongBench, Needle-in-a-Haystack, RULER, L-Eval with Gemma and Mistral: quality stays on par with FP16 at these compression ratios.',
     keyTakeaways: 'Key Takeaways',
     takeaway1: 'KV cache stores Key and Value projections from previous tokens, avoiding redundant computation during generation',

@@ -2,6 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { KVCacheVisualizer } from '@/components/interactive/KVCacheVisualizer'
+import { TurboQuantVisualizer } from '@/components/interactive/TurboQuantVisualizer'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function KVCachePage() {
@@ -134,6 +135,22 @@ export default function KVCachePage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* TurboQuant Interactive */}
+      <section>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 p-0.5">
+            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+              <span className="text-lg">🔬</span>
+            </div>
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.kvCache.turboQuantInteractiveTitle}</h2>
+            <p className="text-sm text-muted">{t.kvCache.turboQuantInteractiveSubtitle}</p>
+          </div>
+        </div>
+        <TurboQuantVisualizer />
       </section>
 
       {/* Key Takeaways */}
