@@ -1,11 +1,12 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useRef } from 'react'
 import Link from 'next/link'
 import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
+import { TableOfContents } from './TableOfContents'
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   beginner: 'Beginner',
@@ -34,6 +35,7 @@ export function TopicLayout({
 }: TopicLayoutProps) {
   const { t } = useTranslation()
   const { locale } = useLocale()
+  const articleRef = useRef<HTMLElement>(null)
 
   // Helper to add locale prefix to href
   const localizeHref = (href: string) => `/${locale}${href}`
@@ -89,8 +91,11 @@ export function TopicLayout({
         )}
       </header>
 
+      {/* Table of Contents */}
+      <TableOfContents articleRef={articleRef} />
+
       {/* Content */}
-      <article className="space-y-12 relative">
+      <article ref={articleRef} className="space-y-12 relative">
         {children}
       </article>
 
