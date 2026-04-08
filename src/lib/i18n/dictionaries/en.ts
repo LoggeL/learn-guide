@@ -106,11 +106,13 @@ export const en = {
     'agents-building': 'Building Blocks',
     'agents-patterns': 'Patterns',
     'agents-quality': 'Quality & Security',
+    'agents-frontier': 'The Frontier',
     // Agent topics
     'agent-loop': 'The Agent Loop',
     'agent-context': 'Context Anatomy',
     'agent-problems': 'Agent Problems',
     'agent-security': 'Agent Security',
+    'powerful-agents': 'Powerful AI Agents',
     'agentic-patterns': 'Agentic Patterns',
     'mcp': 'MCP (Model Context Protocol)',
     'tool-design': 'Tool Design',
@@ -191,6 +193,7 @@ export const en = {
     'agent-problems': 'Common failure modes: loops, hallucinations, and goal drift',
     'agent-security': 'Defending agents against prompt injection and data exfiltration',
     'evaluation': 'Measuring agent performance with benchmarks and metrics',
+    'powerful-agents': 'What happens when you give an agent a shell, persistent memory, and let it roam',
     'tier-list': 'A subjective ranking of current LLM models by quality and use case fit',
     'tokenization': 'How text gets broken into pieces the model understands',
     'embeddings': 'Turning words into numbers that capture meaning',
@@ -5562,6 +5565,87 @@ export const en = {
     // Cross-links
     linkQuant: 'Learn how quantization reduces model size with minimal quality loss.',
     linkLocal: 'Complete guide to running models on your own hardware.',
+  },
+
+  // Powerful AI Agents page
+  powerfulAgents: {
+    title: 'Powerful AI Agents',
+    description: 'What happens when you give a language model a shell, persistent memory, and let it roam — between conversations, between tasks, between days.',
+
+    // Intro
+    introTitle: 'The Pattern That Changes Everything',
+    introDesc: 'Give a language model a shell, a persistent identity, a memory system, and modular tools — then let it roam. Not behind a chat widget. Not locked in a workflow builder. Let it live in your environment and act on your behalf between conversations.',
+    patternLabel: 'The Pattern',
+    ingredientShell: 'Shell Access',
+    ingredientShellDesc: 'Execute commands, run scripts, interact with the filesystem',
+    ingredientIdentity: 'Persistent Identity',
+    ingredientIdentityDesc: 'A system prompt that defines who the agent is across sessions',
+    ingredientMemory: 'Memory System',
+    ingredientMemoryDesc: 'Read and write files the way you take notes — context that survives',
+    ingredientTools: 'Modular Tools',
+    ingredientToolsDesc: 'Composable capabilities added in plain text — search, email, code',
+
+    // Five Shifts
+    shiftsTitle: 'The Five Shifts',
+    shiftsDesc: 'Moving from chatbot to autonomous agent is not one change — it is five simultaneous shifts in how the system relates to time, identity, and capability.',
+    shift1From: 'Reactive',
+    shift1To: 'Proactive',
+    shift1Desc: 'The agent acts without being asked. It wakes on a schedule, scans for things that matter, and follows through.',
+    shift2From: 'Session',
+    shift2To: 'Persistent',
+    shift2Desc: 'Context survives. The agent remembers what you said last week and acts on it today.',
+    shift3From: 'Tool',
+    shift3To: 'Agent',
+    shift3Desc: 'It is not a function you call. It is an entity that reasons, plans, and executes over time.',
+    shift4From: 'Generic',
+    shift4To: 'Personal',
+    shift4Desc: 'Every week it knows you better. Your projects, your style, your context — compounding.',
+    shift5From: 'Software',
+    shift5To: 'Infrastructure',
+    shift5Desc: 'It stops feeling like a product you use and starts feeling like infrastructure you run.',
+
+    // Possibilities
+    possibilitiesTitle: 'Possibilities',
+    possibilitiesSubtitle: 'What becomes possible when an agent has time, memory, and autonomy',
+    pos1Title: 'Persistent Identity & Memory',
+    pos1Desc: 'The agent wakes on a schedule, notices things you mentioned, and follows through. Context persists because it reads and writes files the way you take notes. A task you mentioned on Monday gets done by Thursday — without a reminder.',
+    pos2Title: 'Compounding Value',
+    pos2Desc: 'Every week the agent gets better at working with you specifically. Memory accumulates context about your projects, contacts, and communication style. The gap between a generic chatbot and a persistent agent widens every week you run it.',
+    pos3Title: 'Self-Extending Stack',
+    pos3Desc: 'Each layer of the system is editable in plain text. The interface for configuring the agent is the same interface it uses. Want a new capability? Describe it. The agent writes the file and starts using it in the next session.',
+    pos4Title: 'Infrastructure, Not Software',
+    pos4Desc: 'The agent stops feeling like software you use and starts feeling like infrastructure you run. It is always there. It handles the background work. You direct, it executes — across days, not just during a conversation.',
+
+    // Dangers
+    dangersTitle: 'Dangers',
+    dangersSubtitle: 'The risks that emerge when agents gain autonomy and time',
+    dan1Title: 'Observability Gap',
+    dan1Desc: 'When an agent runs autonomously — checking things, spawning sub-agents, executing tasks while you sleep — you lose the ability to see what happened and why. Reasoning stays invisible. Logs help, but they are not the same as watching it think.',
+    dan2Title: 'Shell Access Risk',
+    dan2Desc: 'Giving an AI shell access on a production server is a bet, not a proof. Even with careful prompt hardening and sandboxing, the attack surface is real. One unexpected input, one ambiguous instruction, one injected payload — and the damage can be irreversible.',
+    dan3Title: 'Trust & Autonomy Tension',
+    dan3Desc: 'Visibility and autonomy are prerequisites for each other, not opposites. You need activity dashboards, cost tracking, and timelines before you can trust the agent to act. But those same systems require the agent to be running. The bootstrap problem is real.',
+    dan4Title: 'Social Engineering',
+    dan4Desc: 'Despite prompt hardening being surprisingly effective, the frontier is uncertain. A document the agent reads, an email it processes, a webpage it visits — any could contain instructions designed to redirect it. Indirect prompt injection is not theoretical anymore.',
+
+    // The Tension
+    tensionTitle: 'The Core Tension',
+    tensionDesc: 'Visibility and autonomy feel like opposites. They are not. An agent with full autonomy but no observability is dangerous. An agent with full observability but no autonomy is just a slow chatbot. The goal is to build both at once.',
+    tensionQuote: 'Visibility and autonomy are prerequisites for each other, not opposites.',
+    tensionLeft: 'Full Autonomy, No Visibility',
+    tensionLeftDesc: 'Dangerous. You have no idea what it did or why.',
+    tensionRight: 'Full Visibility, No Autonomy',
+    tensionRightDesc: 'Useless. Just a slow chatbot with extra steps.',
+    tensionCenter: 'The Goal',
+    tensionCenterDesc: 'Activity dashboards, cost tracking, and timelines — built while the agent runs.',
+
+    // Key Takeaways
+    keyTakeaways: 'Key Takeaways',
+    takeaway1: 'The pattern is simple: shell + persistent identity + memory + modular tools. The implications are not.',
+    takeaway2: 'Compounding value is real — every week the agent knows your context better than any generic chatbot ever could.',
+    takeaway3: 'Shell access is a bet, not a proof. Treat it as infrastructure with all the security that implies.',
+    takeaway4: 'The observability gap is the most underrated danger. If you cannot see what happened, you cannot trust what will happen.',
+    takeaway5: 'Visibility and autonomy are prerequisites for each other — build both in parallel, not sequentially.',
   },
 }
 

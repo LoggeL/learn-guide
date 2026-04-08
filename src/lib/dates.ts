@@ -38,6 +38,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'memory': '2026-01-29',
   'mcp': '2026-01-29',
   'evaluation': '2026-01-29',
+  'powerful-agents': '2026-04-08',
   'bias': '2026-01-24',
   'prompt-basics': '2026-01-24',
   'training': '2026-01-24',

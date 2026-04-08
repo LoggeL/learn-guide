@@ -108,11 +108,13 @@ export const de: Dictionary = {
     'agents-building': 'Bausteine',
     'agents-patterns': 'Muster',
     'agents-quality': 'Qualität & Sicherheit',
+    'agents-frontier': 'Die Grenze',
     // Agent topics
     'agent-loop': 'Der Agenten-Zyklus',
     'agent-context': 'Kontext-Anatomie',
     'agent-problems': 'Agenten-Probleme',
     'agent-security': 'Agenten-Sicherheit',
+    'powerful-agents': 'Mächtige KI-Agenten',
     'agentic-patterns': 'Agentische Muster',
     'mcp': 'MCP (Model Context Protocol)',
     'tool-design': 'Tool-Design',
@@ -193,6 +195,7 @@ export const de: Dictionary = {
     'agent-problems': 'Typische Fehler: Endlosschleifen, Halluzinationen und Zieldrift',
     'agent-security': 'Schutz vor Prompt-Injektion und Datenabfluss',
     'evaluation': 'Agentenleistung mit Benchmarks und Metriken messen',
+    'powerful-agents': 'Was passiert, wenn ein Agent eine Shell, dauerhaftes Gedächtnis bekommt und frei agieren darf',
     'tier-list': 'Eine subjektive Rangliste aktüller LLM-Modelle nach Qualität und Anwendungsfall',
     'tokenization': 'Wie Text in Teile zerlegt wird, die das Modell versteht',
     'embeddings': 'Wörter in Zahlen verwandeln, die Bedeutung erfassen',
@@ -5536,5 +5539,86 @@ export const de: Dictionary = {
 
     linkQuant: 'Erfahre, wie Quantisierung die Modellgröße bei minimalem Qualitätsverlust reduziert.',
     linkLocal: 'Vollständiger Leitfaden zum Ausführen von Modellen auf eigener Hardware.',
+  },
+
+  // Mächtige KI-Agenten Seite
+  powerfulAgents: {
+    title: 'Mächtige KI-Agenten',
+    description: 'Was passiert, wenn du einem Sprachmodell eine Shell, dauerhaftes Gedächtnis und Modularität gibst — und es zwischen Gesprächen, zwischen Aufgaben, zwischen Tagen frei agieren lässt.',
+
+    // Intro
+    introTitle: 'Das Muster, das alles verändert',
+    introDesc: 'Gib einem Sprachmodell eine Shell, eine dauerhafte Identität, ein Gedächtnissystem und modulare Tools — dann lass es frei agieren. Nicht hinter einem Chat-Widget. Nicht in einem Workflow-Builder eingesperrt. Lass es in deiner Umgebung leben und in deinem Namen zwischen Gesprächen handeln.',
+    patternLabel: 'Das Muster',
+    ingredientShell: 'Shell-Zugang',
+    ingredientShellDesc: 'Befehle ausführen, Skripte starten, mit dem Dateisystem interagieren',
+    ingredientIdentity: 'Dauerhafte Identität',
+    ingredientIdentityDesc: 'Ein System-Prompt, der über Sitzungen hinweg definiert, wer der Agent ist',
+    ingredientMemory: 'Gedächtnissystem',
+    ingredientMemoryDesc: 'Dateien lesen und schreiben wie du Notizen machst — Kontext, der überlebt',
+    ingredientTools: 'Modulare Tools',
+    ingredientToolsDesc: 'Zusammensetzbare Fähigkeiten in Klartext hinzugefügt — Suche, E-Mail, Code',
+
+    // Five Shifts
+    shiftsTitle: 'Die fünf Übergänge',
+    shiftsDesc: 'Der Weg vom Chatbot zum autonomen Agenten ist nicht eine einzelne Veränderung — es sind fünf gleichzeitige Verschiebungen darin, wie das System mit Zeit, Identität und Fähigkeiten umgeht.',
+    shift1From: 'Reaktiv',
+    shift1To: 'Proaktiv',
+    shift1Desc: 'Der Agent handelt ohne aufgefordert zu werden. Er wacht nach Zeitplan auf, sucht nach relevanten Dingen und führt sie durch.',
+    shift2From: 'Sitzung',
+    shift2To: 'Dauerhaft',
+    shift2Desc: 'Kontext überlebt. Der Agent erinnert sich, was du letzte Woche gesagt hast, und handelt heute danach.',
+    shift3From: 'Tool',
+    shift3To: 'Agent',
+    shift3Desc: 'Es ist keine Funktion, die du aufrufst. Es ist eine Entität, die über Zeit hinweg denkt, plant und ausführt.',
+    shift4From: 'Generisch',
+    shift4To: 'Persönlich',
+    shift4Desc: 'Jede Woche kennt er dich besser. Deine Projekte, dein Stil, dein Kontext — kumulierend.',
+    shift5From: 'Software',
+    shift5To: 'Infrastruktur',
+    shift5Desc: 'Es hört auf, sich wie ein Produkt anzufühlen, das du nutzt, und fängt an, sich wie Infrastruktur anzufühlen, die du betreibst.',
+
+    // Possibilities
+    possibilitiesTitle: 'Chancen',
+    possibilitiesSubtitle: 'Was möglich wird, wenn ein Agent Zeit, Gedächtnis und Autonomie hat',
+    pos1Title: 'Dauerhafte Identität & Gedächtnis',
+    pos1Desc: 'Der Agent wacht nach Zeitplan auf, bemerkt Dinge, die du erwähnt hast, und führt sie durch. Kontext überlebt, weil er Dateien liest und schreibt wie du Notizen machst. Eine Aufgabe, die du montags erwähnt hast, ist donnerstags erledigt — ohne Erinnerung.',
+    pos2Title: 'Kumulierender Mehrwert',
+    pos2Desc: 'Jede Woche wird der Agent besser darin, speziell mit dir zu arbeiten. Das Gedächtnis akkumuliert Kontext über deine Projekte, Kontakte und Kommunikationsstil. Der Abstand zwischen einem generischen Chatbot und einem dauerhaften Agenten wächst mit jeder Woche, die du ihn betreibst.',
+    pos3Title: 'Selbst-erweiternder Stack',
+    pos3Desc: 'Jede Schicht des Systems ist in Klartext editierbar. Die Schnittstelle zum Konfigurieren des Agenten ist dieselbe, die er selbst nutzt. Neue Fähigkeit gewünscht? Beschreib sie. Der Agent schreibt die Datei und nutzt sie ab der nächsten Sitzung.',
+    pos4Title: 'Infrastruktur, nicht Software',
+    pos4Desc: 'Der Agent hört auf, sich wie Software anzufühlen, die du nutzt, und fühlt sich an wie Infrastruktur, die du betreibst. Er ist immer da. Er erledigt die Hintergrundarbeit. Du gibst die Richtung vor, er führt aus — über Tage, nicht nur während eines Gesprächs.',
+
+    // Dangers
+    dangersTitle: 'Gefahren',
+    dangersSubtitle: 'Die Risiken, die entstehen, wenn Agenten Autonomie und Zeit gewinnen',
+    dan1Title: 'Sichtbarkeitslücke',
+    dan1Desc: 'Wenn ein Agent autonom läuft — Dinge überprüft, Sub-Agenten spawnt, Aufgaben ausführt während du schläfst — verlierst du die Fähigkeit zu sehen, was passiert ist und warum. Das Denken bleibt unsichtbar. Logs helfen, sind aber nicht dasselbe wie zuzuschauen.',
+    dan2Title: 'Shell-Zugriffsrisiko',
+    dan2Desc: 'Einem KI-System Shell-Zugang auf einem Produktionsserver zu geben ist eine Wette, kein Beweis. Selbst mit sorgfältigem Prompt-Hardening und Sandboxing ist die Angriffsfläche real. Ein unerwarteter Input, eine mehrdeutige Anweisung, ein injizierter Payload — und der Schaden kann irreversibel sein.',
+    dan3Title: 'Vertrauen & Autonomiespannung',
+    dan3Desc: 'Sichtbarkeit und Autonomie sind Voraussetzungen füreinander, keine Gegensätze. Du brauchst Aktivitäts-Dashboards, Kostenverfolgung und Timelines, bevor du dem Agenten vertrauen kannst zu handeln. Aber diese Systeme erfordern, dass der Agent bereits läuft. Das Bootstrap-Problem ist real.',
+    dan4Title: 'Social Engineering',
+    dan4Desc: 'Obwohl Prompt-Hardening überraschend effektiv ist, ist die Grenze unsicher. Ein Dokument, das der Agent liest, eine E-Mail, die er verarbeitet, eine Webseite, die er besucht — jede könnte Anweisungen enthalten, die ihn umlenken sollen. Indirekte Prompt-Injektion ist nicht mehr theoretisch.',
+
+    // The Tension
+    tensionTitle: 'Die zentrale Spannung',
+    tensionDesc: 'Sichtbarkeit und Autonomie wirken wie Gegensätze. Sie sind es nicht. Ein Agent mit voller Autonomie, aber keiner Beobachtbarkeit ist gefährlich. Ein Agent mit voller Beobachtbarkeit, aber keiner Autonomie ist nur ein langsamer Chatbot. Das Ziel ist, beides gleichzeitig aufzubauen.',
+    tensionQuote: 'Sichtbarkeit und Autonomie sind Voraussetzungen füreinander, keine Gegensätze.',
+    tensionLeft: 'Volle Autonomie, keine Sichtbarkeit',
+    tensionLeftDesc: 'Gefährlich. Du weißt nicht, was er getan hat oder warum.',
+    tensionRight: 'Volle Sichtbarkeit, keine Autonomie',
+    tensionRightDesc: 'Nutzlos. Nur ein langsamer Chatbot mit zusätzlichen Schritten.',
+    tensionCenter: 'Das Ziel',
+    tensionCenterDesc: 'Aktivitäts-Dashboards, Kostenverfolgung und Timelines — gebaut während der Agent läuft.',
+
+    // Key Takeaways
+    keyTakeaways: 'Wichtigste Erkenntnisse',
+    takeaway1: 'Das Muster ist einfach: Shell + dauerhafte Identität + Gedächtnis + modulare Tools. Die Implikationen sind es nicht.',
+    takeaway2: 'Kumulierender Mehrwert ist real — jede Woche kennt der Agent deinen Kontext besser als je ein generischer Chatbot.',
+    takeaway3: 'Shell-Zugang ist eine Wette, kein Beweis. Behandle ihn als Infrastruktur mit all der Sicherheit, die das impliziert.',
+    takeaway4: 'Die Sichtbarkeitslücke ist die unterschätzteste Gefahr. Wenn du nicht siehst, was passiert ist, kannst du nicht vertrauen, was passieren wird.',
+    takeaway5: 'Sichtbarkeit und Autonomie sind Voraussetzungen füreinander — baue beides parallel, nicht nacheinander.',
   },
 }

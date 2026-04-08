@@ -72,6 +72,13 @@ export const topics: Topic[] = [
               { id: 'evaluation', name: 'Evaluation', path: '/ai/agents/evaluation', difficulty: 'expert', lastUpdated: '2026-02-09' },
             ],
           },
+          {
+            id: 'agents-frontier',
+            name: 'The Frontier',
+            children: [
+              { id: 'powerful-agents', name: 'Powerful AI Agents', path: '/ai/agents/powerful', difficulty: 'expert', lastUpdated: '2026-04-08' },
+            ],
+          },
         ],
       },
       {
@@ -283,6 +290,7 @@ export const learningPath: string[] = [
   'agent-problems',
   'agent-security',
   'evaluation',
+  'powerful-agents',
   // Advanced Vision
   'visual-challenges',
   'agentic-vision',
