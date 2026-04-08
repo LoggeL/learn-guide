@@ -71,7 +71,7 @@ export const models: ModelEntry[] = [
     id: 'deepseek-v32',
     nameKey: 'deepseekV32',
     descKey: 'deepseekV32Desc',
-    tier: 'B',
+    tier: 'S',
     hosting: 'open-weight',
     params: '685B MoE \u2192 37B active',
     totalParamsB: 685,
@@ -147,10 +147,10 @@ export const models: ModelEntry[] = [
 
   // B-Tier
   {
-    id: 'glm-5',
-    nameKey: 'glm5',
-    descKey: 'glm5Desc',
-    tier: 'B',
+    id: 'glm-5-1',
+    nameKey: 'glm51',
+    descKey: 'glm51Desc',
+    tier: 'S',
     hosting: 'open-weight',
     params: '744B MoE \u2192 40B active',
     totalParamsB: 744,
@@ -183,7 +183,7 @@ export const models: ModelEntry[] = [
     id: 'grok-420',
     nameKey: 'grok420',
     descKey: 'grok420Desc',
-    tier: 'B',
+    tier: 'S',
     hosting: 'api',
   },
 
