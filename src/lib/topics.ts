@@ -228,6 +228,75 @@ function validateTopics(topicList: Topic[]): void {
 // Validate on import — build will fail if any leaf topic is missing metadata
 validateTopics(topics)
 
+/**
+ * A curated learning path: topic IDs in recommended study order,
+ * from foundational beginner topics up to expert-level content.
+ */
+export const learningPath: string[] = [
+  // Foundation
+  'getting-started',
+  'neural-networks',
+  'training',
+  'tokenization',
+  'temperature',
+  'embeddings',
+  'prompt-basics',
+  'local-inference',
+  // Understanding LLMs
+  'vision',
+  'multimodality',
+  'gradient-descent',
+  'attention',
+  'transformer-architecture',
+  'rag',
+  'context-rot',
+  'advanced-prompting',
+  'system-prompts',
+  // LLM Architecture & Training
+  'llm-training',
+  'training-data',
+  'distillation',
+  'lora',
+  'moe',
+  'quantization',
+  'nested-learning',
+  'speculative-decoding',
+  // Diffusion Models
+  'diffusion-fundamentals',
+  'text-diffusion',
+  'image-diffusion',
+  // Inference & Performance
+  'batching',
+  'vram-calc',
+  'prompt-caching',
+  'kv-cache',
+  // AI Agents
+  'agent-loop',
+  'agent-context',
+  'tool-design',
+  'programmatic-tools',
+  'memory',
+  'skills',
+  'mcp',
+  'agentic-patterns',
+  'orchestration',
+  'agent-problems',
+  'agent-security',
+  'evaluation',
+  // Advanced Vision
+  'visual-challenges',
+  'agentic-vision',
+  // World Models
+  'world-models',
+  // Safety & Industry
+  'bias',
+  'responsible-ai',
+  'european-ai',
+  'open-source',
+  'logges-favourite-model',
+  'tier-list',
+]
+
 export function searchTopics(query: string): Topic[] {
   const q = query.toLowerCase()
   return flattenTopics().filter(

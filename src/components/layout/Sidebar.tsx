@@ -4,12 +4,12 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, Sparkles, X, Command, Heart, Github } from 'lucide-react'
+import { ChevronRight, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { DIFFICULTY_STYLES } from '@/lib/difficulty'
-import { getTopicCategories, flattenTopics, type Topic } from '@/lib/topics'
+import { getTopicCategories, flattenTopics, learningPath, type Topic } from '@/lib/topics'
 
 const topicTree = getTopicCategories()
 
@@ -137,15 +137,84 @@ function TopicNode({
   )
 }
 
+function LearningPathView({
+  topics,
+  visitedPaths,
+  pathname,
+  locale,
+  onNavigate,
+  getTopicName,
+}: {
+  topics: Topic[]
+  visitedPaths: Set<string>
+  pathname: string
+  locale: string
+  onNavigate?: () => void
+  getTopicName: (key: string) => string
+}) {
+  return (
+    <div className="space-y-0.5">
+      {topics.map((topic, index) => {
+        const localePath = `/${locale}${topic.path}`
+        const isActive = localePath === pathname
+        const isVisited = visitedPaths.has(localePath)
+
+        return (
+          <Link
+            key={topic.id}
+            href={localePath}
+            onClick={onNavigate}
+            className={clsx(
+              'flex items-center gap-2 py-2 px-3 rounded-lg transition-all duration-200 group',
+              isActive
+                ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
+                : isVisited
+                  ? 'text-muted hover:bg-surface-elevated hover:text-text border-l-2 border-emerald-500/30'
+                  : 'text-subtle hover:bg-surface-elevated hover:text-text border-l-2 border-transparent'
+            )}
+          >
+            <span className="text-[10px] font-mono text-subtle w-5 shrink-0 text-right">
+              {index + 1}
+            </span>
+            {isActive ? (
+              <CheckCircle2 size={11} className="text-primary shrink-0" />
+            ) : isVisited ? (
+              <CheckCircle2 size={11} className="text-emerald-500/70 shrink-0" />
+            ) : (
+              <Circle size={11} className="text-subtle/40 shrink-0" />
+            )}
+            <span className="flex-1 text-sm font-medium truncate">
+              {getTopicName(topic.id)}
+            </span>
+            {topic.difficulty && !isActive && (
+              <span className={clsx(
+                'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0',
+                DIFFICULTY_STYLES[topic.difficulty].color,
+                DIFFICULTY_STYLES[topic.difficulty].bg,
+                DIFFICULTY_STYLES[topic.difficulty].border,
+              )}>
+                {DIFFICULTY_STYLES[topic.difficulty].label}
+              </span>
+            )}
+          </Link>
+        )
+      })}
+    </div>
+  )
+}
+
 export function Sidebar() {
   const { t } = useTranslation()
   const { locale } = useLocale()
   const router = useRouter()
+  const pathname = usePathname()
   const [searchQuery, setSearchQuery] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const [viewMode, setViewMode] = useState<'default' | 'learning-path'>('default')
+  const [visitedPaths, setVisitedPaths] = useState<Set<string>>(new Set())
 
   const getTopicName = (key: string): string => {
     // First check topicNames, then categories
@@ -178,8 +247,51 @@ export function Sidebar() {
     }
   }, [isCollapsed])
 
+  // Load persisted state from localStorage
+  useEffect(() => {
+    try {
+      const storedPaths = localStorage.getItem('visitedPaths')
+      if (storedPaths) setVisitedPaths(new Set(JSON.parse(storedPaths)))
+      const storedViewMode = localStorage.getItem('sidebarViewMode')
+      if (storedViewMode === 'learning-path' || storedViewMode === 'default') {
+        setViewMode(storedViewMode)
+      }
+    } catch {}
+  }, [])
+
+  // Track current page as visited
+  useEffect(() => {
+    if (!pathname) return
+    setVisitedPaths(prev => {
+      const next = new Set(prev)
+      next.add(pathname)
+      try { localStorage.setItem('visitedPaths', JSON.stringify(Array.from(next))) } catch {}
+      return next
+    })
+  }, [pathname])
+
+  // Persist view mode
+  useEffect(() => {
+    try { localStorage.setItem('sidebarViewMode', viewMode) } catch {}
+  }, [viewMode])
+
   const allTopics = useMemo(() => flattenTopics(topicTree), [])
-  
+
+  const learningPathTopics = useMemo(() => {
+    return learningPath
+      .map(id => allTopics.find(t => t.id === id))
+      .filter((t): t is Topic => t !== undefined)
+  }, [allTopics])
+
+  const visitedLPCount = useMemo(() => {
+    return learningPathTopics.filter(t => t.path && visitedPaths.has(`/${locale}${t.path}`)).length
+  }, [learningPathTopics, visitedPaths, locale])
+
+  const resetProgress = () => {
+    setVisitedPaths(new Set())
+    try { localStorage.removeItem('visitedPaths') } catch {}
+  }
+
   const searchResults = useMemo(() => {
     if (!searchQuery) return []
     const q = searchQuery.toLowerCase()
@@ -314,18 +426,86 @@ export function Sidebar() {
 
         {/* Navigation */}
         <nav className={clsx('flex-1 overflow-auto px-3 pb-4', isCollapsed && !isMobileOpen && 'hidden')}>
-          <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
-            {t.common.topics}
+          {/* View mode toggle */}
+          <div className="flex items-center gap-1 mb-3">
+            <button
+              onClick={() => setViewMode('default')}
+              title={t.common.defaultView}
+              className={clsx(
+                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-1 justify-center',
+                viewMode === 'default'
+                  ? 'bg-surface-elevated text-text'
+                  : 'text-subtle hover:text-muted hover:bg-surface-elevated/50'
+              )}
+            >
+              <LayoutList size={12} />
+              <span>{t.common.defaultView}</span>
+            </button>
+            <button
+              onClick={() => setViewMode('learning-path')}
+              title={t.common.learningPath}
+              className={clsx(
+                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-1 justify-center',
+                viewMode === 'learning-path'
+                  ? 'bg-surface-elevated text-text'
+                  : 'text-subtle hover:text-muted hover:bg-surface-elevated/50'
+              )}
+            >
+              <ListOrdered size={12} />
+              <span>{t.common.learningPath}</span>
+            </button>
           </div>
-          {topicTree.map((topic) => (
-            <TopicNode 
-              key={topic.id} 
-              topic={topic} 
+
+          {/* Progress bar (learning path mode) */}
+          {viewMode === 'learning-path' && (
+            <div className="mb-3 px-1">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-subtle">
+                  {visitedLPCount}/{learningPathTopics.length} {t.common.topicsCompleted}
+                </span>
+                <button
+                  onClick={resetProgress}
+                  className="text-[10px] text-subtle hover:text-muted transition-colors"
+                >
+                  {t.common.resetProgress}
+                </button>
+              </div>
+              <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${learningPathTopics.length > 0 ? (visitedLPCount / learningPathTopics.length) * 100 : 0}%` }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+              </div>
+            </div>
+          )}
+
+          {viewMode === 'learning-path' ? (
+            <LearningPathView
+              topics={learningPathTopics}
+              visitedPaths={visitedPaths}
+              pathname={pathname}
+              locale={locale}
               onNavigate={() => setIsMobileOpen(false)}
               getTopicName={getTopicName}
-              locale={locale}
             />
-          ))}
+          ) : (
+            <>
+              <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
+                {t.common.topics}
+              </div>
+              {topicTree.map((topic) => (
+                <TopicNode
+                  key={topic.id}
+                  topic={topic}
+                  onNavigate={() => setIsMobileOpen(false)}
+                  getTopicName={getTopicName}
+                  locale={locale}
+                />
+              ))}
+            </>
+          )}
         </nav>
 
         {/* Footer with LMF branding */}

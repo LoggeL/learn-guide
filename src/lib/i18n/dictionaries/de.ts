@@ -30,6 +30,11 @@ export const de: Dictionary = {
     lastUpdated: 'Zuletzt aktualisiert',
     recentlyUpdated: 'Zuletzt aktualisiert',
     whatsNew: 'Was gibt\'s Neues',
+    learningPath: 'Lernpfad',
+    defaultView: 'Standard',
+    progress: 'Fortschritt',
+    topicsCompleted: 'Themen besucht',
+    resetProgress: 'Fortschritt zurücksetzen',
   },
 
   // 404 Seite

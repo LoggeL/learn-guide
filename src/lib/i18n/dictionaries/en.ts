@@ -28,6 +28,11 @@ export const en = {
     lastUpdated: 'Last updated',
     recentlyUpdated: 'Recently Updated',
     whatsNew: "What's New",
+    learningPath: 'Learning Path',
+    defaultView: 'Default',
+    progress: 'Progress',
+    topicsCompleted: 'topics visited',
+    resetProgress: 'Reset progress',
   },
 
   // 404 page
