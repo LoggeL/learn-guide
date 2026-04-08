@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight, BookOpen } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
-import { TableOfContents } from './TableOfContents'
 import { RightTableOfContents } from './RightTableOfContents'
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -95,9 +94,9 @@ export function TopicLayout({
       {/* Content grid: article + right sidebar TOC on desktop */}
       <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 xl:items-start">
         <div>
-          {/* Inline Table of Contents — hidden on xl+ where right sidebar takes over */}
+          {/* Mobile sticky TOC pill bar — hidden on xl+ where right sidebar takes over */}
           <div className="xl:hidden">
-            <TableOfContents articleRef={articleRef} />
+            <RightTableOfContents articleRef={articleRef} variant="mobile" />
           </div>
 
           {/* Content */}
@@ -143,7 +142,7 @@ export function TopicLayout({
         </div>
 
         {/* Right sidebar TOC — only visible on xl+ */}
-        <RightTableOfContents articleRef={articleRef} />
+        <RightTableOfContents articleRef={articleRef} variant="desktop" />
       </div>
     </div>
   )

@@ -10,6 +10,7 @@ interface TocEntry {
 
 interface RightTableOfContentsProps {
   articleRef: React.RefObject<HTMLElement | null>
+  variant?: 'mobile' | 'desktop'
 }
 
 function slugify(text: string): string {
@@ -21,10 +22,11 @@ function slugify(text: string): string {
     .replace(/-+/g, '-')
 }
 
-export function RightTableOfContents({ articleRef }: RightTableOfContentsProps) {
+export function RightTableOfContents({ articleRef, variant }: RightTableOfContentsProps) {
   const [entries, setEntries] = useState<TocEntry[]>([])
   const [activeId, setActiveId] = useState<string>('')
   const observerRef = useRef<IntersectionObserver | null>(null)
+  const activePillRef = useRef<HTMLAnchorElement | null>(null)
 
   useEffect(() => {
     const article = articleRef.current
@@ -70,7 +72,47 @@ export function RightTableOfContents({ articleRef }: RightTableOfContentsProps) 
     return () => observer.disconnect()
   }, [entries])
 
+  // Scroll active pill into view on mobile
+  useEffect(() => {
+    if (activePillRef.current) {
+      activePillRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    }
+  }, [activeId])
+
   if (entries.length < 2) return null
+
+  if (variant === 'mobile') {
+    return (
+      <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 mb-8 bg-background/90 backdrop-blur-sm border-b border-border/50">
+        <nav aria-label="Table of contents" className="overflow-x-auto scrollbar-none">
+          <ul className="flex gap-1.5 w-max">
+            {entries.map(({ id, text }) => {
+              const isActive = activeId === id
+              return (
+                <li key={id} className="shrink-0">
+                  <a
+                    ref={isActive ? activePillRef : null}
+                    href={`#${id}`}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+                    }}
+                    className={`block text-xs px-3 py-1.5 rounded-full border transition-all duration-150 whitespace-nowrap ${
+                      isActive
+                        ? 'border-primary/60 text-primary-light bg-primary/10 font-medium'
+                        : 'border-border text-muted hover:text-text hover:border-border/80 hover:bg-surface/50'
+                    }`}
+                  >
+                    {text}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+      </div>
+    )
+  }
 
   return (
     <aside className="hidden xl:block">
