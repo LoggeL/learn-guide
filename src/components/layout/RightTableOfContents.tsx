@@ -115,8 +115,8 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
   }
 
   return (
-    <aside className="hidden xl:block">
-      <div className="sticky top-8 max-h-[calc(100vh-6rem)] overflow-y-auto pr-1">
+    <aside className="hidden xl:block xl:col-start-2">
+      <div className="fixed top-8 max-h-[calc(100vh-6rem)] overflow-y-auto pr-1 w-[200px]">
         <div className="flex items-center gap-2 mb-3 px-1">
           <List size={13} className="text-subtle shrink-0" />
           <span className="text-xs font-semibold text-gradient uppercase tracking-widest">On this page</span>
