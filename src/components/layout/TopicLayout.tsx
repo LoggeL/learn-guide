@@ -7,6 +7,7 @@ import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
 import { TableOfContents } from './TableOfContents'
+import { RightTableOfContents } from './RightTableOfContents'
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   beginner: 'Beginner',
@@ -91,49 +92,59 @@ export function TopicLayout({
         )}
       </header>
 
-      {/* Table of Contents */}
-      <TableOfContents articleRef={articleRef} />
+      {/* Content grid: article + right sidebar TOC on desktop */}
+      <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 xl:items-start">
+        <div>
+          {/* Inline Table of Contents — hidden on xl+ where right sidebar takes over */}
+          <div className="xl:hidden">
+            <TableOfContents articleRef={articleRef} />
+          </div>
 
-      {/* Content */}
-      <article ref={articleRef} className="space-y-12 relative">
-        {children}
-      </article>
+          {/* Content */}
+          <article ref={articleRef} className="space-y-12 relative">
+            {children}
+          </article>
 
-      {/* Navigation */}
-      <footer className="mt-20 pt-8 border-t border-border">
-        <div className="flex justify-between items-center">
-          {prevTopic ? (
-            <Link
-              href={localizeHref(prevTopic.href)}
-              className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
-            >
-              <ChevronLeft size={18} className="text-muted group-hover:text-primary transition-colors" />
-              <div className="text-left">
-                <span className="text-xs text-subtle block">{t.common.previous}</span>
-                <span className="text-text font-medium group-hover:text-primary-light transition-colors">
-                  {prevTopic.label}
-                </span>
-              </div>
-            </Link>
-          ) : (
-            <div />
-          )}
-          {nextTopic && (
-            <Link
-              href={localizeHref(nextTopic.href)}
-              className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
-            >
-              <div className="text-right">
-                <span className="text-xs text-subtle block">{t.common.next}</span>
-                <span className="text-text font-medium group-hover:text-primary-light transition-colors">
-                  {nextTopic.label}
-                </span>
-              </div>
-              <ChevronRight size={18} className="text-muted group-hover:text-primary transition-colors" />
-            </Link>
-          )}
+          {/* Navigation */}
+          <footer className="mt-20 pt-8 border-t border-border">
+            <div className="flex justify-between items-center">
+              {prevTopic ? (
+                <Link
+                  href={localizeHref(prevTopic.href)}
+                  className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
+                >
+                  <ChevronLeft size={18} className="text-muted group-hover:text-primary transition-colors" />
+                  <div className="text-left">
+                    <span className="text-xs text-subtle block">{t.common.previous}</span>
+                    <span className="text-text font-medium group-hover:text-primary-light transition-colors">
+                      {prevTopic.label}
+                    </span>
+                  </div>
+                </Link>
+              ) : (
+                <div />
+              )}
+              {nextTopic && (
+                <Link
+                  href={localizeHref(nextTopic.href)}
+                  className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-primary/40 hover:bg-surface-elevated transition-all"
+                >
+                  <div className="text-right">
+                    <span className="text-xs text-subtle block">{t.common.next}</span>
+                    <span className="text-text font-medium group-hover:text-primary-light transition-colors">
+                      {nextTopic.label}
+                    </span>
+                  </div>
+                  <ChevronRight size={18} className="text-muted group-hover:text-primary transition-colors" />
+                </Link>
+              )}
+            </div>
+          </footer>
         </div>
-      </footer>
+
+        {/* Right sidebar TOC — only visible on xl+ */}
+        <RightTableOfContents articleRef={articleRef} />
+      </div>
     </div>
   )
 }
