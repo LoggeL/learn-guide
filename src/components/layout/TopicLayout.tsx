@@ -37,11 +37,10 @@ export function TopicLayout({
   const { locale } = useLocale()
   const articleRef = useRef<HTMLElement>(null)
 
-  // Helper to add locale prefix to href
   const localizeHref = (href: string) => `/${locale}${href}`
 
   return (
-    <div className="max-w-4xl xl:max-w-5xl 2xl:max-w-7xl mx-auto relative overflow-x-clip">
+    <div className="max-w-4xl xl:max-w-5xl 2xl:max-w-7xl mx-auto relative">
       {/* Ambient background glow */}
       <div className="absolute -top-40 right-0 w-[500px] h-[500px] bg-gradient-radial from-primary/10 via-transparent to-transparent blur-3xl pointer-events-none" />
       
@@ -93,13 +92,8 @@ export function TopicLayout({
 
       {/* Content grid: article + right sidebar TOC on desktop */}
       <div className="xl:grid xl:grid-cols-[1fr_220px] xl:gap-10 xl:items-start">
+        {/* Left column: article + nav */}
         <div>
-          {/* Mobile sticky TOC pill bar — hidden on xl+ where right sidebar takes over */}
-          <div className="xl:hidden">
-            <RightTableOfContents articleRef={articleRef} variant="mobile" />
-          </div>
-
-          {/* Content */}
           <article ref={articleRef} className="space-y-12 relative">
             {children}
           </article>
