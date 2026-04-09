@@ -5416,7 +5416,7 @@ export const de: Dictionary = {
     gemini31FlashLite: 'Gemini 3.1 Flash Lite',
     gemini31FlashLiteDesc: 'Sehr schnell, aber deutlich teurer als Flash Lite 2.5. Immer noch gut, aber der Preisanstieg ist schwer zu rechtfertigen.',
     claudeOpus46: 'Claude Opus 4.6',
-    claudeOpus46Desc: 'Teür, aber es lohnt sich. Unübertroffenes UI/UX-Designgefühl und kreatives Instruktionsverständnis.',
+    claudeOpus46Desc: 'Teuer, aber es lohnt sich. Unübertroffenes UI/UX-Designgefühl und kreatives Instruktionsverständnis.',
     gemini3Flash: 'Gemini 3 Flash',
     gemini3FlashDesc: 'Unglaublich preiseffizient mit exzellentem Bild- und Videoverständnis. Schnell und schlau.',
     deepseekV32: 'DeepSeek 3.2',
