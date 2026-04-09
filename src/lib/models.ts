@@ -183,7 +183,7 @@ export const models: ModelEntry[] = [
     id: 'grok-420',
     nameKey: 'grok420',
     descKey: 'grok420Desc',
-    tier: 'S',
+    tier: 'C',
     hosting: 'api',
   },
 
