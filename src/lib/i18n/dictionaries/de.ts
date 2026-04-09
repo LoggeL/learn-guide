@@ -196,7 +196,7 @@ export const de: Dictionary = {
     'agent-security': 'Schutz vor Prompt-Injektion und Datenabfluss',
     'evaluation': 'Agentenleistung mit Benchmarks und Metriken messen',
     'powerful-agents': 'Was passiert, wenn ein Agent eine Shell, dauerhaftes Gedächtnis bekommt und frei agieren darf',
-    'tier-list': 'Eine subjektive Rangliste aktüller LLM-Modelle nach Qualität und Anwendungsfall',
+    'tier-list': 'Eine subjektive Rangliste aktueller LLM-Modelle nach Qualität und Anwendungsfall',
     'tokenization': 'Wie Text in Teile zerlegt wird, die das Modell versteht',
     'embeddings': 'Wörter in Zahlen verwandeln, die Bedeutung erfassen',
     'diffusion-fundamentals': 'Vorwärtsrauschen, Rückwärts-Entrauschen und Score-Intuition',
@@ -710,7 +710,7 @@ export const de: Dictionary = {
     problem2Desc: 'Agenten können stecken bleiben und dieselben Aktionen wiederholen, ohne Fortschritte zu machen.',
     problem3: 'Zieldrift',
     problem3Desc: 'Agenten können den Fokus allmählich vom ursprünglichen Aufgabenziel weg verschieben.',
-    problem4: 'Übermäßiges Selbstvertraün',
+    problem4: 'Übermäßiges Selbstvertrauen',
     problem4Desc: 'Agenten können trotz Unsicherheit oder unvollständiger Informationen mit Aktionen fortfahren.',
     
     // Expanded Content
@@ -745,7 +745,7 @@ export const de: Dictionary = {
     
     // Attack 1: Prompt Injection
     attack1Title: 'Angriff #1: Prompt-Injektion',
-    attack1Desc: 'Prompt-Injektion tritt auf, wenn nicht vertraünswürdige Eingaben vom LLM als Anweisungen interpretiert werden. Da Agenten oft externe Daten verarbeiten (E-Mails, Webseiten, Dokumente), können Angreifer versteckte Befehle einbetten, die das Verhalten des Agenten kapern.',
+    attack1Desc: 'Prompt-Injektion tritt auf, wenn nicht vertrauenswürdige Eingaben vom LLM als Anweisungen interpretiert werden. Da Agenten oft externe Daten verarbeiten (E-Mails, Webseiten, Dokumente), können Angreifer versteckte Befehle einbetten, die das Verhalten des Agenten kapern.',
     attack1Example: 'Beispiel-Angriff',
     attack1ExampleDesc: 'Der Benutzer bittet den Agenten, ein Dokument zusammenzufassen. Das Dokument enthält versteckte Anweisungen:',
     whyWorks: 'Warum das funktioniert',
@@ -797,7 +797,7 @@ export const de: Dictionary = {
     defense3Desc: 'Erfordere menschliche Genehmigung für sensible Aktionen. Der Agent schlägt vor, der Mensch bestätigt.',
     defense3Example: 'Beispiel-Bestätigungsablauf:',
     defense4: 'Eingabe-Bereinigung & Isolation',
-    defense4Desc: 'Behandle externe Daten als nicht vertraünswürdig. Trenne Benutzeranweisungen klar von abgerufenen Inhalten.',
+    defense4Desc: 'Behandle externe Daten als nicht vertrauenswürdig. Trenne Benutzeranweisungen klar von abgerufenen Inhalten.',
     defense5: 'Überwachung & Ratenbegrenzung',
     defense5Desc: 'Protokolliere alle Tool-Aufrufe. Setze Ratenlimits für sensible Operationen. Alarmiere bei ungewöhnlichen Mustern (viele E-Mails, große Datenübertragungen, wiederholte Fehler). Aktiviere Rollback für destruktive Aktionen.',
 
@@ -823,7 +823,7 @@ export const de: Dictionary = {
     ipiVector4Title: 'API-Antworten',
     ipiVector4Desc: 'Drittanbieter-APIs, die bösartige Payloads versteckt in JSON/XML-Daten zurückgeben',
     ipiDanger: 'Warum IPI besonders gefährlich ist',
-    ipiDangerDesc: 'IPI umgeht benutzerseitige Sicherheitsmaßnahmen, da der bösartige Inhalt nie direkt vom Benutzer kommt. Der Agent verarbeitet ihn als vertraünswürdige Daten. 2025 nutzen ausgefeilte IPI-Angriffe mehrstufige Payloads, Kontextmanipulation und sogar "Schläfer"-Anweisungen, die nur unter bestimmten Bedingungen aktiviert werden.',
+    ipiDangerDesc: 'IPI umgeht benutzerseitige Sicherheitsmaßnahmen, da der bösartige Inhalt nie direkt vom Benutzer kommt. Der Agent verarbeitet ihn als vertrauenswürdige Daten. 2025 nutzen ausgefeilte IPI-Angriffe mehrstufige Payloads, Kontextmanipulation und sogar "Schläfer"-Anweisungen, die nur unter bestimmten Bedingungen aktiviert werden.',
 
     // Angriff 5: Agent-zu-Agent-Angriffe
     attack5Title: 'Angriff #5: Agent-zu-Agent-Angriffe',
@@ -837,13 +837,13 @@ export const de: Dictionary = {
     a2aAgent3Desc: 'Hat Schreibzugriff, führt Code aus',
     a2aCompromised: 'KOMPROMITTIERT',
     a2aAttackLabel: 'Angriff:',
-    a2aAttackDesc: 'Kompromittierter Orchestrator injiziert bösartige Anweisungen in Nachrichten an den Ausführungs-Agenten und nutzt sein erhöhtes Vertraün, um Sicherheitsprüfungen zu umgehen.',
+    a2aAttackDesc: 'Kompromittierter Orchestrator injiziert bösartige Anweisungen in Nachrichten an den Ausführungs-Agenten und nutzt sein erhöhtes Vertrauen, um Sicherheitsprüfungen zu umgehen.',
     a2aType1: 'Prompt-Relay-Angriffe',
     a2aType1Desc: 'Ein kompromittierter Agent fügt Injektions-Payloads in seine Ausgaben ein, die nachgelagerte Agenten bei der Verarbeitung der Ergebnisse angreifen.',
     a2aType2: 'Gemeinsamer Speicher-Vergiftung',
     a2aType2Desc: 'Angreifer schreibt bösartigen Inhalt in geteilten Agenten-Speicher/Kontext, den andere Agenten später lesen und ausführen.',
-    a2aType3: 'Vertraüns-Eskalation',
-    a2aType3Desc: 'Ausnutzung, dass Agenten Nachrichten von Peer-Agenten oft mehr vertraün als externen Quellen, um Sicherheitsfilter zu umgehen.',
+    a2aType3: 'Vertrauens-Eskalation',
+    a2aType3Desc: 'Ausnutzung, dass Agenten Nachrichten von Peer-Agenten oft mehr vertrauen als externen Quellen, um Sicherheitsfilter zu umgehen.',
     a2aType4: 'Koordinations-Manipulation',
     a2aType4Desc: 'Manipulation von Multi-Agenten-Abstimmung, Konsens oder Aufgabenverteilung, um bösartige Ziele durch legitim erscheinende Zusammenarbeit zu erreichen.',
 
@@ -2251,7 +2251,7 @@ export const de: Dictionary = {
     classicSecurity: 'Sicherheit',
     classicSecurityDesc: 'Widerstandsfähigkeit gegen Prompt-Injection, Jailbreaks und Datenlecks. Umfasst Eingabevalidierung, Ausgabefilterung und Zugriffskontrolle.',
     classicInterpretability: 'Interpretierbarkeit',
-    classicInterpretabilityDesc: 'Fähigkeit, Entscheidungen und Begründungen zu erklären. Unterstützt Debugging, Compliance-Audits und Benutzervertraün durch transparenten Betrieb.',
+    classicInterpretabilityDesc: 'Fähigkeit, Entscheidungen und Begründungen zu erklären. Unterstützt Debugging, Compliance-Audits und Benutzervertrauen durch transparenten Betrieb.',
     classicCompliance: 'Compliance',
     classicComplianceDesc: 'Einhaltung regulatorischer Anforderungen (DSGVO, HIPAA, SOC2), Branchenstandards und organisatorischer Richtlinien.',
     classicNote: 'Enterprise-Evaluierung sollte alle sieben Dimensionen verfolgen. Optimiere für deine spezifischen Anwendungsfallprioritäten.',
@@ -3771,7 +3771,7 @@ export const de: Dictionary = {
     accessDesc: 'Sicherstellen, dass KI-Vorteile breit verteilt werden.',
     keyTakeaways: 'Wichtige Erkenntnisse',
     takeaway1: 'Verantwortungsvolle KI erfordert proaktiven Einsatz während des gesamten Lebenszyklus',
-    takeaway2: 'Transparenz baut Vertraün auf und ermöglicht Verantwortlichkeit',
+    takeaway2: 'Transparenz baut Vertrauen auf und ermöglicht Verantwortlichkeit',
     takeaway3: 'Gesellschaftliche Auswirkungen über unmittelbare Benutzer hinaus berücksichtigen',
     takeaway4: 'Ethik ist nicht optional – integriere sie in Entwicklungsprozesse',
     // Governance Frameworks
@@ -3790,7 +3790,7 @@ export const de: Dictionary = {
     nistManageDesc: 'Priorisieren und reagieren',
     // OECD AI Principles
     oecdTitle: 'OECD KI-Prinzipien',
-    oecdDesc: 'Internationale Prinzipien, die von 46 Ländern angenommen wurden, um vertraünswürdige KI zu fördern, die Menschenrechte und demokratische Werte respektiert.',
+    oecdDesc: 'Internationale Prinzipien, die von 46 Ländern angenommen wurden, um vertrauenswürdige KI zu fördern, die Menschenrechte und demokratische Werte respektiert.',
     oecdInclusive: 'Inklusives Wachstum',
     oecdHuman: 'Menschenzentriert',
     oecdTransparency: 'Transparenz',
@@ -3915,10 +3915,10 @@ export const de: Dictionary = {
     advantage3Title: 'Mehrsprachiger Fokus',
     advantage3Desc: 'Europäische Modelle sind von Grund auf für mehrsprachige Nutzung konzipiert und bedienen vielfältige europäische Sprachen und Märkte effektiv.',
     advantage4Title: 'Ethische KI-Führung',
-    advantage4Desc: 'Europas Betonung auf verantwortungsvolle KI-Entwicklung positioniert seine Unternehmen als vertraünswürdige Partner für Organisationen, die Ethik priorisieren.',
+    advantage4Desc: 'Europas Betonung auf verantwortungsvolle KI-Entwicklung positioniert seine Unternehmen als vertrauenswürdige Partner für Organisationen, die Ethik priorisieren.',
     // Open Source section
     openSource: 'Open Source & Open Weights',
-    openSourceDesc: 'Viele europäische KI-Unternehmen setzen auf Open-Source-Prinzipien und veröffentlichen Modellgewichte und Code unter freizügigen Lizenzen. Diese Transparenz baut Vertraün auf, ermöglicht Anpassungen und unterstützt die breitere KI-Forschungsgemeinschaft.',
+    openSourceDesc: 'Viele europäische KI-Unternehmen setzen auf Open-Source-Prinzipien und veröffentlichen Modellgewichte und Code unter freizügigen Lizenzen. Diese Transparenz baut Vertrauen auf, ermöglicht Anpassungen und unterstützt die breitere KI-Forschungsgemeinschaft.',
     model1Desc: 'Open-Weight LLMs, die privat bereitgestellt und angepasst werden können',
     model2Desc: 'Vollständig offenes Sprachmodell mit Apache 2.0 Code und CC BY 4.0 Gewichten',
     model3Desc: 'State-of-the-Art Encoder-Modell mit über 20 Mio. Downloads',
@@ -3928,7 +3928,7 @@ export const de: Dictionary = {
     takeaway1: 'Europa baut KI mit einzigartigem Fokus auf Souveränität, Datenschutz und Open-Source-Prinzipien',
     takeaway2: 'Französische Startups wie Mistral und Kyutai sind führend bei Open-Weight und Open-Source KI-Modellen',
     takeaway3: 'Der EU AI Act schafft sowohl Herausforderungen als auch Chancen – europäische Unternehmen haben einen Compliance-Vorteil',
-    takeaway4: 'Während US-Unternehmen bei der Größe führen, glänzt europäische KI bei Enterprise-Vertraün, mehrsprachiger Unterstützung und regulatorischer Ausrichtung',
+    takeaway4: 'Während US-Unternehmen bei der Größe führen, glänzt europäische KI bei Enterprise-Vertrauen, mehrsprachiger Unterstützung und regulatorischer Ausrichtung',
   },
 
   // Open Source Advantages page
@@ -5393,7 +5393,7 @@ export const de: Dictionary = {
   // LLM Tier List Seite
   tierList: {
     title: 'LLM Tier-Liste',
-    description: 'Eine subjektive Rangliste aktüller LLM-Modelle nach Qualität und Anwendungsfall.',
+    description: 'Eine subjektive Rangliste aktueller LLM-Modelle nach Qualität und Anwendungsfall.',
     intro: 'Diese Tier-Liste basiert auf persönlicher Erfahrung und Tests in den Bereichen Coding, Reasoning, kreatives Schreiben und allgemeiner Chat. Deine Ergebnisse können abweichen — jeder Anwendungsfall ist anders.',
     disclaimer: 'Hinweis',
     disclaimerText: 'Diese Liste enthält nur Modelle, die ich für relevant halte — nicht jedes Modell da draußen. Die unteren Tiers (D, F) sind meine Wall of Shame. Rankings sind subjektiv und basieren auf persönlicher Erfahrung. Modellqualität ändert sich schnell.',
