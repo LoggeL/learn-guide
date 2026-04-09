@@ -71,7 +71,7 @@ export const models: ModelEntry[] = [
     id: 'deepseek-v32',
     nameKey: 'deepseekV32',
     descKey: 'deepseekV32Desc',
-    tier: 'S',
+    tier: 'B',
     hosting: 'open-weight',
     params: '685B MoE \u2192 37B active',
     totalParamsB: 685,
