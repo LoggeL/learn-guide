@@ -3,7 +3,7 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
-import { Heart, Brain, Zap, Shield, Sparkles, AlertTriangle, Server, Code, MessageSquare, Cpu, Trophy, ExternalLink, ChevronRight, Gauge, Users, Layers, Terminal, MousePointer, Calendar } from 'lucide-react'
+import { Heart, Brain, Zap, Shield, Sparkles, AlertTriangle, Server, Code, MessageSquare, Cpu, Trophy, ExternalLink, ChevronRight, Gauge, Users, Layers, Terminal, MousePointer, Calendar, DollarSign, Globe, Sparkle, Wallet } from 'lucide-react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function SectionIcon({ icon: Icon, gradient }: { icon: any; gradient: string }) {
@@ -34,14 +34,21 @@ export default function FavouriteModelsPage() {
     { title: f.codexStrength4Title, desc: f.codexStrength4Desc, icon: MessageSquare, gradient: 'from-pink-500 to-rose-500' },
   ]
 
+  const glmStrengths = [
+    { title: f.glmStrength1Title, desc: f.glmStrength1Desc, icon: Wallet, gradient: 'from-green-500 to-emerald-500' },
+    { title: f.glmStrength2Title, desc: f.glmStrength2Desc, icon: Globe, gradient: 'from-teal-500 to-cyan-500' },
+    { title: f.glmStrength3Title, desc: f.glmStrength3Desc, icon: Zap, gradient: 'from-lime-500 to-green-500' },
+    { title: f.glmStrength4Title, desc: f.glmStrength4Desc, icon: Sparkle, gradient: 'from-emerald-500 to-teal-500' },
+  ]
+
   const benchmarks = [
-    { name: f.benchSWE, opus: f.benchSWEOpus, codex: f.benchSWECodex, note: f.benchSWENote },
-    { name: f.benchTerminal, opus: f.benchTerminalOpus, codex: f.benchTerminalCodex, note: f.benchTerminalNote },
-    { name: f.benchOSWorld, opus: f.benchOSWorldOpus, codex: f.benchOSWorldCodex, note: f.benchOSWorldNote },
-    { name: f.benchGPQA, opus: f.benchGPQAOpus, codex: f.benchGPQACodex, note: f.benchGPQANote },
-    { name: f.benchARC, opus: f.benchARCOpus, codex: f.benchARCCodex, note: f.benchARCNote },
-    { name: f.benchHLE, opus: f.benchHLEOpus, codex: f.benchHLECodex, note: f.benchHLENote },
-    { name: f.benchCyber, opus: f.benchCyberOpus, codex: f.benchCyberCodex, note: f.benchCyberNote },
+    { name: f.benchSWE, opus: f.benchSWEOpus, codex: f.benchSWECodex, glm: f.benchSWEGlm, note: f.benchSWENote },
+    { name: f.benchTerminal, opus: f.benchTerminalOpus, codex: f.benchTerminalCodex, glm: f.benchTerminalGlm, note: f.benchTerminalNote },
+    { name: f.benchOSWorld, opus: f.benchOSWorldOpus, codex: f.benchOSWorldCodex, glm: f.benchOSWorldGlm, note: f.benchOSWorldNote },
+    { name: f.benchGPQA, opus: f.benchGPQAOpus, codex: f.benchGPQACodex, glm: f.benchGPQAGlm, note: f.benchGPQANote },
+    { name: f.benchARC, opus: f.benchARCOpus, codex: f.benchARCCodex, glm: f.benchARCGlm, note: f.benchARCNote },
+    { name: f.benchHLE, opus: f.benchHLEOpus, codex: f.benchHLECodex, glm: f.benchHLEGlm, note: f.benchHLENote },
+    { name: f.benchCyber, opus: f.benchCyberOpus, codex: f.benchCyberCodex, glm: f.benchCyberGlm, note: f.benchCyberNote },
   ]
 
   const commonTraits = [
@@ -88,18 +95,23 @@ export default function FavouriteModelsPage() {
         transition={{ delay: 0.1 }}
         className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8 text-center"
       >
-        <div className="flex justify-center gap-3 mb-6">
+        <div className="flex justify-center gap-3 mb-6 flex-wrap">
           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 p-0.5">
             <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
               <Brain size={28} className="text-orange-400" />
             </div>
           </div>
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
-            <Heart size={24} className="text-white" fill="currentColor" />
-          </div>
           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-500 p-0.5">
             <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
               <Terminal size={28} className="text-cyan-400" />
+            </div>
+          </div>
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
+            <Heart size={24} className="text-white" fill="currentColor" />
+          </div>
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 p-0.5">
+            <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
+              <Wallet size={28} className="text-green-400" />
             </div>
           </div>
         </div>
@@ -117,8 +129,8 @@ export default function FavouriteModelsPage() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 mt-6">
-          {/* Opus 4.6 Card */}
+        <div className="grid lg:grid-cols-3 gap-6 mt-6">
+          {/* Opus 4.7 Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -192,11 +204,11 @@ export default function FavouriteModelsPage() {
             </div>
           </motion.div>
 
-          {/* GPT-5.3-Codex Card */}
+          {/* GPT-5.4 Card */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
             className="rounded-2xl bg-surface border border-cyan-500/30 overflow-hidden"
           >
             <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-5 border-b border-cyan-500/20">
@@ -265,6 +277,80 @@ export default function FavouriteModelsPage() {
               </a>
             </div>
           </motion.div>
+
+          {/* GLM-5.1 Card */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="rounded-2xl bg-surface border border-green-500/30 overflow-hidden"
+          >
+            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-5 border-b border-green-500/20">
+              <div className="flex items-center gap-3 mb-2">
+                <Wallet size={24} className="text-green-400" />
+                <div>
+                  <h3 className="text-xl font-bold font-heading text-text">{f.glmName}</h3>
+                  <p className="text-xs text-green-400">{f.glmMaker}</p>
+                </div>
+              </div>
+              <p className="text-sm text-muted italic">{f.glmTagline}</p>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
+                  <span className="text-muted text-xs block">Model ID</span>
+                  <code className="text-green-400 text-xs">{f.glmModelId}</code>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
+                  <span className="text-muted text-xs block">Released</span>
+                  <span className="text-text text-xs">{f.glmReleaseDate}</span>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
+                  <span className="text-muted text-xs block">Context</span>
+                  <span className="text-text text-xs">{f.glmContext}</span>
+                </div>
+                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
+                  <span className="text-muted text-xs block">Output</span>
+                  <span className="text-text text-xs">{f.glmOutput}</span>
+                </div>
+              </div>
+
+              <p className="text-sm text-muted leading-relaxed">{f.glmDescription}</p>
+
+              <div className="space-y-3">
+                {glmStrengths.map((s, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + i * 0.05 }}
+                    className="flex gap-3 items-start"
+                  >
+                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}>
+                      <div className="w-full h-full rounded-lg bg-surface flex items-center justify-center">
+                        <s.icon size={14} className="text-text" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-text">{s.title}</h4>
+                      <p className="text-xs text-muted leading-relaxed">{s.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <a
+                href={f.glmSourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 text-sm text-green-400 hover:text-green-300 transition-colors mt-2"
+              >
+                <ExternalLink size={14} />
+                {f.glmSourceLabel}
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -283,8 +369,9 @@ export default function FavouriteModelsPage() {
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-3 px-3 text-muted font-medium">Benchmark</th>
-                <th className="text-center py-3 px-3 text-orange-400 font-medium">Opus 4.6</th>
-                <th className="text-center py-3 px-3 text-cyan-400 font-medium">Codex 5.3</th>
+                <th className="text-center py-3 px-3 text-orange-400 font-medium">Opus 4.7</th>
+                <th className="text-center py-3 px-3 text-cyan-400 font-medium">GPT-5.4</th>
+                <th className="text-center py-3 px-3 text-green-400 font-medium">GLM-5.1</th>
                 <th className="text-left py-3 px-3 text-muted font-medium hidden md:table-cell">Note</th>
               </tr>
             </thead>
@@ -292,8 +379,14 @@ export default function FavouriteModelsPage() {
               {benchmarks.map((b, i) => {
                 const opusNum = parseFloat(b.opus.replace(',', '.'))
                 const codexNum = parseFloat(b.codex.replace(',', '.'))
-                const opusWins = !isNaN(opusNum) && !isNaN(codexNum) && opusNum > codexNum
-                const codexWins = !isNaN(opusNum) && !isNaN(codexNum) && codexNum > opusNum
+                const glmNum = parseFloat(b.glm.replace(',', '.'))
+                const nums = [
+                  { key: 'opus', val: opusNum },
+                  { key: 'codex', val: codexNum },
+                  { key: 'glm', val: glmNum },
+                ].filter(n => !isNaN(n.val))
+                const max = nums.length > 1 ? Math.max(...nums.map(n => n.val)) : -1
+                const winner = max > 0 ? nums.find(n => n.val === max)?.key : null
 
                 return (
                   <motion.tr
@@ -304,11 +397,14 @@ export default function FavouriteModelsPage() {
                     className="border-b border-border/50 hover:bg-surface/80 transition-colors"
                   >
                     <td className="py-3 px-3 font-medium text-text">{b.name}</td>
-                    <td className={`py-3 px-3 text-center font-mono ${opusWins ? 'text-orange-400 font-bold' : 'text-muted'}`}>
+                    <td className={`py-3 px-3 text-center font-mono ${winner === 'opus' ? 'text-orange-400 font-bold' : 'text-muted'}`}>
                       {b.opus}
                     </td>
-                    <td className={`py-3 px-3 text-center font-mono ${codexWins ? 'text-cyan-400 font-bold' : 'text-muted'}`}>
+                    <td className={`py-3 px-3 text-center font-mono ${winner === 'codex' ? 'text-cyan-400 font-bold' : 'text-muted'}`}>
                       {b.codex}
+                    </td>
+                    <td className={`py-3 px-3 text-center font-mono ${winner === 'glm' ? 'text-green-400 font-bold' : 'text-muted'}`}>
+                      {b.glm}
                     </td>
                     <td className="py-3 px-3 text-xs text-muted hidden md:table-cell">{b.note}</td>
                   </motion.tr>
@@ -330,7 +426,7 @@ export default function FavouriteModelsPage() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Opus use cases */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -359,7 +455,7 @@ export default function FavouriteModelsPage() {
             </ul>
           </motion.div>
 
-          {/* Codex use cases */}
+          {/* Codex / GPT-5.4 use cases */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -386,6 +482,34 @@ export default function FavouriteModelsPage() {
               ))}
             </ul>
           </motion.div>
+
+          {/* GLM-5.1 use cases */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="rounded-2xl bg-surface border border-green-500/20 p-6"
+          >
+            <div className="flex items-center gap-2 mb-4">
+              <Wallet size={20} className="text-green-400" />
+              <h3 className="font-bold font-heading text-text">{f.whenGlmTitle}</h3>
+            </div>
+            <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/5 border border-green-500/20">
+              <div className="flex items-center gap-2 mb-1">
+                <Globe size={14} className="text-green-400" />
+                <span className="text-xs font-bold text-green-400 uppercase tracking-wide">{f.whenGlmToolLabel}</span>
+              </div>
+              <p className="text-xs text-muted leading-relaxed">{f.whenGlmToolDesc}</p>
+            </div>
+            <ul className="space-y-3">
+              {[f.whenGlm1, f.whenGlm2, f.whenGlm3, f.whenGlm4, f.whenGlm5].map((item, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-muted">
+                  <ChevronRight size={14} className="text-green-400 mt-0.5 shrink-0" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
         </div>
       </section>
 
@@ -399,7 +523,7 @@ export default function FavouriteModelsPage() {
         </div>
         <p className="text-sm text-muted mb-6">{f.pricingSubtitle}</p>
 
-        <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
           <div className="bg-background/40 rounded-xl p-4 border border-orange-500/20">
             <div className="flex items-center gap-2 mb-2">
               <Brain size={16} className="text-orange-400" />
@@ -413,6 +537,13 @@ export default function FavouriteModelsPage() {
               <h3 className="font-bold text-text text-sm">{f.pricingCodexTitle}</h3>
             </div>
             <p className="text-sm text-muted leading-relaxed">{f.pricingCodexDetail}</p>
+          </div>
+          <div className="bg-background/40 rounded-xl p-4 border border-green-500/30">
+            <div className="flex items-center gap-2 mb-2">
+              <DollarSign size={16} className="text-green-400" />
+              <h3 className="font-bold text-text text-sm">{f.pricingGlmTitle}</h3>
+            </div>
+            <p className="text-sm text-muted leading-relaxed">{f.pricingGlmDetail}</p>
           </div>
         </div>
         <p className="text-text/90 leading-relaxed text-sm italic">{f.pricingVerdict}</p>
@@ -481,21 +612,23 @@ export default function FavouriteModelsPage() {
                 <th className="text-left py-3 px-3 text-muted font-medium"></th>
                 <th className="text-center py-3 px-3 text-orange-400 font-medium">{f.opusName}</th>
                 <th className="text-center py-3 px-3 text-cyan-400 font-medium">{f.codexName}</th>
+                <th className="text-center py-3 px-3 text-green-400 font-medium">{f.glmName}</th>
               </tr>
             </thead>
             <tbody className="text-sm">
               {[
-                [f.quickRefMaker, f.opusMaker, f.codexMaker],
-                [f.quickRefContext, f.opusContext, f.codexContext],
-                [f.quickRefOutput, f.opusOutput, f.codexOutput],
-                [f.quickRefPrice, f.opusPricing, f.codexPricing],
-                [f.quickRefBestFor, f.quickRefOpusBest, f.quickRefCodexBest],
-                [f.quickRefPlatforms, f.quickRefOpusPlatforms, f.quickRefCodexPlatforms],
-              ].map(([label, opus, codex], i) => (
+                [f.quickRefMaker, f.opusMaker, f.codexMaker, f.glmMaker],
+                [f.quickRefContext, f.opusContext, f.codexContext, f.glmContext],
+                [f.quickRefOutput, f.opusOutput, f.codexOutput, f.glmOutput],
+                [f.quickRefPrice, f.opusPricing, f.codexPricing, f.glmPricing],
+                [f.quickRefBestFor, f.quickRefOpusBest, f.quickRefCodexBest, f.quickRefGlmBest],
+                [f.quickRefPlatforms, f.quickRefOpusPlatforms, f.quickRefCodexPlatforms, f.quickRefGlmPlatforms],
+              ].map(([label, opus, codex, glm], i) => (
                 <tr key={i} className="border-b border-border/50">
                   <td className="py-3 px-3 text-muted font-medium">{label}</td>
                   <td className="py-3 px-3 text-center text-text">{opus}</td>
                   <td className="py-3 px-3 text-center text-text">{codex}</td>
+                  <td className="py-3 px-3 text-center text-text">{glm}</td>
                 </tr>
               ))}
             </tbody>

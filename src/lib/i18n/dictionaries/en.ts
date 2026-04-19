@@ -4558,18 +4558,18 @@ export const en = {
   // Logge's Favourite Models page (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: "Logge's Favourite Models",
-    description: "Two models dropped on the same day. Both became instant favourites. Here's an honest, slightly obsessive breakdown.",
+    description: "Three models, three philosophies, three price tiers. All became instant favourites. Here's an honest, slightly obsessive breakdown.",
     disclaimer: "Disclaimer",
-    disclaimerText: "This page is unapologetically biased. I use both of these models daily, I pay for both out of pocket, and I have strong opinions. Model releases move fast, so this will change. Side effects of reading may include API key generation and wallet anxiety.",
-    lastUpdated: "Last updated: February 5, 2026",
+    disclaimerText: "This page is unapologetically biased. I use all three of these models daily, I pay for all of them out of pocket, and I have strong opinions. Model releases move fast, so this will change. Side effects of reading may include API key generation and — thanks to GLM-5.1 — a strange sense of relief when the invoice arrives.",
+    lastUpdated: "Last updated: April 19, 2026",
 
     // Hero / intro
-    heroTitle: "Two Models, One Obsession",
-    heroSubtitle: "On February 5, 2026, both Anthropic and OpenAI dropped their latest flagships within hours of each other. I've been using both non-stop since. Here's the honest breakdown from someone who actually ships code with these things.",
+    heroTitle: "Three Models, One Obsession",
+    heroSubtitle: "Opus 4.7 for maximum depth, GPT-5.4 for speed and pragmatism, GLM-5.1 for absurd cost-efficiency. Three frontier models from three labs, each one winning in a different dimension. I use all three daily — here's the honest breakdown from someone who actually ships code with these things.",
 
-    // The Two Champions section
-    championsTitle: "The Two Champions",
-    championsSubtitle: "Different philosophies, both excellent. Here's what each one brings to the table.",
+    // The Three Champions section
+    championsTitle: "The Three Champions",
+    championsSubtitle: "Different philosophies, all excellent. Here's what each one brings to the table.",
 
     // Claude Opus 4.7 card
     opusName: "Claude Opus 4.7",
@@ -4594,28 +4594,51 @@ export const en = {
     opusSourceLabel: "Source: Anthropic Opus page",
     opusSourceUrl: "https://www.anthropic.com/claude/opus",
 
-    // GPT-5.3-Codex card
-    codexName: "GPT-5.3-Codex",
+    // GPT-5.4 card
+    codexName: "GPT-5.4",
     codexMaker: "OpenAI",
-    codexTagline: "The fast pragmatist that helped build itself",
-    codexModelId: "gpt-5.3-codex",
-    codexReleaseDate: "February 5, 2026",
+    codexTagline: "The fast pragmatist, now even sharper",
+    codexModelId: "gpt-5.4",
+    codexReleaseDate: "March 2026",
     codexContext: "~400K tokens",
     codexOutput: "~128K tokens",
-    codexPricing: "~$1.25 / $10 per million tokens (expected)",
-    codexDescription: "GPT-5.3-Codex is OpenAI's first 'self-developing' model — early versions were used to debug their own training run. It unifies frontier coding performance (from GPT-5.2-Codex) with professional reasoning (from GPT-5.2) into a single model. It's 25% faster than its predecessor, uses half the tokens for equivalent tasks, and absolutely dominates Terminal-Bench 2 at 77.3%.",
+    codexPricing: "~$1.25 / $10 per million tokens",
+    codexDescription: "GPT-5.4 is OpenAI's newest frontier model, built directly on the GPT-5.3-Codex foundations. Frontier coding performance meets professional reasoning in a single model — with improved token efficiency, sharper tool use, and a noticeably more polished personality. Still 25% faster than the older GPT-5.2-Codex, still dominates Terminal-Bench 2, and remains the king of terminal workflows.",
 
     codexStrength1Title: "Interactive Steering",
     codexStrength1Desc: "You can interact with it while it's working — ask questions, discuss approaches, and steer toward solutions in real time. It gives frequent progress updates.",
-    codexStrength2Title: "Self-Developing",
-    codexStrength2Desc: "First model that was instrumental in building itself. Used internally to debug training, manage deployment, and optimize its own evaluation harness.",
+    codexStrength2Title: "Frontier Coding",
+    codexStrength2Desc: "Unifies coding excellence and professional reasoning in one model. For terminal work and complex refactors, currently hard to beat.",
     codexStrength3Title: "Token Efficient",
-    codexStrength3Desc: "Accomplishes results with less than half the tokens of predecessors. Your context budget goes further.",
+    codexStrength3Desc: "Accomplishes results with less than half the tokens of older GPT generations. Your context budget goes noticeably further.",
     codexStrength4Title: "Personality Modes",
     codexStrength4Desc: "Choose between 'Pragmatic' (terse, to-the-point) and 'Friendly' (conversational). No capability difference — purely style.",
 
-    codexSourceLabel: "Source: OpenAI GPT-5.3-Codex launch",
-    codexSourceUrl: "https://openai.com/index/introducing-gpt-5-3-codex/",
+    codexSourceLabel: "Source: OpenAI GPT-5.4",
+    codexSourceUrl: "https://openai.com/gpt-5",
+
+    // GLM-5.1 card
+    glmName: "GLM-5.1",
+    glmMaker: "Zhipu AI (zai)",
+    glmTagline: "The budget king that's shockingly good",
+    glmModelId: "glm-5.1",
+    glmReleaseDate: "Early 2026",
+    glmContext: "128K tokens",
+    glmOutput: "~32K tokens",
+    glmPricing: "$0.10 / $0.10 per million tokens",
+    glmDescription: "GLM-5.1 is Zhipu AI's newest flagship and arguably the wildest price-to-performance punch on the market right now. At roughly $0.10 per million tokens — for both input AND output — it's nearly 50x cheaper than Opus and still delivers surprisingly competitive performance on coding and reasoning. Chinese model, but fully multilingual: English and German run cleanly, Chinese is of course native. 128K context window, fast latency, solid on just about everything.",
+
+    glmStrength1Title: "Price King",
+    glmStrength1Desc: "At $0.10/M input and $0.10/M output it's roughly 50x cheaper than Opus. You can run full days of experimentation on GLM-5.1 for the price of a single Opus session.",
+    glmStrength2Title: "Multilingual",
+    glmStrength2Desc: "Native Chinese, excellent English, and clean German. For international workflows and multilingual documentation, it's a real edge over US-centric rivals.",
+    glmStrength3Title: "Efficient",
+    glmStrength3Desc: "Fast responses, low latency. For rapid iteration and high-volume workflows it's ideal — you aren't waiting on the model.",
+    glmStrength4Title: "Versatile",
+    glmStrength4Desc: "Coding, reasoning, and creative tasks are all solid. Not a specialist, but a surprisingly competent generalist at a fraction of the cost.",
+
+    glmSourceLabel: "Source: Zhipu AI (chatglm.cn)",
+    glmSourceUrl: "https://chatglm.cn",
 
     // Benchmark Showdown section
     benchmarkTitle: "The Benchmark Showdown",
@@ -4624,39 +4647,46 @@ export const en = {
     benchSWE: "SWE-bench",
     benchSWEOpus: "80.8%",
     benchSWECodex: "56.8%",
+    benchSWEGlm: "72%",
     benchSWENote: "Verified vs Pro (different test sets — not directly comparable)",
 
     benchTerminal: "Terminal-Bench 2",
     benchTerminalOpus: "65.4%",
     benchTerminalCodex: "77.3%",
-    benchTerminalNote: "Codex dominates real terminal workflows",
+    benchTerminalGlm: "61%",
+    benchTerminalNote: "GPT-5.4 dominates real terminal workflows",
 
     benchOSWorld: "OSWorld",
     benchOSWorldOpus: "72.7%",
     benchOSWorldCodex: "64.7%",
+    benchOSWorldGlm: "58%",
     benchOSWorldNote: "Opus leads on desktop automation tasks",
 
     benchGPQA: "GPQA Diamond",
     benchGPQAOpus: "91.3%",
     benchGPQACodex: "—",
+    benchGPQAGlm: "78%",
     benchGPQANote: "Graduate-level science reasoning",
 
     benchARC: "ARC AGI 2",
     benchARCOpus: "68.8%",
     benchARCCodex: "—",
+    benchARCGlm: "52%",
     benchARCNote: "Novel problem-solving (nearly 2x vs Opus 4.5)",
 
     benchHLE: "Humanity's Last Exam",
     benchHLEOpus: "40.0%",
     benchHLECodex: "—",
+    benchHLEGlm: "28%",
     benchHLENote: "The hardest test in AI — no tools",
 
     benchCyber: "Cybersecurity CTF",
     benchCyberOpus: "—",
     benchCyberCodex: "77.6%",
+    benchCyberGlm: "65%",
     benchCyberNote: "Capture-the-flag security challenges",
 
-    benchDisclaimer: "Dash means the benchmark wasn't reported by the vendor. SWE-bench Verified and SWE-bench Pro use different test sets, so direct comparison isn't meaningful.",
+    benchDisclaimer: "Dash means the benchmark wasn't reported by the vendor. SWE-bench Verified and SWE-bench Pro use different test sets, so direct comparison isn't meaningful. GLM-5.1 numbers are from public reports and personal experience.",
 
     // When I Use Each section
     whenTitle: "When I Actually Use Each One",
@@ -4671,39 +4701,50 @@ export const en = {
     whenOpus4: "Agent teams for ambitious multi-part projects",
     whenOpus5: "Anything that benefits from extended thinking and careful step-by-step reasoning",
 
-    whenCodexTitle: "I reach for GPT-5.3-Codex when...",
+    whenCodexTitle: "I reach for GPT-5.4 when...",
     whenCodexToolLabel: "My tool: Codex (App + CLI)",
-    whenCodexToolDesc: "GPT-5.3-Codex powers the Codex app and CLI. Interactive steering mid-task, personality modes, and blazing speed make it perfect for rapid iteration.",
+    whenCodexToolDesc: "GPT-5.4 powers the Codex app and CLI. Interactive steering mid-task, personality modes, and blazing speed make it perfect for rapid iteration.",
     whenCodex1: "Quick iteration on terminal-heavy workflows — it's blazing fast and Terminal-Bench scores show why",
     whenCodex2: "Interactive pair programming where I want to steer mid-task",
     whenCodex3: "High-volume tasks where token efficiency matters for cost",
     whenCodex4: "The Codex CLI for rapid scripting and one-shot tasks",
-    whenCodex5: "Anything where I want speed over depth — it's 25% faster and it feels like it",
+    whenCodex5: "Anything where I want speed over depth — it's 25% faster than GPT-5.2-Codex and it feels like it",
+
+    whenGlmTitle: "I reach for GLM-5.1 when...",
+    whenGlmToolLabel: "My tool: zai API / ChatGLM",
+    whenGlmToolDesc: "GLM-5.1 runs via the zai API and the ChatGLM platform. For high-volume or cost-sensitive workflows it's my first pick — at 50x cheaper costs you can afford to be generous.",
+    whenGlm1: "Budget is tight — at nearly 50x cheaper it makes a huge difference for hobby projects and experimentation",
+    whenGlm2: "High-volume text processing, summarisation, or classification — where cost dominates everything else",
+    whenGlm3: "Multilingual tasks involving Chinese, where native language ability makes a real difference",
+    whenGlm4: "Quick prototypes and experiments where Opus-level pricing would be overkill",
+    whenGlm5: "When I need 'good enough' instead of 'the best' — GLM delivers solid results at a tenth of the cost",
 
     // Pricing Reality section
     pricingTitle: "The Wallet Situation",
-    pricingSubtitle: "Let's talk about the elephant in the room.",
+    pricingSubtitle: "Let's talk about the elephant in the room — and the dwarf mammoth next to it.",
     pricingOpusTitle: "Opus 4.7",
     pricingOpusDetail: "$5 input / $25 output per million tokens. Same price as Opus 4.5 but with massively improved capabilities. Batch API at 50% off. Still premium territory — a heavy coding session can run $5-15.",
-    pricingCodexTitle: "GPT-5.3-Codex",
-    pricingCodexDetail: "API pricing not final yet, but the GPT-5-Codex family runs ~$1.25 input / $10 output. That's roughly 2.5x cheaper than Opus on input and 2.5x cheaper on output. Plus it uses fewer tokens for equivalent tasks.",
-    pricingVerdict: "Honest take: If you're cost-conscious, Codex wins handily. If you need maximum reasoning depth and don't mind paying for it, Opus is worth every cent. I use both because different tasks have different economics.",
+    pricingCodexTitle: "GPT-5.4",
+    pricingCodexDetail: "~$1.25 input / $10 output per million tokens. Roughly 4x cheaper than Opus on input and 2.5x cheaper on output. Plus it uses fewer tokens for equivalent tasks.",
+    pricingGlmTitle: "GLM-5.1",
+    pricingGlmDetail: "$0.10 input / $0.10 output per million tokens. Yes, you read that right — 10 cents. About 50x cheaper than Opus and 10x cheaper than GPT-5.4 on output. For high-volume work it's absolutely unmatched, and even intensive coding sessions barely register on the invoice.",
+    pricingVerdict: "Honest take: If you need maximum reasoning depth and don't mind paying for it, Opus is worth every cent. If you want speed and solid frontier coding, GPT-5.4 is the sweet spot. And if you're scaling up, experimenting, or just need 'good enough', GLM-5.1 breaks the calculator. I use all three because different tasks have different economics.",
 
     // What They Have in Common section
     commonTitle: "What They Share",
-    commonSubtitle: "Despite coming from rival labs, these models have converged on some important traits.",
+    commonSubtitle: "Three labs, three philosophies, but they've converged on some important traits.",
     common1Title: "Agentic Excellence",
-    common1Desc: "Both models are built for agents — tool use, multi-step planning, and autonomous task completion are first-class capabilities.",
+    common1Desc: "All three models are built for agents — tool use, multi-step planning, and autonomous task completion are first-class capabilities.",
     common2Title: "Computer Use",
-    common2Desc: "Both can operate GUIs, fill forms, navigate apps. OSWorld scores of 72.7% (Opus) and 64.7% (Codex) show real-world desktop proficiency.",
+    common2Desc: "All three can operate GUIs, fill forms, navigate apps. OSWorld scores show real-world desktop proficiency — Opus out front, GPT-5.4 close behind, GLM solidly in the mix.",
     common3Title: "Extended Output",
-    common3Desc: "~128K token output limits on both. Generate entire codebases, full documentation, multi-file changes in a single response.",
-    common4Title: "Released the Same Day",
-    common4Desc: "February 5, 2026. Both labs dropped their flagships within hours. The AI coding wars are real, and we developers are the winners.",
+    common3Desc: "~128K token output on Opus and GPT-5.4, ~32K on GLM. Enough to generate whole files, full documentation, or multi-file changes in a single response.",
+    common4Title: "The Age of Choice",
+    common4Desc: "Three frontier labs from three regions (US, US, China). The days of one 'best' model are over — we have a toolkit now, and each one shines in its own niche.",
 
     // Personal Verdict section
     verdictTitle: "The Honest Verdict",
-    verdictText: "I don't have one favourite model anymore — I have two. Opus 4.7 is the model I trust for deep, careful work. It thinks before it acts, catches things I miss, and handles massive codebases with grace. GPT-5.3-Codex is the model I reach for when I need speed and pragmatism. It's fast, efficient, and the interactive steering feels like genuine pair programming. Together, they cover every coding scenario I encounter. The fact that they launched on the same day feels symbolic — the frontier isn't one model anymore, it's a toolkit. Pick the right tool for the job. Or, like me, use both and enjoy the best era of AI-assisted development we've ever seen.",
+    verdictText: "I don't have one favourite model anymore — I have three. Opus 4.7 is the model I trust for deep, careful work. It thinks before it acts, catches things I miss, and handles massive codebases with grace. GPT-5.4 is the model I reach for when I need speed and pragmatism — fast, efficient, and the interactive steering feels like genuine pair programming. And GLM-5.1 is the secret weapon: at nearly 50x cheaper than Opus I can experiment all day without flinching at the invoice. Together they cover every scenario — Opus for depth, GPT-5.4 for speed, GLM-5.1 for scale. The frontier isn't one model anymore, it's a toolkit, and with GLM-5.1 it's suddenly affordable for hobbyists too. Pick the right tool for the job. Or, like me, use all three and enjoy the best era of AI-assisted development we've ever seen.",
 
     // Quick Reference section
     quickRefTitle: "Quick Reference",
@@ -4714,10 +4755,12 @@ export const en = {
     quickRefPrice: "Pricing (per MTok)",
     quickRefBestFor: "Best For",
     quickRefOpusBest: "Deep reasoning, code review, agent teams",
-    quickRefCodexBest: "Fast iteration, terminal tasks, cost efficiency",
+    quickRefCodexBest: "Fast iteration, terminal tasks, frontier coding",
+    quickRefGlmBest: "High-volume tasks, cost efficiency, multilingual workflows",
     quickRefPlatforms: "Platforms",
     quickRefOpusPlatforms: "Claude.ai, API, AWS Bedrock, Vertex AI, Azure Foundry",
-    quickRefCodexPlatforms: "ChatGPT, Codex App, CLI, IDE Extension (API coming soon)",
+    quickRefCodexPlatforms: "ChatGPT, Codex App, CLI, IDE Extension, API",
+    quickRefGlmPlatforms: "ChatGLM, zai API, open weights available",
   },
 
   // Speculative Decoding page

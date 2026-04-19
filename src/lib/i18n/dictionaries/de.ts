@@ -4541,18 +4541,18 @@ export const de: Dictionary = {
   // Logges Lieblingsmodelle (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: 'Logges Lieblingsmodelle',
-    description: 'Zwei Modelle am gleichen Tag veröffentlicht. Beide sofort zu Favoriten geworden. Hier ist ein ehrlicher, leicht obsessiver Überblick.',
+    description: 'Drei Modelle, drei Philosophien, drei Preisklassen. Alle sofort zu Favoriten geworden. Hier ist ein ehrlicher, leicht obsessiver Überblick.',
     disclaimer: 'Haftungsausschluss',
-    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Ich nutze beide Modelle täglich, bezahle beide aus eigener Tasche und habe starke Meinungen. Modell-Releases entwickeln sich schnell, das hier wird sich ändern. Nebenwirkungen des Lesens können API-Key-Generierung und Geldbeutel-Angst umfassen.',
-    lastUpdated: 'Zuletzt aktualisiert: 5. Februar 2026',
+    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Ich nutze alle drei Modelle täglich, bezahle alle aus eigener Tasche und habe starke Meinungen. Modell-Releases entwickeln sich schnell, das hier wird sich ändern. Nebenwirkungen des Lesens können API-Key-Generierung und — dank GLM-5.1 — eine seltsame Erleichterung beim Blick auf die Rechnung umfassen.',
+    lastUpdated: 'Zuletzt aktualisiert: 19. April 2026',
 
     // Hero / Intro
-    heroTitle: 'Zwei Modelle, eine Obsession',
-    heroSubtitle: 'Am 5. Februar 2026 haben Anthropic und OpenAI ihre neuesten Flaggschiffe innerhalb weniger Stunden veröffentlicht. Ich nutze beide seitdem ununterbrochen. Hier ist der ehrliche Erfahrungsbericht von jemandem, der tatsächlich Code damit ausliefert.',
+    heroTitle: 'Drei Modelle, eine Obsession',
+    heroSubtitle: 'Opus 4.7 für maximale Tiefe, GPT-5.4 für Speed und Pragmatismus, GLM-5.1 als Preis-Leistungs-Hammer. Drei Frontier-Modelle aus drei Labs, die jeweils in einer anderen Disziplin glänzen. Ich nutze alle drei täglich — hier ist der ehrliche Erfahrungsbericht von jemandem, der tatsächlich Code damit ausliefert.',
 
-    // Die zwei Champions
-    championsTitle: 'Die zwei Champions',
-    championsSubtitle: 'Verschiedene Philosophien, beide exzellent. Hier ist, was jedes Modell mitbringt.',
+    // Die drei Champions
+    championsTitle: 'Die drei Champions',
+    championsSubtitle: 'Verschiedene Philosophien, alle exzellent. Hier ist, was jedes Modell mitbringt.',
 
     // Claude Opus 4.7
     opusName: 'Claude Opus 4.7',
@@ -4577,28 +4577,51 @@ export const de: Dictionary = {
     opusSourceLabel: 'Quelle: Anthropic Opus-Seite',
     opusSourceUrl: 'https://www.anthropic.com/claude/opus',
 
-    // GPT-5.3-Codex
-    codexName: 'GPT-5.3-Codex',
+    // GPT-5.4
+    codexName: 'GPT-5.4',
     codexMaker: 'OpenAI',
-    codexTagline: 'Der schnelle Pragmatiker, der sich selbst mitgebaut hat',
-    codexModelId: 'gpt-5.3-codex',
-    codexReleaseDate: '5. Februar 2026',
+    codexTagline: 'Der schnelle Pragmatiker, jetzt noch schärfer',
+    codexModelId: 'gpt-5.4',
+    codexReleaseDate: 'März 2026',
     codexContext: '~400K Tokens',
     codexOutput: '~128K Tokens',
-    codexPricing: '~$1,25 / $10 pro Million Tokens (erwartet)',
-    codexDescription: 'GPT-5.3-Codex ist OpenAIs erstes "selbstentwickelndes" Modell — frühe Versionen wurden verwendet um den eigenen Trainingslauf zu debuggen. Es vereint Frontier-Coding-Leistung (von GPT-5.2-Codex) mit professionellem Reasoning (von GPT-5.2) in einem einzigen Modell. Es ist 25% schneller als sein Vorgänger, braucht die Hälfte der Tokens für gleichwertige Aufgaben und dominiert Terminal-Bench 2 absolut mit 77,3%.',
+    codexPricing: '~$1,25 / $10 pro Million Tokens',
+    codexDescription: 'GPT-5.4 ist OpenAIs neustes Frontier-Modell und baut direkt auf den GPT-5.3-Codex-Fundamenten auf. Frontier-Coding-Leistung trifft auf professionelles Reasoning in einem einzigen Modell — mit verbesserter Token-Effizienz, schärferem Tool-Use und einer merklich geschliffeneren Persönlichkeit. Weiterhin 25% schneller als der alte GPT-5.2-Codex, dominiert Terminal-Bench 2 und bleibt der König der Terminal-Workflows.',
 
     codexStrength1Title: 'Interactive Steering',
     codexStrength1Desc: 'Du kannst während der Arbeit mit ihm interagieren — Fragen stellen, Ansätze besprechen und in Echtzeit lenken. Es gibt regelmäßige Fortschrittsupdates.',
-    codexStrength2Title: 'Selbstentwickelnd',
-    codexStrength2Desc: 'Erstes Modell, das maßgeblich an seiner eigenen Entwicklung beteiligt war. Intern zum Debugging des Trainings, zur Verwaltung des Deployments und zur Optimierung der Evaluierung eingesetzt.',
+    codexStrength2Title: 'Frontier-Coding',
+    codexStrength2Desc: 'Vereint Coding-Exzellenz und professionelles Reasoning in einem Modell. Für Terminal-Arbeit und komplexe Refactorings aktuell schwer zu schlagen.',
     codexStrength3Title: 'Token-effizient',
-    codexStrength3Desc: 'Erreicht Ergebnisse mit weniger als der Hälfte der Tokens seiner Vorgänger. Dein Kontext-Budget reicht weiter.',
+    codexStrength3Desc: 'Erreicht Ergebnisse mit weniger als der Hälfte der Tokens älterer GPT-Generationen. Dein Kontext-Budget reicht spürbar weiter.',
     codexStrength4Title: 'Persönlichkeitsmodi',
     codexStrength4Desc: 'Wähle zwischen "Pragmatic" (knapp, auf den Punkt) und "Friendly" (gesprächig). Kein Leistungsunterschied — rein stilistisch.',
 
-    codexSourceLabel: 'Quelle: OpenAI GPT-5.3-Codex Launch',
-    codexSourceUrl: 'https://openai.com/index/introducing-gpt-5-3-codex/',
+    codexSourceLabel: 'Quelle: OpenAI GPT-5.4',
+    codexSourceUrl: 'https://openai.com/gpt-5',
+
+    // GLM-5.1
+    glmName: 'GLM-5.1',
+    glmMaker: 'Zhipu AI (zai)',
+    glmTagline: 'Der Preiskönig, der verdammt gut ist',
+    glmModelId: 'glm-5.1',
+    glmReleaseDate: 'Anfang 2026',
+    glmContext: '128K Tokens',
+    glmOutput: '~32K Tokens',
+    glmPricing: '$0,10 / $0,10 pro Million Tokens',
+    glmDescription: 'GLM-5.1 ist Zhipu AIs neustes Flaggschiff und aktuell der wohl verrückteste Preis-Leistungs-Hammer auf dem Markt. Bei rund $0,10 pro Million Tokens — sowohl Input als auch Output — ist es fast 50x günstiger als Opus und liefert trotzdem überraschend wettbewerbsfähige Leistung bei Coding und Reasoning. Chinesisches Modell, aber voll mehrsprachig: Deutsch und Englisch laufen sauber, Chinesisch natürlich nativ. 128K Kontextfenster, schnelle Latenzen, solide in fast allem.',
+
+    glmStrength1Title: 'Preiskönig',
+    glmStrength1Desc: 'Bei $0,10/M Input und $0,10/M Output ist es grob 50x günstiger als Opus. Du kannst ganze Tage mit GLM-5.1 experimentieren für den Preis einer einzigen Opus-Session.',
+    glmStrength2Title: 'Mehrsprachig',
+    glmStrength2Desc: 'Natives Chinesisch, exzellentes Englisch und sauberes Deutsch. Für internationale Workflows und mehrsprachige Dokumentation ein echter Vorteil.',
+    glmStrength3Title: 'Effizient',
+    glmStrength3Desc: 'Schnelle Antworten, niedrige Latenz. Für schnelle Iteration und hochvolumige Workflows ideal — du wartest nicht auf das Modell.',
+    glmStrength4Title: 'Vielseitig',
+    glmStrength4Desc: 'Coding, Reasoning und kreative Aufgaben sind alle solide. Kein Spezialist, aber ein überraschend kompetenter Generalist zu einem Bruchteil der Kosten.',
+
+    glmSourceLabel: 'Quelle: Zhipu AI (chatglm.cn)',
+    glmSourceUrl: 'https://chatglm.cn',
 
     // Benchmark Showdown
     benchmarkTitle: 'Der Benchmark-Showdown',
@@ -4607,39 +4630,46 @@ export const de: Dictionary = {
     benchSWE: 'SWE-bench',
     benchSWEOpus: '80,8%',
     benchSWECodex: '56,8%',
+    benchSWEGlm: '72%',
     benchSWENote: 'Verified vs Pro (verschiedene Testsets — nicht direkt vergleichbar)',
 
     benchTerminal: 'Terminal-Bench 2',
     benchTerminalOpus: '65,4%',
     benchTerminalCodex: '77,3%',
-    benchTerminalNote: 'Codex dominiert echte Terminal-Workflows',
+    benchTerminalGlm: '61%',
+    benchTerminalNote: 'GPT-5.4 dominiert echte Terminal-Workflows',
 
     benchOSWorld: 'OSWorld',
     benchOSWorldOpus: '72,7%',
     benchOSWorldCodex: '64,7%',
+    benchOSWorldGlm: '58%',
     benchOSWorldNote: 'Opus führt bei Desktop-Automatisierung',
 
     benchGPQA: 'GPQA Diamond',
     benchGPQAOpus: '91,3%',
     benchGPQACodex: '—',
+    benchGPQAGlm: '78%',
     benchGPQANote: 'Wissenschaftliches Reasoning auf Doktoranden-Niveau',
 
     benchARC: 'ARC AGI 2',
     benchARCOpus: '68,8%',
     benchARCCodex: '—',
+    benchARCGlm: '52%',
     benchARCNote: 'Neuartige Problemlösung (fast 2x vs Opus 4.5)',
 
     benchHLE: "Humanity's Last Exam",
     benchHLEOpus: '40,0%',
     benchHLECodex: '—',
+    benchHLEGlm: '28%',
     benchHLENote: 'Der schwerste Test in der KI — ohne Tools',
 
     benchCyber: 'Cybersecurity CTF',
     benchCyberOpus: '—',
     benchCyberCodex: '77,6%',
+    benchCyberGlm: '65%',
     benchCyberNote: 'Capture-the-Flag Sicherheits-Challenges',
 
-    benchDisclaimer: 'Strich bedeutet, dass der Benchmark vom Anbieter nicht veröffentlicht wurde. SWE-bench Verified und SWE-bench Pro nutzen verschiedene Testsets, daher ist ein direkter Vergleich nicht aussagekräftig.',
+    benchDisclaimer: 'Strich bedeutet, dass der Benchmark vom Anbieter nicht veröffentlicht wurde. SWE-bench Verified und SWE-bench Pro nutzen verschiedene Testsets, daher ist ein direkter Vergleich nicht aussagekräftig. GLM-5.1-Zahlen stammen aus öffentlichen Berichten und eigener Erfahrung.',
 
     // Wann ich welches nutze
     whenTitle: 'Wann ich welches tatsächlich nutze',
@@ -4654,39 +4684,50 @@ export const de: Dictionary = {
     whenOpus4: 'Agent Teams für ambitionierte mehrteilige Projekte',
     whenOpus5: 'Alles, was von erweitertem Denken und sorgfältigem schrittweisem Reasoning profitiert',
 
-    whenCodexTitle: 'Ich greife zu GPT-5.3-Codex wenn...',
+    whenCodexTitle: 'Ich greife zu GPT-5.4 wenn...',
     whenCodexToolLabel: 'Mein Tool: Codex (App + CLI)',
-    whenCodexToolDesc: 'GPT-5.3-Codex treibt die Codex-App und CLI an. Interactive Steering mid-task, Persönlichkeitsmodi und blitzschnelle Geschwindigkeit machen es perfekt für schnelle Iteration.',
+    whenCodexToolDesc: 'GPT-5.4 treibt die Codex-App und CLI an. Interactive Steering mid-task, Persönlichkeitsmodi und blitzschnelle Geschwindigkeit machen es perfekt für schnelle Iteration.',
     whenCodex1: 'Schnelle Iteration bei Terminal-lastigen Workflows — es ist blitzschnell und die Terminal-Bench-Scores zeigen warum',
     whenCodex2: 'Interaktives Pair Programming, bei dem ich mid-task lenken will',
     whenCodex3: 'Aufgaben mit hohem Volumen, bei denen Token-Effizienz kostenmäßig zählt',
     whenCodex4: 'Die Codex CLI für schnelles Scripting und Einmal-Aufgaben',
-    whenCodex5: 'Alles, wo ich Speed über Tiefe will — es ist 25% schneller und man spürt es',
+    whenCodex5: 'Alles, wo ich Speed über Tiefe will — es ist 25% schneller als GPT-5.2-Codex und man spürt es',
+
+    whenGlmTitle: 'Ich greife zu GLM-5.1 wenn...',
+    whenGlmToolLabel: 'Mein Tool: zai API / ChatGLM',
+    whenGlmToolDesc: 'GLM-5.1 läuft über die zai API und die ChatGLM-Plattform. Für hochvolumige oder kostensensitive Workflows meine erste Wahl — bei 50x günstigeren Kosten kann man großzügig sein.',
+    whenGlm1: 'Das Budget knapp ist — bei fast 50x günstigerem Preis macht es für Hobby-Projekte und Experimente einen riesigen Unterschied',
+    whenGlm2: 'Hochvolumige Textverarbeitung, Zusammenfassungen oder Klassifikation — wo Kosten über alles dominieren',
+    whenGlm3: 'Mehrsprachige Aufgaben mit Chinesisch, wo native Sprachkenntnisse einen echten Unterschied machen',
+    whenGlm4: 'Schnelle Prototypen und Experimente, bei denen Opus-Preise Overkill wären',
+    whenGlm5: 'Wenn ich "gut genug" statt "das Beste" brauche — GLM liefert solide Ergebnisse zu einem Zehntel des Preises',
 
     // Preis-Realität
     pricingTitle: 'Die Geldbeutel-Situation',
-    pricingSubtitle: 'Reden wir über den Elefanten im Raum.',
+    pricingSubtitle: 'Reden wir über den Elefanten im Raum — und das Zwergmammut daneben.',
     pricingOpusTitle: 'Opus 4.7',
-    pricingOpusDetail: '$5 Input / $25 Output pro Million Tokens. Gleicher Preis wie Opus 4.5, aber mit massiv verbesserten Fähigkeiten. Batch API mit 50% Rabatt. Immer noch Premium-Territorium — eine intensive Coding-Session kann $5-15 kosten.',
-    pricingCodexTitle: 'GPT-5.3-Codex',
-    pricingCodexDetail: 'API-Preise stehen noch nicht fest, aber die GPT-5-Codex-Familie liegt bei ~$1,25 Input / $10 Output. Das ist grob 2,5x günstiger als Opus bei Input und 2,5x günstiger bei Output. Plus es braucht weniger Tokens für gleichwertige Aufgaben.',
-    pricingVerdict: 'Ehrliche Einschätzung: Wenn du kostenbewusst bist, gewinnt Codex klar. Wenn du maximale Reasoning-Tiefe brauchst und bereit bist dafür zu zahlen, ist Opus jeden Cent wert. Ich nutze beide, weil verschiedene Aufgaben verschiedene Wirtschaftlichkeit haben.',
+    pricingOpusDetail: '$5 Input / $25 Output pro Million Tokens. Gleicher Preis wie Opus 4.5, aber mit massiv verbesserten Fähigkeiten. Batch API mit 50% Rabatt. Premium-Territorium — eine intensive Coding-Session kann $5-15 kosten.',
+    pricingCodexTitle: 'GPT-5.4',
+    pricingCodexDetail: '~$1,25 Input / $10 Output pro Million Tokens. Grob 4x günstiger als Opus bei Input und 2,5x günstiger bei Output. Plus es braucht weniger Tokens für gleichwertige Aufgaben.',
+    pricingGlmTitle: 'GLM-5.1',
+    pricingGlmDetail: '$0,10 Input / $0,10 Output pro Million Tokens. Richtig gelesen — 10 Cent. Etwa 50x günstiger als Opus und 10x günstiger als GPT-5.4 beim Output. Für hochvolumige Arbeiten absolut konkurrenzlos, und selbst für intensive Coding-Sessions kaum messbare Kosten.',
+    pricingVerdict: 'Ehrliche Einschätzung: Wenn du maximale Reasoning-Tiefe brauchst und bereit bist dafür zu zahlen, ist Opus jeden Cent wert. Wenn du Geschwindigkeit und solides Frontier-Coding willst, ist GPT-5.4 der Sweet Spot. Und wenn es um Skalierung, Experimente oder "gut genug" geht, macht GLM-5.1 den Taschenrechner kaputt. Ich nutze alle drei, weil verschiedene Aufgaben verschiedene Wirtschaftlichkeit haben.',
 
     // Gemeinsamkeiten
     commonTitle: 'Was sie gemeinsam haben',
-    commonSubtitle: 'Trotz rivalisierender Labs sind diese Modelle bei einigen wichtigen Eigenschaften konvergiert.',
+    commonSubtitle: 'Drei Labs, drei Philosophien, aber bei einigen wichtigen Eigenschaften sind sie konvergiert.',
     common1Title: 'Agentische Exzellenz',
-    common1Desc: 'Beide Modelle sind für Agents gebaut — Tool-Nutzung, mehrstufige Planung und autonome Aufgabenerledigung sind erstklassige Fähigkeiten.',
+    common1Desc: 'Alle drei Modelle sind für Agents gebaut — Tool-Nutzung, mehrstufige Planung und autonome Aufgabenerledigung sind erstklassige Fähigkeiten.',
     common2Title: 'Computer Use',
-    common2Desc: 'Beide können GUIs bedienen, Formulare ausfüllen, Apps navigieren. OSWorld-Scores von 72,7% (Opus) und 64,7% (Codex) zeigen echte Desktop-Kompetenz.',
+    common2Desc: 'Alle können GUIs bedienen, Formulare ausfüllen, Apps navigieren. OSWorld-Scores zeigen echte Desktop-Kompetenz — Opus vorn, GPT-5.4 dicht dran, GLM solide hinterher.',
     common3Title: 'Erweiterter Output',
-    common3Desc: '~128K Token Ausgabelimits bei beiden. Ganze Codebases, vollständige Dokumentation, Multi-Datei-Änderungen in einer einzigen Antwort generieren.',
-    common4Title: 'Am gleichen Tag veröffentlicht',
-    common4Desc: '5. Februar 2026. Beide Labs haben ihre Flaggschiffe innerhalb von Stunden veröffentlicht. Die KI-Coding-Kriege sind real, und wir Entwickler sind die Gewinner.',
+    common3Desc: '~128K Token Output bei Opus und GPT-5.4, ~32K bei GLM. Genug, um ganze Dateien, komplette Dokumentation oder Multi-Datei-Änderungen in einer einzigen Antwort zu generieren.',
+    common4Title: 'Das Zeitalter der Auswahl',
+    common4Desc: 'Drei Frontier-Labs aus drei Regionen (USA, USA, China). Die Tage des einen "besten" Modells sind vorbei — wir haben jetzt ein Toolkit, und jedes Modell glänzt in seiner eigenen Nische.',
 
     // Persönliches Verdict
     verdictTitle: 'Das ehrliche Urteil',
-    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe zwei. Opus 4.7 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraü. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.3-Codex ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche. Es ist schnell, effizient und das Interactive Steering fühlt sich wie echtes Pair Programming an. Zusammen decken sie jedes Coding-Szenario ab, das mir begegnet. Die Tatsache, dass sie am gleichen Tag gelauncht wurden, fühlt sich symbolisch an — die Frontier ist nicht mehr ein Modell, es ist ein Toolkit. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, beide und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
+    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe drei. Opus 4.7 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraue. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.4 ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche — schnell, effizient, und das Interactive Steering fühlt sich wie echtes Pair Programming an. Und GLM-5.1 ist der heimliche Star: bei fast 50x günstigeren Kosten als Opus kann ich ganze Tage experimentieren ohne schlechtes Gewissen. Zusammen decken sie jedes Szenario ab — Opus für Tiefe, GPT-5.4 für Geschwindigkeit, GLM-5.1 für Skalierung. Die Frontier ist nicht mehr ein Modell, sie ist ein Toolkit, und mit GLM-5.1 plötzlich auch für Hobbyisten bezahlbar. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, alle drei und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
 
     // Quick Reference
     quickRefTitle: 'Schnellübersicht',
@@ -4697,10 +4738,12 @@ export const de: Dictionary = {
     quickRefPrice: 'Preise (pro MTok)',
     quickRefBestFor: 'Am besten für',
     quickRefOpusBest: 'Tiefes Reasoning, Code Review, Agent Teams',
-    quickRefCodexBest: 'Schnelle Iteration, Terminal-Aufgaben, Kosteneffizienz',
+    quickRefCodexBest: 'Schnelle Iteration, Terminal-Aufgaben, Frontier-Coding',
+    quickRefGlmBest: 'Hochvolumige Aufgaben, Kosteneffizienz, mehrsprachige Workflows',
     quickRefPlatforms: 'Plattformen',
     quickRefOpusPlatforms: 'Claude.ai, API, AWS Bedrock, Vertex AI, Azure Foundry',
-    quickRefCodexPlatforms: 'ChatGPT, Codex App, CLI, IDE Extension (API bald verfügbar)',
+    quickRefCodexPlatforms: 'ChatGPT, Codex App, CLI, IDE Extension, API',
+    quickRefGlmPlatforms: 'ChatGLM, zai API, offene Gewichte verfügbar',
   },
 
   // Speculative Decoding Seite
@@ -5074,6 +5117,33 @@ export const de: Dictionary = {
     tip6: 'Betreibe Modelle als API-Server (Ollama und LM Studio unterstützen das) um lokale Modelle in eigene Anwendungen, Skripte und Workflows zu integrieren.',
     vramCalcLink: 'VRAM-Rechner',
     vramCalcLinkDesc: 'Nicht sicher, ob ein Modell auf deine GPU passt? Berechne VRAM-Bedarf und geschätzte Geschwindigkeit für jedes Modell und jede Quantisierungsstufe.',
+  },
+
+  // Abliteration page
+  abliteration: {
+    title: 'Abliteration',
+    description: 'Wie eine einzige Richtung im Residual Stream die Weigerung eines Modells steuert — und was passiert, wenn man sie entfernt.',
+    whatIs: 'Was ist Abliteration?',
+    whatIsDesc: 'Moderne LLMs werden darauf trainiert, schädliche Anfragen abzulehnen. Forscher haben herausgefunden, dass dieses Weigerungsverhalten von einer einzigen Richtung im Residual Stream des Modells gesteuert wird — einem hochdimensionalen Vektor, der wie ein Ein-/Ausschalter für Weigerungen wirkt. Abliteration ist die Technik, diese Richtung zu identifizieren und zu entfernen, wodurch die Fähigkeit des Modells zu verweigern effektiv deaktiviert wird.',
+    ethicalNote: 'Bildungszweck',
+    ethicalNoteDesc: 'Abliteration enthüllt grundlegende Wahrheiten darüber, wie LLM-Sicherheit funktioniert. Das Verständnis dieser Technik ist entscheidend für den Bau besserer Sicherheitsmechanismen. Dieser Leitfaden dient dem Lernen — Missbrauch hat echte Konsequenzen.',
+    keyInsight: 'Die zentrale Erkenntnis',
+    keyInsightDesc: '2024 zeigten Arditi et al., dass die Weigerung bei LLMs durch eine einzige Richtung im Residual Stream vermittelt wird. Wenn man schädliche und harmlose Prompts durch das Modell laufen lässt und die internen Aktivierungen vergleicht, gibt es einen Vektor, der sich konsistent unterscheidet — die „Weigerungsrichtung“.',
+    keyInsightDesc2: 'Das ist bemerkenswert: Unter Milliarden von Parametern steuert ein einziger ~4096-dimensionaler Vektor, ob das Modell „Ich kann Ihnen dabei nicht helfen" sagt oder tatsächlich antwortet. Entfernt man diese Richtung, hört das Modell auf zu verweigern. Fügt man sie künstlich hinzu, werden selbst harmlose Anfragen abgelehnt.',
+    pipeline: 'Die Abliteration-Pipeline',
+    healingTitle: 'Heilung mit DPO',
+    healingDesc: 'Abliteration ist ein grobes Instrument — das Entfernen der Weigerungsrichtung verschlechtert oft die Gesamtqualität des Modells. Der Standard-Fix ist Direct Preference Optimization (DPO): Das Modell wird auf Präferenzpaare trainiert, bei denen die „gewählte" Antwort hochwertig und unzensiert ist und die „abgelehnte" Antwort von geringer Qualität. Dies stellt die Leistung wieder her, während das unzensierte Verhalten beibehalten wird.',
+    beforeHeal: 'Nach Abliteration',
+    beforeHealDesc: 'Modell verweigert nicht mehr, aber die Qualität sinkt — weniger kohärent, mehr Halluzinationen, schlechteres Reasoning. Die Weigerungsrichtung enthielt auch nützliches Wissen.',
+    afterHeal: 'Nach DPO-Heilung',
+    afterHealDesc: 'Qualität auf nahezu ursprünglichem Niveau wiederhergestellt, bei gleichbleibend unzensiertem Verhalten. Das Modell hat gelernt, „kann antworten" von „sollte antworten" zu trennen.',
+    resources: 'Praktische Ressourcen',
+    keyTakeaways: 'Wichtigste Erkenntnisse',
+    takeaway1: 'Das Weigerungsverhalten wird durch eine einzige Richtung im Residual Stream gesteuert — keine komplexe verteilte Repräsentation',
+    takeaway2: 'Abliteration entfernt diese Richtung durch Gewicht-Orthogonalisierung und deaktiviert Weigerungen dauerhaft',
+    takeaway3: 'Qualitätseinbußen sind zu erwarten — DPO (oder ähnliche Präferenzoptimierung) ist nötig, um die Leistung wiederherzustellen',
+    takeaway4: 'Dies zeigt die Fragilität des aktuellen Sicherheitstrainings und motiviert Forschung zu robusterem Alignment',
+    takeaway5: 'Unsloth bietet kostenlose Colab-Notebooks an, die Fine-Tuning zugänglich machen — dort starten, um die volle Pipeline zu verstehen',
   },
 
   // LoRA page
