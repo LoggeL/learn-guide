@@ -4555,7 +4555,7 @@ export const en = {
     chainingStep3: 'Git Workflow skill is chained to handle the merge',
   },
 
-  // Logge's Favourite Models page (Opus 4.6 + GPT-5.3-Codex)
+  // Logge's Favourite Models page (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: "Logge's Favourite Models",
     description: "Two models dropped on the same day. Both became instant favourites. Here's an honest, slightly obsessive breakdown.",
@@ -4571,16 +4571,16 @@ export const en = {
     championsTitle: "The Two Champions",
     championsSubtitle: "Different philosophies, both excellent. Here's what each one brings to the table.",
 
-    // Claude Opus 4.6 card
-    opusName: "Claude Opus 4.6",
+    // Claude Opus 4.7 card
+    opusName: "Claude Opus 4.7",
     opusMaker: "Anthropic",
     opusTagline: "The deep thinker that codes like a senior engineer",
-    opusModelId: "claude-opus-4-6",
+    opusModelId: "claude-opus-4-7",
     opusReleaseDate: "February 5, 2026",
     opusContext: "200K standard / 1M beta",
     opusOutput: "128K tokens",
     opusPricing: "$5 / $25 per million tokens",
-    opusDescription: "Opus 4.6 is Anthropic's most capable model ever. It doubled the output limit to 128K, introduced a 1M token context window in beta, and brought two exclusive features: Adaptive Thinking (auto-adjusts reasoning depth) and Context Compaction (auto-summarizes old context for endless conversations). The coding improvements are massive — Terminal-Bench jumped from 59.8% to 65.4%, OSWorld from 66.3% to 72.7%, and ARC AGI 2 nearly doubled from 37.6% to 68.8%.",
+    opusDescription: "Opus 4.7 is Anthropic's most capable model ever. It doubled the output limit to 128K, introduced a 1M token context window in beta, and brought two exclusive features: Adaptive Thinking (auto-adjusts reasoning depth) and Context Compaction (auto-summarizes old context for endless conversations). The coding improvements are massive — Terminal-Bench jumped from 59.8% to 65.4%, OSWorld from 66.3% to 72.7%, and ARC AGI 2 nearly doubled from 37.6% to 68.8%.",
 
     opusStrength1Title: "Adaptive Thinking",
     opusStrength1Desc: "Dynamically adjusts reasoning depth based on task complexity. Four intensity levels: low, medium, high, and max. It decides when to think deeper without you asking.",
@@ -4662,9 +4662,9 @@ export const en = {
     whenTitle: "When I Actually Use Each One",
     whenSubtitle: "Theory is nice. Here's my actual workflow after using both daily since launch.",
 
-    whenOpusTitle: "I reach for Opus 4.6 when...",
+    whenOpusTitle: "I reach for Opus 4.7 when...",
     whenOpusToolLabel: "My tool: Claude Code (CLI)",
-    whenOpusToolDesc: "Opus 4.6 lives in my terminal via Claude Code. Agent teams, multi-file edits, deep reasoning — all from the command line. This entire site was built with it.",
+    whenOpusToolDesc: "Opus 4.7 lives in my terminal via Claude Code. Agent teams, multi-file edits, deep reasoning — all from the command line. This entire site was built with it.",
     whenOpus1: "I need deep architectural reasoning across a large codebase — the 1M context window is unmatched",
     whenOpus2: "Writing complex multi-file features where the model needs to hold a lot of state",
     whenOpus3: "Code review and refactoring — Adaptive Thinking makes it genuinely careful",
@@ -4683,7 +4683,7 @@ export const en = {
     // Pricing Reality section
     pricingTitle: "The Wallet Situation",
     pricingSubtitle: "Let's talk about the elephant in the room.",
-    pricingOpusTitle: "Opus 4.6",
+    pricingOpusTitle: "Opus 4.7",
     pricingOpusDetail: "$5 input / $25 output per million tokens. Same price as Opus 4.5 but with massively improved capabilities. Batch API at 50% off. Still premium territory — a heavy coding session can run $5-15.",
     pricingCodexTitle: "GPT-5.3-Codex",
     pricingCodexDetail: "API pricing not final yet, but the GPT-5-Codex family runs ~$1.25 input / $10 output. That's roughly 2.5x cheaper than Opus on input and 2.5x cheaper on output. Plus it uses fewer tokens for equivalent tasks.",
@@ -4703,7 +4703,7 @@ export const en = {
 
     // Personal Verdict section
     verdictTitle: "The Honest Verdict",
-    verdictText: "I don't have one favourite model anymore — I have two. Opus 4.6 is the model I trust for deep, careful work. It thinks before it acts, catches things I miss, and handles massive codebases with grace. GPT-5.3-Codex is the model I reach for when I need speed and pragmatism. It's fast, efficient, and the interactive steering feels like genuine pair programming. Together, they cover every coding scenario I encounter. The fact that they launched on the same day feels symbolic — the frontier isn't one model anymore, it's a toolkit. Pick the right tool for the job. Or, like me, use both and enjoy the best era of AI-assisted development we've ever seen.",
+    verdictText: "I don't have one favourite model anymore — I have two. Opus 4.7 is the model I trust for deep, careful work. It thinks before it acts, catches things I miss, and handles massive codebases with grace. GPT-5.3-Codex is the model I reach for when I need speed and pragmatism. It's fast, efficient, and the interactive steering feels like genuine pair programming. Together, they cover every coding scenario I encounter. The fact that they launched on the same day feels symbolic — the frontier isn't one model anymore, it's a toolkit. Pick the right tool for the job. Or, like me, use both and enjoy the best era of AI-assisted development we've ever seen.",
 
     // Quick Reference section
     quickRefTitle: "Quick Reference",
@@ -5469,7 +5469,7 @@ export const en = {
     gpt54Desc: '1M context, 33% fewer hallucinations than 5.2, Tool Search system. Best for long-horizon professional work.',
     gemini31FlashLite: 'Gemini 3.1 Flash Lite',
     gemini31FlashLiteDesc: 'Very fast but significantly pricier than Flash Lite 2.5. Still capable, but hard to justify the cost increase.',
-    claudeOpus46: 'Claude Opus 4.6',
+    claudeOpus46: 'Claude Opus 4.7',
     claudeOpus46Desc: 'Expensive but worth it. Unmatched UI/UX design sense and creative instruction following.',
     gemini3Flash: 'Gemini 3 Flash',
     gemini3FlashDesc: 'Incredibly price efficient with excellent image and video understanding. Fast and smart.',

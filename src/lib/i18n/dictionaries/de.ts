@@ -4538,7 +4538,7 @@ export const de: Dictionary = {
     chainingStep3: 'Git Workflow Skill wird verkettet, um den Merge zu handhaben',
   },
 
-  // Logges Lieblingsmodelle (Opus 4.6 + GPT-5.3-Codex)
+  // Logges Lieblingsmodelle (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: 'Logges Lieblingsmodelle',
     description: 'Zwei Modelle am gleichen Tag veröffentlicht. Beide sofort zu Favoriten geworden. Hier ist ein ehrlicher, leicht obsessiver Überblick.',
@@ -4554,16 +4554,16 @@ export const de: Dictionary = {
     championsTitle: 'Die zwei Champions',
     championsSubtitle: 'Verschiedene Philosophien, beide exzellent. Hier ist, was jedes Modell mitbringt.',
 
-    // Claude Opus 4.6
-    opusName: 'Claude Opus 4.6',
+    // Claude Opus 4.7
+    opusName: 'Claude Opus 4.7',
     opusMaker: 'Anthropic',
     opusTagline: 'Der Tiefdenker, der wie ein Senior Engineer programmiert',
-    opusModelId: 'claude-opus-4-6',
+    opusModelId: 'claude-opus-4-7',
     opusReleaseDate: '5. Februar 2026',
     opusContext: '200K Standard / 1M Beta',
     opusOutput: '128K Tokens',
     opusPricing: '$5 / $25 pro Million Tokens',
-    opusDescription: 'Opus 4.6 ist Anthropics leistungsfähigstes Modell aller Zeiten. Es verdoppelte das Ausgabelimit auf 128K, führte ein 1M-Token-Kontextfenster in der Beta ein und brachte zwei exklusive Features: Adaptive Thinking (passt die Reasoning-Tiefe automatisch an) und Context Compaction (fasst alten Kontext automatisch zusammen für endlose Konversationen). Die Coding-Verbesserungen sind massiv — Terminal-Bench stieg von 59,8% auf 65,4%, OSWorld von 66,3% auf 72,7%, und ARC AGI 2 hat sich von 37,6% auf 68,8% fast verdoppelt.',
+    opusDescription: 'Opus 4.7 ist Anthropics leistungsfähigstes Modell aller Zeiten. Es verdoppelte das Ausgabelimit auf 128K, führte ein 1M-Token-Kontextfenster in der Beta ein und brachte zwei exklusive Features: Adaptive Thinking (passt die Reasoning-Tiefe automatisch an) und Context Compaction (fasst alten Kontext automatisch zusammen für endlose Konversationen). Die Coding-Verbesserungen sind massiv — Terminal-Bench stieg von 59,8% auf 65,4%, OSWorld von 66,3% auf 72,7%, und ARC AGI 2 hat sich von 37,6% auf 68,8% fast verdoppelt.',
 
     opusStrength1Title: 'Adaptive Thinking',
     opusStrength1Desc: 'Passt die Reasoning-Tiefe dynamisch an die Aufgabenkomplexität an. Vier Intensitätsstufen: niedrig, mittel, hoch und maximal. Es entscheidet selbst, wann tieferes Nachdenken hilft.',
@@ -4645,9 +4645,9 @@ export const de: Dictionary = {
     whenTitle: 'Wann ich welches tatsächlich nutze',
     whenSubtitle: 'Theorie ist nett. Hier ist mein tatsächlicher Workflow, nachdem ich beide seit Launch täglich nutze.',
 
-    whenOpusTitle: 'Ich greife zu Opus 4.6 wenn...',
+    whenOpusTitle: 'Ich greife zu Opus 4.7 wenn...',
     whenOpusToolLabel: 'Mein Tool: Claude Code (CLI)',
-    whenOpusToolDesc: 'Opus 4.6 lebt in meinem Terminal via Claude Code. Agent Teams, Multi-Datei-Edits, tiefes Reasoning — alles von der Kommandozeile. Diese gesamte Seite wurde damit gebaut.',
+    whenOpusToolDesc: 'Opus 4.7 lebt in meinem Terminal via Claude Code. Agent Teams, Multi-Datei-Edits, tiefes Reasoning — alles von der Kommandozeile. Diese gesamte Seite wurde damit gebaut.',
     whenOpus1: 'Ich tiefes architektonisches Reasoning über eine große Codebase brauche — das 1M Kontextfenster ist unübertroffen',
     whenOpus2: 'Ich komplexe Multi-Datei-Features schreibe, bei denen das Modell viel State halten muss',
     whenOpus3: 'Code Review und Refactoring — Adaptive Thinking macht es wirklich sorgfältig',
@@ -4666,7 +4666,7 @@ export const de: Dictionary = {
     // Preis-Realität
     pricingTitle: 'Die Geldbeutel-Situation',
     pricingSubtitle: 'Reden wir über den Elefanten im Raum.',
-    pricingOpusTitle: 'Opus 4.6',
+    pricingOpusTitle: 'Opus 4.7',
     pricingOpusDetail: '$5 Input / $25 Output pro Million Tokens. Gleicher Preis wie Opus 4.5, aber mit massiv verbesserten Fähigkeiten. Batch API mit 50% Rabatt. Immer noch Premium-Territorium — eine intensive Coding-Session kann $5-15 kosten.',
     pricingCodexTitle: 'GPT-5.3-Codex',
     pricingCodexDetail: 'API-Preise stehen noch nicht fest, aber die GPT-5-Codex-Familie liegt bei ~$1,25 Input / $10 Output. Das ist grob 2,5x günstiger als Opus bei Input und 2,5x günstiger bei Output. Plus es braucht weniger Tokens für gleichwertige Aufgaben.',
@@ -4686,7 +4686,7 @@ export const de: Dictionary = {
 
     // Persönliches Verdict
     verdictTitle: 'Das ehrliche Urteil',
-    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe zwei. Opus 4.6 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraü. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.3-Codex ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche. Es ist schnell, effizient und das Interactive Steering fühlt sich wie echtes Pair Programming an. Zusammen decken sie jedes Coding-Szenario ab, das mir begegnet. Die Tatsache, dass sie am gleichen Tag gelauncht wurden, fühlt sich symbolisch an — die Frontier ist nicht mehr ein Modell, es ist ein Toolkit. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, beide und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
+    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe zwei. Opus 4.7 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraü. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.3-Codex ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche. Es ist schnell, effizient und das Interactive Steering fühlt sich wie echtes Pair Programming an. Zusammen decken sie jedes Coding-Szenario ab, das mir begegnet. Die Tatsache, dass sie am gleichen Tag gelauncht wurden, fühlt sich symbolisch an — die Frontier ist nicht mehr ein Modell, es ist ein Toolkit. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, beide und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
 
     // Quick Reference
     quickRefTitle: 'Schnellübersicht',
@@ -5417,7 +5417,7 @@ export const de: Dictionary = {
     gpt54Desc: '1M Kontext, 33% weniger Halluzinationen als 5.2, Tool Search System. Bestes Modell für komplexe professionelle Aufgaben.',
     gemini31FlashLite: 'Gemini 3.1 Flash Lite',
     gemini31FlashLiteDesc: 'Sehr schnell, aber deutlich teurer als Flash Lite 2.5. Immer noch gut, aber der Preisanstieg ist schwer zu rechtfertigen.',
-    claudeOpus46: 'Claude Opus 4.6',
+    claudeOpus46: 'Claude Opus 4.7',
     claudeOpus46Desc: 'Teuer, aber es lohnt sich. Unübertroffenes UI/UX-Designgefühl und kreatives Instruktionsverständnis.',
     gemini3Flash: 'Gemini 3 Flash',
     gemini3FlashDesc: 'Unglaublich preiseffizient mit exzellentem Bild- und Videoverständnis. Schnell und schlau.',
