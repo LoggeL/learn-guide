@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useDeferredValue, useMemo } from 'react'
+import { useState, useEffect, useDeferredValue, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Type, Hash, Zap, Loader2 } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -17,11 +17,12 @@ const TOKEN_COLORS = [
   'bg-red-500/30 border-red-500/50 text-red-200',
 ]
 
-const MAX_RENDER_TOKENS = 800
 const LARGE_TEXT_THRESHOLD = 12000
 const TOKENIZE_DEBOUNCE_MS = 180
 
-// Helper to format token display with whitespace visualization
+type PreviewToken = { token: string; id: number }
+type WorkerResponse = { id: number; tokenCount: number; preview: PreviewToken[]; error?: string }
+
 function formatToken(token: string): { display: string; isWhitespace: boolean; wsType?: string } {
   if (token === ' ') return { display: '·', isWhitespace: true, wsType: 'space' }
   if (token === '\n') return { display: '↵', isWhitespace: true, wsType: 'newline' }
@@ -36,84 +37,93 @@ function formatToken(token: string): { display: string; isWhitespace: boolean; w
 export function TokenizerDemo() {
   const { t } = useTranslation()
   const [text, setText] = useState('The quick brown fox jumps over the lazy dog.')
-  const [tokens, setTokens] = useState<{ token: string; id: number }[]>([])
+  const [tokens, setTokens] = useState<PreviewToken[]>([])
   const [encoding, setEncoding] = useState<Tiktoken | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isTokenizing, setIsTokenizing] = useState(false)
   const [showIdsOnly, setShowIdsOnly] = useState(false)
+  const [tokenCount, setTokenCount] = useState(0)
   const deferredText = useDeferredValue(text)
+  const workerRef = useRef<Worker | null>(null)
+  const requestIdRef = useRef(0)
 
   useEffect(() => {
-    const initEncoder = async () => {
+    const init = async () => {
       try {
         const enc = getEncoding('o200k_base')
         setEncoding(enc)
+
+        const worker = new Worker(new URL('./tokenizer.worker.ts', import.meta.url))
+        workerRef.current = worker
         setIsLoading(false)
       } catch (error) {
-        console.error('Failed to load tokenizer:', error)
+        console.error('Failed to initialize tokenizer:', error)
         setIsLoading(false)
       }
     }
-    initEncoder()
+
+    init()
+
+    return () => {
+      workerRef.current?.terminate()
+      workerRef.current = null
+    }
   }, [])
 
   useEffect(() => {
-    if (!encoding) return
+    const worker = workerRef.current
+    if (!worker) return
+
+    const onMessage = (event: MessageEvent<WorkerResponse>) => {
+      const { id, tokenCount: nextCount, preview, error } = event.data
+      if (id !== requestIdRef.current) return
+
+      if (error) {
+        console.error('Tokenizer worker error:', error)
+        setTokens([])
+        setTokenCount(0)
+      } else {
+        setTokens(preview)
+        setTokenCount(nextCount)
+      }
+      setIsTokenizing(false)
+    }
+
+    worker.addEventListener('message', onMessage)
+    return () => worker.removeEventListener('message', onMessage)
+  }, [])
+
+  useEffect(() => {
+    const worker = workerRef.current
+    if (!worker) return
+
     if (!deferredText) {
       setTokens([])
+      setTokenCount(0)
       setIsTokenizing(false)
       return
     }
 
-    let cancelled = false
     setIsTokenizing(true)
-
     const timeoutId = window.setTimeout(() => {
-      const schedule = typeof window.requestIdleCallback === 'function'
-        ? window.requestIdleCallback.bind(window)
-        : ((cb: IdleRequestCallback) => window.setTimeout(() => cb({
-          didTimeout: false,
-          timeRemaining: () => 0,
-        } as IdleDeadline), 0))
-
-      schedule(() => {
-        if (cancelled) return
-        try {
-          const tokenIds = encoding.encode(deferredText)
-          const tokenData = tokenIds.slice(0, MAX_RENDER_TOKENS).map((id) => ({
-            token: encoding.decode([id]),
-            id,
-          }))
-          if (!cancelled) setTokens(tokenData)
-        } catch (error) {
-          console.error('Tokenization error:', error)
-          if (!cancelled) setTokens([])
-        } finally {
-          if (!cancelled) setIsTokenizing(false)
-        }
-      })
+      requestIdRef.current += 1
+      worker.postMessage({ id: requestIdRef.current, text: deferredText })
     }, TOKENIZE_DEBOUNCE_MS)
 
     return () => {
-      cancelled = true
       window.clearTimeout(timeoutId)
     }
-  }, [deferredText, encoding])
-
-  const tokenCount = useMemo(() => {
-    if (!encoding || !deferredText) return 0
-    try {
-      return encoding.encode(deferredText).length
-    } catch {
-      return 0
-    }
-  }, [encoding, deferredText])
+  }, [deferredText])
 
   const charCount = text.length
-  const ratio = charCount > 0 ? (tokenCount / charCount).toFixed(2) : '0.00'
+  const ratio = useMemo(() => {
+    return charCount > 0 ? (tokenCount / charCount).toFixed(2) : '0.00'
+  }, [charCount, tokenCount])
+
   const renderedTokenCount = tokens.length
   const isLargeText = text.length >= LARGE_TEXT_THRESHOLD
   const isBusy = isLoading || isTokenizing
+  const workerUnavailable = !encoding || !workerRef.current
 
   return (
     <div className="space-y-6">
@@ -145,8 +155,11 @@ export function TokenizerDemo() {
           {isTokenizing && (
             <span className="inline-flex items-center gap-1 text-xs text-amber-400">
               <Loader2 size={12} className="animate-spin" />
-              Processing large input...
+              Processing in worker...
             </span>
+          )}
+          {workerUnavailable && !isLoading && (
+            <span className="text-xs text-red-400">Tokenizer worker unavailable.</span>
           )}
         </div>
       </div>
@@ -260,7 +273,7 @@ export function TokenizerDemo() {
         {(tokenCount > renderedTokenCount || isLargeText) && (
           <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-muted">
             Showing {renderedTokenCount.toLocaleString()} of {tokenCount.toLocaleString()} tokens to keep the page responsive.
-            {isLargeText && ' Large pasted texts are tokenized after a short pause and rendered in a capped preview.'}
+            {isLargeText && ' Large pasted texts are tokenized in a Web Worker and rendered as a capped preview.'}
           </div>
         )}
 
