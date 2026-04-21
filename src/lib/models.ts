@@ -38,13 +38,6 @@ export interface ModelEntry {
 export const models: ModelEntry[] = [
   // S-Tier
   {
-    id: 'gpt53-codex',
-    nameKey: 'gpt53Codex',
-    descKey: 'gpt53CodexDesc',
-    tier: 'S',
-    hosting: 'api',
-  },
-  {
     id: 'gpt-54',
     nameKey: 'gpt54',
     descKey: 'gpt54Desc',
