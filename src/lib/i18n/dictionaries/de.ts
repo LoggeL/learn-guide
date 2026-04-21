@@ -112,6 +112,7 @@ export const de: Dictionary = {
     // Agent topics
     'agent-loop': 'Der Agenten-Zyklus',
     'agent-context': 'Kontext-Anatomie',
+    'chat-compaction': 'Chat Compaction',
     'agent-problems': 'Agenten-Probleme',
     'agent-security': 'Agenten-Sicherheit',
     'powerful-agents': 'Mächtige KI-Agenten',
@@ -186,6 +187,7 @@ export const de: Dictionary = {
     'getting-started': 'Dein erster LLM-API-Aufruf in 10 Minuten — kostenlos',
     'agent-loop': 'Der Beobachten-Denken-Handeln-Zyklus autonomer Agenten',
     'agent-context': 'Wie Agenten ihr Kontextfenster strukturieren und verwalten',
+    'chat-compaction': 'Wie man lange Agent-Chats verdichtet, ohne Wiederaufnahme, Retrieval oder exakte Details zu verlieren',
     'tool-design': 'Prinzipien für Tools, die Agenten zuverlässig nutzen können',
     'programmatic-tools': 'Agenten schreiben Code, der Tools aufruft — weniger Latenz und Tokens',
     'memory': 'Wie Agenten sich über Gespräche und Sitzungen hinweg erinnern',

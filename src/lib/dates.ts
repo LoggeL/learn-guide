@@ -53,6 +53,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'agentic-patterns': '2026-01-24',
   'agent-loop': '2026-01-24',
   'agent-context': '2026-01-24',
+  'chat-compaction': '2026-04-21',
 }
 
 export function formatTopicDate(dateStr: string, locale: string): string {

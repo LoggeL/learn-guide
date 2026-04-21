@@ -110,6 +110,7 @@ export const en = {
     // Agent topics
     'agent-loop': 'The Agent Loop',
     'agent-context': 'Context Anatomy',
+    'chat-compaction': 'Chat Compaction',
     'agent-problems': 'Agent Problems',
     'agent-security': 'Agent Security',
     'powerful-agents': 'Powerful AI Agents',
@@ -184,6 +185,7 @@ export const en = {
     'getting-started': 'Make your first LLM API call in 10 minutes — for free',
     'agent-loop': 'The observe-think-act cycle that powers autonomous agents',
     'agent-context': 'How agents structure and manage their context window',
+    'chat-compaction': 'How to compress long agent chats without losing resumability, retrieval, or exact detail',
     'tool-design': 'Principles for building tools that agents can use reliably',
     'programmatic-tools': 'Let agents write code that calls tools, reducing latency and tokens',
     'memory': 'How agents remember across conversations and sessions',

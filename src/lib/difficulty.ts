@@ -12,6 +12,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   // Agents
   'agent-loop': 'beginner',
   'agent-context': 'intermediate',
+  'chat-compaction': 'intermediate',
   'tool-design': 'intermediate',
   'programmatic-tools': 'intermediate',
   'memory': 'intermediate',

@@ -23,6 +23,7 @@ export { RAGCaseStudyVisualizer } from './RAGCaseStudyVisualizer'
 export { ToolSchemaBuilder } from './ToolSchemaBuilder'
 export { MemorySystemVisualizer } from './MemorySystemVisualizer'
 export { WorkflowVisualizer } from './WorkflowVisualizer'
+export { CompactionExplorer } from './CompactionExplorer'
 
 // Phase 3: ML Fundamentals components
 export { NeuralNetworkVisualizer } from './NeuralNetworkVisualizer'

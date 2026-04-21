@@ -42,6 +42,7 @@ export const topics: Topic[] = [
             children: [
               { id: 'agent-loop', name: 'The Agent Loop', path: '/ai/agents/loop', difficulty: 'beginner', lastUpdated: '2026-02-09' },
               { id: 'agent-context', name: 'Context Anatomy', path: '/ai/agents/context', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
+              { id: 'chat-compaction', name: 'Chat Compaction', path: '/ai/agents/compaction', difficulty: 'intermediate', lastUpdated: '2026-04-21' },
             ],
           },
           {
