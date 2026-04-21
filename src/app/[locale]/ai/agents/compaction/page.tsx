@@ -2,92 +2,72 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { CompactionExplorer } from '@/components/interactive'
+import { useTranslation } from '@/lib/i18n/context'
 
 export default function AgentCompactionPage() {
-  const title = 'Chat Compaction'
-  const description = 'How to compress long agent chats without losing the ability to resume, retrieve, and recover exact details later.'
+  const { t } = useTranslation()
 
   const pillars = [
-    {
-      title: 'Compress',
-      desc: 'Convert older turns into summaries once they no longer need to live in the hot context window.',
-      color: 'cyan',
-    },
-    {
-      title: 'Structure',
-      desc: 'Store compacted history in linked chunks or hierarchies so old work remains navigable instead of becoming a blob.',
-      color: 'purple',
-    },
-    {
-      title: 'Retrieve',
-      desc: 'Pull only the relevant compacted fragments back when the current task depends on earlier decisions or facts.',
-      color: 'amber',
-    },
-    {
-      title: 'Expand',
-      desc: 'Recover exact wording, values, and causal chains on demand instead of guessing from summaries alone.',
-      color: 'emerald',
-    },
+    { title: t.chatCompaction.compress, desc: t.chatCompaction.compressDesc, color: 'cyan' },
+    { title: t.chatCompaction.structure, desc: t.chatCompaction.structureDesc, color: 'purple' },
+    { title: t.chatCompaction.retrieve, desc: t.chatCompaction.retrieveDesc, color: 'amber' },
+    { title: t.chatCompaction.expand, desc: t.chatCompaction.expandDesc, color: 'emerald' },
   ]
 
   const takeaways = [
-    'Compaction is not just about saving tokens. It is about preserving recoverability.',
-    'Good compaction helps both overloaded live sessions and older inactive sessions that are no longer cached.',
-    'Summaries are recall cues, not proof. Exact claims should come from targeted expansion.',
-    'The best systems separate fresh context, compacted history, retrieval, and long-term memory.',
+    t.chatCompaction.takeaway1,
+    t.chatCompaction.takeaway2,
+    t.chatCompaction.takeaway3,
+    t.chatCompaction.takeaway4,
   ]
 
   return (
     <TopicLayout
-      topicId="memory"
-      title={title}
-      description={description}
+      topicId="chat-compaction"
+      title={t.chatCompaction.title}
+      description={t.chatCompaction.description}
       breadcrumbs={[
-        { label: 'AI', href: '/' },
-        { label: 'AI Agents', href: '/ai/agents' },
-        { label: title },
+        { label: t.categories.ai, href: '/' },
+        { label: t.categories.agents, href: '/ai/agents' },
+        { label: t.chatCompaction.title },
       ]}
-      prevTopic={{ label: 'Memory Systems', href: '/ai/agents/memory' }}
-      nextTopic={{ label: 'Orchestration', href: '/ai/agents/orchestration' }}
+      prevTopic={{ label: t.topicNames.memory, href: '/ai/agents/memory' }}
+      nextTopic={{ label: t.topicNames.orchestration, href: '/ai/agents/orchestration' }}
     >
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">What is chat compaction?</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.whatIs}</h2>
         <div className="prose prose-invert max-w-none">
           <p className="text-muted leading-relaxed text-lg">
-            Chat compaction is the deliberate compression of long agent conversations into smaller, structured representations.
-            The goal is not just to fit more text into a context window. The real goal is to keep old work recoverable,
-            so an agent can continue a task later without re-reading every raw turn.
+            {t.chatCompaction.whatIsDesc}
           </p>
           <div className="mt-6 p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20">
             <p className="text-xl text-text font-heading font-semibold mb-0">
-              Compaction is navigation, not truth.
+              {t.chatCompaction.quote}
             </p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Why agents need it</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.why}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
-            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">Active sessions</h3>
+            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">{t.chatCompaction.activeTitle}</h3>
             <p className="text-sm text-muted">
-              Long-running agents accumulate user turns, tool calls, results, retries, and intermediate reasoning. If nothing is compacted,
-              the context window fills up and the agent starts losing useful recent state or paying heavily to keep it all alive.
+              {t.chatCompaction.activeDesc}
             </p>
           </div>
           <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
-            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">Inactive sessions</h3>
+            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.chatCompaction.inactiveTitle}</h3>
             <p className="text-sm text-muted">
-              Old sessions often fall out of hot cache entirely. Compaction gives you a resumable version of cold history, so the agent can
-              restart from a compacted summary plus targeted recall instead of rehydrating the whole thread.
+              {t.chatCompaction.inactiveDesc}
             </p>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The four building blocks</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.blocks}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {pillars.map((pillar) => (
             <div key={pillar.title} className={`p-5 rounded-xl bg-${pillar.color}-500/5 border border-${pillar.color}-500/20`}>
@@ -99,7 +79,7 @@ export default function AgentCompactionPage() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The core pattern</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.pattern}</h2>
         <div className="rounded-2xl bg-background border border-border p-6 md:p-8 font-mono text-sm md:text-base overflow-x-auto">
           <pre className="text-muted">
             <code>
@@ -126,55 +106,54 @@ export default function AgentCompactionPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Interactive compaction explorer</h2>
-            <p className="text-sm text-muted">Compare overloaded live sessions with old inactive sessions that need to be resumed later.</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.chatCompaction.interactive}</h2>
+            <p className="text-sm text-muted">{t.chatCompaction.interactiveDesc}</p>
           </div>
         </div>
         <CompactionExplorer />
       </section>
 
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">What naive compaction breaks</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.breaks}</h2>
         <div className="space-y-4 text-muted leading-relaxed">
           <p>
-            Naive truncation drops old context entirely. Naive summarization keeps only a plausible paraphrase. Both approaches fail in the same way:
-            they make old work cheaper to carry, but harder to trust.
+            {t.chatCompaction.breaksDesc}
           </p>
           <ul className="space-y-3 list-disc pl-5">
-            <li>Important decisions lose their rationale.</li>
-            <li>Open loops disappear, so the agent forgets what was still unresolved.</li>
-            <li>Exact commands, paths, timestamps, and values get blurred into summary language.</li>
-            <li>Old summaries can contradict newer evidence if they are treated like ground truth.</li>
+            <li>{t.chatCompaction.break1}</li>
+            <li>{t.chatCompaction.break2}</li>
+            <li>{t.chatCompaction.break3}</li>
+            <li>{t.chatCompaction.break4}</li>
           </ul>
         </div>
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Good compaction in practice</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.practice}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">Design rules</h3>
+            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">{t.chatCompaction.rules}</h3>
             <ul className="space-y-2 text-sm text-muted list-disc pl-5">
-              <li>Keep a fresh tail for active work.</li>
-              <li>Compact old turns into structured, queryable units.</li>
-              <li>Retrieve summaries for relevance, expand for precision.</li>
-              <li>Let newer evidence override stale summaries.</li>
+              <li>{t.chatCompaction.rule1}</li>
+              <li>{t.chatCompaction.rule2}</li>
+              <li>{t.chatCompaction.rule3}</li>
+              <li>{t.chatCompaction.rule4}</li>
             </ul>
           </div>
           <div className="p-5 rounded-xl bg-amber-500/5 border border-amber-500/20">
-            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">Separation of concerns</h3>
+            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">{t.chatCompaction.separation}</h3>
             <ul className="space-y-2 text-sm text-muted list-disc pl-5">
-              <li>Fresh context is for immediate reasoning.</li>
-              <li>Compacted history is for navigation and resumability.</li>
-              <li>Expansion is for exact facts and causal detail.</li>
-              <li>Long-term memory stores distilled facts, not every turn.</li>
+              <li>{t.chatCompaction.separation1}</li>
+              <li>{t.chatCompaction.separation2}</li>
+              <li>{t.chatCompaction.separation3}</li>
+              <li>{t.chatCompaction.separation4}</li>
             </ul>
           </div>
         </div>
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Key takeaways</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.chatCompaction.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
             {takeaways.map((item, i) => (
