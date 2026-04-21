@@ -52,35 +52,11 @@ export const models: ModelEntry[] = [
     hosting: 'api',
   },
   {
-    id: 'claude-opus-46',
-    nameKey: 'claudeOpus46',
-    descKey: 'claudeOpus46Desc',
+    id: 'claude-opus-47',
+    nameKey: 'claudeOpus47',
+    descKey: 'claudeOpus47Desc',
     tier: 'S',
     hosting: 'api',
-  },
-
-  // A-Tier
-  {
-    id: 'gemini-3-flash',
-    nameKey: 'gemini3Flash',
-    descKey: 'gemini3FlashDesc',
-    tier: 'A',
-    hosting: 'api',
-  },
-  {
-    id: 'deepseek-v32',
-    nameKey: 'deepseekV32',
-    descKey: 'deepseekV32Desc',
-    tier: 'B',
-    hosting: 'open-weight',
-    params: '685B MoE \u2192 37B active',
-    totalParamsB: 685,
-    activeParamsB: 37,
-    isMoE: true,
-    nLayers: 61,
-    dModel: 7168,
-    nKVHeads: 1, // MLA
-    headDim: 128,
   },
   {
     id: 'minimax-m27',
@@ -94,12 +70,27 @@ export const models: ModelEntry[] = [
     isMoE: true,
   },
   {
-    id: 'kimi-k25',
-    nameKey: 'kimiK25',
-    descKey: 'kimiK25Desc',
-    tier: 'A',
+    id: 'glm-5-1',
+    nameKey: 'glm51',
+    descKey: 'glm51Desc',
+    tier: 'S',
     hosting: 'open-weight',
-    params: '1T MoE \u2192 32B active',
+    params: '744B MoE → 40B active',
+    totalParamsB: 744,
+    activeParamsB: 40,
+    isMoE: true,
+    nLayers: 62,
+    dModel: 6144,
+    nKVHeads: 2,
+    headDim: 128,
+  },
+  {
+    id: 'kimi-k26',
+    nameKey: 'kimiK26',
+    descKey: 'kimiK26Desc',
+    tier: 'S',
+    hosting: 'open-weight',
+    params: '1T MoE → 32B active',
     totalParamsB: 1000,
     activeParamsB: 32,
     isMoE: true,
@@ -109,19 +100,12 @@ export const models: ModelEntry[] = [
     headDim: 128,
   },
   {
-    id: 'claude-sonnet-46',
-    nameKey: 'claudeSonnet46',
-    descKey: 'claudeSonnet46Desc',
+    id: 'qwen36-35b-a3',
+    nameKey: 'qwen36_35bA3',
+    descKey: 'qwen36_35bA3Desc',
     tier: 'S',
-    hosting: 'api',
-  },
-  {
-    id: 'qwen35-35b-a3b',
-    nameKey: 'qwen35_35bA3b',
-    descKey: 'qwen35_35bA3bDesc',
-    tier: 'A',
     hosting: 'local',
-    params: '35B MoE \u2192 3B active',
+    params: '35B MoE → 3B active',
     totalParamsB: 35,
     activeParamsB: 3,
     isMoE: true,
@@ -130,35 +114,37 @@ export const models: ModelEntry[] = [
     nKVHeads: 4,
     headDim: 128,
   },
+
+  // A-Tier
   {
-    id: 'qwen35-27b',
-    nameKey: 'qwen35_27b',
-    descKey: 'qwen35_27bDesc',
+    id: 'gemini-3-flash',
+    nameKey: 'gemini3Flash',
+    descKey: 'gemini3FlashDesc',
     tier: 'A',
-    hosting: 'local',
-    params: '27B dense',
-    totalParamsB: 27,
-    activeParamsB: 27,
-    nLayers: 48,
-    dModel: 4096,
-    nKVHeads: 4,
-    headDim: 128,
+    hosting: 'api',
+  },
+  {
+    id: 'claude-sonnet-46',
+    nameKey: 'claudeSonnet46',
+    descKey: 'claudeSonnet46Desc',
+    tier: 'A',
+    hosting: 'api',
   },
 
   // B-Tier
   {
-    id: 'glm-5-1',
-    nameKey: 'glm51',
-    descKey: 'glm51Desc',
-    tier: 'S',
+    id: 'deepseek-v32',
+    nameKey: 'deepseekV32',
+    descKey: 'deepseekV32Desc',
+    tier: 'B',
     hosting: 'open-weight',
-    params: '744B MoE \u2192 40B active',
-    totalParamsB: 744,
-    activeParamsB: 40,
+    params: '685B MoE → 37B active',
+    totalParamsB: 685,
+    activeParamsB: 37,
     isMoE: true,
-    nLayers: 62,
-    dModel: 6144,
-    nKVHeads: 2, // MLA
+    nLayers: 61,
+    dModel: 7168,
+    nKVHeads: 1,
     headDim: 128,
   },
 
@@ -167,6 +153,13 @@ export const models: ModelEntry[] = [
     id: 'gemini-31-flash-lite',
     nameKey: 'gemini31FlashLite',
     descKey: 'gemini31FlashLiteDesc',
+    tier: 'C',
+    hosting: 'api',
+  },
+  {
+    id: 'grok-420',
+    nameKey: 'grok420',
+    descKey: 'grok420Desc',
     tier: 'C',
     hosting: 'api',
   },
@@ -179,13 +172,6 @@ export const models: ModelEntry[] = [
     tier: 'D',
     hosting: 'api',
   },
-  {
-    id: 'grok-420',
-    nameKey: 'grok420',
-    descKey: 'grok420Desc',
-    tier: 'C',
-    hosting: 'api',
-  },
 
   // F-Tier
   {
@@ -194,7 +180,7 @@ export const models: ModelEntry[] = [
     descKey: 'llamaMaverickDesc',
     tier: 'F',
     hosting: 'open-weight',
-    params: '400B MoE \u2192 17B active',
+    params: '400B MoE → 17B active',
     totalParamsB: 400,
     activeParamsB: 17,
     isMoE: true,
@@ -224,71 +210,109 @@ export interface GpuPreset {
 }
 
 export const gpuPresets: GpuPreset[] = [
-  // NVIDIA Consumer — Previous Gen
+  // NVIDIA Consumer
   { name: 'RTX 3060', vramGB: 12, bandwidthGBs: 360, category: 'nvidia-consumer' },
+  { name: 'RTX 3080', vramGB: 10, bandwidthGBs: 760, category: 'nvidia-consumer' },
   { name: 'RTX 3090', vramGB: 24, bandwidthGBs: 936, category: 'nvidia-consumer' },
-  { name: 'Titan V', vramGB: 12, bandwidthGBs: 652, category: 'nvidia-consumer', note: 'HBM2' },
-  // NVIDIA Consumer — RTX 40 Series
-  { name: 'RTX 4060 Ti 16GB', vramGB: 16, bandwidthGBs: 288, category: 'nvidia-consumer' },
-  { name: 'RTX 4070 Ti', vramGB: 16, bandwidthGBs: 504, category: 'nvidia-consumer' },
+  { name: 'RTX 4060 Ti', vramGB: 16, bandwidthGBs: 288, category: 'nvidia-consumer' },
+  { name: 'RTX 4070 Ti Super', vramGB: 16, bandwidthGBs: 672, category: 'nvidia-consumer' },
   { name: 'RTX 4090', vramGB: 24, bandwidthGBs: 1008, category: 'nvidia-consumer' },
-  // NVIDIA Consumer — RTX 50 Series (Blackwell)
-  { name: 'RTX 5070', vramGB: 12, bandwidthGBs: 672, category: 'nvidia-consumer' },
-  { name: 'RTX 5070 Ti', vramGB: 16, bandwidthGBs: 896, category: 'nvidia-consumer' },
-  { name: 'RTX 5080', vramGB: 16, bandwidthGBs: 960, category: 'nvidia-consumer' },
   { name: 'RTX 5090', vramGB: 32, bandwidthGBs: 1792, category: 'nvidia-consumer' },
-  // NVIDIA Pro / Workstation
-  { name: 'RTX PRO 6000 Blackwell', vramGB: 96, bandwidthGBs: 1800, category: 'nvidia-pro', note: '96GB GDDR7, 512-bit' },
-  // NVIDIA DGX Spark (desktop AI supercomputer)
-  { name: 'DGX Spark (GB10)', vramGB: 128, bandwidthGBs: 273, category: 'nvidia-pro', note: '128GB LPDDR5X unified' },
-  // Apple Silicon (unified memory — shared with CPU)
-  { name: 'M2 Pro', vramGB: 32, bandwidthGBs: 200, category: 'apple', note: 'Unified' },
-  { name: 'M3 Max (40-core)', vramGB: 128, bandwidthGBs: 400, category: 'apple', note: 'Unified' },
-  { name: 'M4 Pro', vramGB: 48, bandwidthGBs: 273, category: 'apple', note: 'Unified' },
-  { name: 'M4 Max (40-core)', vramGB: 128, bandwidthGBs: 546, category: 'apple', note: 'Unified' },
-  // AMD APU (unified memory — shared with CPU)
-  { name: 'Strix Halo (Max+ 395)', vramGB: 96, bandwidthGBs: 256, category: 'amd-apu', note: 'LPDDR5X unified' },
-  // Datacenter / Server
-  { name: 'A100 80GB', vramGB: 80, bandwidthGBs: 2039, category: 'datacenter', note: 'HBM2e' },
-  { name: 'H100 80GB', vramGB: 80, bandwidthGBs: 3350, category: 'datacenter', note: 'HBM3' },
-  { name: 'H200 141GB', vramGB: 141, bandwidthGBs: 4800, category: 'datacenter', note: 'HBM3e' },
-  { name: 'B200 192GB', vramGB: 192, bandwidthGBs: 8000, category: 'datacenter', note: 'HBM3e Blackwell' },
+
+  // NVIDIA Pro
+  { name: 'RTX 6000 Ada', vramGB: 48, bandwidthGBs: 960, category: 'nvidia-pro' },
+  { name: 'RTX Pro 6000 Blackwell', vramGB: 96, bandwidthGBs: 1792, category: 'nvidia-pro' },
+
+  // Apple Silicon
+  { name: 'M1 Max', vramGB: 32, bandwidthGBs: 400, category: 'apple' },
+  { name: 'M2 Max', vramGB: 38, bandwidthGBs: 400, category: 'apple' },
+  { name: 'M3 Max', vramGB: 48, bandwidthGBs: 400, category: 'apple' },
+  { name: 'M4 Pro', vramGB: 24, bandwidthGBs: 273, category: 'apple' },
+  { name: 'M4 Max', vramGB: 48, bandwidthGBs: 546, category: 'apple' },
+  { name: 'M3 Ultra', vramGB: 96, bandwidthGBs: 800, category: 'apple' },
+
+  // AMD APUs / iGPUs
+  { name: 'AMD Ryzen AI Max+ 395', vramGB: 96, bandwidthGBs: 256, category: 'amd-apu', note: 'Shared memory' },
+  { name: 'Framework Desktop (Strix Halo)', vramGB: 128, bandwidthGBs: 256, category: 'amd-apu', note: 'Shared memory' },
+
+  // Datacenter
+  { name: 'A100 40GB', vramGB: 40, bandwidthGBs: 1555, category: 'datacenter' },
+  { name: 'A100 80GB', vramGB: 80, bandwidthGBs: 2039, category: 'datacenter' },
+  { name: 'H100', vramGB: 80, bandwidthGBs: 3350, category: 'datacenter' },
+  { name: 'B200', vramGB: 192, bandwidthGBs: 8000, category: 'datacenter' },
 ]
 
-/** Quantization presets with bits per parameter */
+export const gpuCategories: Record<GpuCategory, { label: string; color: string }> = {
+  'nvidia-consumer': { label: 'NVIDIA Consumer', color: 'text-green-400' },
+  'nvidia-pro': { label: 'NVIDIA Pro', color: 'text-emerald-400' },
+  apple: { label: 'Apple Silicon', color: 'text-blue-400' },
+  'amd-apu': { label: 'AMD APU / iGPU', color: 'text-red-400' },
+  datacenter: { label: 'Datacenter', color: 'text-purple-400' },
+}
+
 export const quantPresets = [
-  { id: 'FP16', label: 'FP16 / BF16', bitsPerParam: 16 },
-  { id: 'Q8', label: 'Q8_0', bitsPerParam: 8 },
-  { id: 'Q6_K', label: 'Q6_K', bitsPerParam: 6.5 },
-  { id: 'Q5_K_M', label: 'Q5_K_M', bitsPerParam: 5.5 },
-  { id: 'Q4_K_M', label: 'Q4_K_M', bitsPerParam: 4.85 },
-  { id: 'Q3_K_M', label: 'Q3_K_M', bitsPerParam: 3.9 },
-  { id: 'Q2_K', label: 'Q2_K', bitsPerParam: 3.35 },
+  { key: 'fp16', label: 'FP16', bitsPerParam: 16, overhead: 1.0 },
+  { key: 'bf16', label: 'BF16', bitsPerParam: 16, overhead: 1.0 },
+  { key: 'q8', label: 'Q8', bitsPerParam: 8, overhead: 1.05 },
+  { key: 'q6', label: 'Q6', bitsPerParam: 6, overhead: 1.08 },
+  { key: 'q5', label: 'Q5', bitsPerParam: 5, overhead: 1.1 },
+  { key: 'q4', label: 'Q4', bitsPerParam: 4, overhead: 1.15 },
+  { key: 'q3', label: 'Q3', bitsPerParam: 3, overhead: 1.2 },
+  { key: 'q2', label: 'Q2', bitsPerParam: 2, overhead: 1.3 },
 ] as const
 
-/** Helper: get models by tier */
-export function getModelsByTier(tier: TierLevel): ModelEntry[] {
-  return models.filter(m => m.tier === tier)
+export interface MemoryBreakdown {
+  weightsGB: number
+  kvCacheGB: number
+  totalGB: number
 }
 
-/** Helper: get models that can run locally (have param data) */
-export function getLocalModels(): ModelEntry[] {
-  return models.filter(m => m.totalParamsB != null)
+export function estimateModelMemory(
+  model: ModelEntry,
+  quantBits: number,
+  contextLength: number = 4096,
+  batchSize: number = 1
+): MemoryBreakdown {
+  const paramsB = model.isMoE ? (model.activeParamsB || model.totalParamsB || 0) : (model.totalParamsB || 0)
+
+  const weightsGB = paramsB * (quantBits / 8) * 1.1
+
+  let kvCacheGB = 0
+  if (model.nLayers && model.dModel && model.nKVHeads && model.headDim) {
+    const kvElements = 2 * contextLength * batchSize * model.nLayers * model.nKVHeads * model.headDim
+    kvCacheGB = (kvElements * 2) / (1024 ** 3)
+  }
+
+  return {
+    weightsGB,
+    kvCacheGB,
+    totalGB: weightsGB + kvCacheGB,
+  }
 }
 
-/** Tier display config */
-export const tierConfig: Record<TierLevel, { color: string; bgGradient: string; borderColor: string; badgeBg: string }> = {
-  S: { color: 'text-purple-400', bgGradient: 'from-purple-500/10 to-violet-500/10', borderColor: 'border-purple-500/30', badgeBg: 'bg-purple-500/20' },
-  A: { color: 'text-blue-400', bgGradient: 'from-blue-500/10 to-cyan-500/10', borderColor: 'border-blue-500/30', badgeBg: 'bg-blue-500/20' },
-  B: { color: 'text-emerald-400', bgGradient: 'from-emerald-500/10 to-teal-500/10', borderColor: 'border-emerald-500/30', badgeBg: 'bg-emerald-500/20' },
-  C: { color: 'text-yellow-400', bgGradient: 'from-yellow-500/10 to-amber-500/10', borderColor: 'border-yellow-500/30', badgeBg: 'bg-yellow-500/20' },
-  D: { color: 'text-orange-400', bgGradient: 'from-orange-500/10 to-amber-500/10', borderColor: 'border-orange-500/30', badgeBg: 'bg-orange-500/20' },
-  F: { color: 'text-red-400', bgGradient: 'from-red-500/10 to-rose-500/10', borderColor: 'border-red-500/30', badgeBg: 'bg-red-500/20' },
+export const tierConfig: Record<TierLevel, { color: string; bgGradient: string; borderColor: string }> = {
+  S: { color: 'text-yellow-400', bgGradient: 'from-yellow-500/10 to-orange-500/5', borderColor: 'border-yellow-500/20' },
+  A: { color: 'text-green-400', bgGradient: 'from-green-500/10 to-emerald-500/5', borderColor: 'border-green-500/20' },
+  B: { color: 'text-blue-400', bgGradient: 'from-blue-500/10 to-cyan-500/5', borderColor: 'border-blue-500/20' },
+  C: { color: 'text-purple-400', bgGradient: 'from-purple-500/10 to-pink-500/5', borderColor: 'border-purple-500/20' },
+  D: { color: 'text-orange-400', bgGradient: 'from-orange-500/10 to-red-500/5', borderColor: 'border-orange-500/20' },
+  F: { color: 'text-red-400', bgGradient: 'from-red-500/10 to-rose-500/5', borderColor: 'border-red-500/20' },
 }
 
-/** Hosting badge config */
-export const hostingConfig = {
-  api: { label: 'API only', color: 'text-sky-400', bg: 'bg-sky-500/15 border-sky-500/30' },
-  'open-weight': { label: 'Open Weight', color: 'text-violet-400', bg: 'bg-violet-500/15 border-violet-500/30' },
-  local: { label: 'Consumer GPU', color: 'text-emerald-400', bg: 'bg-emerald-500/15 border-emerald-500/30' },
-} as const
+export const hostingConfig: Record<HostingType, { label: string; color: string; bg: string }> = {
+  api: {
+    label: 'API',
+    color: 'text-blue-400',
+    bg: 'bg-blue-500/10 border-blue-500/20',
+  },
+  'open-weight': {
+    label: 'Open Weights',
+    color: 'text-green-400',
+    bg: 'bg-green-500/10 border-green-500/20',
+  },
+  local: {
+    label: 'Local',
+    color: 'text-purple-400',
+    bg: 'bg-purple-500/10 border-purple-500/20',
+  },
+}

@@ -265,7 +265,7 @@ export default function VramCalcPage() {
               <div className="flex flex-wrap gap-1.5">
                 {quantPresets.map((q, i) => (
                   <button
-                    key={q.id}
+                    key={q.key}
                     onClick={() => setQuantIdx(i)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium border transition-all
                       ${i === quantIdx
