@@ -38,24 +38,33 @@ export interface ModelEntry {
 export const models: ModelEntry[] = [
   // S-Tier
   {
+    id: 'gpt-55',
+    nameKey: 'gpt55',
+    descKey: 'gpt55Desc',
+    tier: 'S',
+    hosting: 'api',
+  },
+
+  // A-Tier
+  {
     id: 'gpt-54',
     nameKey: 'gpt54',
     descKey: 'gpt54Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'api',
   },
   {
     id: 'claude-opus-47',
     nameKey: 'claudeOpus47',
     descKey: 'claudeOpus47Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'api',
   },
   {
     id: 'minimax-m27',
     nameKey: 'minimax27',
     descKey: 'minimax27Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'open-weight',
     params: '250B MoE → 10B active',
     totalParamsB: 250,
@@ -66,7 +75,7 @@ export const models: ModelEntry[] = [
     id: 'glm-5-1',
     nameKey: 'glm51',
     descKey: 'glm51Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'open-weight',
     params: '744B MoE → 40B active',
     totalParamsB: 744,
@@ -81,7 +90,7 @@ export const models: ModelEntry[] = [
     id: 'kimi-k26',
     nameKey: 'kimiK26',
     descKey: 'kimiK26Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'open-weight',
     params: '1T MoE → 32B active',
     totalParamsB: 1000,
@@ -96,7 +105,7 @@ export const models: ModelEntry[] = [
     id: 'qwen36-35b-a3',
     nameKey: 'qwen36_35bA3',
     descKey: 'qwen36_35bA3Desc',
-    tier: 'S',
+    tier: 'A',
     hosting: 'local',
     params: '35B MoE → 3B active',
     totalParamsB: 35,
@@ -107,8 +116,6 @@ export const models: ModelEntry[] = [
     nKVHeads: 4,
     headDim: 128,
   },
-
-  // A-Tier
   {
     id: 'gemini-3-flash',
     nameKey: 'gemini3Flash',
