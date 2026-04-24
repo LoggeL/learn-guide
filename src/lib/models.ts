@@ -57,7 +57,7 @@ export const models: ModelEntry[] = [
     id: 'claude-opus-47',
     nameKey: 'claudeOpus47',
     descKey: 'claudeOpus47Desc',
-    tier: 'A',
+    tier: 'S',
     hosting: 'api',
   },
   {
