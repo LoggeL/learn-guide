@@ -4590,18 +4590,18 @@ export const de: Dictionary = {
   // Logges Lieblingsmodelle (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: 'Logges Lieblingsmodelle',
-    description: 'Drei Modelle, drei Philosophien, drei Preisklassen. Alle sofort zu Favoriten geworden. Hier ist ein ehrlicher, leicht obsessiver Überblick.',
+    description: 'Zwei S-Tier-Modelle, zwei Workflows. Opus 4.7 für Tiefe, GPT-5.5 für schnelle operator-taugliche Umsetzung.',
     disclaimer: 'Haftungsausschluss',
-    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Ich nutze alle drei Modelle täglich, bezahle alle aus eigener Tasche und habe starke Meinungen. Modell-Releases entwickeln sich schnell, das hier wird sich ändern. Nebenwirkungen des Lesens können API-Key-Generierung und — dank GLM-5.1 — eine seltsame Erleichterung beim Blick auf die Rechnung umfassen.',
-    lastUpdated: 'Zuletzt aktualisiert: 19. April 2026',
+    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Das sind aktuell die zwei Modelle, denen ich ernsthafte Arbeit am ehesten anvertraue: Opus 4.7, wenn Tiefe zählt, und GPT-5.5, wenn ich scharfe Umsetzungsgeschwindigkeit will. Modell-Releases bewegen sich schnell, das hier wird sich ändern.',
+    lastUpdated: 'Zuletzt aktualisiert: 24. April 2026',
 
     // Hero / Intro
-    heroTitle: 'Drei Modelle, eine Obsession',
-    heroSubtitle: 'Opus 4.7 für maximale Tiefe, GPT-5.4 für Speed und Pragmatismus, GLM-5.1 als Preis-Leistungs-Hammer. Drei Frontier-Modelle aus drei Labs, die jeweils in einer anderen Disziplin glänzen. Ich nutze alle drei täglich — hier ist der ehrliche Erfahrungsbericht von jemandem, der tatsächlich Code damit ausliefert.',
+    heroTitle: 'Zwei S-Tier-Modelle, eine Obsession',
+    heroSubtitle: 'Opus 4.7 bleibt das Deep-Work-Monster: sorgfältig, teuer und absurd stark, wenn eine Aufgabe echtes Nachdenken braucht. GPT-5.5 ist der neue S-Tier-Daily-Driver: schneller, sauberer mit Tools und stark für OpenClaw-artige Coding-, Infra- und Operator-Workflows. Diese Seite dreht sich jetzt um dieses Duo.',
 
-    // Die drei Champions
-    championsTitle: 'Die drei Champions',
-    championsSubtitle: 'Verschiedene Philosophien, alle exzellent. Hier ist, was jedes Modell mitbringt.',
+    // Das S-Tier-Duo
+    championsTitle: 'Das S-Tier-Duo',
+    championsSubtitle: 'Eins für Tiefe, eins für Momentum. Beiden vertraue ich echte Arbeit an.',
 
     // Claude Opus 4.7
     opusName: 'Claude Opus 4.7',
@@ -4626,27 +4626,27 @@ export const de: Dictionary = {
     opusSourceLabel: 'Quelle: Anthropic Opus-Seite',
     opusSourceUrl: 'https://www.anthropic.com/claude/opus',
 
-    // GPT-5.4
-    codexName: 'GPT-5.4',
+    // GPT-5.5
+    codexName: 'GPT-5.5',
     codexMaker: 'OpenAI',
-    codexTagline: 'Der schnelle Pragmatiker, jetzt noch schärfer',
-    codexModelId: 'gpt-5.4',
-    codexReleaseDate: 'März 2026',
-    codexContext: '~400K Tokens',
+    codexTagline: 'Der schnelle Operator, der wirklich mithält',
+    codexModelId: 'gpt-5.5',
+    codexReleaseDate: 'April 2026',
+    codexContext: '~1M Tokens',
     codexOutput: '~128K Tokens',
     codexPricing: '~$1,25 / $10 pro Million Tokens',
-    codexDescription: 'GPT-5.4 ist OpenAIs neustes Frontier-Modell und baut direkt auf den GPT-5.3-Codex-Fundamenten auf. Frontier-Coding-Leistung trifft auf professionelles Reasoning in einem einzigen Modell — mit verbesserter Token-Effizienz, schärferem Tool-Use und einer merklich geschliffeneren Persönlichkeit. Weiterhin 25% schneller als der alte GPT-5.2-Codex, dominiert Terminal-Bench 2 und bleibt der König der Terminal-Workflows.',
+    codexDescription: 'GPT-5.5 ist das erste OpenAI-Modell seit einer Weile, das sich in echter Operator-Arbeit sofort wie ein Tier-Sprung anfühlt. Es erkennt Intent-Wechsel schneller, handhabt Config- und Code-Änderungen mit weniger Reibung, erholt sich sauber von Tool-Haklern und wirkt besonders stark in OpenClaw-/Codex-artigen Terminal-Workflows. Es ersetzt Opus nicht für tiefes, vorsichtiges Denken — es ist das Modell, das ich will, wenn Momentum zählt.',
 
     codexStrength1Title: 'Interactive Steering',
-    codexStrength1Desc: 'Du kannst während der Arbeit mit ihm interagieren — Fragen stellen, Ansätze besprechen und in Echtzeit lenken. Es gibt regelmäßige Fortschrittsupdates.',
+    codexStrength1Desc: 'Es lässt sich mitten in der Aufgabe sehr gut lenken: gute Fortschrittsupdates, schnelle Kurskorrektur und weniger Reibung, wenn sich der Plan während der Arbeit ändert.',
     codexStrength2Title: 'Frontier-Coding',
-    codexStrength2Desc: 'Vereint Coding-Exzellenz und professionelles Reasoning in einem Modell. Für Terminal-Arbeit und komplexe Refactorings aktuell schwer zu schlagen.',
+    codexStrength2Desc: 'Stark bei praktischem Coding, Config-Edits, Builds, Deploy-Checks und terminal-lastiger Arbeit. Es fühlt sich gemacht dafür an, Änderungen wirklich auszuliefern, nicht nur zu erklären.',
     codexStrength3Title: 'Token-effizient',
-    codexStrength3Desc: 'Erreicht Ergebnisse mit weniger als der Hälfte der Tokens älterer GPT-Generationen. Dein Kontext-Budget reicht spürbar weiter.',
+    codexStrength3Desc: 'Hält Operator-Loops eng: inspizieren, patchen, verifizieren, committen. Weniger Abschweifen, weniger unnötige Umwege, mehr nützlicher Fortschritt pro Turn.',
     codexStrength4Title: 'Persönlichkeitsmodi',
-    codexStrength4Desc: 'Wähle zwischen "Pragmatic" (knapp, auf den Punkt) und "Friendly" (gesprächig). Kein Leistungsunterschied — rein stilistisch.',
+    codexStrength4Desc: 'Der Ton ist weniger steril und die Ausführung wirkt weniger brüchig. Es ist immer noch ein Tool, aber es pair-programmiert natürlicher.',
 
-    codexSourceLabel: 'Quelle: OpenAI GPT-5.4',
+    codexSourceLabel: 'Quelle: OpenAI GPT-5',
     codexSourceUrl: 'https://openai.com/gpt-5',
 
     // GLM-5.1
@@ -4686,7 +4686,7 @@ export const de: Dictionary = {
     benchTerminalOpus: '65,4%',
     benchTerminalCodex: '77,3%',
     benchTerminalGlm: '61%',
-    benchTerminalNote: 'GPT-5.4 dominiert echte Terminal-Workflows',
+    benchTerminalNote: 'GPT-5.5 ist der echte Terminal-Workflow-Pick',
 
     benchOSWorld: 'OSWorld',
     benchOSWorldOpus: '72,7%',
@@ -4718,11 +4718,11 @@ export const de: Dictionary = {
     benchCyberGlm: '65%',
     benchCyberNote: 'Capture-the-Flag Sicherheits-Challenges',
 
-    benchDisclaimer: 'Strich bedeutet, dass der Benchmark vom Anbieter nicht veröffentlicht wurde. SWE-bench Verified und SWE-bench Pro nutzen verschiedene Testsets, daher ist ein direkter Vergleich nicht aussagekräftig. GLM-5.1-Zahlen stammen aus öffentlichen Berichten und eigener Erfahrung.',
+    benchDisclaimer: 'Strich bedeutet, dass der Benchmark nicht veröffentlicht wurde oder nicht sauber vergleichbar ist. Benchmarks sind nützliche Signale, aber diese Seite gewichtet praktische Coding-, Tool-Use- und Operator-Erfahrung stärker.',
 
     // Wann ich welches nutze
     whenTitle: 'Wann ich welches tatsächlich nutze',
-    whenSubtitle: 'Theorie ist nett. Hier ist mein tatsächlicher Workflow, nachdem ich beide seit Launch täglich nutze.',
+    whenSubtitle: 'Theorie ist nett. Der echte Split ist simpel: Opus für Tiefe, GPT-5.5 für Momentum.',
 
     whenOpusTitle: 'Ich greife zu Opus 4.7 wenn...',
     whenOpusToolLabel: 'Mein Tool: Claude Code (CLI)',
@@ -4733,14 +4733,14 @@ export const de: Dictionary = {
     whenOpus4: 'Agent Teams für ambitionierte mehrteilige Projekte',
     whenOpus5: 'Alles, was von erweitertem Denken und sorgfältigem schrittweisem Reasoning profitiert',
 
-    whenCodexTitle: 'Ich greife zu GPT-5.4 wenn...',
+    whenCodexTitle: 'Ich greife zu GPT-5.5 wenn...',
     whenCodexToolLabel: 'Mein Tool: Codex (App + CLI)',
-    whenCodexToolDesc: 'GPT-5.4 treibt die Codex-App und CLI an. Interactive Steering mid-task, Persönlichkeitsmodi und blitzschnelle Geschwindigkeit machen es perfekt für schnelle Iteration.',
-    whenCodex1: 'Schnelle Iteration bei Terminal-lastigen Workflows — es ist blitzschnell und die Terminal-Bench-Scores zeigen warum',
+    whenCodexToolDesc: 'GPT-5.5 ist mein Codex-/OpenClaw-Operator-Modell. Interactive Steering, schnelle Erholung und starke Tool-Nutzung machen es perfekt für schnelle Implementierungs-Loops.',
+    whenCodex1: 'Schnelle Iteration bei terminal-lastigen Workflows — Config, Patches, Builds, Deploy-Checks, wiederholen',
     whenCodex2: 'Interaktives Pair Programming, bei dem ich mid-task lenken will',
-    whenCodex3: 'Aufgaben mit hohem Volumen, bei denen Token-Effizienz kostenmäßig zählt',
+    whenCodex3: 'Operator-Aufgaben, bei denen ich weniger Umwege und mehr Vorwärtsbewegung will',
     whenCodex4: 'Die Codex CLI für schnelles Scripting und Einmal-Aufgaben',
-    whenCodex5: 'Alles, wo ich Speed über Tiefe will — es ist 25% schneller als GPT-5.2-Codex und man spürt es',
+    whenCodex5: 'Alles, wo ich Speed und Pragmatismus will, ohne unter Frontier-Qualität zu fallen',
 
     whenGlmTitle: 'Ich greife zu GLM-5.1 wenn...',
     whenGlmToolLabel: 'Mein Tool: zai API / ChatGLM',
@@ -4756,27 +4756,27 @@ export const de: Dictionary = {
     pricingSubtitle: 'Reden wir über den Elefanten im Raum — und das Zwergmammut daneben.',
     pricingOpusTitle: 'Opus 4.7',
     pricingOpusDetail: '$5 Input / $25 Output pro Million Tokens. Gleicher Preis wie Opus 4.5, aber mit massiv verbesserten Fähigkeiten. Batch API mit 50% Rabatt. Premium-Territorium — eine intensive Coding-Session kann $5-15 kosten.',
-    pricingCodexTitle: 'GPT-5.4',
-    pricingCodexDetail: '~$1,25 Input / $10 Output pro Million Tokens. Grob 4x günstiger als Opus bei Input und 2,5x günstiger bei Output. Plus es braucht weniger Tokens für gleichwertige Aufgaben.',
+    pricingCodexTitle: 'GPT-5.5',
+    pricingCodexDetail: 'Preise können je nach Account und Oberfläche schwanken, aber praktisch zählt: Es ist die S-Tier-Option für hohen Durchsatz. Ich nutze es, wenn Geschwindigkeit und Iterationszahl wichtiger sind als maximale Gründlichkeit.',
     pricingGlmTitle: 'GLM-5.1',
     pricingGlmDetail: '$0,10 Input / $0,10 Output pro Million Tokens. Richtig gelesen — 10 Cent. Etwa 50x günstiger als Opus und 10x günstiger als GPT-5.4 beim Output. Für hochvolumige Arbeiten absolut konkurrenzlos, und selbst für intensive Coding-Sessions kaum messbare Kosten.',
-    pricingVerdict: 'Ehrliche Einschätzung: Wenn du maximale Reasoning-Tiefe brauchst und bereit bist dafür zu zahlen, ist Opus jeden Cent wert. Wenn du Geschwindigkeit und solides Frontier-Coding willst, ist GPT-5.4 der Sweet Spot. Und wenn es um Skalierung, Experimente oder "gut genug" geht, macht GLM-5.1 den Taschenrechner kaputt. Ich nutze alle drei, weil verschiedene Aufgaben verschiedene Wirtschaftlichkeit haben.',
+    pricingVerdict: 'Ehrliche Einschätzung: Opus ist das Premium-Modell für Deep Work. GPT-5.5 ist der S-Tier-Daily-Driver für schnelles Coding und Infrastrukturarbeit. Wenn die Aufgabe heikel, architektonisch oder high-stakes ist, greife ich weiterhin zu Opus. Wenn ich schnell vorankommen und unterwegs verifizieren will, ist GPT-5.5 der bessere Default.',
 
     // Gemeinsamkeiten
     commonTitle: 'Was sie gemeinsam haben',
-    commonSubtitle: 'Drei Labs, drei Philosophien, aber bei einigen wichtigen Eigenschaften sind sie konvergiert.',
+    commonSubtitle: 'Verschiedene Labs, verschiedene Philosophien, aber sie konvergieren in dieselbe agentische Form.',
     common1Title: 'Agentische Exzellenz',
-    common1Desc: 'Alle drei Modelle sind für Agents gebaut — Tool-Nutzung, mehrstufige Planung und autonome Aufgabenerledigung sind erstklassige Fähigkeiten.',
+    common1Desc: 'Beide Modelle sind für Agents gebaut — Tool-Nutzung, mehrstufige Planung und autonome Aufgabenerledigung sind erstklassige Fähigkeiten.',
     common2Title: 'Computer Use',
-    common2Desc: 'Alle können GUIs bedienen, Formulare ausfüllen, Apps navigieren. OSWorld-Scores zeigen echte Desktop-Kompetenz — Opus vorn, GPT-5.4 dicht dran, GLM solide hinterher.',
+    common2Desc: 'Beide sind in echten Workflows zuhause: Terminal-Sessions, Tools, UI-Automation und chaotische Multi-Step-Aufgaben. Opus ist vorsichtiger; GPT-5.5 lässt sich schneller steuern.',
     common3Title: 'Erweiterter Output',
-    common3Desc: '~128K Token Output bei Opus und GPT-5.4, ~32K bei GLM. Genug, um ganze Dateien, komplette Dokumentation oder Multi-Datei-Änderungen in einer einzigen Antwort zu generieren.',
+    common3Desc: 'Genug Output und Kontext für ganze Dateien, vollständige Dokumentation, Multi-Datei-Änderungen und lange Debugging-Sessions, ohne sofort auseinanderzufallen.',
     common4Title: 'Das Zeitalter der Auswahl',
-    common4Desc: 'Drei Frontier-Labs aus drei Regionen (USA, USA, China). Die Tage des einen "besten" Modells sind vorbei — wir haben jetzt ein Toolkit, und jedes Modell glänzt in seiner eigenen Nische.',
+    common4Desc: 'Die Tage des einen universell besten Modells sind vorbei. Die nützliche Frage ist: Brauche ich Tiefe oder Momentum? Diese zwei decken diesen Split wunderschön ab.',
 
     // Persönliches Verdict
     verdictTitle: 'Das ehrliche Urteil',
-    verdictText: 'Ich habe nicht mehr ein Lieblingsmodell — ich habe drei. Opus 4.7 ist das Modell, dem ich bei tiefer, sorgfältiger Arbeit vertraue. Es denkt bevor es handelt, entdeckt Dinge die ich übersehe und meistert massive Codebases mit Eleganz. GPT-5.4 ist das Modell, zu dem ich greife wenn ich Speed und Pragmatismus brauche — schnell, effizient, und das Interactive Steering fühlt sich wie echtes Pair Programming an. Und GLM-5.1 ist der heimliche Star: bei fast 50x günstigeren Kosten als Opus kann ich ganze Tage experimentieren ohne schlechtes Gewissen. Zusammen decken sie jedes Szenario ab — Opus für Tiefe, GPT-5.4 für Geschwindigkeit, GLM-5.1 für Skalierung. Die Frontier ist nicht mehr ein Modell, sie ist ein Toolkit, und mit GLM-5.1 plötzlich auch für Hobbyisten bezahlbar. Wähle das richtige Tool für die Aufgabe. Oder nutze, wie ich, alle drei und genieße die beste Ära KI-gestützter Entwicklung, die wir je erlebt haben.',
+    verdictText: 'Das aktuelle S-Tier-Duo ist simpel: Opus 4.7 für Tiefe, GPT-5.5 für Momentum. Opus ist das Modell, dem ich vertraue, wenn eine Aufgabe sorgfältige Architektur, subtile Reviews oder langfristiges Reasoning braucht. GPT-5.5 will ich neben mir haben, wenn ich operiere: Config editieren, Code patchen, bauen, verifizieren, committen, pushen. Es fühlt sich schärfer und weniger zäh an als 5.4, ohne das praktische Codex-Gefühl zu verlieren. Wenn ich nur eins für hartes Denken wählen müsste: Opus. Wenn ich nur eins fürs tägliche Shippen wählen müsste: GPT-5.5.',
 
     // Quick Reference
     quickRefTitle: 'Schnellübersicht',
@@ -4787,7 +4787,7 @@ export const de: Dictionary = {
     quickRefPrice: 'Preise (pro MTok)',
     quickRefBestFor: 'Am besten für',
     quickRefOpusBest: 'Tiefes Reasoning, Code Review, Agent Teams',
-    quickRefCodexBest: 'Schnelle Iteration, Terminal-Aufgaben, Frontier-Coding',
+    quickRefCodexBest: 'Schnelle Iteration, OpenClaw-/Codex-Ops, Terminal-Aufgaben',
     quickRefGlmBest: 'Hochvolumige Aufgaben, Kosteneffizienz, mehrsprachige Workflows',
     quickRefPlatforms: 'Plattformen',
     quickRefOpusPlatforms: 'Claude.ai, API, AWS Bedrock, Vertex AI, Azure Foundry',

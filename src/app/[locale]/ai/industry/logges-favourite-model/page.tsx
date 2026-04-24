@@ -3,12 +3,41 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { motion } from 'framer-motion'
-import { Heart, Brain, Zap, Shield, Sparkles, AlertTriangle, Server, Code, MessageSquare, Cpu, Trophy, ExternalLink, ChevronRight, Gauge, Users, Layers, Terminal, MousePointer, Calendar, DollarSign, Globe, Sparkle, Wallet } from 'lucide-react'
+import {
+  Heart,
+  Brain,
+  Zap,
+  Shield,
+  Sparkles,
+  AlertTriangle,
+  Server,
+  Code,
+  MessageSquare,
+  Cpu,
+  Trophy,
+  ExternalLink,
+  ChevronRight,
+  Gauge,
+  Users,
+  Layers,
+  Terminal,
+  MousePointer,
+  Calendar,
+  DollarSign,
+} from 'lucide-react'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function SectionIcon({ icon: Icon, gradient }: { icon: any; gradient: string }) {
+function SectionIcon({
+  icon: Icon,
+  gradient,
+}: {
+  icon: any
+  gradient: string
+}) {
   return (
-    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} p-0.5 shrink-0`}>
+    <div
+      className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} p-0.5 shrink-0`}
+    >
       <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
         <Icon size={18} className="text-text" />
       </div>
@@ -21,45 +50,134 @@ export default function FavouriteModelsPage() {
   const f = t.favModels
 
   const opusStrengths = [
-    { title: f.opusStrength1Title, desc: f.opusStrength1Desc, icon: Brain, gradient: 'from-purple-500 to-violet-500' },
-    { title: f.opusStrength2Title, desc: f.opusStrength2Desc, icon: Users, gradient: 'from-blue-500 to-cyan-500' },
-    { title: f.opusStrength3Title, desc: f.opusStrength3Desc, icon: Layers, gradient: 'from-orange-500 to-amber-500' },
-    { title: f.opusStrength4Title, desc: f.opusStrength4Desc, icon: Code, gradient: 'from-emerald-500 to-teal-500' },
+    {
+      title: f.opusStrength1Title,
+      desc: f.opusStrength1Desc,
+      icon: Brain,
+      gradient: 'from-purple-500 to-violet-500',
+    },
+    {
+      title: f.opusStrength2Title,
+      desc: f.opusStrength2Desc,
+      icon: Users,
+      gradient: 'from-blue-500 to-cyan-500',
+    },
+    {
+      title: f.opusStrength3Title,
+      desc: f.opusStrength3Desc,
+      icon: Layers,
+      gradient: 'from-orange-500 to-amber-500',
+    },
+    {
+      title: f.opusStrength4Title,
+      desc: f.opusStrength4Desc,
+      icon: Code,
+      gradient: 'from-emerald-500 to-teal-500',
+    },
   ]
 
   const codexStrengths = [
-    { title: f.codexStrength1Title, desc: f.codexStrength1Desc, icon: MousePointer, gradient: 'from-cyan-500 to-blue-500' },
-    { title: f.codexStrength2Title, desc: f.codexStrength2Desc, icon: Cpu, gradient: 'from-green-500 to-emerald-500' },
-    { title: f.codexStrength3Title, desc: f.codexStrength3Desc, icon: Gauge, gradient: 'from-yellow-500 to-orange-500' },
-    { title: f.codexStrength4Title, desc: f.codexStrength4Desc, icon: MessageSquare, gradient: 'from-pink-500 to-rose-500' },
-  ]
-
-  const glmStrengths = [
-    { title: f.glmStrength1Title, desc: f.glmStrength1Desc, icon: Wallet, gradient: 'from-green-500 to-emerald-500' },
-    { title: f.glmStrength2Title, desc: f.glmStrength2Desc, icon: Globe, gradient: 'from-teal-500 to-cyan-500' },
-    { title: f.glmStrength3Title, desc: f.glmStrength3Desc, icon: Zap, gradient: 'from-lime-500 to-green-500' },
-    { title: f.glmStrength4Title, desc: f.glmStrength4Desc, icon: Sparkle, gradient: 'from-emerald-500 to-teal-500' },
+    {
+      title: f.codexStrength1Title,
+      desc: f.codexStrength1Desc,
+      icon: MousePointer,
+      gradient: 'from-cyan-500 to-blue-500',
+    },
+    {
+      title: f.codexStrength2Title,
+      desc: f.codexStrength2Desc,
+      icon: Cpu,
+      gradient: 'from-green-500 to-emerald-500',
+    },
+    {
+      title: f.codexStrength3Title,
+      desc: f.codexStrength3Desc,
+      icon: Gauge,
+      gradient: 'from-yellow-500 to-orange-500',
+    },
+    {
+      title: f.codexStrength4Title,
+      desc: f.codexStrength4Desc,
+      icon: MessageSquare,
+      gradient: 'from-pink-500 to-rose-500',
+    },
   ]
 
   const benchmarks = [
-    { name: f.benchSWE, opus: f.benchSWEOpus, codex: f.benchSWECodex, glm: f.benchSWEGlm, note: f.benchSWENote },
-    { name: f.benchTerminal, opus: f.benchTerminalOpus, codex: f.benchTerminalCodex, glm: f.benchTerminalGlm, note: f.benchTerminalNote },
-    { name: f.benchOSWorld, opus: f.benchOSWorldOpus, codex: f.benchOSWorldCodex, glm: f.benchOSWorldGlm, note: f.benchOSWorldNote },
-    { name: f.benchGPQA, opus: f.benchGPQAOpus, codex: f.benchGPQACodex, glm: f.benchGPQAGlm, note: f.benchGPQANote },
-    { name: f.benchARC, opus: f.benchARCOpus, codex: f.benchARCCodex, glm: f.benchARCGlm, note: f.benchARCNote },
-    { name: f.benchHLE, opus: f.benchHLEOpus, codex: f.benchHLECodex, glm: f.benchHLEGlm, note: f.benchHLENote },
-    { name: f.benchCyber, opus: f.benchCyberOpus, codex: f.benchCyberCodex, glm: f.benchCyberGlm, note: f.benchCyberNote },
+    {
+      name: f.benchSWE,
+      opus: f.benchSWEOpus,
+      codex: f.benchSWECodex,
+      note: f.benchSWENote,
+    },
+    {
+      name: f.benchTerminal,
+      opus: f.benchTerminalOpus,
+      codex: f.benchTerminalCodex,
+      note: f.benchTerminalNote,
+    },
+    {
+      name: f.benchOSWorld,
+      opus: f.benchOSWorldOpus,
+      codex: f.benchOSWorldCodex,
+      note: f.benchOSWorldNote,
+    },
+    {
+      name: f.benchGPQA,
+      opus: f.benchGPQAOpus,
+      codex: f.benchGPQACodex,
+      note: f.benchGPQANote,
+    },
+    {
+      name: f.benchARC,
+      opus: f.benchARCOpus,
+      codex: f.benchARCCodex,
+      note: f.benchARCNote,
+    },
+    {
+      name: f.benchHLE,
+      opus: f.benchHLEOpus,
+      codex: f.benchHLECodex,
+      note: f.benchHLENote,
+    },
+    {
+      name: f.benchCyber,
+      opus: f.benchCyberOpus,
+      codex: f.benchCyberCodex,
+      note: f.benchCyberNote,
+    },
   ]
 
   const commonTraits = [
-    { title: f.common1Title, desc: f.common1Desc, icon: Server, gradient: 'from-purple-500 to-violet-500' },
-    { title: f.common2Title, desc: f.common2Desc, icon: MousePointer, gradient: 'from-blue-500 to-cyan-500' },
-    { title: f.common3Title, desc: f.common3Desc, icon: Code, gradient: 'from-emerald-500 to-teal-500' },
-    { title: f.common4Title, desc: f.common4Desc, icon: Calendar, gradient: 'from-orange-500 to-red-500' },
+    {
+      title: f.common1Title,
+      desc: f.common1Desc,
+      icon: Server,
+      gradient: 'from-purple-500 to-violet-500',
+    },
+    {
+      title: f.common2Title,
+      desc: f.common2Desc,
+      icon: MousePointer,
+      gradient: 'from-blue-500 to-cyan-500',
+    },
+    {
+      title: f.common3Title,
+      desc: f.common3Desc,
+      icon: Code,
+      gradient: 'from-emerald-500 to-teal-500',
+    },
+    {
+      title: f.common4Title,
+      desc: f.common4Desc,
+      icon: Calendar,
+      gradient: 'from-orange-500 to-red-500',
+    },
   ]
 
   return (
-    <TopicLayout topicId="logges-favourite-model"
+    <TopicLayout
+      topicId="logges-favourite-model"
       title={f.title}
       description={f.description}
       breadcrumbs={[
@@ -67,8 +185,14 @@ export default function FavouriteModelsPage() {
         { label: t.categories.industry, href: '/ai/industry' },
         { label: f.title },
       ]}
-      prevTopic={{ label: t.topicNames['open-source'], href: '/ai/industry/open-source' }}
-      nextTopic={{ label: t.topicNames['tier-list'], href: '/ai/industry/tier-list' }}
+      prevTopic={{
+        label: t.topicNames['open-source'],
+        href: '/ai/industry/open-source',
+      }}
+      nextTopic={{
+        label: t.topicNames['tier-list'],
+        href: '/ai/industry/tier-list',
+      }}
     >
       {/* Disclaimer */}
       <motion.section
@@ -81,7 +205,9 @@ export default function FavouriteModelsPage() {
             <AlertTriangle className="w-5 h-5 text-amber-400" />
           </div>
           <div>
-            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">{f.disclaimer}</h3>
+            <h3 className="text-lg font-bold font-heading text-amber-400 mb-2">
+              {f.disclaimer}
+            </h3>
             <p className="text-muted leading-relaxed">{f.disclaimerText}</p>
             <p className="text-xs text-muted mt-2">{f.lastUpdated}</p>
           </div>
@@ -109,27 +235,28 @@ export default function FavouriteModelsPage() {
           <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center">
             <Heart size={24} className="text-white" fill="currentColor" />
           </div>
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 p-0.5">
-            <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
-              <Wallet size={28} className="text-green-400" />
-            </div>
-          </div>
         </div>
-        <h2 className="text-3xl font-bold font-heading text-gradient mb-4">{f.heroTitle}</h2>
-        <p className="text-muted leading-relaxed max-w-3xl mx-auto text-lg">{f.heroSubtitle}</p>
+        <h2 className="text-3xl font-bold font-heading text-gradient mb-4">
+          {f.heroTitle}
+        </h2>
+        <p className="text-muted leading-relaxed max-w-3xl mx-auto text-lg">
+          {f.heroSubtitle}
+        </p>
       </motion.section>
 
-      {/* The Two Champions */}
+      {/* The S-Tier Pair */}
       <section>
         <div className="flex items-center gap-3 mb-2">
           <SectionIcon icon={Trophy} gradient="from-yellow-500 to-orange-500" />
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{f.championsTitle}</h2>
+            <h2 className="text-2xl font-bold font-heading text-text">
+              {f.championsTitle}
+            </h2>
             <p className="text-sm text-muted">{f.championsSubtitle}</p>
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6 mt-6">
+        <div className="grid lg:grid-cols-2 gap-6 mt-6">
           {/* Opus 4.7 Card */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -141,7 +268,9 @@ export default function FavouriteModelsPage() {
               <div className="flex items-center gap-3 mb-2">
                 <Brain size={24} className="text-orange-400" />
                 <div>
-                  <h3 className="text-xl font-bold font-heading text-text">{f.opusName}</h3>
+                  <h3 className="text-xl font-bold font-heading text-text">
+                    {f.opusName}
+                  </h3>
                   <p className="text-xs text-orange-400">{f.opusMaker}</p>
                 </div>
               </div>
@@ -152,7 +281,9 @@ export default function FavouriteModelsPage() {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="bg-background/50 rounded-lg p-3 border border-border/50">
                   <span className="text-muted text-xs block">Model ID</span>
-                  <code className="text-orange-400 text-xs">{f.opusModelId}</code>
+                  <code className="text-orange-400 text-xs">
+                    {f.opusModelId}
+                  </code>
                 </div>
                 <div className="bg-background/50 rounded-lg p-3 border border-border/50">
                   <span className="text-muted text-xs block">Released</span>
@@ -168,7 +299,9 @@ export default function FavouriteModelsPage() {
                 </div>
               </div>
 
-              <p className="text-sm text-muted leading-relaxed">{f.opusDescription}</p>
+              <p className="text-sm text-muted leading-relaxed">
+                {f.opusDescription}
+              </p>
 
               <div className="space-y-3">
                 {opusStrengths.map((s, i) => (
@@ -179,14 +312,20 @@ export default function FavouriteModelsPage() {
                     transition={{ delay: 0.3 + i * 0.05 }}
                     className="flex gap-3 items-start"
                   >
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}>
+                    <div
+                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}
+                    >
                       <div className="w-full h-full rounded-lg bg-surface flex items-center justify-center">
                         <s.icon size={14} className="text-text" />
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-text">{s.title}</h4>
-                      <p className="text-xs text-muted leading-relaxed">{s.desc}</p>
+                      <h4 className="text-sm font-semibold text-text">
+                        {s.title}
+                      </h4>
+                      <p className="text-xs text-muted leading-relaxed">
+                        {s.desc}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
@@ -204,7 +343,7 @@ export default function FavouriteModelsPage() {
             </div>
           </motion.div>
 
-          {/* GPT-5.4 Card */}
+          {/* GPT-5.5 Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -215,7 +354,9 @@ export default function FavouriteModelsPage() {
               <div className="flex items-center gap-3 mb-2">
                 <Terminal size={24} className="text-cyan-400" />
                 <div>
-                  <h3 className="text-xl font-bold font-heading text-text">{f.codexName}</h3>
+                  <h3 className="text-xl font-bold font-heading text-text">
+                    {f.codexName}
+                  </h3>
                   <p className="text-xs text-cyan-400">{f.codexMaker}</p>
                 </div>
               </div>
@@ -226,11 +367,15 @@ export default function FavouriteModelsPage() {
               <div className="grid grid-cols-2 gap-3 text-sm">
                 <div className="bg-background/50 rounded-lg p-3 border border-border/50">
                   <span className="text-muted text-xs block">Model ID</span>
-                  <code className="text-cyan-400 text-xs">{f.codexModelId}</code>
+                  <code className="text-cyan-400 text-xs">
+                    {f.codexModelId}
+                  </code>
                 </div>
                 <div className="bg-background/50 rounded-lg p-3 border border-border/50">
                   <span className="text-muted text-xs block">Released</span>
-                  <span className="text-text text-xs">{f.codexReleaseDate}</span>
+                  <span className="text-text text-xs">
+                    {f.codexReleaseDate}
+                  </span>
                 </div>
                 <div className="bg-background/50 rounded-lg p-3 border border-border/50">
                   <span className="text-muted text-xs block">Context</span>
@@ -242,7 +387,9 @@ export default function FavouriteModelsPage() {
                 </div>
               </div>
 
-              <p className="text-sm text-muted leading-relaxed">{f.codexDescription}</p>
+              <p className="text-sm text-muted leading-relaxed">
+                {f.codexDescription}
+              </p>
 
               <div className="space-y-3">
                 {codexStrengths.map((s, i) => (
@@ -253,14 +400,20 @@ export default function FavouriteModelsPage() {
                     transition={{ delay: 0.3 + i * 0.05 }}
                     className="flex gap-3 items-start"
                   >
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}>
+                    <div
+                      className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}
+                    >
                       <div className="w-full h-full rounded-lg bg-surface flex items-center justify-center">
                         <s.icon size={14} className="text-text" />
                       </div>
                     </div>
                     <div>
-                      <h4 className="text-sm font-semibold text-text">{s.title}</h4>
-                      <p className="text-xs text-muted leading-relaxed">{s.desc}</p>
+                      <h4 className="text-sm font-semibold text-text">
+                        {s.title}
+                      </h4>
+                      <p className="text-xs text-muted leading-relaxed">
+                        {s.desc}
+                      </p>
                     </div>
                   </motion.div>
                 ))}
@@ -277,80 +430,6 @@ export default function FavouriteModelsPage() {
               </a>
             </div>
           </motion.div>
-
-          {/* GLM-5.1 Card */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="rounded-2xl bg-surface border border-green-500/30 overflow-hidden"
-          >
-            <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 p-5 border-b border-green-500/20">
-              <div className="flex items-center gap-3 mb-2">
-                <Wallet size={24} className="text-green-400" />
-                <div>
-                  <h3 className="text-xl font-bold font-heading text-text">{f.glmName}</h3>
-                  <p className="text-xs text-green-400">{f.glmMaker}</p>
-                </div>
-              </div>
-              <p className="text-sm text-muted italic">{f.glmTagline}</p>
-            </div>
-
-            <div className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
-                  <span className="text-muted text-xs block">Model ID</span>
-                  <code className="text-green-400 text-xs">{f.glmModelId}</code>
-                </div>
-                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
-                  <span className="text-muted text-xs block">Released</span>
-                  <span className="text-text text-xs">{f.glmReleaseDate}</span>
-                </div>
-                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
-                  <span className="text-muted text-xs block">Context</span>
-                  <span className="text-text text-xs">{f.glmContext}</span>
-                </div>
-                <div className="bg-background/50 rounded-lg p-3 border border-border/50">
-                  <span className="text-muted text-xs block">Output</span>
-                  <span className="text-text text-xs">{f.glmOutput}</span>
-                </div>
-              </div>
-
-              <p className="text-sm text-muted leading-relaxed">{f.glmDescription}</p>
-
-              <div className="space-y-3">
-                {glmStrengths.map((s, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + i * 0.05 }}
-                    className="flex gap-3 items-start"
-                  >
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${s.gradient} p-0.5 shrink-0`}>
-                      <div className="w-full h-full rounded-lg bg-surface flex items-center justify-center">
-                        <s.icon size={14} className="text-text" />
-                      </div>
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-text">{s.title}</h4>
-                      <p className="text-xs text-muted leading-relaxed">{s.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              <a
-                href={f.glmSourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-1.5 text-sm text-green-400 hover:text-green-300 transition-colors mt-2"
-              >
-                <ExternalLink size={14} />
-                {f.glmSourceLabel}
-              </a>
-            </div>
-          </motion.div>
         </div>
       </section>
 
@@ -359,7 +438,9 @@ export default function FavouriteModelsPage() {
         <div className="flex items-center gap-3 mb-2">
           <SectionIcon icon={Zap} gradient="from-yellow-500 to-orange-500" />
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{f.benchmarkTitle}</h2>
+            <h2 className="text-2xl font-bold font-heading text-text">
+              {f.benchmarkTitle}
+            </h2>
             <p className="text-sm text-muted">{f.benchmarkSubtitle}</p>
           </div>
         </div>
@@ -368,25 +449,32 @@ export default function FavouriteModelsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left py-3 px-3 text-muted font-medium">Benchmark</th>
-                <th className="text-center py-3 px-3 text-orange-400 font-medium">Opus 4.7</th>
-                <th className="text-center py-3 px-3 text-cyan-400 font-medium">GPT-5.4</th>
-                <th className="text-center py-3 px-3 text-green-400 font-medium">GLM-5.1</th>
-                <th className="text-left py-3 px-3 text-muted font-medium hidden md:table-cell">Note</th>
+                <th className="text-left py-3 px-3 text-muted font-medium">
+                  Benchmark
+                </th>
+                <th className="text-center py-3 px-3 text-orange-400 font-medium">
+                  Opus 4.7
+                </th>
+                <th className="text-center py-3 px-3 text-cyan-400 font-medium">
+                  GPT-5.5
+                </th>
+                <th className="text-left py-3 px-3 text-muted font-medium hidden md:table-cell">
+                  Note
+                </th>
               </tr>
             </thead>
             <tbody>
               {benchmarks.map((b, i) => {
                 const opusNum = parseFloat(b.opus.replace(',', '.'))
                 const codexNum = parseFloat(b.codex.replace(',', '.'))
-                const glmNum = parseFloat(b.glm.replace(',', '.'))
                 const nums = [
                   { key: 'opus', val: opusNum },
                   { key: 'codex', val: codexNum },
-                  { key: 'glm', val: glmNum },
-                ].filter(n => !isNaN(n.val))
-                const max = nums.length > 1 ? Math.max(...nums.map(n => n.val)) : -1
-                const winner = max > 0 ? nums.find(n => n.val === max)?.key : null
+                ].filter((n) => !isNaN(n.val))
+                const max =
+                  nums.length > 1 ? Math.max(...nums.map((n) => n.val)) : -1
+                const winner =
+                  max > 0 ? nums.find((n) => n.val === max)?.key : null
 
                 return (
                   <motion.tr
@@ -396,17 +484,22 @@ export default function FavouriteModelsPage() {
                     transition={{ delay: 0.1 + i * 0.05 }}
                     className="border-b border-border/50 hover:bg-surface/80 transition-colors"
                   >
-                    <td className="py-3 px-3 font-medium text-text">{b.name}</td>
-                    <td className={`py-3 px-3 text-center font-mono ${winner === 'opus' ? 'text-orange-400 font-bold' : 'text-muted'}`}>
+                    <td className="py-3 px-3 font-medium text-text">
+                      {b.name}
+                    </td>
+                    <td
+                      className={`py-3 px-3 text-center font-mono ${winner === 'opus' ? 'text-orange-400 font-bold' : 'text-muted'}`}
+                    >
                       {b.opus}
                     </td>
-                    <td className={`py-3 px-3 text-center font-mono ${winner === 'codex' ? 'text-cyan-400 font-bold' : 'text-muted'}`}>
+                    <td
+                      className={`py-3 px-3 text-center font-mono ${winner === 'codex' ? 'text-cyan-400 font-bold' : 'text-muted'}`}
+                    >
                       {b.codex}
                     </td>
-                    <td className={`py-3 px-3 text-center font-mono ${winner === 'glm' ? 'text-green-400 font-bold' : 'text-muted'}`}>
-                      {b.glm}
+                    <td className="py-3 px-3 text-xs text-muted hidden md:table-cell">
+                      {b.note}
                     </td>
-                    <td className="py-3 px-3 text-xs text-muted hidden md:table-cell">{b.note}</td>
                   </motion.tr>
                 )
               })}
@@ -421,12 +514,14 @@ export default function FavouriteModelsPage() {
         <div className="flex items-center gap-3 mb-6">
           <SectionIcon icon={Sparkles} gradient="from-primary to-accent" />
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{f.whenTitle}</h2>
+            <h2 className="text-2xl font-bold font-heading text-text">
+              {f.whenTitle}
+            </h2>
             <p className="text-sm text-muted">{f.whenSubtitle}</p>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {/* Opus use cases */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
@@ -436,26 +531,44 @@ export default function FavouriteModelsPage() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Brain size={20} className="text-orange-400" />
-              <h3 className="font-bold font-heading text-text">{f.whenOpusTitle}</h3>
+              <h3 className="font-bold font-heading text-text">
+                {f.whenOpusTitle}
+              </h3>
             </div>
             <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-orange-500/10 to-amber-500/5 border border-orange-500/20">
               <div className="flex items-center gap-2 mb-1">
                 <Terminal size={14} className="text-orange-400" />
-                <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">{f.whenOpusToolLabel}</span>
+                <span className="text-xs font-bold text-orange-400 uppercase tracking-wide">
+                  {f.whenOpusToolLabel}
+                </span>
               </div>
-              <p className="text-xs text-muted leading-relaxed">{f.whenOpusToolDesc}</p>
+              <p className="text-xs text-muted leading-relaxed">
+                {f.whenOpusToolDesc}
+              </p>
             </div>
             <ul className="space-y-3">
-              {[f.whenOpus1, f.whenOpus2, f.whenOpus3, f.whenOpus4, f.whenOpus5].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted">
-                  <ChevronRight size={14} className="text-orange-400 mt-0.5 shrink-0" />
+              {[
+                f.whenOpus1,
+                f.whenOpus2,
+                f.whenOpus3,
+                f.whenOpus4,
+                f.whenOpus5,
+              ].map((item, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 text-sm text-muted"
+                >
+                  <ChevronRight
+                    size={14}
+                    className="text-orange-400 mt-0.5 shrink-0"
+                  />
                   <span>{item}</span>
                 </li>
               ))}
             </ul>
           </motion.div>
 
-          {/* Codex / GPT-5.4 use cases */}
+          {/* Codex / GPT-5.5 use cases */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -464,47 +577,37 @@ export default function FavouriteModelsPage() {
           >
             <div className="flex items-center gap-2 mb-4">
               <Terminal size={20} className="text-cyan-400" />
-              <h3 className="font-bold font-heading text-text">{f.whenCodexTitle}</h3>
+              <h3 className="font-bold font-heading text-text">
+                {f.whenCodexTitle}
+              </h3>
             </div>
             <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-cyan-500/10 to-blue-500/5 border border-cyan-500/20">
               <div className="flex items-center gap-2 mb-1">
                 <Code size={14} className="text-cyan-400" />
-                <span className="text-xs font-bold text-cyan-400 uppercase tracking-wide">{f.whenCodexToolLabel}</span>
+                <span className="text-xs font-bold text-cyan-400 uppercase tracking-wide">
+                  {f.whenCodexToolLabel}
+                </span>
               </div>
-              <p className="text-xs text-muted leading-relaxed">{f.whenCodexToolDesc}</p>
+              <p className="text-xs text-muted leading-relaxed">
+                {f.whenCodexToolDesc}
+              </p>
             </div>
             <ul className="space-y-3">
-              {[f.whenCodex1, f.whenCodex2, f.whenCodex3, f.whenCodex4, f.whenCodex5].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted">
-                  <ChevronRight size={14} className="text-cyan-400 mt-0.5 shrink-0" />
-                  <span>{item}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-
-          {/* GLM-5.1 use cases */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="rounded-2xl bg-surface border border-green-500/20 p-6"
-          >
-            <div className="flex items-center gap-2 mb-4">
-              <Wallet size={20} className="text-green-400" />
-              <h3 className="font-bold font-heading text-text">{f.whenGlmTitle}</h3>
-            </div>
-            <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-green-500/10 to-emerald-500/5 border border-green-500/20">
-              <div className="flex items-center gap-2 mb-1">
-                <Globe size={14} className="text-green-400" />
-                <span className="text-xs font-bold text-green-400 uppercase tracking-wide">{f.whenGlmToolLabel}</span>
-              </div>
-              <p className="text-xs text-muted leading-relaxed">{f.whenGlmToolDesc}</p>
-            </div>
-            <ul className="space-y-3">
-              {[f.whenGlm1, f.whenGlm2, f.whenGlm3, f.whenGlm4, f.whenGlm5].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-muted">
-                  <ChevronRight size={14} className="text-green-400 mt-0.5 shrink-0" />
+              {[
+                f.whenCodex1,
+                f.whenCodex2,
+                f.whenCodex3,
+                f.whenCodex4,
+                f.whenCodex5,
+              ].map((item, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 text-sm text-muted"
+                >
+                  <ChevronRight
+                    size={14}
+                    className="text-cyan-400 mt-0.5 shrink-0"
+                  />
                   <span>{item}</span>
                 </li>
               ))}
@@ -519,34 +622,39 @@ export default function FavouriteModelsPage() {
           <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center">
             <AlertTriangle className="w-5 h-5 text-red-400" />
           </div>
-          <h2 className="text-2xl font-bold font-heading text-red-400">{f.pricingTitle}</h2>
+          <h2 className="text-2xl font-bold font-heading text-red-400">
+            {f.pricingTitle}
+          </h2>
         </div>
         <p className="text-sm text-muted mb-6">{f.pricingSubtitle}</p>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
           <div className="bg-background/40 rounded-xl p-4 border border-orange-500/20">
             <div className="flex items-center gap-2 mb-2">
               <Brain size={16} className="text-orange-400" />
-              <h3 className="font-bold text-text text-sm">{f.pricingOpusTitle}</h3>
+              <h3 className="font-bold text-text text-sm">
+                {f.pricingOpusTitle}
+              </h3>
             </div>
-            <p className="text-sm text-muted leading-relaxed">{f.pricingOpusDetail}</p>
+            <p className="text-sm text-muted leading-relaxed">
+              {f.pricingOpusDetail}
+            </p>
           </div>
           <div className="bg-background/40 rounded-xl p-4 border border-cyan-500/20">
             <div className="flex items-center gap-2 mb-2">
               <Terminal size={16} className="text-cyan-400" />
-              <h3 className="font-bold text-text text-sm">{f.pricingCodexTitle}</h3>
+              <h3 className="font-bold text-text text-sm">
+                {f.pricingCodexTitle}
+              </h3>
             </div>
-            <p className="text-sm text-muted leading-relaxed">{f.pricingCodexDetail}</p>
-          </div>
-          <div className="bg-background/40 rounded-xl p-4 border border-green-500/30">
-            <div className="flex items-center gap-2 mb-2">
-              <DollarSign size={16} className="text-green-400" />
-              <h3 className="font-bold text-text text-sm">{f.pricingGlmTitle}</h3>
-            </div>
-            <p className="text-sm text-muted leading-relaxed">{f.pricingGlmDetail}</p>
+            <p className="text-sm text-muted leading-relaxed">
+              {f.pricingCodexDetail}
+            </p>
           </div>
         </div>
-        <p className="text-text/90 leading-relaxed text-sm italic">{f.pricingVerdict}</p>
+        <p className="text-text/90 leading-relaxed text-sm italic">
+          {f.pricingVerdict}
+        </p>
       </section>
 
       {/* What They Share */}
@@ -554,7 +662,9 @@ export default function FavouriteModelsPage() {
         <div className="flex items-center gap-3 mb-6">
           <SectionIcon icon={Shield} gradient="from-emerald-500 to-teal-500" />
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{f.commonTitle}</h2>
+            <h2 className="text-2xl font-bold font-heading text-text">
+              {f.commonTitle}
+            </h2>
             <p className="text-sm text-muted">{f.commonSubtitle}</p>
           </div>
         </div>
@@ -569,7 +679,9 @@ export default function FavouriteModelsPage() {
               whileHover={{ scale: 1.02, y: -3 }}
               className="group relative p-5 rounded-2xl bg-surface border border-border hover:border-primary/30 transition-all duration-300"
             >
-              <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${trait.gradient} p-0.5 mb-3`}>
+              <div
+                className={`w-10 h-10 rounded-xl bg-gradient-to-br ${trait.gradient} p-0.5 mb-3`}
+              >
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <trait.icon size={18} className="text-text" />
                 </div>
@@ -578,7 +690,9 @@ export default function FavouriteModelsPage() {
                 {trait.title}
               </h3>
               <p className="text-sm text-muted leading-relaxed">{trait.desc}</p>
-              <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${trait.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+              <div
+                className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${trait.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+              />
             </motion.div>
           ))}
         </div>
@@ -597,38 +711,48 @@ export default function FavouriteModelsPage() {
               <Heart size={22} className="text-pink-400" fill="currentColor" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold font-heading text-gradient">{f.verdictTitle}</h2>
+          <h2 className="text-2xl font-bold font-heading text-gradient">
+            {f.verdictTitle}
+          </h2>
         </div>
         <p className="text-text/90 leading-relaxed text-lg">{f.verdictText}</p>
       </motion.section>
 
       {/* Quick Reference Table */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{f.quickRefTitle}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">
+          {f.quickRefTitle}
+        </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
                 <th className="text-left py-3 px-3 text-muted font-medium"></th>
-                <th className="text-center py-3 px-3 text-orange-400 font-medium">{f.opusName}</th>
-                <th className="text-center py-3 px-3 text-cyan-400 font-medium">{f.codexName}</th>
-                <th className="text-center py-3 px-3 text-green-400 font-medium">{f.glmName}</th>
+                <th className="text-center py-3 px-3 text-orange-400 font-medium">
+                  {f.opusName}
+                </th>
+                <th className="text-center py-3 px-3 text-cyan-400 font-medium">
+                  {f.codexName}
+                </th>
               </tr>
             </thead>
             <tbody className="text-sm">
               {[
-                [f.quickRefMaker, f.opusMaker, f.codexMaker, f.glmMaker],
-                [f.quickRefContext, f.opusContext, f.codexContext, f.glmContext],
-                [f.quickRefOutput, f.opusOutput, f.codexOutput, f.glmOutput],
-                [f.quickRefPrice, f.opusPricing, f.codexPricing, f.glmPricing],
-                [f.quickRefBestFor, f.quickRefOpusBest, f.quickRefCodexBest, f.quickRefGlmBest],
-                [f.quickRefPlatforms, f.quickRefOpusPlatforms, f.quickRefCodexPlatforms, f.quickRefGlmPlatforms],
-              ].map(([label, opus, codex, glm], i) => (
+                [f.quickRefMaker, f.opusMaker, f.codexMaker],
+                [f.quickRefContext, f.opusContext, f.codexContext],
+                [f.quickRefOutput, f.opusOutput, f.codexOutput],
+                [f.quickRefPrice, f.opusPricing, f.codexPricing],
+                [f.quickRefBestFor, f.quickRefOpusBest, f.quickRefCodexBest],
+                [
+                  f.quickRefPlatforms,
+                  f.quickRefOpusPlatforms,
+                  f.quickRefCodexPlatforms,
+                ],
+              ].map(([label, opus, codex], i) => (
                 <tr key={i} className="border-b border-border/50">
                   <td className="py-3 px-3 text-muted font-medium">{label}</td>
                   <td className="py-3 px-3 text-center text-text">{opus}</td>
                   <td className="py-3 px-3 text-center text-text">{codex}</td>
-                  <td className="py-3 px-3 text-center text-text">{glm}</td>
                 </tr>
               ))}
             </tbody>
