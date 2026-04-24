@@ -4590,34 +4590,34 @@ export const de: Dictionary = {
   // Logges Lieblingsmodelle (Opus 4.7 + GPT-5.3-Codex)
   favModels: {
     title: 'Logges Lieblingsmodelle',
-    description: 'Zwei S-Tier-Modelle, zwei Workflows. Opus 4.7 für Tiefe, GPT-5.5 für schnelle operator-taugliche Umsetzung.',
+    description: 'Zwei S-Tier-Modelle, zwei Aufgaben. Opus 4.7 für Pushback und emotionale Interpretation; GPT-5.5 für direkte Intelligenz und Logik.',
     disclaimer: 'Haftungsausschluss',
-    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Das sind aktuell die zwei Modelle, denen ich ernsthafte Arbeit am ehesten anvertraue: Opus 4.7, wenn Tiefe zählt, und GPT-5.5, wenn ich scharfe Umsetzungsgeschwindigkeit will. Modell-Releases bewegen sich schnell, das hier wird sich ändern.',
+    disclaimerText: 'Diese Seite ist unverblümt voreingenommen. Das sind aktuell die zwei Modelle, denen ich am meisten vertraue, aber aus unterschiedlichen Gründen: Opus 4.7 gibt Pushback bei dummen Ideen und liest emotionalen Subtext besser; GPT-5.5 ist die Maschine für direkte Intelligenz und Logik. Modell-Releases bewegen sich schnell, das hier wird sich ändern.',
     lastUpdated: 'Zuletzt aktualisiert: 24. April 2026',
 
     // Hero / Intro
     heroTitle: 'Zwei S-Tier-Modelle, eine Obsession',
-    heroSubtitle: 'Opus 4.7 bleibt das Deep-Work-Monster: sorgfältig, teuer und absurd stark, wenn eine Aufgabe echtes Nachdenken braucht. GPT-5.5 ist der neue S-Tier-Daily-Driver: schneller, sauberer mit Tools und stark für OpenClaw-artige Coding-, Infra- und Operator-Workflows. Diese Seite dreht sich jetzt um dieses Duo.',
+    heroSubtitle: 'Opus 4.7 ist wichtig, weil es bei dummen Ideen widerspricht, emotionalen Subtext erkennt und chaotische menschliche Situationen mit mehr Takt interpretiert. GPT-5.5 ist die Wahl für direkte Intelligenz und Logik: klar, schnell, tool-freundlich und stark, wenn die Aufgabe sauberes Denken und Umsetzung verlangt.',
 
     // Das S-Tier-Duo
     championsTitle: 'Das S-Tier-Duo',
-    championsSubtitle: 'Eins für Tiefe, eins für Momentum. Beiden vertraue ich echte Arbeit an.',
+    championsSubtitle: 'Eins für emotionale Interpretation und nützlichen Widerstand. Eins für klare Logik und direkte Umsetzung.',
 
     // Claude Opus 4.7
     opusName: 'Claude Opus 4.7',
     opusMaker: 'Anthropic',
-    opusTagline: 'Der Tiefdenker, der wie ein Senior Engineer programmiert',
+    opusTagline: 'Der emotional kluge Senior Reviewer, der widerspricht',
     opusModelId: 'claude-opus-4-7',
     opusReleaseDate: '5. Februar 2026',
     opusContext: '200K Standard / 1M Beta',
     opusOutput: '128K Tokens',
     opusPricing: '$5 / $25 pro Million Tokens',
-    opusDescription: 'Opus 4.7 ist Anthropics leistungsfähigstes Modell aller Zeiten. Es verdoppelte das Ausgabelimit auf 128K, führte ein 1M-Token-Kontextfenster in der Beta ein und brachte zwei exklusive Features: Adaptive Thinking (passt die Reasoning-Tiefe automatisch an) und Context Compaction (fasst alten Kontext automatisch zusammen für endlose Konversationen). Die Coding-Verbesserungen sind massiv — Terminal-Bench stieg von 59,8% auf 65,4%, OSWorld von 66,3% auf 72,7%, und ARC AGI 2 hat sich von 37,6% auf 68,8% fast verdoppelt.',
+    opusDescription: 'Opus 4.7 ist das Modell, das ich will, wenn eine Antwort nicht nur schnell, sondern emotional und strategisch bewusst sein soll. Sein Wert ist nicht nur rohe Coding-Power — es ist der Pushback. Es sagt eher Nein zu schlechten Ideen, erkennt versteckte Risiken, liest angespannte emotionale Kontexte und bremst, bevor man in die falsche Lösung rennt.',
 
-    opusStrength1Title: 'Adaptive Thinking',
-    opusStrength1Desc: 'Passt die Reasoning-Tiefe dynamisch an die Aufgabenkomplexität an. Vier Intensitätsstufen: niedrig, mittel, hoch und maximal. Es entscheidet selbst, wann tieferes Nachdenken hilft.',
-    opusStrength2Title: 'Agent Teams',
-    opusStrength2Desc: 'Ermöglicht Multi-Agent-Coding in Claude Code — ein Agent fürs Frontend, einer für die API, ein dritter für die Migration — alle koordinieren sich autonom.',
+    opusStrength1Title: 'Nützlicher Pushback',
+    opusStrength1Desc: 'Der beste Grund für Opus: Es widerspricht eher einer schwachen Prämisse, benennt versteckte Risiken und sagt das Unbequeme, bevor Arbeit in die falsche Richtung läuft.',
+    opusStrength2Title: 'Emotionale Interpretation',
+    opusStrength2Desc: 'Stark darin, Subtext, Ton, Konflikt, Unsicherheit und Beziehungsdynamik zu lesen. Wenn die Arbeit Menschen betrifft, versteht es mehr als den reinen Wortlaut.',
     opusStrength3Title: '1M Token Kontext',
     opusStrength3Desc: 'Erstes Opus-Modell mit einem Millionen-Token-Fenster. Füttere es mit einer ganzen Codebase und es kann über alles hinweg denken.',
     opusStrength4Title: '128K Output',
@@ -4629,18 +4629,18 @@ export const de: Dictionary = {
     // GPT-5.5
     codexName: 'GPT-5.5',
     codexMaker: 'OpenAI',
-    codexTagline: 'Der schnelle Operator, der wirklich mithält',
+    codexTagline: 'Die Engine für direkte Intelligenz und Logik',
     codexModelId: 'gpt-5.5',
     codexReleaseDate: 'April 2026',
     codexContext: '~1M Tokens',
     codexOutput: '~128K Tokens',
     codexPricing: '~$1,25 / $10 pro Million Tokens',
-    codexDescription: 'GPT-5.5 ist das erste OpenAI-Modell seit einer Weile, das sich in echter Operator-Arbeit sofort wie ein Tier-Sprung anfühlt. Es erkennt Intent-Wechsel schneller, handhabt Config- und Code-Änderungen mit weniger Reibung, erholt sich sauber von Tool-Haklern und wirkt besonders stark in OpenClaw-/Codex-artigen Terminal-Workflows. Es ersetzt Opus nicht für tiefes, vorsichtiges Denken — es ist das Modell, das ich will, wenn Momentum zählt.',
+    codexDescription: 'GPT-5.5 ist das Modell, das ich will, wenn die Aufgabe vor allem Intelligenz und Logik verlangt: Ziel verstehen, sauber schließen, direkten Weg wählen und ausführen. Es wirkt schärfer und weniger zäh als GPT-5.4 in OpenClaw-/Codex-artiger Arbeit, aber seine eigentliche Rolle hier ist Klarheit: weniger Vibes, mehr Logik.',
 
-    codexStrength1Title: 'Interactive Steering',
-    codexStrength1Desc: 'Es lässt sich mitten in der Aufgabe sehr gut lenken: gute Fortschrittsupdates, schnelle Kurskorrektur und weniger Reibung, wenn sich der Plan während der Arbeit ändert.',
-    codexStrength2Title: 'Frontier-Coding',
-    codexStrength2Desc: 'Stark bei praktischem Coding, Config-Edits, Builds, Deploy-Checks und terminal-lastiger Arbeit. Es fühlt sich gemacht dafür an, Änderungen wirklich auszuliefern, nicht nur zu erklären.',
+    codexStrength1Title: 'Direkte Logik',
+    codexStrength1Desc: 'Sehr gut darin, eine chaotische Anfrage auf ihre logische Struktur zu reduzieren: was zählt, was daraus folgt, was als Nächstes passieren sollte.',
+    codexStrength2Title: 'Direkte Intelligenz',
+    codexStrength2Desc: 'Schnell, fähig und präzise. Stark bei technischem Reasoning, Coding, Config-Arbeit und Vorwärtsbewegung, ohne jeden Schritt zur Therapiesitzung zu machen.',
     codexStrength3Title: 'Token-effizient',
     codexStrength3Desc: 'Hält Operator-Loops eng: inspizieren, patchen, verifizieren, committen. Weniger Abschweifen, weniger unnötige Umwege, mehr nützlicher Fortschritt pro Turn.',
     codexStrength4Title: 'Persönlichkeitsmodi',
@@ -4722,23 +4722,23 @@ export const de: Dictionary = {
 
     // Wann ich welches nutze
     whenTitle: 'Wann ich welches tatsächlich nutze',
-    whenSubtitle: 'Theorie ist nett. Der echte Split ist simpel: Opus für Tiefe, GPT-5.5 für Momentum.',
+    whenSubtitle: 'Theorie ist nett. Der echte Split ist simpel: Opus für Pushback und emotionale Interpretation; GPT-5.5 für direkte Intelligenz und Logik.',
 
     whenOpusTitle: 'Ich greife zu Opus 4.7 wenn...',
     whenOpusToolLabel: 'Mein Tool: Claude Code (CLI)',
     whenOpusToolDesc: 'Opus 4.7 lebt in meinem Terminal via Claude Code. Agent Teams, Multi-Datei-Edits, tiefes Reasoning — alles von der Kommandozeile. Diese gesamte Seite wurde damit gebaut.',
-    whenOpus1: 'Ich tiefes architektonisches Reasoning über eine große Codebase brauche — das 1M Kontextfenster ist unübertroffen',
-    whenOpus2: 'Ich komplexe Multi-Datei-Features schreibe, bei denen das Modell viel State halten muss',
-    whenOpus3: 'Code Review und Refactoring — Adaptive Thinking macht es wirklich sorgfältig',
+    whenOpus1: 'Ich Pushback zu einem Plan brauche, besonders wenn ich mir gerade eine dumme Idee schönrede',
+    whenOpus2: 'Ich emotionale Interpretation, Tonlesen oder Hilfe beim Verstehen einer menschlichen Situation brauche',
+    whenOpus3: 'Code Review und Refactoring, bei denen ich Vorsicht, Skepsis und langsameres Urteil will',
     whenOpus4: 'Agent Teams für ambitionierte mehrteilige Projekte',
-    whenOpus5: 'Alles, was von erweitertem Denken und sorgfältigem schrittweisem Reasoning profitiert',
+    whenOpus5: 'Alles, wo richtig sein Takt, Zurückhaltung oder ein klares Nein erfordert',
 
     whenCodexTitle: 'Ich greife zu GPT-5.5 wenn...',
     whenCodexToolLabel: 'Mein Tool: Codex (App + CLI)',
     whenCodexToolDesc: 'GPT-5.5 ist mein Codex-/OpenClaw-Operator-Modell. Interactive Steering, schnelle Erholung und starke Tool-Nutzung machen es perfekt für schnelle Implementierungs-Loops.',
-    whenCodex1: 'Schnelle Iteration bei terminal-lastigen Workflows — Config, Patches, Builds, Deploy-Checks, wiederholen',
-    whenCodex2: 'Interaktives Pair Programming, bei dem ich mid-task lenken will',
-    whenCodex3: 'Operator-Aufgaben, bei denen ich weniger Umwege und mehr Vorwärtsbewegung will',
+    whenCodex1: 'Ich direkte Schlussfolgerung, klare Logik und einen konkreten nächsten Schritt brauche',
+    whenCodex2: 'Technische Umsetzung, bei der die beste Antwort schnelles Verstehen und Ausführen ist',
+    whenCodex3: 'Operator-Aufgaben, bei denen ich weniger Umwege und mehr logische Vorwärtsbewegung will',
     whenCodex4: 'Die Codex CLI für schnelles Scripting und Einmal-Aufgaben',
     whenCodex5: 'Alles, wo ich Speed und Pragmatismus will, ohne unter Frontier-Qualität zu fallen',
 
@@ -4760,7 +4760,7 @@ export const de: Dictionary = {
     pricingCodexDetail: 'Preise können je nach Account und Oberfläche schwanken, aber praktisch zählt: Es ist die S-Tier-Option für hohen Durchsatz. Ich nutze es, wenn Geschwindigkeit und Iterationszahl wichtiger sind als maximale Gründlichkeit.',
     pricingGlmTitle: 'GLM-5.1',
     pricingGlmDetail: '$0,10 Input / $0,10 Output pro Million Tokens. Richtig gelesen — 10 Cent. Etwa 50x günstiger als Opus und 10x günstiger als GPT-5.4 beim Output. Für hochvolumige Arbeiten absolut konkurrenzlos, und selbst für intensive Coding-Sessions kaum messbare Kosten.',
-    pricingVerdict: 'Ehrliche Einschätzung: Opus ist das Premium-Modell für Deep Work. GPT-5.5 ist der S-Tier-Daily-Driver für schnelles Coding und Infrastrukturarbeit. Wenn die Aufgabe heikel, architektonisch oder high-stakes ist, greife ich weiterhin zu Opus. Wenn ich schnell vorankommen und unterwegs verifizieren will, ist GPT-5.5 der bessere Default.',
+    pricingVerdict: 'Ehrliche Einschätzung: Opus lohnt sich, wenn eine schlechte Idee, eine falsche Lesart oder eine emotional taube Antwort teuer wäre. GPT-5.5 ist der bessere Default, wenn die Aufgabe direkte Intelligenz, Logik und Umsetzungsgeschwindigkeit verlangt.',
 
     // Gemeinsamkeiten
     commonTitle: 'Was sie gemeinsam haben',
@@ -4772,11 +4772,11 @@ export const de: Dictionary = {
     common3Title: 'Erweiterter Output',
     common3Desc: 'Genug Output und Kontext für ganze Dateien, vollständige Dokumentation, Multi-Datei-Änderungen und lange Debugging-Sessions, ohne sofort auseinanderzufallen.',
     common4Title: 'Das Zeitalter der Auswahl',
-    common4Desc: 'Die Tage des einen universell besten Modells sind vorbei. Die nützliche Frage ist: Brauche ich Tiefe oder Momentum? Diese zwei decken diesen Split wunderschön ab.',
+    common4Desc: 'Die nützliche Frage ist nicht, welches Modell universell am besten ist. Sie lautet: Braucht die Aufgabe emotionales Urteil und Pushback, oder direkte Intelligenz und Logik?',
 
     // Persönliches Verdict
     verdictTitle: 'Das ehrliche Urteil',
-    verdictText: 'Das aktuelle S-Tier-Duo ist simpel: Opus 4.7 für Tiefe, GPT-5.5 für Momentum. Opus ist das Modell, dem ich vertraue, wenn eine Aufgabe sorgfältige Architektur, subtile Reviews oder langfristiges Reasoning braucht. GPT-5.5 will ich neben mir haben, wenn ich operiere: Config editieren, Code patchen, bauen, verifizieren, committen, pushen. Es fühlt sich schärfer und weniger zäh an als 5.4, ohne das praktische Codex-Gefühl zu verlieren. Wenn ich nur eins für hartes Denken wählen müsste: Opus. Wenn ich nur eins fürs tägliche Shippen wählen müsste: GPT-5.5.',
+    verdictText: 'Das aktuelle S-Tier-Duo ist simpel: Opus 4.7 für Pushback und emotionale Interpretation; GPT-5.5 für direkte Intelligenz und Logik. Opus ist das Modell, dem ich vertraue, wenn ich falsch liegen könnte, wenn ein Plan Widerstand braucht oder wenn der menschliche Kontext genauso wichtig ist wie der technische. GPT-5.5 will ich, wenn die Aufgabe klares Denken, direkte Handlung und Shipping verlangt. Wenn ich Urteil brauche: Opus. Wenn ich Logik und Umsetzung brauche: GPT-5.5.',
 
     // Quick Reference
     quickRefTitle: 'Schnellübersicht',
@@ -4786,8 +4786,8 @@ export const de: Dictionary = {
     quickRefOutput: 'Max Output',
     quickRefPrice: 'Preise (pro MTok)',
     quickRefBestFor: 'Am besten für',
-    quickRefOpusBest: 'Tiefes Reasoning, Code Review, Agent Teams',
-    quickRefCodexBest: 'Schnelle Iteration, OpenClaw-/Codex-Ops, Terminal-Aufgaben',
+    quickRefOpusBest: 'Pushback, emotionale Interpretation, sorgfältiges Urteil',
+    quickRefCodexBest: 'Direkte Intelligenz, Logik, Umsetzung',
     quickRefGlmBest: 'Hochvolumige Aufgaben, Kosteneffizienz, mehrsprachige Workflows',
     quickRefPlatforms: 'Plattformen',
     quickRefOpusPlatforms: 'Claude.ai, API, AWS Bedrock, Vertex AI, Azure Foundry',
