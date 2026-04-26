@@ -156,7 +156,7 @@ export const models: ModelEntry[] = [
     id: 'gemini-31-pro',
     nameKey: 'gemini31Pro',
     descKey: 'gemini31ProDesc',
-    tier: 'D',
+    tier: 'C',
     hosting: 'api',
   },
 
