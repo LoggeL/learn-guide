@@ -158,6 +158,7 @@ export const topics: Topic[] = [
           { id: 'neural-networks', name: 'Neural Networks', path: '/ai/ml-fundamentals/neural-networks', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'gradient-descent', name: 'Gradient Descent', path: '/ai/ml-fundamentals/gradient-descent', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
           { id: 'training', name: 'Training Process', path: '/ai/ml-fundamentals/training', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+          { id: 'reinforcement-learning', name: 'Reinforcement Learning', path: '/ai/ml-fundamentals/reinforcement-learning', difficulty: 'intermediate', lastUpdated: '2026-04-29' },
           { id: 'world-models', name: 'World Models', path: '/ai/ml-fundamentals/world-models', difficulty: 'expert', lastUpdated: '2026-02-15' },
         ],
       },
@@ -184,6 +185,7 @@ export const topics: Topic[] = [
         children: [
           { id: 'european-ai', name: 'AI Made in Europe', path: '/ai/industry/european-ai', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'open-source', name: 'Open Source Advantages', path: '/ai/industry/open-source', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+          { id: 'custom-chips', name: 'Custom Chips for AI', path: '/ai/industry/custom-chips', difficulty: 'intermediate', lastUpdated: '2026-04-29' },
           { id: 'logges-favourite-model', name: "Logge's Favourite Models", path: '/ai/industry/logges-favourite-model', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'tier-list', name: 'LLM Tier List', path: '/ai/industry/tier-list', difficulty: 'beginner', lastUpdated: '2026-02-19' },
         ],

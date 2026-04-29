@@ -168,6 +168,7 @@ export const de: Dictionary = {
     'neural-networks': 'Neuronale Netzwerke',
     'gradient-descent': 'Gradientenabstieg',
     'training': 'Trainingsprozess',
+    'reinforcement-learning': 'Reinforcement Learning',
     'world-models': 'World Models',
     // Prompting
     'prompt-basics': 'Prompt-Grundlagen',
@@ -179,6 +180,7 @@ export const de: Dictionary = {
     // Industry
     'european-ai': 'KI aus Europa',
     'open-source': 'Open-Source-Vorteile',
+    'custom-chips': 'Custom Chips für KI',
     'logges-favourite-model': 'Logges Lieblingsmodelle',
   },
 
@@ -231,6 +233,7 @@ export const de: Dictionary = {
     'neural-networks': 'Schichten verbundener Neuronen, die Muster aus Daten lernen',
     'gradient-descent': 'Der Optimierungsalgorithmus, der neuronale Netze trainiert',
     'training': 'Wie Modelle durch Vorwärts- und Rückwärtsdurchläufe lernen',
+    'reinforcement-learning': 'Agenten lernen durch Handeln, Belohnungen und Verbesserung einer Policy',
     'prompt-basics': 'Grundlegende Techniken für gute Ergebnisse mit LLMs',
     'advanced-prompting': 'Chain-of-Thought, Few-Shot und andere Profi-Techniken',
     'system-prompts': 'Persona, Regeln und Verhalten eines LLMs festlegen',
@@ -238,6 +241,7 @@ export const de: Dictionary = {
     'responsible-ai': 'KI-Systeme bauen, die fair, transparent und sicher sind',
     'european-ai': 'Das wachsende europäische KI-Ökosystem und seine Stärken',
     'open-source': 'Warum offene Gewichte für Innovation und Transparenz wichtig sind',
+    'custom-chips': 'Warum GPUs, TPUs, NPUs, FPGAs und KI-ASICs Kosten und Geschwindigkeit prägen',
     'logges-favourite-model': 'Kuratierte Auswahl der besten Modelle für verschiedene Aufgaben',
     'world-models': 'Interne Simulatoren, mit denen KI in virtüllen Welten vorhersagen und planen kann',
   },

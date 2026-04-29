@@ -100,3 +100,9 @@ export { CacheHitMissAnimation } from './CacheHitMissAnimation'
 export { PrefixMatchingDemo } from './PrefixMatchingDemo'
 export { CostSavingsCalculator } from './CostSavingsCalculator'
 export { CacheTTLVisualization } from './CacheTTLVisualization'
+
+// Custom chips components
+export { ChipTradeoffSimulator } from './ChipTradeoffSimulator'
+
+// Reinforcement Learning components
+export { ReinforcementLearningPlayground } from './ReinforcementLearningPlayground'

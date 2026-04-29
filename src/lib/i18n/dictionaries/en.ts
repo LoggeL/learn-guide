@@ -166,6 +166,7 @@ export const en = {
     'neural-networks': 'Neural Networks',
     'gradient-descent': 'Gradient Descent',
     'training': 'Training Process',
+    'reinforcement-learning': 'Reinforcement Learning',
     'world-models': 'World Models',
     // Prompting
     'prompt-basics': 'Prompt Basics',
@@ -177,6 +178,7 @@ export const en = {
     // Industry
     'european-ai': 'AI Made in Europe',
     'open-source': 'Open Source Advantages',
+    'custom-chips': 'Custom Chips for AI',
     'logges-favourite-model': "Logge's Favourite Models",
   },
 
@@ -229,6 +231,7 @@ export const en = {
     'neural-networks': 'Layers of connected neurons that learn patterns from data',
     'gradient-descent': 'The optimization algorithm that trains neural networks',
     'training': 'How models learn from data through forward and backward passes',
+    'reinforcement-learning': 'Agents learn by acting, receiving rewards, and improving a policy',
     'prompt-basics': 'Fundamental techniques for getting good results from LLMs',
     'advanced-prompting': 'Chain-of-thought, few-shot, and other power techniques',
     'system-prompts': 'Set the persona, rules, and behavior of an LLM',
@@ -236,6 +239,7 @@ export const en = {
     'responsible-ai': 'Building AI systems that are fair, transparent, and safe',
     'european-ai': 'The growing European AI ecosystem and its unique strengths',
     'open-source': 'Why open weights matter for innovation and transparency',
+    'custom-chips': 'Why GPUs, TPUs, NPUs, FPGAs, and AI ASICs shape model cost and speed',
     'logges-favourite-model': "Curated picks of the best models for different tasks",
     'world-models': 'Internal simulators that let AI predict and plan in virtual worlds',
   },

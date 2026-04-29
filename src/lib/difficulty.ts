@@ -62,6 +62,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'neural-networks': 'beginner',
   'gradient-descent': 'intermediate',
   'training': 'beginner',
+  'reinforcement-learning': 'intermediate',
   'world-models': 'expert',
   // Prompting
   'prompt-basics': 'beginner',
@@ -73,5 +74,6 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   // Industry
   'european-ai': 'beginner',
   'open-source': 'beginner',
+  'custom-chips': 'intermediate',
   'logges-favourite-model': 'beginner',
 }
