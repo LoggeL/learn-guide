@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock } from 'lucide-react'
+import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock, Database, Gauge } from 'lucide-react'
 import { useBrainPacman } from '@/components/interactive/BrainPacman'
 import { DIFFICULTY_STYLES, TOPIC_DIFFICULTY } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
@@ -79,8 +79,13 @@ export default function Home() {
     },
   ]
 
+  const allTopicCount = flattenTopics().filter((topic) => topic.path).length
+  const latestTopics = Object.entries(TOPIC_DATES)
+    .sort(([, a], [, b]) => b.localeCompare(a))
+    .slice(0, 3)
+
   return (
-    <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto relative px-4 md:px-0 overflow-x-clip">
+    <div className="mx-auto w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px] relative overflow-x-clip">
       {brainPacmanOverlay}
       {/* Ambient background glow */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-radial from-primary/20 via-transparent to-transparent blur-3xl pointer-events-none" />
@@ -92,88 +97,93 @@ export default function Home() {
         className="relative"
       >
         {/* Hero Section */}
-        <motion.header variants={itemVariants} className="text-center mb-20">
-          <div className="relative inline-flex items-center mb-8">
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border cursor-pointer select-none transition-all duration-300 animate-[glow-pulse_2s_ease-in-out_infinite]"
-              onClick={handleBrainClick}
-              style={{
-                animationName: 'glow-pulse',
-              }}
-            >
-              <Sparkles size={14} className="text-primary" />
-              <span className="text-sm text-muted">{t.common.interactiveAiLearning}</span>
+        <motion.header variants={itemVariants} className="mb-8">
+          <div className="border-gradient relative overflow-hidden rounded-3xl p-5 shadow-card md:p-8 xl:p-10">
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_18%_10%,rgba(168,85,247,.20),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(34,211,238,.16),transparent_30%)]" />
+            <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_360px] lg:items-center">
+              <div>
+                <button
+                  type="button"
+                  className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/35 bg-primary/10 px-4 py-2 text-sm text-muted transition-all duration-300 hover:border-primary/60 hover:text-text animate-[glow-pulse_2s_ease-in-out_infinite]"
+                  onClick={handleBrainClick}
+                  style={{ animationName: 'glow-pulse' }}
+                >
+                  <Sparkles size={14} className="text-primary-light" />
+                  <span>{t.common.interactiveAiLearning}</span>
+                </button>
+                <h1 className="max-w-4xl text-4xl font-bold font-heading leading-[1.04] tracking-tight md:text-6xl xl:text-7xl">
+                  <span className="text-gradient">{t.home.heroTitle1}</span>
+                  <br />
+                  <span className="text-text">{t.home.heroTitle2}</span>
+                </h1>
+                <p className="mt-6 max-w-2xl text-base leading-8 text-muted md:text-xl">
+                  {t.home.heroDescription}
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <Link href={`/${locale}/ai/llm/mtp`} className="btn-primary inline-flex items-center justify-center gap-2 text-base">
+                    {t.home.startLearning}
+                    <ArrowRight size={18} />
+                  </Link>
+                  <Link href="#topics" className="btn-secondary inline-flex items-center justify-center gap-2">
+                    {t.home.browseTopics}
+                  </Link>
+                </div>
+              </div>
+
+              <div className="grid gap-3 rounded-2xl border border-border/80 bg-background/55 p-4 backdrop-blur-xl">
+                {[
+                  { icon: BookOpen, label: t.common.topics, value: String(allTopicCount), sub: t.common.guidesDescription },
+                  { icon: Clock, label: t.common.recentlyUpdated, value: latestTopics[0]?.[0] ? (t.topicNames[latestTopics[0][0] as keyof typeof t.topicNames] || latestTopics[0][0]) : '—', sub: latestTopics[0]?.[1] ? formatTopicDate(latestTopics[0][1], locale) : '—' },
+                  { icon: Database, label: 'LLM', value: 'Architecture', sub: 'MTP · MoE · KV cache · inference' },
+                ].map((item, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-surface/55 p-4">
+                    <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-subtle">
+                      <item.icon size={14} className="text-primary-light" />
+                      {item.label}
+                    </div>
+                    <div className="truncate text-xl font-black text-text">{item.value}</div>
+                    <div className="mt-1 line-clamp-2 text-xs leading-5 text-muted">{item.sub}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold font-heading mb-6 leading-[1.1] tracking-tight">
-            <span className="text-gradient">{t.home.heroTitle1}</span>
-            <br />
-            <span className="text-text">{t.home.heroTitle2}</span>
-          </h1>
-          
-          <p className="text-xl text-muted max-w-2xl mx-auto leading-relaxed mb-10">
-            {t.home.heroDescription}
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
-              href={`/${locale}/ai/llm/temperature`}
-              className="btn-primary inline-flex items-center gap-2 text-lg"
-            >
-              {t.home.startLearning}
-              <ArrowRight size={18} />
-            </Link>
-            <Link 
-              href="#topics" 
-              className="btn-secondary inline-flex items-center gap-2"
-            >
-              {t.home.browseTopics}
-            </Link>
           </div>
         </motion.header>
 
-        {/* Blog Banner */}
-        <motion.section variants={itemVariants} className="mb-12">
+        {/* Lab Dashboard Strip */}
+        <motion.section variants={itemVariants} className="mb-12 grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
           <a
             href="https://blog.logge.top"
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r from-[#d90429]/10 via-surface to-[#d90429]/5 border border-[#d90429]/20 hover:border-[#d90429]/40 transition-all duration-300"
+            className="group border-gradient flex items-center gap-4 rounded-2xl p-5 transition-all duration-300 hover:translate-y-[-2px]"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d90429] to-[#d90429]/70 p-0.5 shrink-0">
-              <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
-                <Newspaper size={20} className="text-[#d90429]" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d90429] to-primary p-0.5 shrink-0">
+              <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
+                <Newspaper size={20} className="text-[#ff5c70]" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-text group-hover:text-[#d90429] transition-colors font-heading">LMF Blog</h3>
+              <h3 className="text-base font-bold text-text group-hover:text-primary-light transition-colors font-heading">LMF Blog</h3>
               <p className="text-sm text-muted">Latest AI news, model analysis, and deep dives</p>
             </div>
-            <ArrowRight size={18} className="text-muted group-hover:text-[#d90429] transition-colors shrink-0 transform group-hover:translate-x-1 transition-transform" />
+            <ArrowRight size={18} className="text-muted group-hover:text-primary-light transition-colors shrink-0 transform group-hover:translate-x-1" />
           </a>
-        </motion.section>
 
-        {/* Feature Cards */}
-        <motion.section variants={itemVariants} className="mb-24">
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-3">
             {features.map((feature) => (
               <motion.div
                 key={feature.titleKey}
-                whileHover={{ scale: 1.02, y: -4 }}
+                whileHover={{ scale: 1.02, y: -3 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="group relative p-6 rounded-2xl bg-surface border border-border hover:border-primary/30 transition-all duration-300"
+                className="group relative rounded-2xl border border-border bg-surface/60 p-4 transition-all duration-300 hover:border-primary/35"
               >
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.gradient} p-0.5 mb-4`}>
-                  <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
-                    <feature.icon size={22} className="text-text" />
+                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} p-0.5`}>
+                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
+                    <feature.icon size={18} className="text-text" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold text-text mb-2 font-heading">{t.features[feature.titleKey]}</h3>
-                <p className="text-sm text-muted leading-relaxed">{t.features[feature.descKey]}</p>
-                
-                {/* Hover glow effect */}
-                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
+                <h3 className="text-sm font-semibold text-text font-heading">{t.features[feature.titleKey]}</h3>
               </motion.div>
             ))}
           </div>
