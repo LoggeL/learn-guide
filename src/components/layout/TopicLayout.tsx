@@ -40,7 +40,7 @@ export function TopicLayout({
   const localizeHref = (href: string) => `/${locale}${href}`
 
   return (
-    <div className="w-full max-w-4xl xl:max-w-5xl 2xl:max-w-6xl relative">
+    <div className="mx-auto w-full max-w-4xl xl:max-w-6xl 2xl:max-w-[1380px] relative">
       {/* Topic-local glow */}
       <div className="absolute -top-32 right-0 w-[520px] h-[520px] bg-gradient-radial from-primary/12 via-secondary/5 to-transparent blur-3xl pointer-events-none" />
       
@@ -98,7 +98,7 @@ export function TopicLayout({
       </header>
 
       {/* Content grid: article + right sidebar TOC on desktop */}
-      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_220px] xl:gap-7 xl:items-start">
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_220px] xl:gap-8 2xl:gap-10 xl:items-start">
         {/* Left column: article + nav */}
         <div>
           <article ref={articleRef} className="space-y-8 relative">
