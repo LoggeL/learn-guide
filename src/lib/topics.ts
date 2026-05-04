@@ -124,6 +124,7 @@ export const topics: Topic[] = [
               { id: 'moe', name: 'Mixture of Experts', path: '/ai/llm/moe', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'quantization', name: 'Quantization', path: '/ai/llm/quantization', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'nested-learning', name: 'Nested Learning', path: '/ai/llm/nested-learning', difficulty: 'expert', lastUpdated: '2026-02-09' },
+              { id: 'mtp', name: 'Multi-Token Prediction (MTP)', path: '/ai/llm/mtp', difficulty: 'expert', lastUpdated: '2026-05-04' },
               { id: 'distillation', name: 'Distillation', path: '/ai/llm/distillation', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'lora', name: 'Fine-Tuning & LoRA', path: '/ai/llm/lora', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'speculative-decoding', name: 'Speculative Decoding', path: '/ai/llm/speculative-decoding', difficulty: 'expert', lastUpdated: '2026-02-09' },
@@ -270,6 +271,7 @@ export const learningPath: string[] = [
   'moe',
   'quantization',
   'nested-learning',
+  'mtp',
   'speculative-decoding',
   // Diffusion Models
   'diffusion-fundamentals',

@@ -1,4 +1,5 @@
 export const TOPIC_DATES: Record<string, string> = {
+  'mtp': '2026-05-04',
   'custom-chips': '2026-04-29',
   'reinforcement-learning': '2026-04-29',
   'world-models': '2026-02-15',

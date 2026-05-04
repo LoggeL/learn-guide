@@ -49,6 +49,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'moe': 'expert',
   'quantization': 'expert',
   'nested-learning': 'expert',
+  'mtp': 'expert',
   'distillation': 'intermediate',
   'lora': 'intermediate',
   'speculative-decoding': 'expert',
