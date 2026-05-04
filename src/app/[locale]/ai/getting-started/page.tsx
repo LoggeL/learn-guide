@@ -3,7 +3,7 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { GettingStartedPlayground, LearningPath } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
-import { Globe, Zap, Cpu, ExternalLink, Clock, Code, Lightbulb, ArrowRight } from 'lucide-react'
+import { Globe, ExternalLink, Clock, Code, Lightbulb, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default function GettingStartedPage() {
@@ -39,53 +39,18 @@ export default function GettingStartedPage() {
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{gs.getKeyTitle}</h2>
         <p className="text-muted leading-relaxed mb-6">{gs.getKeyDesc}</p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {/* OpenRouter */}
+        <div className="max-w-2xl">
           <div className="rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20 p-5">
             <div className="flex items-center gap-2 mb-3">
               <Globe className="w-5 h-5 text-violet-400" />
-              <h3 className="text-lg font-bold font-heading text-violet-400">OpenRouter</h3>
+              <h3 className="text-lg font-bold font-heading text-violet-400">OpenRouter · Auto (Free)</h3>
             </div>
-            <p className="text-sm text-muted mb-4">{gs.openrouterDesc}</p>
+            <p className="text-sm text-muted mb-4">{gs.openrouterAutoOnlyDesc}</p>
             <a
               href="https://openrouter.ai/keys"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm text-violet-400 hover:text-violet-300 transition-colors"
-            >
-              {gs.getKey} <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
-
-          {/* Groq */}
-          <div className="rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Zap className="w-5 h-5 text-orange-400" />
-              <h3 className="text-lg font-bold font-heading text-orange-400">Groq</h3>
-            </div>
-            <p className="text-sm text-muted mb-4">{gs.groqDesc}</p>
-            <a
-              href="https://console.groq.com/keys"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-orange-400 hover:text-orange-300 transition-colors"
-            >
-              {gs.getKey} <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          </div>
-
-          {/* Cerebras */}
-          <div className="rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <Cpu className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-lg font-bold font-heading text-cyan-400">Cerebras</h3>
-            </div>
-            <p className="text-sm text-muted mb-4">{gs.cerebrasDesc}</p>
-            <a
-              href="https://cloud.cerebras.ai/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               {gs.getKey} <ExternalLink className="w-3.5 h-3.5" />
             </a>

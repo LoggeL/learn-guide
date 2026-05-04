@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
-import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Zap, Globe, AlertTriangle, Loader2, ShieldCheck, Clock, Cpu, MessageSquare, Hash } from 'lucide-react'
+import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Globe, AlertTriangle, Loader2, ShieldCheck, Clock, MessageSquare, Hash, Zap } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
@@ -23,7 +23,7 @@ const codeStyle = {
   },
 }
 
-type Provider = 'openrouter' | 'groq' | 'cerebras'
+type Provider = 'openrouter'
 
 interface ProviderConfig {
   name: string
@@ -37,31 +37,9 @@ const PROVIDERS: Record<Provider, ProviderConfig> = {
     name: 'OpenRouter',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
     models: [
-      { id: 'openrouter/free', name: 'Auto (Free)' },
-      { id: 'meta-llama/llama-3.3-70b-instruct:free', name: 'Llama 3.3 70B' },
-      { id: 'google/gemma-3-12b-it:free', name: 'Gemma 3 12B' },
-      { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B' },
+      { id: 'openrouter/auto:free', name: 'Auto (Free)' },
     ],
     keyPrefix: 'sk-or-',
-  },
-  groq: {
-    name: 'Groq',
-    endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-    models: [
-      { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B' },
-      { id: 'llama-3.1-8b-instant', name: 'Llama 3.1 8B' },
-    ],
-    keyPrefix: 'gsk_',
-  },
-  cerebras: {
-    name: 'Cerebras',
-    endpoint: 'https://api.cerebras.ai/v1/chat/completions',
-    models: [
-      { id: 'llama3.1-8b', name: 'Llama 3.1 8B' },
-      { id: 'llama-3.3-70b', name: 'Llama 3.3 70B' },
-      { id: 'gpt-oss-120b', name: 'GPT-OSS 120B' },
-    ],
-    keyPrefix: 'csk-',
   },
 }
 
@@ -96,9 +74,9 @@ export function GettingStartedPlayground() {
   const { t } = useTranslation()
   const gs = t.gettingStarted
 
-  const [provider, setProvider] = useState<Provider>('groq')
+  const [provider, setProvider] = useState<Provider>('openrouter')
   const [apiKey, setApiKey] = useState('')
-  const [model, setModel] = useState(PROVIDERS.groq.models[0].id)
+  const [model, setModel] = useState(PROVIDERS.openrouter.models[0].id)
   const [message, setMessage] = useState('')
   const [response, setResponse] = useState('')
   const [rawJson, setRawJson] = useState('')
@@ -119,14 +97,6 @@ export function GettingStartedPlayground() {
   const [showKey, setShowKey] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const responseRef = useRef<HTMLDivElement>(null)
-
-  // Switch provider
-  const switchProvider = (p: Provider) => {
-    setProvider(p)
-    setModel(PROVIDERS[p].models[0].id)
-    setError('')
-    setApiKey('')
-  }
 
   const config = PROVIDERS[provider]
 
@@ -252,21 +222,13 @@ console.log(data.choices[0].message.content);`
 
   return (
     <div className="space-y-6">
-      {/* Provider Selector */}
-      <div className="flex flex-wrap gap-3">
-        {(Object.keys(PROVIDERS) as Provider[]).map(p => (
-          <button
-            key={p}
-            onClick={() => switchProvider(p)}
-            className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-              provider === p
-                ? 'bg-primary/20 text-primary-light border border-primary/40'
-                : 'bg-surface/50 text-muted border border-border hover:border-primary/30 hover:text-text'
-            }`}
-          >
-            {PROVIDERS[p].name}
-          </button>
-        ))}
+      {/* Provider Notice */}
+      <div className="rounded-xl border border-violet-500/25 bg-violet-500/10 p-4">
+        <div className="flex items-center gap-2 mb-1">
+          <Globe className="w-4 h-4 text-violet-400" />
+          <span className="text-sm font-semibold text-violet-300">OpenRouter · Auto (Free)</span>
+        </div>
+        <p className="text-xs leading-relaxed text-muted">{gs.openrouterAutoOnlyNote}</p>
       </div>
 
       {/* API Key Input */}
