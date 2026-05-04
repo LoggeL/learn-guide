@@ -49,12 +49,12 @@ function TopicNode({
   }, [containsActive])
 
   const rowClasses = clsx(
-    'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200',
+    'flex items-center gap-2 py-2 px-3 rounded-lg cursor-pointer transition-all duration-200 border-l-2',
     isActive
-      ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
+      ? 'bg-gradient-to-r from-primary/18 to-primary/8 text-primary-light border-primary shadow-[inset_0_0_18px_rgba(168,85,247,0.08)]'
       : isFavourite
-        ? 'bg-gradient-to-r from-pink-500/10 to-rose-500/5 text-pink-300 hover:from-pink-500/15 hover:to-rose-500/10 border-l-2 border-pink-500/40'
-        : 'hover:bg-surface-elevated text-muted hover:text-text'
+        ? 'bg-gradient-to-r from-pink-500/10 to-rose-500/5 text-pink-300 hover:from-pink-500/15 hover:to-rose-500/10 border-pink-500/40'
+        : 'border-transparent hover:bg-surface-elevated/80 text-muted hover:text-text'
   )
   const rowStyle = { paddingLeft: `${level * 12 + 12}px` }
 
@@ -167,7 +167,7 @@ function LearningPathView({
             className={clsx(
               'flex items-center gap-2 py-2 px-3 rounded-lg transition-all duration-200 group',
               isActive
-                ? 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary-light border-l-2 border-primary'
+                ? 'bg-gradient-to-r from-primary/18 to-primary/8 text-primary-light border-primary shadow-[inset_0_0_18px_rgba(168,85,247,0.08)]'
                 : isVisited
                   ? 'text-muted hover:bg-surface-elevated hover:text-text border-l-2 border-emerald-500/30'
                   : 'text-subtle hover:bg-surface-elevated hover:text-text border-l-2 border-transparent'
@@ -342,7 +342,7 @@ export function Sidebar() {
       <aside
         className={clsx(
           'fixed left-0 top-0 h-screen flex flex-col z-40 transition-all duration-300',
-          'bg-surface/80 backdrop-blur-xl border-r border-border',
+          'bg-background-alt/95 backdrop-blur-xl border-r border-border/80 shadow-[18px_0_60px_rgba(0,0,0,0.22)]',
           // Desktop behavior
           'hidden md:flex',
           isCollapsed ? 'md:w-16' : 'md:w-72',
@@ -351,10 +351,10 @@ export function Sidebar() {
         )}
       >
         {/* Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-border/80 p-4">
           {(!isCollapsed || isMobileOpen) && (
             <Link href={`/${locale}`} className="flex items-center gap-3 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
                 </div>
@@ -369,7 +369,7 @@ export function Sidebar() {
           )}
           {isCollapsed && !isMobileOpen && (
             <Link href={`/${locale}`} className="mx-auto">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
                 </div>
@@ -407,7 +407,7 @@ export function Sidebar() {
             onClick={() => setSearchOpen(true)}
             className={clsx(
               'flex items-center gap-3 px-4 py-2.5 text-sm rounded-xl transition-all duration-200',
-              'bg-background border border-border hover:border-primary/40 hover:bg-surface-elevated',
+              'bg-background/70 border border-border/80 hover:border-primary/45 hover:bg-surface-elevated/90',
               isCollapsed && !isMobileOpen ? 'w-10 h-10 justify-center p-0' : 'w-full'
             )}
           >
@@ -434,8 +434,8 @@ export function Sidebar() {
               className={clsx(
                 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-1 justify-center',
                 viewMode === 'default'
-                  ? 'bg-surface-elevated text-text'
-                  : 'text-subtle hover:text-muted hover:bg-surface-elevated/50'
+                  ? 'bg-primary/15 text-primary-light border border-primary/25'
+                  : 'text-subtle border border-transparent hover:text-muted hover:bg-surface-elevated/50'
               )}
             >
               <LayoutList size={12} />
@@ -447,8 +447,8 @@ export function Sidebar() {
               className={clsx(
                 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all flex-1 justify-center',
                 viewMode === 'learning-path'
-                  ? 'bg-surface-elevated text-text'
-                  : 'text-subtle hover:text-muted hover:bg-surface-elevated/50'
+                  ? 'bg-primary/15 text-primary-light border border-primary/25'
+                  : 'text-subtle border border-transparent hover:text-muted hover:bg-surface-elevated/50'
               )}
             >
               <ListOrdered size={12} />
@@ -472,7 +472,7 @@ export function Sidebar() {
               </div>
               <div className="h-1.5 bg-surface-elevated rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-primary to-accent rounded-full"
+                  className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${learningPathTopics.length > 0 ? (visitedLPCount / learningPathTopics.length) * 100 : 0}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -492,7 +492,7 @@ export function Sidebar() {
             />
           ) : (
             <>
-              <div className="text-[10px] uppercase tracking-widest text-subtle font-semibold px-3 mb-2">
+              <div className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-subtle">
                 {t.common.topics}
               </div>
               {topicTree.map((topic) => (
@@ -511,7 +511,7 @@ export function Sidebar() {
         {/* Footer with LMF branding */}
         <div
           className={clsx(
-            'p-4 border-t border-border',
+            'p-4 border-t border-border/80',
             isCollapsed && !isMobileOpen ? 'text-center' : ''
           )}
         >

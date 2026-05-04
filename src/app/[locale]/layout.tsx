@@ -78,7 +78,7 @@ export default function LocaleLayout({
 
   return (
     <html lang={locale} className="dark overflow-x-hidden">
-      <body className="bg-background text-text min-h-screen antialiased overflow-x-hidden">
+      <body className="bg-background text-text min-h-screen antialiased overflow-x-hidden bg-ambient">
         {jsonLdItems.map((item, i) => (
           <script
             key={i}
@@ -86,15 +86,17 @@ export default function LocaleLayout({
             dangerouslySetInnerHTML={{ __html: JSON.stringify(item) }}
           />
         ))}
-        {/* Ambient background gradient */}
+        {/* Ambient dashboard grid */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-secondary/5 rounded-full blur-[100px]" />
+          <div className="absolute inset-0 opacity-[0.035] [background-image:linear-gradient(rgba(148,163,184,.55)_1px,transparent_1px),linear-gradient(90deg,rgba(148,163,184,.55)_1px,transparent_1px)] [background-size:56px_56px]" />
+          <div className="absolute top-0 left-[18rem] h-px w-[calc(100vw-18rem)] bg-gradient-to-r from-primary/40 via-secondary/20 to-transparent" />
+          <div className="absolute top-[-12rem] left-1/3 h-[34rem] w-[34rem] rounded-full bg-primary/10 blur-[120px]" />
+          <div className="absolute bottom-[-10rem] right-[8rem] h-[28rem] w-[28rem] rounded-full bg-secondary/10 blur-[110px]" />
         </div>
         
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <Sidebar />
-          <main className="main-content p-6 md:p-10 overflow-auto min-h-screen relative">
+          <main className="main-content min-h-screen overflow-auto relative px-4 py-5 md:px-6 md:py-6 xl:px-7">
             {children}
           </main>
         </LocaleProvider>

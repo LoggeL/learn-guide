@@ -116,9 +116,9 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
 
   return (
     <aside className="hidden xl:block xl:col-start-2">
-      <div className="fixed top-8 max-h-[calc(100vh-6rem)] overflow-y-auto pr-1 w-[200px]">
-        <div className="flex items-center gap-2 mb-3 px-1">
-          <List size={13} className="text-subtle shrink-0" />
+      <div className="fixed top-6 max-h-[calc(100vh-3rem)] w-[200px] overflow-y-auto rounded-2xl border border-border/80 bg-background/55 p-4 pr-3 shadow-card backdrop-blur-xl">
+        <div className="mb-3 flex items-center gap-2 px-1">
+          <List size={13} className="text-primary-light shrink-0" />
           <span className="text-xs font-semibold text-gradient uppercase tracking-widest">On this page</span>
         </div>
         <nav aria-label="Table of contents">
@@ -133,8 +133,8 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
                   }}
                   className={`block text-xs py-1.5 px-2 rounded-r border-l-2 transition-all duration-150 leading-snug ${
                     activeId === id
-                      ? 'border-primary text-primary-light font-medium bg-primary/5'
-                      : 'border-transparent text-muted hover:text-text hover:border-border hover:bg-surface/50'
+                      ? 'border-primary text-primary-light font-medium bg-primary/10'
+                      : 'border-transparent text-muted hover:text-text hover:border-border hover:bg-surface/60'
                   }`}
                 >
                   {text}

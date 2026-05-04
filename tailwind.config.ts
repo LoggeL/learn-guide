@@ -10,16 +10,16 @@ const config: Config = {
     extend: {
       colors: {
         background: {
-          DEFAULT: '#09090b',
-          alt: '#0c0c10',
+          DEFAULT: '#050914',
+          alt: '#07101d',
         },
         surface: {
-          DEFAULT: '#131318',
-          elevated: '#1a1a22',
+          DEFAULT: '#0b1220',
+          elevated: '#0f172a',
         },
         border: {
-          DEFAULT: '#27272a',
-          subtle: '#1f1f23',
+          DEFAULT: '#1e293b',
+          subtle: 'rgba(148,163,184,0.16)',
         },
         primary: {
           DEFAULT: '#a855f7',
@@ -30,13 +30,13 @@ const config: Config = {
           DEFAULT: '#22d3ee',
           light: '#67e8f9',
         },
-        accent: '#f472b6',
-        muted: '#a1a1aa',
-        subtle: '#71717a',
-        text: '#fafafa',
-        success: '#4ade80',
-        warning: '#fbbf24',
-        error: '#f87171',
+        accent: '#14b8a6',
+        muted: '#a7b3c7',
+        subtle: '#7b8aa3',
+        text: '#f8fafc',
+        success: '#14b8a6',
+        warning: '#f59e0b',
+        error: '#ef4444',
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'sans-serif'],
@@ -48,8 +48,8 @@ const config: Config = {
         '3xl': '1.5rem',
       },
       boxShadow: {
-        'glow': '0 0 40px -10px rgba(168, 85, 247, 0.4)',
-        'glow-lg': '0 0 60px -15px rgba(168, 85, 247, 0.5)',
+        'glow': '0 0 28px -10px rgba(168, 85, 247, 0.45)',
+        'glow-lg': '0 0 48px -15px rgba(168, 85, 247, 0.5)',
         'card': '0 20px 40px -15px rgba(0, 0, 0, 0.5)',
       },
       animation: {
