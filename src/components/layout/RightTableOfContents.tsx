@@ -51,25 +51,46 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
     if (entries.length === 0) return
     observerRef.current?.disconnect()
 
-    const observer = new IntersectionObserver(
-      (obs) => {
-        const visible = obs
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-        if (visible.length > 0) {
-          setActiveId(visible[0].target.id)
-        }
-      },
-      { rootMargin: '0px 0px -70% 0px', threshold: 0 }
-    )
+    const updateActiveHeading = () => {
+      const headingPositions = entries
+        .map(({ id }) => {
+          const el = document.getElementById(id)
+          return el ? { id, top: el.getBoundingClientRect().top } : null
+        })
+        .filter((item): item is { id: string; top: number } => item !== null)
+
+      if (headingPositions.length === 0) return
+
+      const activationLine = 170
+      const passed = headingPositions.filter((item) => item.top <= activationLine)
+      const nextActive = passed.length > 0
+        ? passed[passed.length - 1].id
+        : headingPositions[0].id
+
+      setActiveId((current) => current === nextActive ? current : nextActive)
+    }
+
+    const observer = new IntersectionObserver(updateActiveHeading, {
+      root: null,
+      rootMargin: '-120px 0px -65% 0px',
+      threshold: [0, 1],
+    })
 
     entries.forEach(({ id }) => {
       const el = document.getElementById(id)
       if (el) observer.observe(el)
     })
 
+    updateActiveHeading()
+    window.addEventListener('scroll', updateActiveHeading, { passive: true })
+    window.addEventListener('resize', updateActiveHeading)
+
     observerRef.current = observer
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('scroll', updateActiveHeading)
+      window.removeEventListener('resize', updateActiveHeading)
+    }
   }, [entries])
 
   // Scroll active pill into view on mobile
