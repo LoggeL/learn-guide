@@ -240,75 +240,112 @@ function validateTopics(topicList: Topic[]): void {
 validateTopics(topics)
 
 /**
- * A curated learning path: topic IDs in recommended study order,
- * from foundational beginner topics up to expert-level content.
+ * A curated learning path grouped into higher-level lecture blocks.
+ * Keep every leaf topic represented here so the learning-path sidebar is complete.
  */
-export const learningPath: string[] = [
-  // Foundation
-  'getting-started',
-  'neural-networks',
-  'training',
-  'tokenization',
-  'temperature',
-  'embeddings',
-  'prompt-basics',
-  'local-inference',
-  // Understanding LLMs
-  'vision',
-  'multimodality',
-  'gradient-descent',
-  'attention',
-  'transformer-architecture',
-  'rag',
-  'context-rot',
-  'advanced-prompting',
-  'system-prompts',
-  // LLM Architecture & Training
-  'llm-training',
-  'training-data',
-  'distillation',
-  'lora',
-  'moe',
-  'quantization',
-  'nested-learning',
-  'mtp',
-  'speculative-decoding',
-  // Diffusion Models
-  'diffusion-fundamentals',
-  'text-diffusion',
-  'image-diffusion',
-  // Inference & Performance
-  'batching',
-  'vram-calc',
-  'prompt-caching',
-  'kv-cache',
-  // AI Agents
-  'agent-loop',
-  'agent-context',
-  'tool-design',
-  'programmatic-tools',
-  'memory',
-  'skills',
-  'mcp',
-  'agentic-patterns',
-  'orchestration',
-  'agent-problems',
-  'agent-security',
-  'evaluation',
-  'powerful-agents',
-  // Advanced Vision
-  'visual-challenges',
-  'agentic-vision',
-  // World Models
-  'world-models',
-  // Safety & Industry
-  'bias',
-  'responsible-ai',
-  'european-ai',
-  'open-source',
-  'logges-favourite-model',
-  'tier-list',
+export interface LearningPathGroup {
+  id: string
+  topicIds: string[]
+}
+
+export const learningPathGroups: LearningPathGroup[] = [
+  {
+    id: 'lecture-foundations',
+    topicIds: [
+      'getting-started',
+      'neural-networks',
+      'training',
+      'gradient-descent',
+      'tokenization',
+      'temperature',
+      'embeddings',
+      'prompt-basics',
+    ],
+  },
+  {
+    id: 'lecture-llm-core',
+    topicIds: [
+      'attention',
+      'transformer-architecture',
+      'llm-training',
+      'training-data',
+      'context-rot',
+      'rag',
+      'advanced-prompting',
+      'system-prompts',
+    ],
+  },
+  {
+    id: 'lecture-modalities',
+    topicIds: [
+      'vision',
+      'visual-challenges',
+      'agentic-vision',
+      'multimodality',
+      'diffusion-fundamentals',
+      'text-diffusion',
+      'image-diffusion',
+    ],
+  },
+  {
+    id: 'lecture-architecture',
+    topicIds: [
+      'distillation',
+      'lora',
+      'moe',
+      'quantization',
+      'nested-learning',
+      'mtp',
+      'speculative-decoding',
+      'abliteration',
+    ],
+  },
+  {
+    id: 'lecture-inference',
+    topicIds: [
+      'local-inference',
+      'batching',
+      'vram-calc',
+      'prompt-caching',
+      'kv-cache',
+    ],
+  },
+  {
+    id: 'lecture-agents',
+    topicIds: [
+      'agent-loop',
+      'agent-context',
+      'chat-compaction',
+      'tool-design',
+      'programmatic-tools',
+      'memory',
+      'skills',
+      'mcp',
+      'agentic-patterns',
+      'orchestration',
+      'agent-problems',
+      'agent-security',
+      'evaluation',
+      'powerful-agents',
+    ],
+  },
+  {
+    id: 'lecture-frontier',
+    topicIds: [
+      'reinforcement-learning',
+      'world-models',
+      'bias',
+      'responsible-ai',
+      'european-ai',
+      'open-source',
+      'custom-chips',
+      'logges-favourite-model',
+      'tier-list',
+    ],
+  },
 ]
+
+export const learningPath: string[] = learningPathGroups.flatMap((group) => group.topicIds)
 
 export function searchTopics(query: string): Topic[] {
   const q = query.toLowerCase()

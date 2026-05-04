@@ -9,7 +9,7 @@ import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { DIFFICULTY_STYLES } from '@/lib/difficulty'
-import { getTopicCategories, flattenTopics, learningPath, type Topic } from '@/lib/topics'
+import { getTopicCategories, flattenTopics, learningPath, learningPathGroups, type LearningPathGroup, type Topic } from '@/lib/topics'
 
 const topicTree = getTopicCategories()
 
@@ -228,65 +228,100 @@ function TopicNode({
 }
 
 function LearningPathView({
-  topics,
+  groups,
+  allTopics,
   visitedPaths,
   pathname,
   locale,
   onNavigate,
   getTopicName,
 }: {
-  topics: Topic[]
+  groups: LearningPathGroup[]
+  allTopics: Topic[]
   visitedPaths: Set<string>
   pathname: string
   locale: string
   onNavigate?: () => void
   getTopicName: (key: string) => string
 }) {
+  let absoluteIndex = 0
+
   return (
-    <div className="space-y-0.5">
-      {topics.map((topic, index) => {
-        const localePath = `/${locale}${topic.path}`
-        const isActive = localePath === pathname
-        const isVisited = visitedPaths.has(localePath)
+    <div className="space-y-4">
+      {groups.map((group, groupIndex) => {
+        const topics = group.topicIds
+          .map(id => allTopics.find(t => t.id === id))
+          .filter((t): t is Topic => t !== undefined)
+        const visitedInGroup = topics.filter(t => t.path && visitedPaths.has(`/${locale}${t.path}`)).length
+        const groupTitle = getTopicName(group.id)
 
         return (
-          <Link
-            key={topic.id}
-            href={localePath}
-            onClick={onNavigate}
-            className={clsx(
-              'flex items-center gap-2 py-2 px-3 rounded-lg transition-all duration-200 group',
-              isActive
-                ? 'bg-gradient-to-r from-primary/18 to-primary/8 text-primary-light border-primary shadow-[inset_0_0_18px_rgba(168,85,247,0.08)]'
-                : isVisited
-                  ? 'text-muted hover:bg-surface-elevated hover:text-text border-l-2 border-emerald-500/30'
-                  : 'text-subtle hover:bg-surface-elevated hover:text-text border-l-2 border-transparent'
-            )}
-          >
-            <span className="text-[10px] font-mono text-subtle w-5 shrink-0 text-right">
-              {index + 1}
-            </span>
-            {isActive ? (
-              <CheckCircle2 size={11} className="text-primary shrink-0" />
-            ) : isVisited ? (
-              <CheckCircle2 size={11} className="text-emerald-500/70 shrink-0" />
-            ) : (
-              <Circle size={11} className="text-subtle/40 shrink-0" />
-            )}
-            <span className="flex-1 text-sm font-medium truncate">
-              {getTopicName(topic.id)}
-            </span>
-            {topic.difficulty && !isActive && (
-              <span className={clsx(
-                'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0',
-                DIFFICULTY_STYLES[topic.difficulty].color,
-                DIFFICULTY_STYLES[topic.difficulty].bg,
-                DIFFICULTY_STYLES[topic.difficulty].border,
-              )}>
-                {DIFFICULTY_STYLES[topic.difficulty].label}
-              </span>
-            )}
-          </Link>
+          <section key={group.id} className="rounded-xl border border-border/70 bg-background/35 p-2.5">
+            <div className="mb-2 flex items-center justify-between gap-2 px-1">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-light/80">
+                  {String(groupIndex + 1).padStart(2, '0')} · {groupTitle}
+                </div>
+                <div className="mt-1 text-[10px] text-subtle">
+                  {visitedInGroup}/{topics.length} {getTopicName('topicsCompleted')}
+                </div>
+              </div>
+              <div className="h-1.5 w-12 overflow-hidden rounded-full bg-surface-elevated">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                  style={{ width: `${topics.length > 0 ? (visitedInGroup / topics.length) * 100 : 0}%` }}
+                />
+              </div>
+            </div>
+            <div className="space-y-0.5">
+              {topics.map((topic) => {
+                absoluteIndex += 1
+                const localePath = `/${locale}${topic.path}`
+                const isActive = localePath === pathname
+                const isVisited = visitedPaths.has(localePath)
+
+                return (
+                  <Link
+                    key={topic.id}
+                    href={localePath}
+                    onClick={onNavigate}
+                    className={clsx(
+                      'flex items-center gap-2 py-2 px-2 rounded-lg transition-all duration-200 group',
+                      isActive
+                        ? 'bg-gradient-to-r from-primary/18 to-primary/8 text-primary-light border-primary shadow-[inset_0_0_18px_rgba(168,85,247,0.08)]'
+                        : isVisited
+                          ? 'text-muted hover:bg-surface-elevated hover:text-text border-l-2 border-emerald-500/30'
+                          : 'text-subtle hover:bg-surface-elevated hover:text-text border-l-2 border-transparent'
+                    )}
+                  >
+                    <span className="text-[10px] font-mono text-subtle w-5 shrink-0 text-right">
+                      {absoluteIndex}
+                    </span>
+                    {isActive ? (
+                      <CheckCircle2 size={11} className="text-primary shrink-0" />
+                    ) : isVisited ? (
+                      <CheckCircle2 size={11} className="text-emerald-500/70 shrink-0" />
+                    ) : (
+                      <Circle size={11} className="text-subtle/40 shrink-0" />
+                    )}
+                    <span className="flex-1 text-sm font-medium truncate">
+                      {getTopicName(topic.id)}
+                    </span>
+                    {topic.difficulty && !isActive && (
+                      <span className={clsx(
+                        'text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0',
+                        DIFFICULTY_STYLES[topic.difficulty].color,
+                        DIFFICULTY_STYLES[topic.difficulty].bg,
+                        DIFFICULTY_STYLES[topic.difficulty].border,
+                      )}>
+                        {DIFFICULTY_STYLES[topic.difficulty].label}
+                      </span>
+                    )}
+                  </Link>
+                )
+              })}
+            </div>
+          </section>
         )
       })}
     </div>
@@ -313,6 +348,9 @@ export function Sidebar() {
     }
     if (key in t.categories) {
       return t.categories[key as keyof typeof t.categories]
+    }
+    if (key in t.learningPath) {
+      return t.learningPath[key as keyof typeof t.learningPath]
     }
     return key
   }
@@ -573,7 +611,8 @@ export function Sidebar() {
 
           {viewMode === 'learning-path' ? (
             <LearningPathView
-              topics={learningPathTopics}
+              groups={learningPathGroups}
+              allTopics={allTopics}
               visitedPaths={visitedPaths}
               pathname={pathname}
               locale={locale}
