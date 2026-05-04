@@ -136,8 +136,8 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
   }
 
   return (
-    <aside data-right-toc className="hidden xl:block xl:col-start-2">
-      <div className="w-full overflow-y-auto rounded-2xl border border-border/80 bg-background/55 p-4 pr-3 shadow-card backdrop-blur-xl">
+    <aside data-right-toc className="hidden xl:col-start-2 xl:block xl:self-stretch">
+      <div className="sticky top-24 max-h-[calc(100vh-7rem)] w-full overflow-y-auto rounded-2xl border border-border/80 bg-background/55 p-4 pr-3 shadow-card backdrop-blur-xl">
         <div className="mb-3 flex items-center gap-2 px-1">
           <List size={13} className="text-primary-light shrink-0" />
           <span className="text-xs font-semibold text-gradient uppercase tracking-widest">On this page</span>

@@ -77,8 +77,8 @@ export default function LocaleLayout({
   const jsonLdItems = getHomepageJsonLd(locale)
 
   return (
-    <html lang={locale} className="dark overflow-x-hidden">
-      <body className="bg-background text-text min-h-screen antialiased overflow-x-hidden bg-ambient">
+    <html lang={locale} className="dark overflow-x-clip">
+      <body className="bg-background text-text min-h-screen antialiased overflow-x-clip bg-ambient">
         {jsonLdItems.map((item, i) => (
           <script
             key={i}
@@ -96,7 +96,7 @@ export default function LocaleLayout({
         
         <LocaleProvider locale={locale} dictionary={dictionary}>
           <Sidebar />
-          <main className="main-content min-h-screen overflow-auto relative px-4 py-5 md:px-6 md:py-6 xl:px-7">
+          <main className="main-content min-h-screen overflow-visible relative px-4 py-5 md:px-6 md:py-6 xl:px-7">
             {children}
           </main>
         </LocaleProvider>
