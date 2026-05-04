@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle } from 'lucide-react'
+import { ChevronRight, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
@@ -12,6 +12,86 @@ import { DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { getTopicCategories, flattenTopics, learningPath, type Topic } from '@/lib/topics'
 
 const topicTree = getTopicCategories()
+
+const TOPIC_ICONS: Record<string, typeof Brain> = {
+  ai: Brain,
+  agents: Bot,
+  llm: Cpu,
+  diffusion: Sparkles,
+  'ml-fundamentals': GraduationCap,
+  prompting: MessageSquare,
+  safety: Shield,
+  industry: Building2,
+  'llm-inference': Gauge,
+  'agents-core': Brain,
+  'agents-building': Wrench,
+  'agents-patterns': Network,
+  'agents-quality': Shield,
+  'agents-frontier': Sparkles,
+  'llm-overview': BookOpen,
+  'llm-fundamentals': GraduationCap,
+  'llm-behavior': Zap,
+  'llm-capabilities': Sparkles,
+  'llm-architecture': Cpu,
+  'agent-loop': Route,
+  'agent-context': Layers,
+  'chat-compaction': Database,
+  'agent-problems': Shield,
+  'agent-security': Lock,
+  'powerful-agents': Bot,
+  'agentic-patterns': Network,
+  mcp: Network,
+  'tool-design': Wrench,
+  'programmatic-tools': Code2,
+  memory: Database,
+  orchestration: GitBranch,
+  evaluation: Gauge,
+  skills: Sparkles,
+  'tier-list': Gauge,
+  tokenization: Code2,
+  embeddings: Database,
+  rag: Database,
+  'context-rot': Layers,
+  temperature: Gauge,
+  attention: Eye,
+  vision: Eye,
+  'visual-challenges': ImageIcon,
+  'agentic-vision': Eye,
+  multimodality: Layers,
+  'transformer-architecture': Cpu,
+  'llm-training': GraduationCap,
+  'training-data': Database,
+  moe: Network,
+  quantization: Cpu,
+  'nested-learning': Layers,
+  distillation: Zap,
+  lora: Wrench,
+  abliteration: Shield,
+  'speculative-decoding': Zap,
+  'kv-cache': Database,
+  'prompt-caching': Database,
+  batching: Layers,
+  'local-inference': Cpu,
+  'vram-calc': Gauge,
+  'neural-networks': Brain,
+  'gradient-descent': Route,
+  training: GraduationCap,
+  'reinforcement-learning': Route,
+  'world-models': Globe2,
+  'prompt-basics': MessageSquare,
+  'advanced-prompting': Sparkles,
+  'system-prompts': Lock,
+  bias: Shield,
+  'responsible-ai': Shield,
+  'european-ai': Globe2,
+  'open-source': Github,
+  'custom-chips': Cpu,
+  'logges-favourite-model': Heart,
+}
+
+function getTopicIcon(id: string, hasChildren?: boolean) {
+  return TOPIC_ICONS[id] ?? (hasChildren ? Layers : BookOpen)
+}
 
 function hasActivePath(topic: Topic, pathname: string, locale: string): boolean {
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
@@ -58,9 +138,11 @@ function TopicNode({
   )
   const rowStyle = { paddingLeft: `${level * 12 + 12}px` }
 
+  const Icon = getTopicIcon(topic.id, hasChildren)
+
   const rowContent = (
     <>
-      {hasChildren && (
+      {hasChildren ? (
         <motion.div
           animate={{ rotate: expanded ? 90 : 0 }}
           transition={{ duration: 0.15 }}
@@ -73,10 +155,18 @@ function TopicNode({
         >
           <ChevronRight size={12} />
         </motion.div>
+      ) : (
+        <span className="w-3 shrink-0" />
       )}
-      {!hasChildren && !isFavourite && <span className="w-3" />}
-      {!hasChildren && isFavourite && <Heart size={12} className="text-pink-400" fill="currentColor" />}
-      <span className={clsx('flex-1 text-sm', localePath ? 'font-medium' : 'font-semibold')}>
+      <Icon
+        size={13}
+        className={clsx(
+          'shrink-0 transition-colors',
+          isActive ? 'text-primary-light' : isFavourite ? 'text-pink-400' : hasChildren ? 'text-secondary-light/80' : 'text-subtle'
+        )}
+        {...(isFavourite ? { fill: 'currentColor' } : {})}
+      />
+      <span className={clsx('flex-1 truncate text-sm', localePath ? 'font-medium' : 'font-semibold')}>
         {getTopicName(topic.id)}
       </span>
       {topic.difficulty && !isActive && (
