@@ -128,10 +128,10 @@ export const models: ModelEntry[] = [
 
   // B-Tier
   {
-    id: 'gemini-3-flash',
+    id: 'gemini-35-flash',
     nameKey: 'gemini3Flash',
     descKey: 'gemini3FlashDesc',
-    tier: 'B',
+    tier: 'A',
     hosting: 'api',
   },
 
