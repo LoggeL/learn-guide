@@ -91,6 +91,7 @@ export const topics: Topic[] = [
             name: 'Fundamentals',
             children: [
               { id: 'tokenization', name: 'Tokenization', path: '/ai/llm/tokenization', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+              { id: 'subtoken-blindness', name: 'Subtoken Blindness', path: '/ai/llm/subtoken-blindness', difficulty: 'intermediate', lastUpdated: '2026-05-22' },
               { id: 'embeddings', name: 'Embeddings', path: '/ai/llm/embeddings', difficulty: 'beginner', lastUpdated: '2026-02-09' },
               { id: 'attention', name: 'Attention Mechanism', path: '/ai/llm/attention', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
             ],
@@ -257,6 +258,7 @@ export const learningPathGroups: LearningPathGroup[] = [
       'training',
       'gradient-descent',
       'tokenization',
+      'subtoken-blindness',
       'temperature',
       'embeddings',
       'prompt-basics',

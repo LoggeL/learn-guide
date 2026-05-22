@@ -133,6 +133,7 @@ export const de: Dictionary = {
     // LLM topics
     'tier-list': 'LLM Tier-Liste',
     'tokenization': 'Tokenisierung',
+    'subtoken-blindness': 'Subtoken-Blindheit',
     'embeddings': 'Einbettungen',
     'diffusion': 'Diffusionsmodelle',
     'diffusion-fundamentals': 'Wie Diffusion funktioniert',
@@ -204,6 +205,7 @@ export const de: Dictionary = {
     'powerful-agents': 'Was passiert, wenn ein Agent eine Shell, dauerhaftes Gedächtnis bekommt und frei agieren darf',
     'tier-list': 'Eine subjektive Rangliste aktueller LLM-Modelle nach Qualität und Anwendungsfall',
     'tokenization': 'Wie Text in Teile zerlegt wird, die das Modell versteht',
+    'subtoken-blindness': 'Warum Modelle Buchstaben, Ziffern und exakte Zählungen innerhalb von Tokens verfehlen',
     'embeddings': 'Wörter in Zahlen verwandeln, die Bedeutung erfassen',
     'diffusion-fundamentals': 'Vorwärtsrauschen, Rückwärts-Entrauschen und Score-Intuition',
     'text-diffusion': 'Mask-and-Predict-Generierung mit Token-Rastern fester Länge',

@@ -28,6 +28,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'tier-list': 'beginner',
   // LLM Fundamentals
   'tokenization': 'beginner',
+  'subtoken-blindness': 'intermediate',
   'embeddings': 'beginner',
   'attention': 'intermediate',
   'diffusion-fundamentals': 'intermediate',

@@ -14,6 +14,7 @@ export { PatchGridVisualizer } from './PatchGridVisualizer'
 
 // Phase 1: LLM components
 export { TokenizerDemo } from './TokenizerDemo'
+export { SubtokenBlindnessDemo } from './SubtokenBlindnessDemo'
 export { EmbeddingVisualizer } from './EmbeddingVisualizer'
 export { RAGPipelineVisualizer } from './RAGPipelineVisualizer'
 export { RAGComparisonVisualizer } from './RAGComparisonVisualizer'

@@ -131,6 +131,7 @@ export const en = {
     // LLM topics
     'tier-list': 'LLM Tier List',
     'tokenization': 'Tokenization',
+    'subtoken-blindness': 'Subtoken Blindness',
     'embeddings': 'Embeddings',
     'diffusion': 'Diffusion Models',
     'diffusion-fundamentals': 'How Diffusion Works',
@@ -202,6 +203,7 @@ export const en = {
     'powerful-agents': 'What happens when you give an agent a shell, persistent memory, and let it roam',
     'tier-list': 'A subjective ranking of current LLM models by quality and use case fit',
     'tokenization': 'How text gets broken into pieces the model understands',
+    'subtoken-blindness': 'Why models miss letters, digits, and exact counts hidden inside tokens',
     'embeddings': 'Turning words into numbers that capture meaning',
     'diffusion-fundamentals': 'Forward noise, reverse denoising, and why score estimation works',
     'text-diffusion': 'Mask-and-predict generation with fixed-length token grids',
