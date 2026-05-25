@@ -100,6 +100,8 @@ export default function LocaleLayout({
             {children}
           </main>
         </LocaleProvider>
+        {/* Umami Analytics */}
+        <script defer src="https://insights.logge.top/script.js" data-website-id="92a626c8-758d-4bc0-a6a6-2e4a6db1c82b" />
         {/* Cloudflare Web Analytics */}
         <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "6c4d6e2bf331427b9c62c4951a8d2346"}' />
       </body>
