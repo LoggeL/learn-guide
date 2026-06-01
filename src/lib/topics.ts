@@ -71,6 +71,7 @@ export const topics: Topic[] = [
               { id: 'agent-problems', name: 'Agent Problems', path: '/ai/agents/problems', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
               { id: 'agent-security', name: 'Agent Security', path: '/ai/agents/security', difficulty: 'expert', lastUpdated: '2026-02-09' },
               { id: 'evaluation', name: 'Evaluation', path: '/ai/agents/evaluation', difficulty: 'expert', lastUpdated: '2026-02-09' },
+              { id: 'verifiable-rewards', name: 'Verifiable Rewards', path: '/ai/agents/verifiable-rewards', difficulty: 'expert', lastUpdated: '2026-06-01' },
             ],
           },
           {

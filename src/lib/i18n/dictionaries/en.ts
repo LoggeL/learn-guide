@@ -121,6 +121,7 @@ export const en = {
     'memory': 'Memory Systems',
     'orchestration': 'Orchestration',
     'evaluation': 'Evaluation',
+    'verifiable-rewards': 'Verifiable Rewards',
     'skills': 'Agent Skills',
     // LLM subcategories
     'llm-overview': 'Overview',
@@ -200,6 +201,7 @@ export const en = {
     'agent-problems': 'Common failure modes: loops, hallucinations, and goal drift',
     'agent-security': 'Defending agents against prompt injection and data exfiltration',
     'evaluation': 'Measuring agent performance with benchmarks and metrics',
+    'verifiable-rewards': 'Training LLMs and agents with objective outcome checks in realistic environments',
     'powerful-agents': 'What happens when you give an agent a shell, persistent memory, and let it roam',
     'tier-list': 'A subjective ranking of current LLM models by quality and use case fit',
     'tokenization': 'How text gets broken into pieces the model understands',

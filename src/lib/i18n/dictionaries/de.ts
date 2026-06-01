@@ -123,6 +123,7 @@ export const de: Dictionary = {
     'memory': 'Speichersysteme',
     'orchestration': 'Orchestrierung',
     'evaluation': 'Evaluierung',
+    'verifiable-rewards': 'Verifizierbare Rewards',
     'skills': 'Agenten-Skills',
     // LLM subcategories
     'llm-overview': 'Übersicht',
@@ -202,6 +203,7 @@ export const de: Dictionary = {
     'agent-problems': 'Typische Fehler: Endlosschleifen, Halluzinationen und Zieldrift',
     'agent-security': 'Schutz vor Prompt-Injektion und Datenabfluss',
     'evaluation': 'Agentenleistung mit Benchmarks und Metriken messen',
+    'verifiable-rewards': 'LLMs und Agenten mit objektiv prüfbaren Ergebnissen in realistischen Umgebungen trainieren',
     'powerful-agents': 'Was passiert, wenn ein Agent eine Shell, dauerhaftes Gedächtnis bekommt und frei agieren darf',
     'tier-list': 'Eine subjektive Rangliste aktueller LLM-Modelle nach Qualität und Anwendungsfall',
     'tokenization': 'Wie Text in Teile zerlegt wird, die das Modell versteht',
