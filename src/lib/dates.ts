@@ -34,6 +34,7 @@ export const TOPIC_DATES: Record<string, string> = {
   'diffusion-fundamentals': '2026-02-25',
   'text-diffusion': '2026-02-25',
   'image-diffusion': '2026-02-25',
+  'jagged-frontier': '2026-06-01',
   'context-rot': '2026-01-29',
   'agentic-vision': '2026-01-29',
   'open-source': '2026-01-29',

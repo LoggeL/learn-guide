@@ -37,6 +37,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'image-diffusion': 'intermediate',
   // LLM Behavior
   'temperature': 'beginner',
+  'jagged-frontier': 'intermediate',
   'context-rot': 'intermediate',
   // LLM Capabilities
   'rag': 'intermediate',
