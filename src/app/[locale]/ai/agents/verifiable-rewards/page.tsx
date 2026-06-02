@@ -1,6 +1,7 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { VerifiableRewardsSimulator } from '@/components/interactive/VerifiableRewardsSimulator'
 import { useTranslation } from '@/lib/i18n/context'
 import { CheckCircle2, Cloud, Cpu, FlaskConical, Gauge, ServerCog, Target, TestTube2 } from 'lucide-react'
 
@@ -88,6 +89,8 @@ export default function VerifiableRewardsPage() {
           The hard part is not just buying more GPUs. You also need many ordinary cloud machines running sandboxes, apps, documents, browsers, databases, and graders so the agent has something real to act inside.
         </div>
       </section>
+
+      <VerifiableRewardsSimulator />
 
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The reward loop</h2>

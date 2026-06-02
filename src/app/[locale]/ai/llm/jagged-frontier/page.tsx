@@ -12,6 +12,7 @@ import {
   TestTube2,
 } from 'lucide-react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { JaggedFrontierMap } from '@/components/interactive/JaggedFrontierMap'
 import { useLocale } from '@/lib/i18n/context'
 
 const copy = {
@@ -210,6 +211,8 @@ export default function JaggedFrontierPage() {
           <p>{c.thesis}</p>
         </div>
       </section>
+
+      <JaggedFrontierMap locale={locale} />
 
       <section className="grid gap-4 md:grid-cols-3">
         {c.peaks.map((peak, index) => {

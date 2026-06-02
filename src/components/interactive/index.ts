@@ -107,3 +107,7 @@ export { ChipTradeoffSimulator } from './ChipTradeoffSimulator'
 
 // Reinforcement Learning components
 export { ReinforcementLearningPlayground } from './ReinforcementLearningPlayground'
+
+// Frontier / reward components
+export { JaggedFrontierMap } from './JaggedFrontierMap'
+export { VerifiableRewardsSimulator } from './VerifiableRewardsSimulator'
