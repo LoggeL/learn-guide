@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
+import { FeedForwardMoeVisualizer } from '@/components/interactive/FeedForwardMoeVisualizer'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useLocale } from '@/lib/i18n/context'
 
@@ -117,6 +118,8 @@ export default function FeedForwardNetworksMoePage() {
         </div>
         <p className="text-lg leading-relaxed text-muted">{c.description}</p>
       </section>
+
+      <FeedForwardMoeVisualizer locale={locale} />
 
       <section className="grid gap-4 md:grid-cols-2">
         {c.sections.map((section, index) => (

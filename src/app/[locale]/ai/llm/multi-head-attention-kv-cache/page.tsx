@@ -2,6 +2,7 @@
 
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { MultiHeadKvCacheVisualizer } from '@/components/interactive/MultiHeadKvCacheVisualizer'
 import { useLocale } from '@/lib/i18n/context'
 
 const copy = {
@@ -113,6 +114,8 @@ export default function MultiHeadAttentionKvCachePage() {
         </div>
         <p className="text-lg leading-relaxed text-muted">{c.description}</p>
       </section>
+
+      <MultiHeadKvCacheVisualizer />
 
       <section className="grid gap-4 md:grid-cols-2">
         {c.sections.map((section, index) => (

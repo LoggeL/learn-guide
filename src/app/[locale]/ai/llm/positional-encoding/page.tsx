@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
+import { PositionalEncodingRopeVisualizer } from '@/components/interactive/PositionalEncodingRopeVisualizer'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useLocale } from '@/lib/i18n/context'
 
@@ -115,6 +116,8 @@ export default function PositionalEncodingPage() {
         </div>
         <p className="text-lg leading-relaxed text-muted">{c.description}</p>
       </section>
+
+      <PositionalEncodingRopeVisualizer />
 
       <section className="grid gap-4 md:grid-cols-2">
         {c.sections.map((section, index) => (
