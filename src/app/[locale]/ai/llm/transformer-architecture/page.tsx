@@ -22,7 +22,7 @@ export default function TransformerArchitecturePage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.transformerArchitecture.title },
       ]}
-      prevTopic={{ label: t.topicNames['multi-head-attention-kv-cache'], href: '/ai/llm/multi-head-attention-kv-cache' }}
+      prevTopic={{ label: t.topicNames['multi-head-attention-gqa'], href: '/ai/llm/multi-head-attention-gqa' }}
       nextTopic={{ label: t.topicNames['feed-forward-networks-moe'], href: '/ai/llm/feed-forward-networks-moe' }}
     >
       {/* Overview */}

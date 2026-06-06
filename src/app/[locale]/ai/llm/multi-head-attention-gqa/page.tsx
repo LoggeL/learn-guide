@@ -2,13 +2,13 @@
 
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { MultiHeadKvCacheVisualizer } from '@/components/interactive/MultiHeadKvCacheVisualizer'
+import { MultiHeadGqaVisualizer } from '@/components/interactive/MultiHeadGqaVisualizer'
 import { useLocale } from '@/lib/i18n/context'
 
 const copy = {
   en: {
-    title: 'Multi-Head Attention & KV Cache',
-    description: 'How attention runs many learned views in parallel, and why the KV cache dominates long-context inference memory.',
+    title: 'Multi-Head Attention, MQA & GQA',
+    description: 'How attention runs many learned views in parallel, and how MQA/GQA share key-value heads to reduce inference memory.',
     crumb: 'Multi-Head Attention',
     prev: 'Attention Mechanism',
     next: 'Transformer Architecture',
@@ -30,25 +30,25 @@ const copy = {
     ],
       },
       {
-        title: 'KV cache, MQA, and GQA',
-        body: 'During generation, old keys and values are stored so the model does not recompute the whole prompt for every new token. This KV cache grows with context length.',
+        title: 'MQA and GQA share key-value heads',
+        body: 'Standard multi-head attention can give every query head its own key/value heads. MQA and GQA keep many query views while sharing fewer key-value projections.',
         bullets: [
-      'MQA lets many query heads share one key/value set.',
-      'GQA groups query heads over fewer key/value heads.',
-      'Both reduce KV-cache memory and bandwidth while keeping many query views.'
+      'MQA lets many query heads share one key-value set.',
+      'GQA groups query heads over fewer key-value heads.',
+      'This reduces inference memory and bandwidth while preserving multiple query lenses.'
     ],
       }
     ],
     takeawaysTitle: 'Key Takeaways',
     takeaways: [
       'Heads are learned views, not fixed chunks.',
-      'The KV cache is the main long-context inference memory cost.',
-      'GQA/MQA reduce cache cost by sharing key/value heads.'
+      'MQA/GQA are attention-architecture choices: many query views, fewer key-value heads.',
+      'Sharing key-value heads reduces inference memory and bandwidth.'
     ],
   },
   de: {
-    title: 'Multi-Head Attention & KV-Cache',
-    description: 'Wie Attention viele gelernte Blickwinkel parallel nutzt und warum der KV-Cache bei langem Kontext Speicher frisst.',
+    title: 'Multi-Head Attention, MQA & GQA',
+    description: 'Wie Attention viele gelernte Blickwinkel parallel nutzt und wie MQA/GQA Key-Value-Heads teilen, um Inferenzspeicher zu sparen.',
     crumb: 'Multi-Head Attention',
     prev: 'Attention-Mechanismus',
     next: 'Transformer-Architektur',
@@ -70,31 +70,31 @@ const copy = {
     ],
       },
       {
-        title: 'KV-Cache, MQA und GQA',
-        body: 'Bei der Generierung werden alte Keys und Values gespeichert, damit das Modell nicht für jedes neue Token den ganzen Prompt neu berechnen muss. Dieser KV-Cache wächst mit der Kontextlänge.',
+        title: 'MQA und GQA teilen Key-Value-Heads',
+        body: 'Standard-Multi-Head-Attention kann jedem Query-Head eigene Key/Value-Heads geben. MQA und GQA behalten viele Query-Sichten, teilen aber weniger Key-Value-Projektionen.',
         bullets: [
-      'MQA lässt viele Query-Heads ein Key/Value-Set teilen.',
-      'GQA gruppiert Query-Heads über weniger Key/Value-Heads.',
-      'Beides reduziert Speicher und Bandbreite des KV-Caches.'
+      'MQA lässt viele Query-Heads ein Key-Value-Set teilen.',
+      'GQA gruppiert Query-Heads über weniger Key-Value-Heads.',
+      'Das reduziert Speicher und Bandbreite bei der Inferenz, ohne alle Query-Sichten aufzugeben.'
     ],
       }
     ],
     takeawaysTitle: 'Kernaussagen',
     takeaways: [
       'Heads sind gelernte Sichten, keine festen Vektorstücke.',
-      'Der KV-Cache ist der zentrale Speicherfresser bei Long-Context-Inferenz.',
-      'GQA/MQA senken Cache-Kosten durch geteilte Key/Value-Heads.'
+      'MQA/GQA sind Attention-Architektur: viele Query-Sichten, aber weniger Key-Value-Heads.',
+      'Geteilte Key-Value-Heads senken Speicher und Bandbreite bei der Inferenz.'
     ],
   },
 }
 
-export default function MultiHeadAttentionKvCachePage() {
+export default function MultiHeadAttentionGqaPage() {
   const { locale } = useLocale()
   const c = locale === 'de' ? copy.de : copy.en
 
   return (
     <TopicLayout
-      topicId="multi-head-attention-kv-cache"
+      topicId="multi-head-attention-gqa"
       title={c.title}
       description={c.description}
       breadcrumbs={[
@@ -115,7 +115,7 @@ export default function MultiHeadAttentionKvCachePage() {
         <p className="text-lg leading-relaxed text-muted">{c.description}</p>
       </section>
 
-      <MultiHeadKvCacheVisualizer />
+      <MultiHeadGqaVisualizer />
 
       <section className="grid gap-4 md:grid-cols-2">
         {c.sections.map((section, index) => (

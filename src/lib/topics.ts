@@ -96,7 +96,7 @@ export const topics: Topic[] = [
               { id: 'embeddings', name: 'Embeddings', path: '/ai/llm/embeddings', difficulty: 'beginner', lastUpdated: '2026-02-09' },
               { id: 'positional-encoding', name: 'Positional Encoding & RoPE', path: '/ai/llm/positional-encoding', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
               { id: 'attention', name: 'Attention Mechanism', path: '/ai/llm/attention', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
-              { id: 'multi-head-attention-kv-cache', name: 'Multi-Head Attention & KV Cache', path: '/ai/llm/multi-head-attention-kv-cache', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
+              { id: 'multi-head-attention-gqa', name: 'Multi-Head Attention, MQA & GQA', path: '/ai/llm/multi-head-attention-gqa', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
             ],
           },
           {
@@ -276,7 +276,7 @@ export const learningPathGroups: LearningPathGroup[] = [
     topicIds: [
       'positional-encoding',
       'attention',
-      'multi-head-attention-kv-cache',
+      'multi-head-attention-gqa',
       'transformer-architecture',
       'feed-forward-networks-moe',
       'residual-stream-layer-norm',

@@ -55,7 +55,7 @@ const TOPIC_ICONS: Record<string, typeof Brain> = {
   temperature: Gauge,
   attention: Eye,
   'positional-encoding': Layers,
-  'multi-head-attention-kv-cache': Eye,
+  'multi-head-attention-gqa': Eye,
   vision: Eye,
   'visual-challenges': ImageIcon,
   'agentic-vision': Eye,

@@ -29,7 +29,7 @@ export default function AttentionPage() {
         { label: t.attention.title },
       ]}
       prevTopic={{ label: t.topicNames['positional-encoding'], href: '/ai/llm/positional-encoding' }}
-      nextTopic={{ label: t.topicNames['multi-head-attention-kv-cache'], href: '/ai/llm/multi-head-attention-kv-cache' }}
+      nextTopic={{ label: t.topicNames['multi-head-attention-gqa'], href: '/ai/llm/multi-head-attention-gqa' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

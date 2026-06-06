@@ -1,6 +1,6 @@
 export const TOPIC_DATES: Record<string, string> = {
   'positional-encoding': '2026-06-06',
-  'multi-head-attention-kv-cache': '2026-06-06',
+  'multi-head-attention-gqa': '2026-06-06',
   'feed-forward-networks-moe': '2026-06-06',
   'residual-stream-layer-norm': '2026-06-06',
   'next-token-prediction': '2026-06-06',

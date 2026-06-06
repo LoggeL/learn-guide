@@ -33,7 +33,7 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'embeddings': 'beginner',
   'attention': 'intermediate',
   'positional-encoding': 'intermediate',
-  'multi-head-attention-kv-cache': 'intermediate',
+  'multi-head-attention-gqa': 'intermediate',
   'diffusion-fundamentals': 'intermediate',
   'text-diffusion': 'intermediate',
   'image-diffusion': 'intermediate',
