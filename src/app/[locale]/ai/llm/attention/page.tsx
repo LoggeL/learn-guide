@@ -28,8 +28,8 @@ export default function AttentionPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.attention.title },
       ]}
-      prevTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}
-      nextTopic={{ label: t.topicNames.vision, href: '/ai/llm/vision' }}
+      prevTopic={{ label: t.topicNames['positional-encoding'], href: '/ai/llm/positional-encoding' }}
+      nextTopic={{ label: t.topicNames['multi-head-attention-kv-cache'], href: '/ai/llm/multi-head-attention-kv-cache' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -86,8 +86,7 @@ export default function AttentionPage() {
         </div>
         <div className="mt-6 p-5 rounded-xl bg-surface border border-border text-center">
           <p className="text-muted">
-            The model calculates a score by multiplying <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-semibold">Q</span> and <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-semibold">K</span>. 
-            This score determines how much of <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">V</span> to keep.
+            The model compares <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-400 font-semibold">Q</span> and <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-400 font-semibold">K</span> with scaled dot products, turns the scores into weights with softmax, then uses those weights to mix the <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-semibold">V</span> vectors.
           </p>
         </div>
       </section>

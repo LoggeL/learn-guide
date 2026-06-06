@@ -1,4 +1,9 @@
 export const TOPIC_DATES: Record<string, string> = {
+  'positional-encoding': '2026-06-06',
+  'multi-head-attention-kv-cache': '2026-06-06',
+  'feed-forward-networks-moe': '2026-06-06',
+  'residual-stream-layer-norm': '2026-06-06',
+  'next-token-prediction': '2026-06-06',
   'verifiable-rewards': '2026-06-01',
   'subtoken-blindness': '2026-05-22',
   'mtp': '2026-05-04',

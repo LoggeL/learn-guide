@@ -94,7 +94,9 @@ export const topics: Topic[] = [
               { id: 'tokenization', name: 'Tokenization', path: '/ai/llm/tokenization', difficulty: 'beginner', lastUpdated: '2026-02-09' },
               { id: 'subtoken-blindness', name: 'Subtoken Blindness', path: '/ai/llm/subtoken-blindness', difficulty: 'intermediate', lastUpdated: '2026-05-22' },
               { id: 'embeddings', name: 'Embeddings', path: '/ai/llm/embeddings', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+              { id: 'positional-encoding', name: 'Positional Encoding & RoPE', path: '/ai/llm/positional-encoding', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
               { id: 'attention', name: 'Attention Mechanism', path: '/ai/llm/attention', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
+              { id: 'multi-head-attention-kv-cache', name: 'Multi-Head Attention & KV Cache', path: '/ai/llm/multi-head-attention-kv-cache', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
             ],
           },
           {
@@ -122,6 +124,9 @@ export const topics: Topic[] = [
             name: 'Architecture',
             children: [
               { id: 'transformer-architecture', name: 'Transformer Architecture', path: '/ai/llm/transformer-architecture', difficulty: 'intermediate', lastUpdated: '2026-02-09' },
+              { id: 'feed-forward-networks-moe', name: 'Feed-Forward Networks & MoE', path: '/ai/llm/feed-forward-networks-moe', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
+              { id: 'residual-stream-layer-norm', name: 'Residual Stream & LayerNorm', path: '/ai/llm/residual-stream-layer-norm', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
+              { id: 'next-token-prediction', name: 'Next-Token Prediction', path: '/ai/llm/next-token-prediction', difficulty: 'beginner', lastUpdated: '2026-06-06' },
               { id: 'llm-training', name: 'LLM Training', path: '/ai/llm/training', difficulty: 'intermediate', lastUpdated: '2026-02-14' },
               { id: 'training-data', name: 'Training Data', path: '/ai/llm/training-data', difficulty: 'intermediate', lastUpdated: '2026-02-24' },
               { id: 'moe', name: 'Mixture of Experts', path: '/ai/llm/moe', difficulty: 'expert', lastUpdated: '2026-02-09' },
@@ -269,8 +274,13 @@ export const learningPathGroups: LearningPathGroup[] = [
   {
     id: 'lecture-llm-core',
     topicIds: [
+      'positional-encoding',
       'attention',
+      'multi-head-attention-kv-cache',
       'transformer-architecture',
+      'feed-forward-networks-moe',
+      'residual-stream-layer-norm',
+      'next-token-prediction',
       'llm-training',
       'training-data',
       'context-rot',

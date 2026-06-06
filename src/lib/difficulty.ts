@@ -32,6 +32,8 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'subtoken-blindness': 'intermediate',
   'embeddings': 'beginner',
   'attention': 'intermediate',
+  'positional-encoding': 'intermediate',
+  'multi-head-attention-kv-cache': 'intermediate',
   'diffusion-fundamentals': 'intermediate',
   'text-diffusion': 'intermediate',
   'image-diffusion': 'intermediate',
@@ -47,6 +49,9 @@ export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
   'multimodality': 'beginner',
   // LLM Architecture
   'transformer-architecture': 'intermediate',
+  'feed-forward-networks-moe': 'intermediate',
+  'residual-stream-layer-norm': 'intermediate',
+  'next-token-prediction': 'beginner',
   'llm-training': 'intermediate',
   'training-data': 'intermediate',
   'moe': 'expert',

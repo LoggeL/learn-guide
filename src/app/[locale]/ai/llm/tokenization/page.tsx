@@ -16,7 +16,7 @@ export default function TokenizationPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.tokenization.title },
       ]}
-      nextTopic={{ label: t.topicNames.embeddings, href: '/ai/llm/embeddings' }}
+      nextTopic={{ label: t.topicNames['subtoken-blindness'], href: '/ai/llm/subtoken-blindness' }}
     >
       {/* What is Tokenization */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

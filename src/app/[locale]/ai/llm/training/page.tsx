@@ -16,7 +16,7 @@ export default function LLMTrainingPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.llmTraining.title },
       ]}
-      prevTopic={{ label: t.topicNames['visual-challenges'], href: '/ai/llm/visual-challenges' }}
+      prevTopic={{ label: t.topicNames['next-token-prediction'], href: '/ai/llm/next-token-prediction' }}
       nextTopic={{ label: t.topicNames['training-data'], href: '/ai/llm/training-data' }}
     >
       {/* Overview */}

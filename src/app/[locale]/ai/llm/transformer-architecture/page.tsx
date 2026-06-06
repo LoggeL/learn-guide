@@ -22,8 +22,8 @@ export default function TransformerArchitecturePage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.transformerArchitecture.title },
       ]}
-      prevTopic={{ label: t.topicNames.attention, href: '/ai/llm/attention' }}
-      nextTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
+      prevTopic={{ label: t.topicNames['multi-head-attention-kv-cache'], href: '/ai/llm/multi-head-attention-kv-cache' }}
+      nextTopic={{ label: t.topicNames['feed-forward-networks-moe'], href: '/ai/llm/feed-forward-networks-moe' }}
     >
       {/* Overview */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">

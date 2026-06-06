@@ -16,8 +16,8 @@ export default function EmbeddingsPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.embeddings.title },
       ]}
-      prevTopic={{ label: t.topicNames.tokenization, href: '/ai/llm/tokenization' }}
-      nextTopic={{ label: t.topicNames.rag, href: '/ai/llm/rag' }}
+      prevTopic={{ label: t.topicNames['subtoken-blindness'], href: '/ai/llm/subtoken-blindness' }}
+      nextTopic={{ label: t.topicNames['positional-encoding'], href: '/ai/llm/positional-encoding' }}
     >
       {/* What are Embeddings */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
