@@ -176,9 +176,24 @@ function OrbitalPhaseWheel({
           const isKey = index === keyPosition
           const isShifted = index === shiftedFocus || index === shiftedKey
           const isActive = isFocus || isKey
+          const isInert = index < focusPosition - keyPosition
 
           return (
-            <g key={`${token}-${index}`} className="cursor-pointer" onClick={() => onSelectFocus(index)} tabIndex={0} role="button" aria-label={`${token} ${labels.position} ${index}`}>
+            <g
+              key={`${token}-${index}`}
+              className={isInert ? undefined : 'cursor-pointer'}
+              onClick={() => onSelectFocus(index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelectFocus(index)
+                }
+              }}
+              tabIndex={isInert ? undefined : 0}
+              role="button"
+              aria-disabled={isInert || undefined}
+              aria-label={`${token} ${labels.position} ${index}`}
+            >
               <circle cx={p.x} cy={p.y} r={isActive ? 13 : 8} fill={isFocus ? `url(#${gradientId}-planet)` : isKey ? `url(#${gradientId}-key)` : isShifted ? 'rgba(226,232,240,0.42)' : 'rgba(148,163,184,0.34)'} stroke={isActive ? '#f8fafc' : 'rgba(226,232,240,0.24)'} strokeWidth={isActive ? 2 : 1} opacity={isShifted && !isActive ? 0.75 : 1} />
               <text x={p.x} y={p.y + (p.y > CENTER ? 27 : -18)} textAnchor="middle" fill={isActive ? '#f8fafc' : 'rgba(203,213,225,0.72)'} fontSize="10" fontWeight={isActive ? 800 : 600}>
                 {index}
@@ -257,6 +272,7 @@ export function PositionalEncodingRopeVisualizer() {
   const phaseTicks = useMemo(() => tokens.map((token, index) => ({ token, index, angle: index * BASE_STEP })), [tokens])
 
   const setFocusClamped = (value: number) => setFocusPosition(Math.max(Math.min(value, sequenceLength - 1), Math.min(distance, sequenceLength - 1)))
+  const setDistanceClamped = (value: number) => setDistance(Math.min(value, maxDistance, focusPosition))
   const setLengthClamped = (value: number) => {
     setSequenceLength(value)
     setDistance((current) => Math.min(current, Math.min(6, value - 1)))
@@ -295,7 +311,7 @@ export function PositionalEncodingRopeVisualizer() {
             <div className="space-y-3">
               <OrbitSlider label={c.sequence} min={5} max={12} value={sequenceLength} accent="cyan" onChange={setLengthClamped} />
               <OrbitSlider label={c.focus} min={safeDistance} max={sequenceLength - 1} value={safeFocus} accent="purple" onChange={setFocusClamped} />
-              <OrbitSlider label={c.distance} min={1} max={maxDistance} value={safeDistance} accent="emerald" onChange={setDistance} />
+              <OrbitSlider label={c.distance} min={1} max={maxDistance} value={safeDistance} accent="emerald" onChange={setDistanceClamped} />
             </div>
           </div>
 

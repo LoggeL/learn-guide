@@ -6,11 +6,16 @@ import { Plus, X, Code, CheckCircle, AlertCircle, Wrench } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
 interface Parameter {
+  id: number
   name: string
   type: 'string' | 'number' | 'boolean' | 'array'
   description: string
   required: boolean
 }
+
+// Stable ids for parameters so list animations track the right row
+let paramIdCounter = 0
+const nextParamId = () => ++paramIdCounter
 
 interface ToolSchema {
   name: string
@@ -20,13 +25,21 @@ interface ToolSchema {
 
 const PARAM_TYPES = ['string', 'number', 'boolean', 'array'] as const
 
+const COPY = {
+  en: {
+    defineIdentity: "Define your tool's identity",
+  },
+  de: {
+    defineIdentity: 'Definiere die Identität deines Tools',
+  },
+}
+
 function validateSchema(schema: ToolSchema): { valid: boolean; errors: string[] } {
   const errors: string[] = []
 
   if (!schema.name || schema.name.length < 2) {
     errors.push('Tool name must be at least 2 characters')
-  }
-  if (!/^[a-z_][a-z0-9_]*$/i.test(schema.name)) {
+  } else if (!/^[a-z_][a-z0-9_]*$/.test(schema.name)) {
     errors.push('Tool name should use snake_case (e.g., search_web)')
   }
   if (!schema.description || schema.description.length < 10) {
@@ -71,15 +84,16 @@ function generateJSONSchema(schema: ToolSchema): string {
 }
 
 export function ToolSchemaBuilder() {
-  const { t } = useTranslation()
-  const [schema, setSchema] = useState<ToolSchema>({
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
+  const [schema, setSchema] = useState<ToolSchema>(() => ({
     name: 'search_web',
     description: 'Search the web for information on a given query',
     parameters: [
-      { name: 'query', type: 'string', description: 'The search query', required: true },
-      { name: 'max_results', type: 'number', description: 'Maximum number of results to return (1-10)', required: false },
+      { id: nextParamId(), name: 'query', type: 'string', description: 'The search query', required: true },
+      { id: nextParamId(), name: 'max_results', type: 'number', description: 'Maximum number of results to return (1-10)', required: false },
     ],
-  })
+  }))
   const [showValidation, setShowValidation] = useState(false)
 
   const validation = validateSchema(schema)
@@ -89,7 +103,7 @@ export function ToolSchemaBuilder() {
       ...schema,
       parameters: [
         ...schema.parameters,
-        { name: '', type: 'string', description: '', required: false },
+        { id: nextParamId(), name: '', type: 'string', description: '', required: false },
       ],
     })
   }
@@ -120,7 +134,7 @@ export function ToolSchemaBuilder() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">{t.interactive.toolName}</h3>
-            <p className="text-xs text-muted">Define your tool&apos;s identity</p>
+            <p className="text-xs text-muted">{c.defineIdentity}</p>
           </div>
         </div>
 
@@ -172,7 +186,7 @@ export function ToolSchemaBuilder() {
           <AnimatePresence>
             {schema.parameters.map((param, index) => (
               <motion.div
-                key={index}
+                key={param.id}
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}

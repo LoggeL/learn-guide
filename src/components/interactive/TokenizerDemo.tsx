@@ -4,7 +4,6 @@ import { useState, useEffect, useDeferredValue, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Type, Hash, Zap, Loader2 } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
-import { getEncoding, Tiktoken } from 'js-tiktoken'
 
 const TOKEN_COLORS = [
   'bg-purple-500/30 border-purple-500/50 text-purple-200',
@@ -19,6 +18,17 @@ const TOKEN_COLORS = [
 
 const LARGE_TEXT_THRESHOLD = 12000
 const TOKENIZE_DEBOUNCE_MS = 180
+
+const COPY = {
+  en: {
+    processing: 'Processing in worker...',
+    workerUnavailable: 'Tokenizer worker unavailable.',
+  },
+  de: {
+    processing: 'Verarbeitung im Worker …',
+    workerUnavailable: 'Tokenizer-Worker nicht verfügbar.',
+  },
+}
 
 type PreviewToken = { token: string; id: number }
 type WorkerResponse = { id: number; tokenCount: number; preview: PreviewToken[]; error?: string }
@@ -35,10 +45,11 @@ function formatToken(token: string): { display: string; isWhitespace: boolean; w
 }
 
 export function TokenizerDemo() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [text, setText] = useState('The quick brown fox jumps over the lazy dog.')
   const [tokens, setTokens] = useState<PreviewToken[]>([])
-  const [encoding, setEncoding] = useState<Tiktoken | null>(null)
+  const [workerFailed, setWorkerFailed] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [isTokenizing, setIsTokenizing] = useState(false)
   const [showIdsOnly, setShowIdsOnly] = useState(false)
@@ -48,21 +59,18 @@ export function TokenizerDemo() {
   const requestIdRef = useRef(0)
 
   useEffect(() => {
-    const init = async () => {
-      try {
-        const enc = getEncoding('o200k_base')
-        setEncoding(enc)
-
-        const worker = new Worker(new URL('./tokenizer.worker.ts', import.meta.url))
-        workerRef.current = worker
-        setIsLoading(false)
-      } catch (error) {
-        console.error('Failed to initialize tokenizer:', error)
-        setIsLoading(false)
-      }
+    try {
+      const worker = new Worker(new URL('./tokenizer.worker.ts', import.meta.url))
+      worker.addEventListener('error', (error) => {
+        console.error('Tokenizer worker error:', error)
+        setWorkerFailed(true)
+      })
+      workerRef.current = worker
+    } catch (error) {
+      console.error('Failed to initialize tokenizer:', error)
+      setWorkerFailed(true)
     }
-
-    init()
+    setIsLoading(false)
 
     return () => {
       workerRef.current?.terminate()
@@ -123,7 +131,7 @@ export function TokenizerDemo() {
   const renderedTokenCount = tokens.length
   const isLargeText = text.length >= LARGE_TEXT_THRESHOLD
   const isBusy = isLoading || isTokenizing
-  const workerUnavailable = !encoding || !workerRef.current
+  const workerUnavailable = workerFailed
 
   return (
     <div className="space-y-6">
@@ -155,11 +163,11 @@ export function TokenizerDemo() {
           {isTokenizing && (
             <span className="inline-flex items-center gap-1 text-xs text-amber-400">
               <Loader2 size={12} className="animate-spin" />
-              Processing in worker...
+              {c.processing}
             </span>
           )}
           {workerUnavailable && !isLoading && (
-            <span className="text-xs text-red-400">Tokenizer worker unavailable.</span>
+            <span className="text-xs text-red-400">{c.workerUnavailable}</span>
           )}
         </div>
       </div>

@@ -2,6 +2,18 @@
 
 import { useMemo, useState } from 'react'
 import { CheckCircle2, FlaskConical, Play, RotateCcw, ShieldAlert, Target, TestTube2 } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    title: 'Reward loop simulator',
+    intro: 'Tune the environment and verifier. The goal is not a pretty answer; it is many attempts that produce useful training data.',
+  },
+  de: {
+    title: 'Reward-Loop-Simulator',
+    intro: 'Stelle Umgebung und Verifier ein. Das Ziel ist keine hübsche Antwort, sondern viele Versuche, die nützliche Trainingsdaten erzeugen.',
+  },
+}
 
 const taskPresets = [
   {
@@ -58,6 +70,8 @@ function formatCost(value: number) {
 }
 
 export function VerifiableRewardsSimulator() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [taskId, setTaskId] = useState('code')
   const [rollouts, setRollouts] = useState(40)
   const [verifierStrictness, setVerifierStrictness] = useState(70)
@@ -91,10 +105,10 @@ export function VerifiableRewardsSimulator() {
         <div>
           <div className="mb-2 flex items-center gap-2">
             <FlaskConical size={20} className="text-emerald-300" />
-            <h2 className="font-heading text-2xl font-bold text-gradient">Reward loop simulator</h2>
+            <h2 className="font-heading text-2xl font-bold text-gradient">{c.title}</h2>
           </div>
           <p className="max-w-2xl text-sm leading-relaxed text-muted">
-            Tune the environment and verifier. The goal is not a pretty answer; it is many attempts that produce useful training data.
+            {c.intro}
           </p>
         </div>
         <button

@@ -2,6 +2,20 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { Ghost, Crown, User, Bot, Sparkles, X } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    outsideWindow: 'Outside context window',
+    fading: 'Fading from attention...',
+    emptyHint: 'No messages yet. Start the conversation!',
+  },
+  de: {
+    outsideWindow: 'Außerhalb des Kontextfensters',
+    fading: 'Verblasst aus der Aufmerksamkeit...',
+    emptyHint: 'Noch keine Nachrichten. Starte die Unterhaltung!',
+  },
+} as const
 
 interface Message {
   id: string
@@ -24,6 +38,8 @@ export function MemoryFadeVisualizer({
   highlightFirst = false,
   showTruncated = false,
 }: MemoryFadeVisualizerProps) {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const totalTokens = messages.reduce((sum, m) => sum + m.tokens, 0)
 
   const getMessageStyle = (index: number, message: Message) => {
@@ -102,7 +118,7 @@ export function MemoryFadeVisualizer({
                   ? 'bg-red-500/5 border-red-500/20' 
                   : `${config.bg} ${config.border}`
               } ${
-                isFirst && !isTruncated && 'ring-2 ring-purple-500/50 ring-offset-2 ring-offset-surface'
+                isFirst && !isTruncated ? 'ring-2 ring-purple-500/50 ring-offset-2 ring-offset-surface' : ''
               }`}
             >
               {/* Gradient accent bar */}
@@ -115,7 +131,7 @@ export function MemoryFadeVisualizer({
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-red-500/5">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/20 border border-red-500/30">
                     <X size={14} className="text-red-400" />
-                    <span className="text-xs font-medium text-red-400">Outside context window</span>
+                    <span className="text-xs font-medium text-red-400">{c.outsideWindow}</span>
                   </div>
                 </div>
               )}
@@ -165,7 +181,7 @@ export function MemoryFadeVisualizer({
                   >
                     <div className="flex items-center gap-2 px-4 text-muted/60">
                       <Ghost size={16} className="animate-pulse" />
-                      <span className="text-xs italic">Fading from attention...</span>
+                      <span className="text-xs italic">{c.fading}</span>
                     </div>
                   </motion.div>
                 )}
@@ -177,7 +193,7 @@ export function MemoryFadeVisualizer({
       
       {messages.length === 0 && (
         <div className="text-center py-8 text-muted">
-          <p className="text-sm">No messages yet. Start the conversation!</p>
+          <p className="text-sm">{c.emptyHint}</p>
         </div>
       )}
     </div>

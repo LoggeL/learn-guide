@@ -2,6 +2,16 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    emptyHint: 'Press Play or Step to start generating tokens...',
+  },
+  de: {
+    emptyHint: 'Drücke Play oder Step, um Tokens zu generieren...',
+  },
+} as const
 
 interface CacheEntry {
   token: string
@@ -38,34 +48,31 @@ function VectorCell({ values, color }: { values: number[]; color: string }) {
 
 // Main KV Cache step-by-step demo
 function KVCacheStepDemo() {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [cache, setCache] = useState<CacheEntry[]>([])
   const maxStep = SAMPLE_TOKENS.length
 
   const advanceStep = useCallback(() => {
-    setCurrentStep((prev) => {
-      const next = prev + 1
-      if (next > maxStep) {
-        setIsPlaying(false)
-        return prev
-      }
-      // Add to cache
-      if (next <= maxStep) {
-        const token = SAMPLE_TOKENS[next - 1]
-        setCache((c) => [
-          ...c,
-          {
-            token,
-            key: randomVector(next * 7),
-            value: randomVector(next * 13),
-            step: next,
-          },
-        ])
-      }
-      return next
-    })
-  }, [maxStep])
+    if (currentStep >= maxStep) {
+      setIsPlaying(false)
+      return
+    }
+    const next = currentStep + 1
+    const newEntry: CacheEntry = {
+      token: SAMPLE_TOKENS[next - 1],
+      key: randomVector(next * 7),
+      value: randomVector(next * 13),
+      step: next,
+    }
+    setCurrentStep(next)
+    setCache((c) => [...c, newEntry])
+    if (next >= maxStep) {
+      setIsPlaying(false)
+    }
+  }, [currentStep, maxStep])
 
   useEffect(() => {
     if (!isPlaying) return
@@ -176,7 +183,7 @@ function KVCacheStepDemo() {
               {cache.length === 0 && (
                 <tr>
                   <td colSpan={4} className="py-8 text-center text-muted text-sm">
-                    Press Play or Step to start generating tokens...
+                    {c.emptyHint}
                   </td>
                 </tr>
               )}
@@ -216,13 +223,10 @@ function KVCacheStepDemo() {
 function MemoryGrowthChart() {
   const [seqLen, setSeqLen] = useState(512)
   const [numLayers, setNumLayers] = useState(32)
-  const [dModel, setDModel] = useState(4096)
-  const [numKvHeads, setNumKvHeads] = useState(32) // MHA default
 
   // KV cache memory: 2 * num_layers * seq_len * d_head * num_kv_heads * 2 bytes (fp16)
+  const dModel = 4096
   const dHead = dModel / 32 // assume 32 heads for d_head calculation
-  const memoryBytes = 2 * numLayers * seqLen * dHead * numKvHeads * 2
-  const memoryMB = memoryBytes / (1024 * 1024)
 
   // Compare MHA vs GQA vs MQA
   const mhaMemMB = (2 * numLayers * seqLen * dHead * 32 * 2) / (1024 * 1024)

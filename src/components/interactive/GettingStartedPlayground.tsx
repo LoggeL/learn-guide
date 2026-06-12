@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Send, Copy, Check, ChevronDown, ChevronUp, Key, Globe, AlertTriangle, Loader2, ShieldCheck, Clock, MessageSquare, Hash, Zap } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -58,10 +58,17 @@ function CodeTab({ label, code, active, onClick }: { label: string; code: string
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
+  }, [])
   const copy = () => {
     navigator.clipboard.writeText(text)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    timeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
   return (
     <button onClick={copy} className="absolute top-3 right-3 p-1.5 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
@@ -101,6 +108,7 @@ export function GettingStartedPlayground() {
   const config = PROVIDERS[provider]
 
   const sendMessage = async () => {
+    if (loading) return
     if (!apiKey || !message.trim()) return
     setLoading(true)
     setError('')
@@ -172,12 +180,16 @@ export function GettingStartedPlayground() {
   const stop = () => { abortRef.current?.abort(); setLoading(false) }
 
   // Generate code snippets
+  const promptText = message || 'Hello, who are you?'
+  const promptJson = JSON.stringify(promptText) // valid JSON/JS/Python string literal
+  const promptShell = promptJson.replace(/'/g, `'\\''`) // safe inside single-quoted shell string
+
   const curlCode = `curl ${config.endpoint} \\
   -H "Content-Type: application/json" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -d '{
     "model": "${model}",
-    "messages": [{"role": "user", "content": "${message || 'Hello, who are you?'}"}],
+    "messages": [{"role": "user", "content": ${promptShell}}],
     "temperature": ${temperature},
     "max_tokens": ${maxTokens}
   }'`
@@ -192,7 +204,7 @@ response = requests.post(
     },
     json={
         "model": "${model}",
-        "messages": [{"role": "user", "content": "${message || 'Hello, who are you?'}"}],
+        "messages": [{"role": "user", "content": ${promptJson}}],
         "temperature": ${temperature},
         "max_tokens": ${maxTokens},
     },
@@ -209,7 +221,7 @@ print(data["choices"][0]["message"]["content"])`
   },
   body: JSON.stringify({
     model: "${model}",
-    messages: [{ role: "user", content: "${message || 'Hello, who are you?'}" }],
+    messages: [{ role: "user", content: ${promptJson} }],
     temperature: ${temperature},
     max_tokens: ${maxTokens},
   }),

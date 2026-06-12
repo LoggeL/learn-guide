@@ -98,32 +98,30 @@ export function CacheTTLVisualization({ t }: CacheTTLVisualizationProps) {
   }, [cleanup])
 
   const start = useCallback(() => {
+    if (phase === 'running') return
     reset()
-    // Small delay to let reset propagate
-    setTimeout(() => {
-      setPhase('running')
-      const minutesPerTick = TIMELINE_MAX / (ANIMATION_DURATION / TICK_INTERVAL)
+    setPhase('running')
+    const minutesPerTick = TIMELINE_MAX / (ANIMATION_DURATION / TICK_INTERVAL)
 
-      intervalRef.current = setInterval(() => {
-        setCurrentTime((prev) => {
-          const next = prev + minutesPerTick
-          if (next >= TIMELINE_MAX) {
-            cleanup()
-            setPhase('done')
-            return TIMELINE_MAX
-          }
-          return next
-        })
-      }, TICK_INTERVAL)
-    }, 50)
-  }, [reset, cleanup])
+    intervalRef.current = setInterval(() => {
+      setCurrentTime((prev) => {
+        const next = prev + minutesPerTick
+        if (next >= TIMELINE_MAX) {
+          cleanup()
+          setPhase('done')
+          return TIMELINE_MAX
+        }
+        return next
+      })
+    }, TICK_INTERVAL)
+  }, [phase, reset, cleanup])
 
   useEffect(() => {
     return cleanup
   }, [cleanup])
 
   // Calculate which events have been reached
-  const visibleEvents = events.filter((e) => e.time <= currentTime)
+  const visibleEvents = phase === 'idle' ? [] : events.filter((e) => e.time <= currentTime)
 
   // Determine cache state at currentTime
   let cacheAlive = false
@@ -215,25 +213,6 @@ export function CacheTTLVisualization({ t }: CacheTTLVisualizationProps) {
             )
           })}
 
-          {/* Expiry zones (red after TTL ends) */}
-          {ttlSegments.map((seg, i) => {
-            if (seg.end > currentTime) return null
-            const nextSegStart = i < ttlSegments.length - 1 ? ttlSegments[i + 1].start : TIMELINE_MAX
-            const gapEnd = Math.min(nextSegStart, currentTime)
-            if (gapEnd <= seg.end) return null
-
-            return (
-              <motion.div
-                key={`expire-${i}`}
-                className="absolute top-0 h-full bg-red-500/10 border-y border-red-500/20"
-                style={{
-                  left: `${timeToPercent(seg.end)}%`,
-                  width: `${timeToPercent(gapEnd) - timeToPercent(seg.end)}%`,
-                }}
-              />
-            )
-          })}
-
           {/* Playhead */}
           {phase !== 'idle' && (
             <motion.div
@@ -244,7 +223,7 @@ export function CacheTTLVisualization({ t }: CacheTTLVisualizationProps) {
 
           {/* Event dots */}
           {events.map((event, i) => {
-            const visible = event.time <= currentTime
+            const visible = phase !== 'idle' && event.time <= currentTime
             if (!visible && phase !== 'done') return null
 
             const dotColor =
@@ -360,7 +339,7 @@ export function CacheTTLVisualization({ t }: CacheTTLVisualizationProps) {
       {/* Play / Reset button */}
       <div className="flex justify-center">
         <button
-          onClick={phase === 'done' ? () => { reset(); setTimeout(start, 50) } : phase === 'idle' ? start : reset}
+          onClick={phase === 'running' ? reset : start}
           className={`
             flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-sm transition-all
             ${phase === 'running'

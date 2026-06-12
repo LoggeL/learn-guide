@@ -129,7 +129,7 @@ export function NextTokenPredictionVisualizer() {
 
   const maxLogit = Math.max(...candidates.map((candidate) => candidate.logit))
   const selectedIndex = distribution.rows.findIndex((item) => item.token === distribution.selected.token)
-  let rouletteAngle = -90
+  let rouletteAngle = 0
   const rouletteGradient = distribution.rows
     .filter((item) => item.keep)
     .map((item) => {
@@ -360,7 +360,7 @@ export function NextTokenPredictionVisualizer() {
             <div className="relative mx-auto aspect-square max-w-[260px] rounded-full border border-slate-600 bg-slate-950 p-3 shadow-inner shadow-black">
               <motion.div
                 className="h-full rounded-full"
-                animate={{ background: `conic-gradient(${rouletteGradient || '#334155 0deg 360deg'})` }}
+                animate={{ background: `conic-gradient(from -90deg, ${rouletteGradient || '#334155 0deg 360deg'})` }}
               />
               <div className="absolute inset-[18%] grid place-items-center rounded-full border border-slate-700 bg-slate-950/90 text-center">
                 <div>

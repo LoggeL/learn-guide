@@ -5,6 +5,21 @@ import { motion } from 'framer-motion'
 import { Play, Square, RotateCcw, Activity, AlertTriangle } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
+const COPY = {
+  en: {
+    title: 'Training Progress',
+    subtitle: 'Watch a neural network learn',
+    lossOverTime: 'Loss Over Time',
+    accuracyOverTime: 'Accuracy Over Time',
+  },
+  de: {
+    title: 'Trainingsfortschritt',
+    subtitle: 'Sieh zu, wie ein neuronales Netz lernt',
+    lossOverTime: 'Loss über Zeit',
+    accuracyOverTime: 'Accuracy über Zeit',
+  },
+}
+
 interface DataPoint {
   epoch: number
   trainLoss: number
@@ -13,7 +28,8 @@ interface DataPoint {
 }
 
 export function TrainingProgressVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [isTraining, setIsTraining] = useState(false)
   const [epoch, setEpoch] = useState(0)
   const [data, setData] = useState<DataPoint[]>([])
@@ -26,37 +42,34 @@ export function TrainingProgressVisualizer() {
   useEffect(() => {
     if (isTraining && epoch < maxEpochs) {
       intervalRef.current = setInterval(() => {
-        setEpoch((e) => {
-          const newEpoch = e + 1
+        const newEpoch = epoch + 1
 
-          // Simulate training dynamics
-          const trainLoss = 2 * Math.exp(-0.1 * newEpoch) + 0.1 + Math.random() * 0.05
-          const valLoss =
-            newEpoch < 25
-              ? 2 * Math.exp(-0.08 * newEpoch) + 0.15 + Math.random() * 0.08
-              : 0.4 + 0.02 * (newEpoch - 25) + Math.random() * 0.1 // Starts increasing (overfitting)
-          const accuracy = Math.min(0.95, 0.5 + 0.4 * (1 - Math.exp(-0.1 * newEpoch)) + Math.random() * 0.02)
+        // Simulate training dynamics
+        const trainLoss = 2 * Math.exp(-0.1 * newEpoch) + 0.1 + Math.random() * 0.05
+        const valLoss =
+          newEpoch < 25
+            ? 2 * Math.exp(-0.08 * newEpoch) + 0.15 + Math.random() * 0.08
+            : 0.4 + 0.02 * (newEpoch - 25) + Math.random() * 0.1 // Starts increasing (overfitting)
+        const accuracy = Math.min(0.95, 0.5 + 0.4 * (1 - Math.exp(-0.1 * newEpoch)) + Math.random() * 0.02)
 
-          const newPoint: DataPoint = {
-            epoch: newEpoch,
-            trainLoss,
-            valLoss,
-            accuracy,
-          }
+        const newPoint: DataPoint = {
+          epoch: newEpoch,
+          trainLoss,
+          valLoss,
+          accuracy,
+        }
 
-          setData((prev) => [...prev, newPoint])
+        setEpoch(newEpoch)
+        setData((prev) => [...prev, newPoint])
 
-          // Detect overfitting
-          if (newEpoch > 25 && valLoss > trainLoss * 1.5) {
-            setOverfitting(true)
-          }
+        // Detect overfitting
+        if (newEpoch > 25 && valLoss > trainLoss * 1.5) {
+          setOverfitting(true)
+        }
 
-          if (newEpoch >= maxEpochs) {
-            setIsTraining(false)
-          }
-
-          return newEpoch
-        })
+        if (newEpoch >= maxEpochs) {
+          setIsTraining(false)
+        }
       }, 200)
     }
 
@@ -109,8 +122,8 @@ export function TrainingProgressVisualizer() {
               <Activity size={18} className="text-blue-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">Training Progress</h3>
-              <p className="text-xs text-muted">Watch a neural network learn</p>
+              <h3 className="font-semibold text-text font-heading">{c.title}</h3>
+              <p className="text-xs text-muted">{c.subtitle}</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -215,7 +228,7 @@ export function TrainingProgressVisualizer() {
 
       {/* Loss Chart */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <h4 className="text-sm font-semibold text-text mb-4">Loss Over Time</h4>
+        <h4 className="text-sm font-semibold text-text mb-4">{c.lossOverTime}</h4>
         <div className="relative w-full overflow-x-auto">
           <svg width={width} height={height} className="mx-auto bg-background rounded-xl">
             {/* Grid */}
@@ -255,7 +268,7 @@ export function TrainingProgressVisualizer() {
 
       {/* Accuracy Chart */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <h4 className="text-sm font-semibold text-text mb-4">Accuracy Over Time</h4>
+        <h4 className="text-sm font-semibold text-text mb-4">{c.accuracyOverTime}</h4>
         <div className="relative w-full overflow-x-auto">
           <svg width={width} height={height} className="mx-auto bg-background rounded-xl">
             <rect width={width} height={height} fill="url(#traingrid)" />

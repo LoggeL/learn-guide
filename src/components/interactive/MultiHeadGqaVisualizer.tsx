@@ -9,6 +9,54 @@ type HeadId = 'syntax' | 'reference' | 'topic' | 'position'
 
 const TOKENS = ['The', 'robot', 'that', 'Lena', 'built', 'explains', 'attention']
 
+const NUM_QUERY_HEADS = 8
+
+const QUERY_HEAD_COLORS = ['#22d3ee', '#a78bfa', '#34d399', '#fbbf24', '#f472b6', '#fb923c', '#60a5fa', '#f87171']
+
+const SHARING_LEVELS: {
+  id: string
+  label: string
+  kvHeads: number
+  desc: { en: string; de: string }
+}[] = [
+  {
+    id: 'mha',
+    label: 'MHA',
+    kvHeads: 8,
+    desc: {
+      en: 'Multi-head attention: every query head owns its own K/V head.',
+      de: 'Multi-Head Attention: Jeder Query-Head besitzt einen eigenen K/V-Head.',
+    },
+  },
+  {
+    id: 'gqa4',
+    label: 'GQA-4',
+    kvHeads: 4,
+    desc: {
+      en: 'Grouped-query attention: pairs of query heads share one K/V head.',
+      de: 'Grouped-Query Attention: Je zwei Query-Heads teilen sich einen K/V-Head.',
+    },
+  },
+  {
+    id: 'gqa2',
+    label: 'GQA-2',
+    kvHeads: 2,
+    desc: {
+      en: 'Grouped-query attention: four query heads share one K/V head.',
+      de: 'Grouped-Query Attention: Je vier Query-Heads teilen sich einen K/V-Head.',
+    },
+  },
+  {
+    id: 'mqa',
+    label: 'MQA',
+    kvHeads: 1,
+    desc: {
+      en: 'Multi-query attention: all eight query heads share a single K/V head.',
+      de: 'Multi-Query Attention: Alle acht Query-Heads teilen sich einen einzigen K/V-Head.',
+    },
+  },
+]
+
 const HEADS: Record<HeadId, {
   label: { en: string; de: string }
   short: { en: string; de: string }
@@ -81,56 +129,50 @@ const HEADS: Record<HeadId, {
 const COPY = {
   en: {
     eyebrow: 'Attention observatory',
-    title: 'Multiple lenses scan the prompt while MQA/GQA share key-value shelves',
-    desc: 'Switch the telescope lens, then step through grouped-query layouts. Each query head keeps its own attention view, while MQA/GQA share fewer key-value shelves behind the scenes.',
+    title: 'Many query lenses, fewer key-value shelves: from MHA to MQA',
+    desc: 'Switch the telescope lens to see how each query head reads the prompt, then step through the head grouping. MHA gives every query head its own key-value head, GQA shares one per group, and MQA keeps a single shared key-value head for all queries.',
     headFocus: 'Lens array',
+    lensNote: 'Four example lenses out of the 8 query heads',
     decodeStep: 'Head grouping',
     next: 'More sharing',
     reset: 'Reset',
     attentionView: 'Radar sweep for this head',
-    cache: 'Key-value sharing shelf',
-    cached: 'KV groups',
-    newWork: 'query lens',
-    avoided: 'saved KV heads',
-    withoutCache: 'separate K/V',
-    withCache: 'shared K/V',
-    prompt: 'Every query lens can either own separate key/value shelves or share them in MQA/GQA groups.',
+    cache: 'Shared key-value shelves',
+    cached: 'KV heads',
+    prompt: 'Every query head needs keys and values to read. MHA stores one K/V head per query head; GQA and MQA let several query heads share the same K/V head.',
     reads: 'query beams read shared key-value shelves',
-    queries: 'More sharing means fewer key-value heads to store and read, while the model still keeps multiple query lenses.',
+    queries: 'More sharing means fewer KV heads to store and read at inference time. The model keeps all 8 query lenses, but the KV cache shrinks by the sharing factor.',
     currentToken: 'Current token',
     intensity: 'attention intensity',
-    scan: 'scan',
+    queryHeads: 'query heads',
+    kvHeadsStored: 'KV heads stored',
+    memorySaving: 'KV memory saving',
     key: 'K',
     value: 'V',
   },
   de: {
     eyebrow: 'Attention-Observatorium',
-    title: 'Mehrere Linsen scannen den Prompt, während MQA/GQA Key-Value-Regale teilen',
-    desc: 'Wechsle die Teleskop-Linse und gehe durch Grouped-Query-Layouts. Jeder Query-Head behält seine eigene Attention-Sicht, während MQA/GQA im Hintergrund weniger Key-Value-Regale teilen.',
+    title: 'Viele Query-Linsen, weniger Key-Value-Regale: von MHA zu MQA',
+    desc: 'Wechsle die Teleskop-Linse, um zu sehen, wie jeder Query-Head den Prompt liest, und gehe dann die Head-Gruppierung durch. Bei MHA hat jeder Query-Head einen eigenen Key-Value-Head, bei GQA teilt sich jede Gruppe einen, und bei MQA bleibt ein einziger geteilter Key-Value-Head für alle Queries.',
     headFocus: 'Linsen-Array',
+    lensNote: 'Vier Beispiel-Linsen der 8 Query-Heads',
     decodeStep: 'Head-Gruppierung',
     next: 'Mehr Sharing',
     reset: 'Zurücksetzen',
     attentionView: 'Radar-Sweep für diesen Head',
-    cache: 'Key-Value-Sharing-Regal',
-    cached: 'KV-Gruppen',
-    newWork: 'Query-Linse',
-    avoided: 'gesparte KV-Heads',
-    withoutCache: 'separate K/V',
-    withCache: 'geteilte K/V',
-    prompt: 'Jede Query-Linse kann eigene Key/Value-Regale besitzen oder sie in MQA/GQA-Gruppen teilen.',
+    cache: 'Geteilte Key-Value-Regale',
+    cached: 'KV-Heads',
+    prompt: 'Jeder Query-Head braucht Keys und Values zum Lesen. MHA speichert pro Query-Head einen eigenen K/V-Head; bei GQA und MQA teilen sich mehrere Query-Heads denselben K/V-Head.',
     reads: 'Query-Strahlen lesen geteilte Key-Value-Regale',
-    queries: 'Mehr Sharing bedeutet weniger Key-Value-Heads zum Speichern und Lesen, während mehrere Query-Linsen erhalten bleiben.',
+    queries: 'Mehr Sharing bedeutet weniger KV-Heads, die bei der Inferenz gespeichert und gelesen werden müssen. Das Modell behält alle 8 Query-Linsen, aber der KV-Cache schrumpft um den Sharing-Faktor.',
     currentToken: 'Aktuelles Token',
     intensity: 'Attention-Stärke',
-    scan: 'Scan',
+    queryHeads: 'Query-Heads',
+    kvHeadsStored: 'gespeicherte KV-Heads',
+    memorySaving: 'KV-Speicherersparnis',
     key: 'K',
     value: 'V',
   },
-}
-
-function vector(seed: number) {
-  return Array.from({ length: 3 }, (_, i) => Math.round((Math.sin(seed * 4.7 + i * 2.3) * 0.5 + 0.5) * 9))
 }
 
 function polarPoint(index: number, total: number, radius: number) {
@@ -147,22 +189,19 @@ export function MultiHeadGqaVisualizer() {
   const lang = locale === 'de' ? 'de' : 'en'
   const c = COPY[lang]
   const [headId, setHeadId] = useState<HeadId>('reference')
-  const [step, setStep] = useState(3)
+  const [levelIndex, setLevelIndex] = useState(0)
   const head = HEADS[headId]
-  const visibleTokens = TOKENS.slice(0, step)
+  const level = SHARING_LEVELS[levelIndex]
+  const groupSize = NUM_QUERY_HEADS / level.kvHeads
+  const savingFactor = NUM_QUERY_HEADS / level.kvHeads
   const Icon = head.icon
-
-  const totals = useMemo(() => {
-    const withoutCache = (step * (step + 1)) / 2
-    const withCache = step
-    return { withoutCache, withCache, avoided: Math.max(0, withoutCache - withCache) }
-  }, [step])
 
   const tokenPoints = useMemo(() => TOKENS.map((_, index) => polarPoint(index, TOKENS.length, 34)), [])
   const activeHeadIds = Object.keys(HEADS) as HeadId[]
-  const advance = () => setStep((value) => Math.min(TOKENS.length, value + 1))
-  const reset = () => setStep(3)
-  const currentPoint = tokenPoints[step - 1]
+  const currentTokenIndex = TOKENS.length - 1
+  const currentPoint = tokenPoints[currentTokenIndex]
+  const advance = () => setLevelIndex((value) => Math.min(SHARING_LEVELS.length - 1, value + 1))
+  const reset = () => setLevelIndex(0)
 
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-cyan-300/20 bg-[#070b18] p-4 text-text shadow-2xl shadow-cyan-950/30 md:p-7">
@@ -192,30 +231,11 @@ export function MultiHeadGqaVisualizer() {
 
       <div className="relative grid gap-5 xl:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.04] p-4 backdrop-blur-sm md:p-5">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <div>
-              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200/80">{c.attentionView}</div>
-              <div className="mt-1 flex items-center gap-2 font-heading text-xl font-bold text-white">
-                <Icon size={20} style={{ color: head.color }} />
-                {head.lens[lang]}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={advance}
-                disabled={step >= TOKENS.length}
-                className="inline-flex items-center gap-2 rounded-full bg-cyan-300/15 px-3 py-2 text-sm font-semibold text-cyan-100 ring-1 ring-cyan-200/25 transition hover:bg-cyan-300/25 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                <StepForward size={16} />
-                {c.next}
-              </button>
-              <button
-                onClick={reset}
-                className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-2 text-sm text-slate-100 ring-1 ring-white/15 transition hover:bg-white/10"
-              >
-                <RotateCcw size={16} />
-                {c.reset}
-              </button>
+          <div className="mb-4">
+            <div className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200/80">{c.attentionView}</div>
+            <div className="mt-1 flex items-center gap-2 font-heading text-xl font-bold text-white">
+              <Icon size={20} style={{ color: head.color }} />
+              {head.lens[lang]}
             </div>
           </div>
 
@@ -242,7 +262,7 @@ export function MultiHeadGqaVisualizer() {
                   return <line key={index} x1="50" y1="50" x2={point.x} y2={point.y} stroke="rgba(255,255,255,0.08)" strokeWidth="0.3" />
                 })}
                 <motion.line
-                  key={`${headId}-${step}-sweep`}
+                  key={`${headId}-sweep`}
                   x1="50"
                   y1="50"
                   x2={currentPoint.x}
@@ -254,7 +274,7 @@ export function MultiHeadGqaVisualizer() {
                   animate={{ opacity: [0.32, 0.9, 0.45] }}
                   transition={{ duration: 0.9 }}
                 />
-                {visibleTokens.slice(0, -1).map((token, index) => {
+                {TOKENS.slice(0, -1).map((token, index) => {
                   const point = tokenPoints[index]
                   const weight = head.weights[index]
                   return (
@@ -278,17 +298,16 @@ export function MultiHeadGqaVisualizer() {
                 <circle cx="50" cy="50" r="2.4" fill={head.color} />
                 {TOKENS.map((token, index) => {
                   const point = tokenPoints[index]
-                  const active = index < step
-                  const current = index === step - 1
+                  const current = index === currentTokenIndex
                   const weight = head.weights[index]
                   return (
-                    <g key={`${token}-${index}`} opacity={active ? 1 : 0.28}>
+                    <g key={`${token}-${index}`}>
                       <motion.circle
                         cx={point.x}
                         cy={point.y}
                         r={current ? 4.6 : 3 + weight * 2.4}
                         fill={current ? head.color : 'rgba(15,23,42,0.96)'}
-                        stroke={active ? head.color : 'rgba(255,255,255,0.28)'}
+                        stroke={head.color}
                         strokeWidth={current ? 1.2 : 0.8}
                         animate={{ scale: current ? [1, 1.16, 1] : 1 }}
                         transition={{ duration: 1.1, repeat: current ? Infinity : 0 }}
@@ -307,7 +326,7 @@ export function MultiHeadGqaVisualizer() {
               </svg>
               <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center">
                 <div className="rounded-full border border-white/10 bg-black/50 px-3 py-1 text-xs text-slate-200 backdrop-blur">
-                  {c.currentToken}: <span className="font-mono text-white">{TOKENS[step - 1]}</span>
+                  {c.currentToken}: <span className="font-mono text-white">{TOKENS[currentTokenIndex]}</span>
                 </div>
               </div>
             </div>
@@ -324,12 +343,12 @@ export function MultiHeadGqaVisualizer() {
               <div>
                 <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">{c.intensity}</div>
                 <div className="space-y-2">
-                  {visibleTokens.map((token, index) => {
+                  {TOKENS.map((token, index) => {
                     const weight = head.weights[index]
-                    const current = index === step - 1
+                    const current = index === currentTokenIndex
                     return (
                       <div key={`${token}-beam-${index}`} className="grid grid-cols-[4.6rem_1fr_2.6rem] items-center gap-2 text-sm">
-                        <span className={`rounded-full px-2 py-1 font-mono ${current ? 'bg-white text-slate-950' : 'bg-white/8 text-slate-200'}`}>{token}</span>
+                        <span className={`rounded-full px-2 py-1 font-mono ${current ? 'bg-white text-slate-950' : 'bg-white/10 text-slate-200'}`}>{token}</span>
                         <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
                           <motion.div
                             className={`h-full rounded-full bg-gradient-to-r ${head.beam}`}
@@ -352,7 +371,7 @@ export function MultiHeadGqaVisualizer() {
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-200/80">{c.headFocus}</div>
-                <div className="mt-1 text-sm text-slate-300">{c.scan}: {step} / {TOKENS.length}</div>
+                <div className="mt-1 text-sm text-slate-300">{c.lensNote}</div>
               </div>
               <Aperture size={24} style={{ color: head.color }} />
             </div>
@@ -366,7 +385,7 @@ export function MultiHeadGqaVisualizer() {
                     key={id}
                     onClick={() => setHeadId(id)}
                     aria-pressed={active}
-                    className={`group relative overflow-hidden rounded-2xl border p-3 text-left transition ${active ? 'border-white/40 bg-white/12' : 'border-white/10 bg-black/20 hover:border-white/25 hover:bg-white/8'}`}
+                    className={`group relative overflow-hidden rounded-2xl border p-3 text-left transition ${active ? 'border-white/40 bg-white/10' : 'border-white/10 bg-black/20 hover:border-white/25 hover:bg-white/10'}`}
                   >
                     <div className={`absolute -right-4 -top-4 h-16 w-16 rounded-full blur-2xl ${active ? 'opacity-60' : 'opacity-0 group-hover:opacity-30'}`} style={{ backgroundColor: option.color }} />
                     <div className="relative flex items-center gap-2">
@@ -388,28 +407,74 @@ export function MultiHeadGqaVisualizer() {
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="font-heading text-lg font-bold text-white">{c.cache}</h3>
               <span className="rounded-full border border-amber-200/25 bg-amber-200/10 px-3 py-1 text-xs font-semibold text-amber-100">
-                {step} {c.cached}
+                {level.label} · {level.kvHeads} {c.cached}
               </span>
             </div>
+
+            <div className="mb-3">
+              <div className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-amber-100/70">{c.decodeStep}</div>
+              <div className="flex flex-wrap items-center gap-2">
+                {SHARING_LEVELS.map((lvl, index) => (
+                  <button
+                    key={lvl.id}
+                    onClick={() => setLevelIndex(index)}
+                    aria-pressed={index === levelIndex}
+                    className={`rounded-full px-3 py-1.5 font-mono text-xs font-semibold transition ${
+                      index === levelIndex
+                        ? 'bg-amber-200/20 text-amber-100 ring-1 ring-amber-200/40'
+                        : 'bg-white/5 text-slate-300 ring-1 ring-white/15 hover:bg-white/10'
+                    }`}
+                  >
+                    {lvl.label}
+                  </button>
+                ))}
+                <button
+                  onClick={advance}
+                  disabled={levelIndex >= SHARING_LEVELS.length - 1}
+                  className="inline-flex items-center gap-2 rounded-full bg-cyan-300/15 px-3 py-1.5 text-xs font-semibold text-cyan-100 ring-1 ring-cyan-200/25 transition hover:bg-cyan-300/25 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  <StepForward size={14} />
+                  {c.next}
+                </button>
+                <button
+                  onClick={reset}
+                  className="inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs text-slate-100 ring-1 ring-white/15 transition hover:bg-white/10"
+                >
+                  <RotateCcw size={14} />
+                  {c.reset}
+                </button>
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-amber-50/80">{level.desc[lang]}</p>
+            </div>
+
             <div className="overflow-x-auto pb-2">
-              <div className="flex min-w-max gap-2">
-                {TOKENS.map((token, index) => {
-                  const active = index < step
-                  const fresh = index === step - 1
-                  const values = vector(index + headId.length * 3)
+              <div
+                className="grid min-w-[420px] gap-2"
+                style={{ gridTemplateColumns: `repeat(${level.kvHeads}, minmax(0, 1fr))` }}
+              >
+                {Array.from({ length: level.kvHeads }, (_, group) => {
+                  const members = Array.from({ length: groupSize }, (_, member) => group * groupSize + member)
                   return (
-                    <motion.div
-                      key={`${token}-ledger-${index}`}
-                      animate={{ opacity: active ? 1 : 0.32, y: fresh ? -4 : 0 }}
-                      className={`w-28 shrink-0 rounded-xl border p-2 ${fresh ? 'border-cyan-200/55 bg-cyan-200/15 shadow-lg shadow-cyan-500/10' : active ? 'border-amber-100/20 bg-black/24' : 'border-white/10 bg-black/10'}`}
-                    >
-                      <div className="mb-2 truncate font-mono text-sm font-semibold text-white">{token}</div>
-                      <div className="space-y-1 font-mono text-[11px]">
-                        <div className="rounded bg-cyan-300/10 px-1.5 py-1 text-cyan-100">{c.key} [{values.join('')}]</div>
-                        <div className="rounded bg-orange-300/10 px-1.5 py-1 text-orange-100">{c.value} [{values.slice().reverse().join('')}]</div>
+                    <div key={`${level.id}-kv-${group}`} className="rounded-xl border border-amber-100/20 bg-black/25 p-2">
+                      <div className="flex min-h-[3.75rem] flex-wrap content-start justify-center gap-1">
+                        {members.map((q) => (
+                          <motion.span
+                            layoutId={`query-head-${q}`}
+                            key={q}
+                            transition={{ type: 'spring', stiffness: 260, damping: 26 }}
+                            className="grid h-7 w-7 place-items-center rounded-full border bg-black/40 font-mono text-[10px] font-semibold text-white"
+                            style={{ borderColor: QUERY_HEAD_COLORS[q] }}
+                          >
+                            Q{q + 1}
+                          </motion.span>
+                        ))}
                       </div>
-                      {fresh && <div className="mt-2 rounded-full bg-white px-2 py-0.5 text-center text-[10px] font-bold uppercase tracking-wide text-slate-950">{c.newWork}</div>}
-                    </motion.div>
+                      <div className="my-1 text-center text-xs text-amber-100/60">↓</div>
+                      <div className="space-y-1 font-mono text-[11px]">
+                        <div className="rounded bg-cyan-300/10 px-1.5 py-1 text-center text-cyan-100">{c.key}{group + 1}</div>
+                        <div className="rounded bg-orange-300/10 px-1.5 py-1 text-center text-orange-100">{c.value}{group + 1}</div>
+                      </div>
+                    </div>
                   )
                 })}
               </div>
@@ -418,17 +483,17 @@ export function MultiHeadGqaVisualizer() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1">
-            <div className="rounded-2xl border border-red-300/20 bg-red-400/8 p-4">
-              <div className="text-xs uppercase tracking-[0.2em] text-red-200">{c.withoutCache}</div>
-              <div className="mt-1 font-heading text-3xl font-bold text-red-100">{totals.withoutCache}</div>
+            <div className="rounded-2xl border border-red-300/20 bg-red-400/10 p-4">
+              <div className="text-xs uppercase tracking-[0.2em] text-red-200">{c.queryHeads}</div>
+              <div className="mt-1 font-heading text-3xl font-bold text-red-100">{NUM_QUERY_HEADS}</div>
             </div>
-            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/8 p-4">
-              <div className="text-xs uppercase tracking-[0.2em] text-emerald-200">{c.withCache}</div>
-              <div className="mt-1 font-heading text-3xl font-bold text-emerald-100">{totals.withCache}</div>
+            <div className="rounded-2xl border border-emerald-300/20 bg-emerald-400/10 p-4">
+              <div className="text-xs uppercase tracking-[0.2em] text-emerald-200">{c.kvHeadsStored}</div>
+              <div className="mt-1 font-heading text-3xl font-bold text-emerald-100">{level.kvHeads}</div>
             </div>
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/8 p-4">
-              <div className="text-xs uppercase tracking-[0.2em] text-cyan-200">{c.avoided}</div>
-              <div className="mt-1 font-heading text-3xl font-bold text-cyan-100">{totals.avoided}</div>
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-400/10 p-4">
+              <div className="text-xs uppercase tracking-[0.2em] text-cyan-200">{c.memorySaving}</div>
+              <div className="mt-1 font-heading text-3xl font-bold text-cyan-100">×{savingFactor}</div>
             </div>
           </div>
         </div>

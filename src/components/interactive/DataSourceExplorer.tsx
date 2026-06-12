@@ -3,6 +3,18 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Database, ChevronDown, Filter } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    title: 'Training Data Sources',
+    subtitle: 'Explore the datasets behind modern LLMs',
+  },
+  de: {
+    title: 'Trainingsdaten-Quellen',
+    subtitle: 'Erkunde die Datensätze hinter modernen LLMs',
+  },
+} as const
 
 type Category = 'legitimate' | 'controversial' | 'synthetic'
 type FilterTab = 'all' | Category
@@ -181,6 +193,8 @@ const TABS: { key: FilterTab; label: string; color: string; activeColor: string 
 ]
 
 export function DataSourceExplorer() {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const [activeTab, setActiveTab] = useState<FilterTab>('all')
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
 
@@ -200,8 +214,8 @@ export function DataSourceExplorer() {
           <Database size={18} className="text-emerald-400" />
         </div>
         <div>
-          <h3 className="font-semibold text-text font-heading">Training Data Sources</h3>
-          <p className="text-xs text-muted">Explore the datasets behind modern LLMs</p>
+          <h3 className="font-semibold text-text font-heading">{c.title}</h3>
+          <p className="text-xs text-muted">{c.subtitle}</p>
         </div>
       </div>
 

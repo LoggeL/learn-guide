@@ -111,3 +111,10 @@ export { ReinforcementLearningPlayground } from './ReinforcementLearningPlaygrou
 // Frontier / reward components
 export { JaggedFrontierMap } from './JaggedFrontierMap'
 export { VerifiableRewardsSimulator } from './VerifiableRewardsSimulator'
+
+// LLM internals components
+export { PositionalEncodingRopeVisualizer } from './PositionalEncodingRopeVisualizer'
+export { MultiHeadGqaVisualizer } from './MultiHeadGqaVisualizer'
+export { FeedForwardMoeVisualizer } from './FeedForwardMoeVisualizer'
+export { ResidualStreamLayerNormVisualizer } from './ResidualStreamLayerNormVisualizer'
+export { NextTokenPredictionVisualizer } from './NextTokenPredictionVisualizer'

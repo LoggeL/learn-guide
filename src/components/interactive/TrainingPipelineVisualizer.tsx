@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Database, 
@@ -18,6 +18,18 @@ import {
   HardDrive,
   Zap
 } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    clickStageHint: 'Click any stage to see details · Total pipeline: 3-12 months, $5M-$300M+',
+    openSourceNote: 'Often skip expensive RLHF, use DPO or synthetic data for alignment (10-100x cheaper)',
+  },
+  de: {
+    clickStageHint: 'Klicke auf eine Stufe für Details · Gesamte Pipeline: 3–12 Monate, 5–300+ Mio. $',
+    openSourceNote: 'Überspringen oft das teure RLHF und nutzen stattdessen DPO oder synthetische Daten fürs Alignment (10–100x günstiger)',
+  },
+}
 
 const PIPELINE_STAGES = [
   {
@@ -129,12 +141,23 @@ const PIPELINE_STAGES = [
 type StageId = typeof PIPELINE_STAGES[number]['id']
 
 export function TrainingPipelineVisualizer() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [selectedStage, setSelectedStage] = useState<StageId | null>(null)
   const [animateFlow, setAnimateFlow] = useState(false)
+  const flowTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear pending animation timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (flowTimeoutRef.current) clearTimeout(flowTimeoutRef.current)
+    }
+  }, [])
 
   const handleAnimate = () => {
     setAnimateFlow(true)
-    setTimeout(() => setAnimateFlow(false), PIPELINE_STAGES.length * 800 + 1000)
+    if (flowTimeoutRef.current) clearTimeout(flowTimeoutRef.current)
+    flowTimeoutRef.current = setTimeout(() => setAnimateFlow(false), PIPELINE_STAGES.length * 800 + 1000)
   }
 
   return (
@@ -146,7 +169,7 @@ export function TrainingPipelineVisualizer() {
             Modern LLM Training Pipeline
           </h3>
           <p className="text-sm text-muted">
-            Click any stage to see details · Total pipeline: 3-12 months, $5M-$300M+
+            {c.clickStageHint}
           </p>
         </div>
         <button
@@ -348,7 +371,7 @@ export function TrainingPipelineVisualizer() {
             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
             <div>
               <span className="font-semibold text-emerald-300">Open-source models:</span>
-              <span className="text-muted ml-1">Often skip expensive RLHF, use DPO or synthetic data for alignment (10-100x cheaper)</span>
+              <span className="text-muted ml-1">{c.openSourceNote}</span>
             </div>
           </div>
         </div>

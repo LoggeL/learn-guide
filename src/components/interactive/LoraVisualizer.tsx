@@ -9,6 +9,25 @@ interface LoraVisualizerProps {
   t: Record<string, string>
 }
 
+// Literal class lookups — Tailwind cannot see runtime-constructed class names
+const accentClasses: Record<string, { card: string; cardHover: string; text: string }> = {
+  cyan: {
+    card: 'bg-cyan-500/5 border border-cyan-500/20',
+    cardHover: 'hover:bg-cyan-500/10',
+    text: 'text-cyan-400',
+  },
+  emerald: {
+    card: 'bg-emerald-500/5 border border-emerald-500/20',
+    cardHover: 'hover:bg-emerald-500/10',
+    text: 'text-emerald-400',
+  },
+  purple: {
+    card: 'bg-purple-500/5 border border-purple-500/20',
+    cardHover: 'hover:bg-purple-500/10',
+    text: 'text-purple-400',
+  },
+}
+
 // ── 1. Matrix Decomposition ───────────────────────────────────────────
 const RANKS = [1, 2, 4, 8, 16, 32, 64]
 const D = 512
@@ -310,9 +329,9 @@ function MemorySection({ t }: { t: Record<string, string> }) {
           { icon: '⚡', title: t.speedBenefit, desc: t.speedBenefitDesc, color: 'emerald' },
           { icon: '🔀', title: t.swapBenefit, desc: t.swapBenefitDesc, color: 'purple' },
         ].map((item) => (
-          <div key={item.title} className={`p-4 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
+          <div key={item.title} className={`p-4 rounded-xl ${accentClasses[item.color].card}`}>
             <span className="text-2xl">{item.icon}</span>
-            <h4 className={`text-${item.color}-400 font-semibold mt-2 mb-1`}>{item.title}</h4>
+            <h4 className={`${accentClasses[item.color].text} font-semibold mt-2 mb-1`}>{item.title}</h4>
             <p className="text-muted text-xs leading-relaxed">{item.desc}</p>
           </div>
         ))}
@@ -496,7 +515,7 @@ function VariantsSection({ t }: { t: Record<string, string> }) {
         {variants.map((v) => (
           <motion.div
             key={v.id}
-            className={`p-5 rounded-xl bg-${v.color}-500/5 border border-${v.color}-500/20 cursor-pointer transition-all hover:bg-${v.color}-500/10`}
+            className={`p-5 rounded-xl ${accentClasses[v.color].card} cursor-pointer transition-all ${accentClasses[v.color].cardHover}`}
             onClick={() => setExpanded(expanded === v.id ? null : v.id)}
             layout
           >
@@ -504,7 +523,7 @@ function VariantsSection({ t }: { t: Record<string, string> }) {
               <span className="text-2xl">{v.icon}</span>
               <div className="flex-1">
                 <div className="flex items-center justify-between">
-                  <h4 className={`text-lg font-bold text-${v.color}-400`}>{v.title}</h4>
+                  <h4 className={`text-lg font-bold ${accentClasses[v.color].text}`}>{v.title}</h4>
                   <motion.span
                     className="text-muted text-sm"
                     animate={{ rotate: expanded === v.id ? 180 : 0 }}

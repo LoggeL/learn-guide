@@ -1,6 +1,16 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    trainEpisode: 'Train one full episode',
+  },
+  de: {
+    trainEpisode: 'Eine komplette Episode trainieren',
+  },
+}
 
 const size = 5
 const start = { x: 0, y: 0 }
@@ -74,6 +84,8 @@ function updateQ(table: QTable, pos: Position, action: Action, next: Position, r
 }
 
 export function ReinforcementLearningPlayground() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [agent, setAgent] = useState<Position>(start)
   const [epsilon, setEpsilon] = useState(30)
   const [qTable, setQTable] = useState<QTable>(() => makeEmptyQTable())
@@ -205,7 +217,7 @@ export function ReinforcementLearningPlayground() {
             <button onClick={() => learnOneStep(actions[1])} className="rounded-lg border border-border bg-background p-3 hover:border-primary">→</button>
           </div>
           <button onClick={() => learnOneStep()} className="w-full rounded-xl bg-primary text-background font-semibold py-3 hover:opacity-90">Let ε-greedy policy step</button>
-          <button onClick={trainEpisode} className="w-full rounded-xl bg-secondary text-background font-semibold py-3 hover:opacity-90">Train one full episode</button>
+          <button onClick={trainEpisode} className="w-full rounded-xl bg-secondary text-background font-semibold py-3 hover:opacity-90">{c.trainEpisode}</button>
           <button onClick={resetLearning} className="w-full rounded-xl border border-border bg-surface py-3 text-text hover:border-primary/50">Reset learning</button>
 
           <div className="rounded-xl border border-border bg-background p-4">

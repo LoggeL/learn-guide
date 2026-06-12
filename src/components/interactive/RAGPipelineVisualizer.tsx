@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Database, FileText, Cpu, ArrowRight, Sparkles } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -26,33 +26,73 @@ const SAMPLE_QUERIES = [
 
 type Stage = 'idle' | 'embedding' | 'retrieving' | 'augmenting' | 'generating' | 'complete'
 
+const COPY = {
+  en: {
+    generatedResponse: 'Generated Response',
+  },
+  de: {
+    generatedResponse: 'Generierte Antwort',
+  },
+}
+
+// Common filler words that carry no signal for retrieval
+const STOPWORDS = new Set(['a', 'an', 'and', 'about', 'is', 'it', 'me', 'of', 'the', 'tell', 'to', 'what'])
+
+function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .split(/\s+/)
+    .map((word) => word.replace(/[^a-z0-9äöüß]/g, ''))
+    .filter((word) => word.length > 0)
+}
+
 function calculateRelevance(query: string, content: string): number {
-  const queryWords = query.toLowerCase().split(/\s+/)
-  const contentLower = content.toLowerCase()
+  const queryWords = tokenize(query).filter((word) => !STOPWORDS.has(word))
+  if (queryWords.length === 0) return 0
+
+  const contentWords = new Set(tokenize(content))
   let score = 0
 
   for (const word of queryWords) {
-    if (word.length < 3) continue
-    if (contentLower.includes(word)) {
+    if (contentWords.has(word)) {
       score += 1
     }
   }
 
-  // Boost for title match
   return Math.min(score / queryWords.length, 1)
 }
 
 export function RAGPipelineVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [query, setQuery] = useState('')
   const [stage, setStage] = useState<Stage>('idle')
   const [documents, setDocuments] = useState(DOCUMENTS)
   const [retrievedDocs, setRetrievedDocs] = useState<typeof DOCUMENTS>([])
   const [response, setResponse] = useState('')
+  const runIdRef = useRef(0)
+  const timeoutIdsRef = useRef<number[]>([])
+
+  // Cancel pending pipeline timeouts on unmount
+  useEffect(() => {
+    return () => {
+      runIdRef.current += 1
+      timeoutIdsRef.current.forEach((id) => window.clearTimeout(id))
+      timeoutIdsRef.current = []
+    }
+  }, [])
+
+  const delay = (ms: number) =>
+    new Promise<void>((resolve) => {
+      const id = window.setTimeout(resolve, ms)
+      timeoutIdsRef.current.push(id)
+    })
 
   const runPipeline = async (queryToUse?: string) => {
     const searchQuery = queryToUse || query
     if (!searchQuery.trim()) return
+
+    const runId = ++runIdRef.current
 
     // Reset state
     setResponse('')
@@ -60,11 +100,13 @@ export function RAGPipelineVisualizer() {
 
     // Stage 1: Embedding
     setStage('embedding')
-    await new Promise(r => setTimeout(r, 800))
+    await delay(800)
+    if (runIdRef.current !== runId) return
 
     // Stage 2: Retrieval
     setStage('retrieving')
-    await new Promise(r => setTimeout(r, 600))
+    await delay(600)
+    if (runIdRef.current !== runId) return
 
     // Calculate relevance scores
     const docsWithScores = DOCUMENTS.map(doc => ({
@@ -78,15 +120,18 @@ export function RAGPipelineVisualizer() {
     setDocuments(docsWithScores.length > 0 ? docsWithScores : DOCUMENTS.slice(0, 2).map(d => ({ ...d, relevance: 0.3 })))
     setRetrievedDocs(docsWithScores.length > 0 ? docsWithScores : DOCUMENTS.slice(0, 2).map(d => ({ ...d, relevance: 0.3 })))
 
-    await new Promise(r => setTimeout(r, 800))
+    await delay(800)
+    if (runIdRef.current !== runId) return
 
     // Stage 3: Augmenting
     setStage('augmenting')
-    await new Promise(r => setTimeout(r, 600))
+    await delay(600)
+    if (runIdRef.current !== runId) return
 
     // Stage 4: Generating
     setStage('generating')
-    await new Promise(r => setTimeout(r, 1000))
+    await delay(1000)
+    if (runIdRef.current !== runId) return
 
     // Generate response based on retrieved docs
     const topDoc = docsWithScores[0]
@@ -100,6 +145,9 @@ export function RAGPipelineVisualizer() {
   }
 
   const reset = () => {
+    runIdRef.current += 1
+    timeoutIdsRef.current.forEach((id) => window.clearTimeout(id))
+    timeoutIdsRef.current = []
     setStage('idle')
     setQuery('')
     setRetrievedDocs([])
@@ -267,7 +315,7 @@ export function RAGPipelineVisualizer() {
             >
               <div className="flex items-center gap-2 mb-2">
                 <Sparkles size={16} className="text-primary-light" />
-                <span className="font-semibold text-text text-sm">Generated Response</span>
+                <span className="font-semibold text-text text-sm">{c.generatedResponse}</span>
               </div>
               {stage === 'generating' ? (
                 <div className="flex items-center gap-2">

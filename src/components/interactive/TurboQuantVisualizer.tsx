@@ -2,6 +2,16 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    jlSignBits: 'JL sign bits (1 bit each)',
+  },
+  de: {
+    jlSignBits: 'JL-Vorzeichenbits (je 1 Bit)',
+  },
+}
 
 const stages = [
   {
@@ -80,6 +90,8 @@ function VectorBar({ value, max = 1 }: { value: number; max?: number }) {
 }
 
 export function TurboQuantVisualizer() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [stage, setStage] = useState(0)
   const s = stages[stage]
 
@@ -176,7 +188,7 @@ export function TurboQuantVisualizer() {
                     ))}
                   </div>
                   <div className="rounded-lg border border-purple-500/30 bg-background/60 p-3">
-                    <div className="text-xs text-muted mb-2">JL sign bits (1 bit each)</div>
+                    <div className="text-xs text-muted mb-2">{c.jlSignBits}</div>
                     <div className="flex gap-2 flex-wrap">
                       {s.signBits.map((bit, i) => (
                         <div key={i} className={`font-mono text-sm rounded px-2 py-1 ${bit === '+1' ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-300'}`}>

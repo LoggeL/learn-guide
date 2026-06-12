@@ -3,6 +3,20 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Settings, Wrench, MessageSquare, Database, ChevronDown, Layers } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    title: 'Context Window',
+    priorityTitle: 'Priority Order',
+    priorityText: 'When context exceeds the window limit, content is typically trimmed from the middle or oldest history first. System prompts and tool definitions have highest priority and are rarely truncated. Recent conversation turns are preserved to maintain coherence.',
+  },
+  de: {
+    title: 'Kontextfenster',
+    priorityTitle: 'Prioritätsreihenfolge',
+    priorityText: 'Überschreitet der Kontext das Fensterlimit, wird Inhalt typischerweise zuerst aus der Mitte oder dem ältesten Verlauf entfernt. System-Prompts und Tool-Definitionen haben die höchste Priorität und werden selten gekürzt. Aktuelle Gesprächsrunden bleiben erhalten, um die Kohärenz zu wahren.',
+  },
+} as const
 
 type ContextLayer = 'system' | 'tools' | 'retrieved' | 'history'
 
@@ -49,6 +63,8 @@ const layerData: Record<ContextLayer, { title: string; desc: string; tokens: num
 }
 
 export function ContextAnatomyVisualizer() {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const [expandedLayer, setExpandedLayer] = useState<ContextLayer | null>('system')
   const [showTokens, setShowTokens] = useState(true)
   const maxTokens = 8192
@@ -70,7 +86,7 @@ export function ContextAnatomyVisualizer() {
               <Layers size={18} className="text-primary-light" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">Context Window</h3>
+              <h3 className="font-semibold text-text font-heading">{c.title}</h3>
               <p className="text-xs text-muted">{totalTokens.toLocaleString()} / {maxTokens.toLocaleString()} tokens</p>
             </div>
           </div>
@@ -188,12 +204,10 @@ export function ContextAnatomyVisualizer() {
       {/* Priority Info */}
       <div className="rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 p-5">
         <h4 className="font-semibold text-text font-heading mb-3 flex items-center gap-2">
-          <span className="text-lg">Priority Order</span>
+          <span className="text-lg">{c.priorityTitle}</span>
         </h4>
         <p className="text-sm text-muted leading-relaxed">
-          When context exceeds the window limit, content is typically trimmed from the middle or oldest history first.
-          System prompts and tool definitions have highest priority and are rarely truncated.
-          Recent conversation turns are preserved to maintain coherence.
+          {c.priorityText}
         </p>
       </div>
     </div>

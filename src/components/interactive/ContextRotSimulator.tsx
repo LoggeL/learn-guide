@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Send, RotateCcw, Zap, Play, MessageSquare, AlertTriangle, Skull, Sparkles } from 'lucide-react'
 import { TokenCounter } from './TokenCounter'
@@ -42,6 +42,7 @@ export function ContextRotSimulator() {
     { label: t.interactive.labelHaiku, prompt: t.interactive.exampleHaiku },
   ]
 
+  const messageIdRef = useRef(0)
   const [systemPrompt, setSystemPrompt] = useState(EXAMPLE_PROMPTS[0].prompt)
   const [messages, setMessages] = useState<Message[]>([])
   const [isStarted, setIsStarted] = useState(false)
@@ -68,7 +69,7 @@ export function ContextRotSimulator() {
   const addSampleMessage = useCallback(() => {
     const userText = SAMPLE_MESSAGES[messageCount % SAMPLE_MESSAGES.length]
     const userMessage: Message = {
-      id: `user-${Date.now()}`,
+      id: `user-${messageIdRef.current++}`,
       role: 'user',
       content: userText,
       tokens: estimateTokens(userText),
@@ -76,7 +77,7 @@ export function ContextRotSimulator() {
 
     const responseText = SAMPLE_RESPONSES[messageCount % SAMPLE_RESPONSES.length]
     const assistantMessage: Message = {
-      id: `assistant-${Date.now()}`,
+      id: `assistant-${messageIdRef.current++}`,
       role: 'assistant',
       content: responseText,
       tokens: estimateTokens(responseText),
@@ -99,17 +100,17 @@ export function ContextRotSimulator() {
 
     // Keep adding until we EXCEED the limit
     for (let i = 0; i < 20 && currentTokens < maxTokens * 1.5; i++) {
-      const userText = `Message ${messages.length / 2 + i + 1}: Can you help me with this?`
+      const userText = `Message ${Math.floor(messages.length / 2) + i + 1}: Can you help me with this?`
       const assistantText = SAMPLE_RESPONSES[i % SAMPLE_RESPONSES.length]
 
       quickMessages.push({
-        id: `user-quick-${Date.now()}-${i}`,
+        id: `user-quick-${messageIdRef.current++}`,
         role: 'user',
         content: userText,
         tokens: estimateTokens(userText),
       })
       quickMessages.push({
-        id: `assistant-quick-${Date.now()}-${i}`,
+        id: `assistant-quick-${messageIdRef.current++}`,
         role: 'assistant',
         content: assistantText,
         tokens: estimateTokens(assistantText),

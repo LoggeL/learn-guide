@@ -78,8 +78,24 @@ const PROBLEMS: Problem[] = [
   },
 ]
 
+const copy = {
+  en: {
+    selectProblem: 'Select Problem',
+    selectHint: 'See how chain-of-thought improves reasoning',
+    withoutHint: 'Without reasoning steps, the model may jump to an intuitive but wrong answer.',
+    clickHint: 'Click "Show Steps" to see how chain-of-thought reasoning leads to the correct answer.',
+  },
+  de: {
+    selectProblem: 'Aufgabe wählen',
+    selectHint: 'Sieh, wie Chain-of-Thought das Schlussfolgern verbessert',
+    withoutHint: 'Ohne Zwischenschritte springt das Modell womöglich zu einer intuitiven, aber falschen Antwort.',
+    clickHint: 'Klicke auf „Schritte anzeigen“, um zu sehen, wie Chain-of-Thought-Reasoning zur richtigen Antwort führt.',
+  },
+} as const
+
 export function ChainOfThoughtDemo() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [selectedProblem, setSelectedProblem] = useState<string>(PROBLEMS[0].id)
   const [showSteps, setShowSteps] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
@@ -124,8 +140,8 @@ export function ChainOfThoughtDemo() {
             <Brain size={18} className="text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">Select Problem</h3>
-            <p className="text-xs text-muted">See how chain-of-thought improves reasoning</p>
+            <h3 className="font-semibold text-text font-heading">{c.selectProblem}</h3>
+            <p className="text-xs text-muted">{c.selectHint}</p>
           </div>
         </div>
 
@@ -180,7 +196,7 @@ export function ChainOfThoughtDemo() {
               </div>
             </div>
             <p className="text-xs text-muted mt-4">
-              Without reasoning steps, the model may jump to an intuitive but wrong answer.
+              {c.withoutHint}
             </p>
           </div>
         </div>
@@ -267,7 +283,7 @@ export function ChainOfThoughtDemo() {
 
             {!showSteps && (
               <p className="text-xs text-muted">
-                Click &quot;Show Steps&quot; to see how chain-of-thought reasoning leads to the correct answer.
+                {c.clickHint}
               </p>
             )}
           </div>

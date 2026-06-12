@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /* ─── 1. Catastrophic Forgetting Demo ─── */
@@ -27,26 +27,26 @@ export function ForgettingDemo({ labels }: ForgettingDemoProps) {
   useEffect(() => {
     if (phase === 'trainA') {
       const interval = setInterval(() => {
-        setTaskAKnowledge(prev => {
-          if (prev >= 95) { setPhase('doneA'); clearInterval(interval); return 95 }
-          return prev + 5
-        })
+        setTaskAKnowledge(prev => Math.min(95, prev + 5))
         setStep(s => s + 1)
       }, 80)
       return () => clearInterval(interval)
     }
     if (phase === 'trainB') {
       const interval = setInterval(() => {
-        setTaskBKnowledge(prev => {
-          if (prev >= 95) { setPhase('doneB'); clearInterval(interval); return 95 }
-          return prev + 5
-        })
+        setTaskBKnowledge(prev => Math.min(95, prev + 5))
         setTaskAKnowledge(prev => Math.max(0, prev - 4))
         setStep(s => s + 1)
       }, 80)
       return () => clearInterval(interval)
     }
   }, [phase])
+
+  // Phase transitions once a task is fully trained
+  useEffect(() => {
+    if (phase === 'trainA' && taskAKnowledge >= 95) setPhase('doneA')
+    if (phase === 'trainB' && taskBKnowledge >= 95) setPhase('doneB')
+  }, [phase, taskAKnowledge, taskBKnowledge])
 
   const reset = () => { setPhase('idle'); setTaskAKnowledge(0); setTaskBKnowledge(0); setStep(0) }
 
@@ -99,7 +99,7 @@ export function ForgettingDemo({ labels }: ForgettingDemoProps) {
 
       <div className="flex gap-3 flex-wrap">
         <button
-          onClick={() => { reset(); setTimeout(() => setPhase('trainA'), 50) }}
+          onClick={() => { reset(); setPhase('trainA') }}
           disabled={phase === 'trainA' || phase === 'trainB'}
           className="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 disabled:opacity-40 text-sm font-medium transition-colors"
         >
@@ -143,34 +143,45 @@ export function NestedLoopsDemo({ labels }: NestedLoopsProps) {
   const [outerProgress, setOuterProgress] = useState(0)
   const [middleProgress, setMiddleProgress] = useState(0)
   const [innerProgress, setInnerProgress] = useState(0)
+  const outerRef = useRef(0)
+  const middleRef = useRef(0)
+  const innerRef = useRef(0)
 
   useEffect(() => {
     if (!running) return
     const interval = setInterval(() => {
-      setInnerProgress(prev => {
-        if (prev >= 100) {
-          setMiddleProgress(mp => {
-            if (mp >= 100) {
-              setOuterProgress(op => {
-                if (op >= 100) {
-                  setRunning(false)
-                  return 100
-                }
-                return op + 10
-              })
-              return 0
-            }
-            return mp + 10
-          })
-          return 0
+      let inner = innerRef.current
+      let middle = middleRef.current
+      let outer = outerRef.current
+
+      if (inner >= 100) {
+        inner = 0
+        if (middle >= 100) {
+          middle = 0
+          if (outer >= 100) {
+            setRunning(false)
+          } else {
+            outer += 10
+          }
+        } else {
+          middle += 10
         }
-        return prev + 5
-      })
+      } else {
+        inner += 5
+      }
+
+      innerRef.current = inner
+      middleRef.current = middle
+      outerRef.current = outer
+      setInnerProgress(inner)
+      setMiddleProgress(middle)
+      setOuterProgress(outer)
     }, 60)
     return () => clearInterval(interval)
   }, [running])
 
   const restart = () => {
+    outerRef.current = 0; middleRef.current = 0; innerRef.current = 0
     setOuterProgress(0); setMiddleProgress(0); setInnerProgress(0)
     setRunning(true)
   }
@@ -309,7 +320,7 @@ export function ComparisonDemo({ labels }: ComparisonDemoProps) {
       </div>
       <div className="mt-4 flex gap-3">
         <button
-          onClick={() => { reset(); setTimeout(() => setPhase(1), 50) }}
+          onClick={() => { reset(); setPhase(1) }}
           disabled={phase > 0 && phase < 4}
           className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 disabled:opacity-40 text-sm font-medium transition-colors"
         >

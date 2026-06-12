@@ -25,7 +25,6 @@ const copy = {
     moe: 'MoE FFN: router activates a sparse subset of expert MLPs',
     attention: 'Attention output',
     router: 'Router',
-    combine: 'Weighted combine',
     utilization: 'Expert utilization for this mini-batch',
     denseMachine: 'Monolithic transform press',
     expertWorkshop: 'Expert workshop lanes',
@@ -54,7 +53,6 @@ const copy = {
     moe: 'MoE-FFN: Router aktiviert eine sparse Teilmenge von Expert-MLPs',
     attention: 'Attention-Ausgabe',
     router: 'Router',
-    combine: 'Gewichtet kombinieren',
     utilization: 'Expert-Auslastung für diesen Mini-Batch',
     denseMachine: 'Monolithische Transformationspresse',
     expertWorkshop: 'Expert-Werkstattspuren',
@@ -199,7 +197,7 @@ export function FeedForwardMoeVisualizer({ locale = 'en' }: FeedForwardMoeVisual
                 <div className="mb-2 text-xs uppercase tracking-[0.2em] text-slate-500">{c.attention}</div>
                 <div className="flex flex-wrap gap-2">
                   {scenario.tokens.map((token) => (
-                    <span key={token} className="rounded-full border border-emerald-200/20 bg-emerald-200/8 px-3 py-1.5 font-mono text-sm text-emerald-50">
+                    <span key={token} className="rounded-full border border-emerald-200/20 bg-emerald-200/[0.08] px-3 py-1.5 font-mono text-sm text-emerald-50">
                       {token}
                     </span>
                   ))}
@@ -228,7 +226,7 @@ export function FeedForwardMoeVisualizer({ locale = 'en' }: FeedForwardMoeVisual
               </div>
 
               <div className="flex items-center justify-center lg:justify-start">
-                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/8 px-4 py-3 text-sm font-semibold text-emerald-100">
+                <div className="rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.08] px-4 py-3 text-sm font-semibold text-emerald-100">
                   → {c.residual}
                 </div>
               </div>
@@ -241,7 +239,7 @@ export function FeedForwardMoeVisualizer({ locale = 'en' }: FeedForwardMoeVisual
                 <GitBranch size={16} />
                 {c.moe}
               </div>
-              <div className="rounded-full border border-cyan-300/20 bg-cyan-300/8 px-3 py-1 text-xs text-cyan-100">
+              <div className="rounded-full border border-cyan-300/20 bg-cyan-300/[0.08] px-3 py-1 text-xs text-cyan-100">
                 {c.selectedToken}: <span className="font-mono font-bold">{scenario.tokens[selectedToken]}</span>
               </div>
             </div>
@@ -375,17 +373,17 @@ export function FeedForwardMoeVisualizer({ locale = 'en' }: FeedForwardMoeVisual
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/8 p-4">
+            <div className="rounded-2xl border border-cyan-300/20 bg-cyan-300/[0.08] p-4">
               <div className="text-2xl font-bold text-cyan-100">{activePercent}%</div>
               <div className="text-xs text-slate-400">{c.activeParams}</div>
             </div>
-            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/8 p-4">
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.08] p-4">
               <div className="text-2xl font-bold text-amber-100">100%</div>
               <div className="text-xs text-slate-400">{c.totalParams}</div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-amber-300/20 bg-amber-300/8 p-4 text-sm leading-relaxed text-slate-300">
+          <div className="rounded-2xl border border-amber-300/20 bg-amber-300/[0.08] p-4 text-sm leading-relaxed text-slate-300">
             <span className="font-semibold text-amber-100">{c.keyIdea} </span>
             {c.note}
           </div>

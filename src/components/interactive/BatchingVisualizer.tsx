@@ -103,7 +103,7 @@ function ThroughputChart({ t }: { t: Record<string, string> }) {
                 <motion.div
                   className="absolute w-2 h-2 rounded-full bg-emerald-400 border border-emerald-300"
                   initial={false}
-                  animate={{ bottom: `${(point.perUserTokS / MAX_PER_USER) * 192 + 20}px` }}
+                  animate={{ bottom: `${Math.min((point.perUserTokS / MAX_PER_USER) * 192 + 20, 184)}px` }}
                   transition={{ type: 'spring', stiffness: 150, damping: 20 }}
                 />
                 <span className={`text-xs ${i === idx ? (isOom ? 'text-red-400 font-bold' : 'text-cyan-400 font-bold') : 'text-muted'}`}>
@@ -153,13 +153,14 @@ function PrefillDecodeViz({ t }: { t: Record<string, string> }) {
   useEffect(() => {
     if (!auto) return
     const timer = setInterval(() => {
-      setStep(s => {
-        if (s >= 1 + outputTokens.length) { setAuto(false); return s }
-        return s + 1
-      })
+      setStep(s => Math.min(s + 1, 1 + outputTokens.length))
     }, 800)
     return () => clearInterval(timer)
   }, [auto, outputTokens.length])
+
+  useEffect(() => {
+    if (step >= 1 + outputTokens.length) setAuto(false)
+  }, [step, outputTokens.length])
 
   const reset = useCallback(() => { setStep(0); setAuto(false) }, [])
   const isPrefillDone = step >= 1
@@ -421,32 +422,30 @@ function ContinuousBatchingViz({ t }: { t: Record<string, string> }) {
 
   // Continuous: when a request finishes, add a new one
   useEffect(() => {
-    if (mode !== 'continuous' || !playing) return
-    setContRequests(prev => {
-      const newReqs = [...prev]
-      let changed = false
-      for (let s = 0; s < SLOT_COUNT; s++) {
-        const active = newReqs.find(r => r.slot === s && r.startStep + r.duration > currentStep && r.startStep <= currentStep)
-        if (!active && currentStep > 0) {
-          const dur = 4 + Math.floor(Math.random() * 8)
-          newReqs.push({ id: nextId.current++, slot: s, startStep: currentStep, duration: dur, color: COLORS[nextId.current % COLORS.length] })
-          changed = true
-        }
+    if (mode !== 'continuous' || !playing || currentStep === 0) return
+    const newReqs: Request[] = []
+    for (let s = 0; s < SLOT_COUNT; s++) {
+      const active = contRequests.find(r => r.slot === s && r.startStep + r.duration > currentStep && r.startStep <= currentStep)
+      if (!active) {
+        const id = nextId.current++
+        const dur = 4 + Math.floor(Math.random() * 8)
+        newReqs.push({ id, slot: s, startStep: currentStep, duration: dur, color: COLORS[id % COLORS.length] })
       }
-      return changed ? newReqs : prev
-    })
-  }, [currentStep, mode, playing])
+    }
+    if (newReqs.length > 0) setContRequests(prev => [...prev, ...newReqs])
+  }, [currentStep, mode, playing, contRequests])
 
   useEffect(() => {
     if (!playing) return
     const timer = setInterval(() => {
-      setCurrentStep(s => {
-        if (s >= maxSteps - 1) { setPlaying(false); return s }
-        return s + 1
-      })
+      setCurrentStep(s => Math.min(s + 1, maxSteps - 1))
     }, 400)
     return () => clearInterval(timer)
   }, [playing])
+
+  useEffect(() => {
+    if (currentStep >= maxSteps - 1) setPlaying(false)
+  }, [currentStep])
 
   const resetAll = () => {
     setPlaying(false)
@@ -465,8 +464,10 @@ function ContinuousBatchingViz({ t }: { t: Record<string, string> }) {
     const activeSlots = new Set(contRequests.filter(r => r.startStep + r.duration > currentStep && r.startStep <= currentStep).map(r => r.slot))
     for (let s = 0; s < SLOT_COUNT; s++) {
       if (!activeSlots.has(s)) {
+        const id = nextId.current++
         const dur = 4 + Math.floor(Math.random() * 8)
-        setContRequests(prev => [...prev, { id: nextId.current++, slot: s, startStep: currentStep, duration: dur, color: COLORS[nextId.current % COLORS.length] }])
+        const newReq: Request = { id, slot: s, startStep: currentStep, duration: dur, color: COLORS[id % COLORS.length] }
+        setContRequests(prev => [...prev, newReq])
         return
       }
     }

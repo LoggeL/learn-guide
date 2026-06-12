@@ -53,7 +53,7 @@ function analyzeForBias(text: string): AnalysisResult {
   }
 
   // Gender assumptions
-  if (lowerText.includes(' she ') || lowerText.includes(' he ') || lowerText.includes(' his ') || lowerText.includes(' her ')) {
+  if (/\b(she|he|his|her|him|hers)\b/.test(lowerText)) {
     indicators.push({
       type: 'Gender Assumption',
       severity: 'medium',
@@ -112,8 +112,22 @@ function analyzeForBias(text: string): AnalysisResult {
   }
 }
 
+const copy = {
+  en: {
+    inputHint: 'Enter text to analyze for potential bias',
+    scoreHint: 'Based on detected bias indicators',
+    recommendationsHint: 'Suggestions for improvement',
+  },
+  de: {
+    inputHint: 'Text eingeben, um ihn auf möglichen Bias zu analysieren',
+    scoreHint: 'Basierend auf erkannten Bias-Indikatoren',
+    recommendationsHint: 'Vorschläge zur Verbesserung',
+  },
+} as const
+
 export function BiasDetectionDemo() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [inputText, setInputText] = useState('')
   const [result, setResult] = useState<AnalysisResult | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
@@ -158,13 +172,13 @@ export function BiasDetectionDemo() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">{t.interactive.testInput}</h3>
-            <p className="text-xs text-muted">Enter text to analyze for potential bias</p>
+            <p className="text-xs text-muted">{c.inputHint}</p>
           </div>
         </div>
 
         <textarea
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
+          onChange={(e) => { setInputText(e.target.value); setResult(null) }}
           className="w-full h-32 bg-background border border-border rounded-xl p-4 text-text focus:outline-none focus:border-primary/50 transition-colors resize-none"
           placeholder="Enter a prompt, job description, or any text to analyze..."
         />
@@ -236,7 +250,7 @@ export function BiasDetectionDemo() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-text font-heading">{t.interactive.fairnessScore}</h3>
-                    <p className="text-xs text-muted">Based on detected bias indicators</p>
+                    <p className="text-xs text-muted">{c.scoreHint}</p>
                   </div>
                 </div>
                 <motion.div
@@ -307,7 +321,7 @@ export function BiasDetectionDemo() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-text font-heading">{t.interactive.recommendations}</h3>
-                  <p className="text-xs text-muted">Suggestions for improvement</p>
+                  <p className="text-xs text-muted">{c.recommendationsHint}</p>
                 </div>
               </div>
 

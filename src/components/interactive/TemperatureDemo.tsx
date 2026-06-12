@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sparkles, Shuffle, Thermometer, Flame, Snowflake, Wind } from 'lucide-react'
 import { TemperatureVisualizer } from './TemperatureVisualizer'
@@ -82,13 +82,23 @@ export function TemperatureDemo() {
   const state = getTemperatureState(temperature)
   const StateIcon = state.icon
 
+  const regenerateTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const regenerate = () => {
     setIsGenerating(true)
-    setTimeout(() => {
+    if (regenerateTimeoutRef.current) clearTimeout(regenerateTimeoutRef.current)
+    regenerateTimeoutRef.current = setTimeout(() => {
       setCompletion(getCompletion(temperature))
       setIsGenerating(false)
     }, 300)
   }
+
+  // Clear pending regenerate timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (regenerateTimeoutRef.current) clearTimeout(regenerateTimeoutRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     setCompletion(getCompletion(temperature))
@@ -220,11 +230,17 @@ export function TemperatureDemo() {
               exit={{ opacity: 0, y: -10 }}
               className="text-lg text-text leading-relaxed"
             >
-              <span className="text-muted">{t.interactive.onceUponATime.replace('...', '')} </span>
+              <span className="text-muted">{t.interactive.onceUponATime.replace(/\.{3}"?$/, '')} </span>
               <span className="px-1.5 py-0.5 rounded bg-primary/20 text-primary-light font-semibold">
                 {completion.bold}
               </span>
-              <span className="text-muted"> {completion.text.replace(completion.bold + ' ', '').replace(completion.bold, '')}"</span>
+              <span className="text-muted">
+                {' '}
+                {completion.text.startsWith(completion.bold)
+                  ? completion.text.slice(completion.bold.length).trimStart()
+                  : completion.text}
+                &quot;
+              </span>
             </motion.div>
           </AnimatePresence>
           

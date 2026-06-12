@@ -240,7 +240,7 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
               </div>
               {isActive && (
                 <motion.div
-                  layoutId="active-indicator"
+                  layoutId={`active-indicator-${modality.id}`}
                   className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary flex items-center justify-center"
                   initial={false}
                 >
@@ -256,9 +256,9 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
       <div className="flex flex-col lg:flex-row items-center gap-6">
         {/* Active Modalities */}
         <div className="flex-1 w-full">
-          <AnimatePresence mode="popLayout">
-            {activeModalities.length > 0 ? (
-              <div className="grid gap-3">
+          {activeModalities.length > 0 ? (
+            <div className="grid gap-3">
+              <AnimatePresence mode="popLayout">
                 {activeModalities.map((id) => {
                   const modality = modalities.find(m => m.id === id)
                   if (!modality) return null
@@ -285,17 +285,17 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
                     </motion.div>
                   )
                 })}
-              </div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="p-8 text-center text-muted rounded-xl border border-dashed border-border"
-              >
-                {labels.selectToSee}
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </AnimatePresence>
+            </div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="p-8 text-center text-muted rounded-xl border border-dashed border-border"
+            >
+              {labels.selectToSee}
+            </motion.div>
+          )}
         </div>
 
         {/* Arrow */}
@@ -360,8 +360,8 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
             <Lightbulb className="w-5 h-5 text-yellow-400" />
             <h4 className="font-bold text-text">{labels.useCases}</h4>
           </div>
-          <AnimatePresence mode="popLayout">
-            <div className="grid gap-4">
+          <div className="grid gap-4">
+            <AnimatePresence mode="popLayout">
               {getUseCases().map((useCase, index) => (
                 <motion.div
                   key={useCase.title}
@@ -379,8 +379,8 @@ export function MultimodalityVisualizer({ labels }: MultimodalityVisualizerProps
                   </div>
                 </motion.div>
               ))}
-            </div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
         </motion.div>
       )}
     </div>

@@ -1,10 +1,24 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    clickStageHint: 'Click on any stage to learn more',
+    totalReward: 'Total Reward: +21.5',
+  },
+  de: {
+    clickStageHint: 'Klicke auf eine Stufe, um mehr zu erfahren',
+    totalReward: 'Gesamtbelohnung: +21,5',
+  },
+}
 
 // ─── World Model Pipeline SVG ───────────────────────────────────────────────
 export function WorldModelPipeline() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [activeStage, setActiveStage] = useState<number | null>(null)
 
   const stages = [
@@ -203,7 +217,7 @@ export function WorldModelPipeline() {
         )}
       </AnimatePresence>
 
-      <p className="text-xs text-muted text-center">Click on any stage to learn more</p>
+      <p className="text-xs text-muted text-center">{c.clickStageHint}</p>
     </div>
   )
 }
@@ -265,14 +279,19 @@ export function SimToRealToggle() {
       </div>
 
       {/* Comparison grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={showReal ? 'real' : 'sim'}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="grid grid-cols-2 md:grid-cols-3 gap-3"
+        >
           {current.items.map((item, i) => (
             <motion.div
-              key={`${showReal ? 'real' : 'sim'}-${i}`}
+              key={i}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
               transition={{ delay: i * 0.05 }}
               className="p-3 rounded-xl border"
               style={{
@@ -285,8 +304,8 @@ export function SimToRealToggle() {
               <p className="text-xs text-muted mt-0.5">{item.detail}</p>
             </motion.div>
           ))}
-        </AnimatePresence>
-      </div>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Insight box */}
       <motion.div
@@ -310,6 +329,8 @@ export function SimToRealToggle() {
 
 // ─── Training Loop Visualization ────────────────────────────────────────────
 export function TrainingLoopViz() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [step, setStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -437,7 +458,7 @@ export function TrainingLoopViz() {
           ))}
           {/* Total */}
           <text x="140" y={105} textAnchor="middle" fill="#fbbf24" className="text-[12px] font-bold">
-            Total Reward: +21.5
+            {c.totalReward}
           </text>
         </g>
       ),
@@ -503,23 +524,24 @@ export function TrainingLoopViz() {
   ]
 
   const currentStep = steps[step]
+  const totalSteps = steps.length
 
-  // Auto-play logic
-  const handlePlay = () => {
-    if (isPlaying) {
-      setIsPlaying(false)
-      return
-    }
-    setIsPlaying(true)
-    let current = step
-    const interval = setInterval(() => {
-      current = (current + 1) % steps.length
-      setStep(current)
-      if (current === 0) {
-        clearInterval(interval)
+  // Auto-play logic: advance one step at a time while playing, stop after the last step
+  useEffect(() => {
+    if (!isPlaying) return
+    const timeout = setTimeout(() => {
+      if (step >= totalSteps - 1) {
+        setStep(0)
         setIsPlaying(false)
+      } else {
+        setStep(step + 1)
       }
     }, 2500)
+    return () => clearTimeout(timeout)
+  }, [isPlaying, step, totalSteps])
+
+  const handlePlay = () => {
+    setIsPlaying((prev) => !prev)
   }
 
   return (
@@ -569,6 +591,11 @@ export function TrainingLoopViz() {
             transition={{ duration: 0.3 }}
           >
             <svg viewBox="0 0 280 120" className="w-full max-w-lg mx-auto h-auto">
+              <defs>
+                <marker id="arrowYellow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0 0L8 4L0 8z" fill="#fbbf24" />
+                </marker>
+              </defs>
               {currentStep.visual}
             </svg>
           </motion.div>

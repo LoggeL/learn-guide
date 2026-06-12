@@ -49,6 +49,15 @@ const CATEGORY_COLORS: Record<string, string> = {
   default: 'bg-gray-500',
 }
 
+const copy = {
+  en: {
+    cosineHint: 'Cosine similarity to other words',
+  },
+  de: {
+    cosineHint: 'Kosinus-Ähnlichkeit zu anderen Wörtern',
+  },
+} as const
+
 const CATEGORY_HEX: Record<string, string> = {
   animals: '#10b981',
   royalty: '#a855f7',
@@ -106,7 +115,8 @@ export type WordData = {
 export { getCategory, getEmbedding, cosineSimilarity3D, CATEGORY_HEX, AVAILABLE_WORDS, CATEGORY_COLORS }
 
 export function EmbeddingVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [activeWords, setActiveWords] = useState<string[]>(['king', 'queen', 'cat', 'dog', 'computer'])
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
 
@@ -245,7 +255,7 @@ export function EmbeddingVisualizer() {
               <h3 className="font-semibold text-text font-heading">
                 {t.interactive.similarityScore}: {selectedWord}
               </h3>
-              <p className="text-xs text-muted">Cosine similarity to other words</p>
+              <p className="text-xs text-muted">{c.cosineHint}</p>
             </div>
           </div>
 

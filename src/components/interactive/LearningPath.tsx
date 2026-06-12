@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n/context'
 import { CheckCircle2, Circle, ChevronDown, ChevronUp, Sparkles, BookOpen, Rocket, GraduationCap } from 'lucide-react'
@@ -19,6 +19,7 @@ interface PathStage {
   colorTo: string
   accent: string
   accentBorder: string
+  accentBorderHover: string
   accentBg: string
   topics: PathTopic[]
 }
@@ -31,6 +32,7 @@ const stages: PathStage[] = [
     colorTo: 'to-green-500',
     accent: 'text-emerald-400',
     accentBorder: 'border-emerald-500/30',
+    accentBorderHover: 'hover:border-emerald-500/30',
     accentBg: 'bg-emerald-500/10',
     topics: [
       { id: 'prompt-basics', href: '/ai/prompting/basics', nameKey: 'prompt-basics', descKey: 'lpPromptBasics' },
@@ -48,6 +50,7 @@ const stages: PathStage[] = [
     colorTo: 'to-orange-500',
     accent: 'text-amber-400',
     accentBorder: 'border-amber-500/30',
+    accentBorderHover: 'hover:border-amber-500/30',
     accentBg: 'bg-amber-500/10',
     topics: [
       { id: 'system-prompts', href: '/ai/prompting/system-prompts', nameKey: 'system-prompts', descKey: 'lpSystemPrompts' },
@@ -66,6 +69,7 @@ const stages: PathStage[] = [
     colorTo: 'to-rose-500',
     accent: 'text-red-400',
     accentBorder: 'border-red-500/30',
+    accentBorderHover: 'hover:border-red-500/30',
     accentBg: 'bg-red-500/10',
     topics: [
       { id: 'agentic-patterns', href: '/ai/agents/patterns', nameKey: 'agentic-patterns', descKey: 'lpAgenticPatterns' },
@@ -82,27 +86,28 @@ export function LearningPath() {
   const lp = t.learningPath
   const [expandedStage, setExpandedStage] = useState<number>(0)
 
-  // Read completed topics from localStorage
-  const [completed, setCompleted] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set()
+  // Completed topics — loaded from localStorage after mount to avoid hydration mismatch
+  const [completed, setCompleted] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem('learning-path-completed')
-      return stored ? new Set(JSON.parse(stored)) : new Set()
-    } catch {
-      return new Set()
-    }
-  })
+      if (stored) setCompleted(new Set(JSON.parse(stored)))
+    } catch { /* ignore */ }
+  }, [])
+
+  const persistCompleted = (next: Set<string>) => {
+    try { localStorage.setItem('learning-path-completed', JSON.stringify(Array.from(next))) } catch {}
+  }
 
   const toggleCompleted = (id: string, e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setCompleted(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      try { localStorage.setItem('learning-path-completed', JSON.stringify(Array.from(next))) } catch {}
-      return next
-    })
+    const next = new Set(completed)
+    if (next.has(id)) next.delete(id)
+    else next.add(id)
+    persistCompleted(next)
+    setCompleted(next)
   }
 
   const levelLabels: Record<string, string> = {
@@ -174,16 +179,14 @@ export function LearningPath() {
                         href={topic.href}
                         onClick={() => {
                           if (!isDone) {
-                            setCompleted(prev => {
-                              const next = new Set(prev)
-                              next.add(topic.id)
-                              try { localStorage.setItem('learning-path-completed', JSON.stringify(Array.from(next))) } catch {}
-                              return next
-                            })
+                            const next = new Set(completed)
+                            next.add(topic.id)
+                            persistCompleted(next)
+                            setCompleted(next)
                           }
                         }}
                         className={`group flex items-start gap-3 p-3 rounded-lg border transition-all hover:bg-surface/50 ${
-                          isDone ? 'border-border/50 opacity-75' : `border-border hover:${stage.accentBorder}`
+                          isDone ? 'border-border/50 opacity-75' : `border-border ${stage.accentBorderHover}`
                         }`}
                       >
                         <button

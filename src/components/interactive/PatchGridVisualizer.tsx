@@ -16,6 +16,20 @@ interface Patch {
 const GRID_SIZES = [4, 8, 14, 16] as const
 type GridSize = (typeof GRID_SIZES)[number]
 
+const statBoxClasses: Record<string, string> = {
+  cyan: 'bg-cyan-500/10 border border-cyan-500/20',
+  purple: 'bg-purple-500/10 border border-purple-500/20',
+  emerald: 'bg-emerald-500/10 border border-emerald-500/20',
+  orange: 'bg-orange-500/10 border border-orange-500/20',
+}
+
+const statTextClasses: Record<string, string> = {
+  cyan: 'text-cyan-400',
+  purple: 'text-purple-400',
+  emerald: 'text-emerald-400',
+  orange: 'text-orange-400',
+}
+
 // Generate a simple gradient/pattern to represent an "image"
 function generateImagePatches(gridSize: number): Patch[] {
   const patches: Patch[] = []
@@ -110,8 +124,12 @@ export function PatchGridVisualizer() {
           </button>
           <button
             onClick={() => {
-              setAnimationIndex(0)
-              setIsAnimating(true)
+              if (isAnimating) {
+                setIsAnimating(false)
+              } else {
+                if (animationIndex >= patches.length - 1) setAnimationIndex(0)
+                setIsAnimating(true)
+              }
             }}
             className="p-2 rounded-lg bg-primary/20 border border-primary/30 text-primary-light hover:bg-primary/30 transition-all"
           >
@@ -257,9 +275,9 @@ export function PatchGridVisualizer() {
           ].map((stat) => (
             <div
               key={stat.label}
-              className={`p-3 rounded-lg bg-${stat.color}-500/10 border border-${stat.color}-500/20 text-center`}
+              className={`p-3 rounded-lg text-center ${statBoxClasses[stat.color]}`}
             >
-              <div className={`text-lg font-mono font-bold text-${stat.color}-400`}>{stat.value}</div>
+              <div className={`text-lg font-mono font-bold ${statTextClasses[stat.color]}`}>{stat.value}</div>
               <div className="text-xs text-muted">{stat.label}</div>
             </div>
           ))}

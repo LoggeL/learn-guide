@@ -41,6 +41,12 @@ function computeRevealOrder(length: number, seed: number): number[] {
   return indices
 }
 
+// Deterministic pseudo-random confidence for wrong guesses (stable across re-renders)
+function wrongGuessConfidence(index: number, seed: number): number {
+  const s = (index * 1664525 + seed * 1013904223) & 0xffffffff
+  return 0.3 + (((s >>> 16) % 1000) / 1000) * 0.2
+}
+
 // Simulate confidence scores that increase over steps
 function getConfidence(step: number, totalSteps: number, revealStep: number): number {
   if (step < revealStep) return 0
@@ -154,7 +160,7 @@ export function TextDiffusionDemo() {
 
         if (willBeRemasked && !wasAlreadyRemasked && WRONG_GUESSES[sentence[i]]) {
           states[i].text = WRONG_GUESSES[sentence[i]]
-          states[i].confidence = 0.3 + Math.random() * 0.2
+          states[i].confidence = wrongGuessConfidence(i, sentenceIdx)
         } else {
           states[i].text = sentence[i]
           // Confidence increases the longer it's been revealed
@@ -167,7 +173,7 @@ export function TextDiffusionDemo() {
     }
 
     return states
-  }, [sentence, currentStep, revealOrder, stepPlan, totalSteps])
+  }, [sentence, sentenceIdx, currentStep, revealOrder, stepPlan, totalSteps])
 
   // Count revealed vs masked
   const revealedCount = tokens.filter(t => t.revealed).length
@@ -177,16 +183,14 @@ export function TextDiffusionDemo() {
   useEffect(() => {
     if (!isRunning) return
     const intervalId = window.setInterval(() => {
-      setCurrentStep((prev) => {
-        if (prev >= totalSteps) {
-          setIsRunning(false)
-          return totalSteps
-        }
-        return prev + 1
-      })
+      setCurrentStep((prev) => Math.min(prev + 1, totalSteps))
     }, 900)
     return () => window.clearInterval(intervalId)
   }, [isRunning, totalSteps])
+
+  useEffect(() => {
+    if (currentStep >= totalSteps) setIsRunning(false)
+  }, [currentStep, totalSteps])
 
   const restart = useCallback(() => {
     setCurrentStep(0)

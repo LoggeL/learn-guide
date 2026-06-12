@@ -2,11 +2,21 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Play, Pause, RotateCcw, ChevronRight, Settings, Wrench, MessageSquare,
-  Terminal, CheckCircle, Loader2, AlertTriangle, Zap, ArrowRight
-} from 'lucide-react'
+import { Play, Pause, RotateCcw, ChevronRight, Settings, Wrench, MessageSquare, Terminal, CheckCircle, Loader2, AlertTriangle, Zap, ArrowRight } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    title: 'Travel Planning Agent',
+    contextWindow: 'Context Window',
+    emptyHint: 'Watch an agent plan a Tokyo trip — searching flights, handling errors, and staying within budget.',
+  },
+  de: {
+    title: 'Reiseplanungs-Agent',
+    contextWindow: 'Kontextfenster',
+    emptyHint: 'Sieh zu, wie ein Agent eine Tokio-Reise plant — Flüge sucht, Fehler abfängt und im Budget bleibt.',
+  },
+} as const
 
 type MessageType = 'system' | 'tools' | 'user' | 'assistant' | 'tool_call' | 'tool_result' | 'error'
 
@@ -132,13 +142,14 @@ function buildDemoFlow(t: Record<string, string>): ContextMessage[] {
 }
 
 export function AgentLoopVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState<'slow' | 'normal' | 'fast'>('normal')
-  const [isComplete, setIsComplete] = useState(false)
 
   const DEMO_FLOW = buildDemoFlow(t as unknown as Record<string, string>)
+  const isComplete = currentStep >= DEMO_FLOW.length
   const visibleMessages = DEMO_FLOW.slice(0, currentStep)
   const totalTokens = visibleMessages.reduce((s, m) => s + m.tokens, 0)
 
@@ -153,20 +164,18 @@ export function AgentLoopVisualizer() {
     }
     if (isPlaying && currentStep >= DEMO_FLOW.length) {
       setIsPlaying(false)
-      setIsComplete(true)
     }
   }, [isPlaying, currentStep, DEMO_FLOW.length, speedMs])
 
   const reset = useCallback(() => {
     setCurrentStep(0)
     setIsPlaying(false)
-    setIsComplete(false)
   }, [])
 
   const togglePlay = () => {
     if (isComplete) {
-      reset()
-      setTimeout(() => setIsPlaying(true), 50)
+      setCurrentStep(0)
+      setIsPlaying(true)
     } else {
       setIsPlaying(!isPlaying)
     }
@@ -175,7 +184,6 @@ export function AgentLoopVisualizer() {
   const stepForward = () => {
     if (currentStep < DEMO_FLOW.length) {
       setCurrentStep(s => s + 1)
-      if (currentStep + 1 >= DEMO_FLOW.length) setIsComplete(true)
     }
   }
 
@@ -209,7 +217,7 @@ export function AgentLoopVisualizer() {
             </div>
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">Travel Planning Agent</h3>
+            <h3 className="font-semibold text-text font-heading">{c.title}</h3>
             <p className="text-xs text-muted">
               {currentStep === 0 ? 'Press Play to watch the agent plan a trip' :
                 isComplete ? `Done — ${DEMO_FLOW.length} steps, ${loopIterations.length} loops` :
@@ -293,7 +301,7 @@ export function AgentLoopVisualizer() {
       <div className="rounded-2xl bg-surface border border-border overflow-hidden">
         <div className="px-6 py-3 bg-surface-elevated border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <span className="text-sm font-semibold text-text">Context Window</span>
+            <span className="text-sm font-semibold text-text">{c.contextWindow}</span>
             <span className="text-xs text-muted font-mono">{totalTokens} tokens</span>
           </div>
           <div className="flex items-center gap-3 text-xs">
@@ -346,7 +354,7 @@ export function AgentLoopVisualizer() {
             <div className="flex flex-col items-center justify-center h-[200px] gap-4">
               <div className="text-4xl">✈️</div>
               <p className="text-sm text-muted text-center max-w-sm">
-                Watch an agent plan a Tokyo trip — searching flights, handling errors, and staying within budget.
+                {c.emptyHint}
               </p>
               <button
                 onClick={() => { setCurrentStep(1); setIsPlaying(true) }}

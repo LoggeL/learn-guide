@@ -6,8 +6,18 @@ import clsx from 'clsx'
 import { Eye } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
+const copy = {
+  en: {
+    title: 'Attention Map Simulator',
+  },
+  de: {
+    title: 'Attention-Map-Simulator',
+  },
+} as const
+
 export function AttentionVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [selectedWordIndex, setSelectedWordIndex] = useState<number | null>(null)
   const [sentenceIndex, setSentenceIndex] = useState(0)
 
@@ -99,7 +109,7 @@ export function AttentionVisualizer() {
             <Eye size={18} className="text-primary-light" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">Attention Map Simulator</h3>
+            <h3 className="font-semibold text-text font-heading">{c.title}</h3>
             <p className="text-xs text-muted">{t.interactive.hoverToSee}</p>
           </div>
         </div>

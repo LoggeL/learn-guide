@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Pause, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -23,13 +23,13 @@ interface Pattern {
   pseudocode: string
 }
 
-const colorClasses: Record<string, { bg: string; border: string; text: string; glow: string }> = {
-  emerald: { bg: 'bg-emerald-500/20', border: 'border-emerald-500/40', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
-  purple: { bg: 'bg-purple-500/20', border: 'border-purple-500/40', text: 'text-purple-400', glow: 'shadow-purple-500/20' },
-  cyan: { bg: 'bg-cyan-500/20', border: 'border-cyan-500/40', text: 'text-cyan-400', glow: 'shadow-cyan-500/20' },
-  orange: { bg: 'bg-orange-500/20', border: 'border-orange-500/40', text: 'text-orange-400', glow: 'shadow-orange-500/20' },
-  pink: { bg: 'bg-pink-500/20', border: 'border-pink-500/40', text: 'text-pink-400', glow: 'shadow-pink-500/20' },
-  red: { bg: 'bg-red-500/20', border: 'border-red-500/40', text: 'text-red-400', glow: 'shadow-red-500/20' },
+const colorClasses: Record<string, { bg: string; solid: string; border: string; text: string; glow: string }> = {
+  emerald: { bg: 'bg-emerald-500/20', solid: 'bg-emerald-500', border: 'border-emerald-500/40', text: 'text-emerald-400', glow: 'shadow-emerald-500/20' },
+  purple: { bg: 'bg-purple-500/20', solid: 'bg-purple-500', border: 'border-purple-500/40', text: 'text-purple-400', glow: 'shadow-purple-500/20' },
+  cyan: { bg: 'bg-cyan-500/20', solid: 'bg-cyan-500', border: 'border-cyan-500/40', text: 'text-cyan-400', glow: 'shadow-cyan-500/20' },
+  orange: { bg: 'bg-orange-500/20', solid: 'bg-orange-500', border: 'border-orange-500/40', text: 'text-orange-400', glow: 'shadow-orange-500/20' },
+  pink: { bg: 'bg-pink-500/20', solid: 'bg-pink-500', border: 'border-pink-500/40', text: 'text-pink-400', glow: 'shadow-pink-500/20' },
+  red: { bg: 'bg-red-500/20', solid: 'bg-red-500', border: 'border-red-500/40', text: 'text-red-400', glow: 'shadow-red-500/20' },
 }
 
 export function AgenticPatternsVisualizer() {
@@ -141,11 +141,13 @@ return orchestrator.synthesize(results)`,
   }
 
   // Auto-advance when playing
-  useState(() => {
+  useEffect(() => {
     if (!isPlaying) return
-    const interval = setInterval(nextStep, 1500)
+    const interval = setInterval(() => {
+      setActiveStep((prev) => (prev + 1) % pattern.steps.length)
+    }, 1500)
     return () => clearInterval(interval)
-  })
+  }, [isPlaying, activePattern, pattern.steps.length])
 
   return (
     <div className="rounded-2xl bg-background border border-border overflow-hidden">
@@ -170,7 +172,7 @@ return orchestrator.synthesize(results)`,
               {isActive && (
                 <motion.div
                   layoutId="activeTab"
-                  className={`absolute bottom-0 left-0 right-0 h-0.5 ${c.bg.replace('/20', '')}`}
+                  className={`absolute bottom-0 left-0 right-0 h-0.5 ${c.solid}`}
                 />
               )}
             </button>

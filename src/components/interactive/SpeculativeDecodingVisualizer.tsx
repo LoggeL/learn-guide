@@ -24,13 +24,15 @@ interface SimulationState {
 }
 
 // Simulated tokens with predetermined acceptance (for demo purposes)
+// Every token has a correction that differs from the draft, so a rejected
+// token is always replaced by a visibly different one
 const DEMO_SEQUENCE = [
-  { text: 'jumps', accept: true },
-  { text: 'over', accept: true },
-  { text: 'the', accept: true },
+  { text: 'jumps', accept: true, correction: 'leaps' },
+  { text: 'over', accept: true, correction: 'past' },
+  { text: 'the', accept: true, correction: 'a' },
   { text: 'lazy', accept: false, correction: 'sleeping' },
-  { text: 'dog', accept: true },
-  { text: '.', accept: true },
+  { text: 'dog', accept: true, correction: 'cat' },
+  { text: '.', accept: true, correction: '!' },
 ]
 
 const DRAFT_TOKENS_PER_BATCH = 4
@@ -73,6 +75,8 @@ export function SpeculativeDecodingVisualizer() {
     if (!isRunning) return
 
     const interval = setInterval(() => {
+      // Roll randomness outside the updater so it stays pure
+      const rolls = DEMO_SEQUENCE.map(() => Math.random() * 100)
       setState(prev => {
         // Phase 1: Drafting
         if (prev.phase === 'idle' || prev.phase === 'drafting') {
@@ -110,14 +114,14 @@ export function SpeculativeDecodingVisualizer() {
 
             const originalData = DEMO_SEQUENCE[token.id]
             // Use acceptance rate to determine if token is accepted (with some randomness based on slider)
-            const shouldAccept = originalData.accept && Math.random() * 100 < acceptanceRate
+            const shouldAccept = originalData.accept && rolls[token.id] < acceptanceRate
 
             if (shouldAccept) {
               newFinalTokens.push({ ...token, status: 'accepted' })
               accepted++
             } else {
-              // Rejection - add correction
-              const correction = originalData.correction || token.text
+              // Rejection - add correction (always differs from the rejected draft token)
+              const correction = originalData.correction
               newFinalTokens.push({
                 id: token.id,
                 text: correction,
@@ -144,16 +148,17 @@ export function SpeculativeDecodingVisualizer() {
           }
         }
 
-        if (prev.phase === 'complete') {
-          setIsRunning(false)
-        }
-
         return prev
       })
     }, 1000 / draftSpeed)
 
     return () => clearInterval(interval)
   }, [isRunning, acceptanceRate, draftSpeed])
+
+  // Stop the clock once the simulation completes (outside the state updater)
+  useEffect(() => {
+    if (state.phase === 'complete') setIsRunning(false)
+  }, [state.phase])
 
   const speedup = state.standardPasses > 0
     ? (state.standardPasses / Math.max(state.speculativePasses, 1)).toFixed(2)

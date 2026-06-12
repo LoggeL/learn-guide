@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import clsx from "clsx";
+import { useLocale } from "@/lib/i18n/context";
 import {
   Activity,
   Gauge,
@@ -48,6 +49,78 @@ const vectorLabels = ["syntax", "position", "entity", "tone", "next-token"];
 const channelBase = [0.42, 0.68, 0.5, 0.36, 0.58];
 const channelColors = ["#67e8f9", "#a78bfa", "#f0abfc", "#fbbf24", "#86efac"];
 
+const copy = {
+  en: {
+    eyebrow: "residual river",
+    title: "Signal bus with LayerNorm gates",
+    intro:
+      "The residual stream is a shared highway. Each transformer block taps the flow, adds a packet of change, and LayerNorm acts like a stabilizing clamp that keeps the current usable.",
+    toggleAria: "LayerNorm placement",
+    preToggle: "Pre-norm gate first",
+    postToggle: "Post-norm gate last",
+    preExplainer:
+      "Pre-norm clamps the read side first: every block sees a centered, steady signal before it writes a delta back into the river.",
+    postExplainer:
+      "Post-norm clamps after the write: the block rides the raw river, so louder signals can slosh before the gate smooths them.",
+    workspaceEyebrow: "horizontal workspace",
+    workspaceTitle: "Flow → tap → delta write → stabilized flow",
+    selectedLabel: "selected:",
+    waveAria: "Residual stream signal wave before and after LayerNorm",
+    tap: "tap",
+    writeDelta: "write delta",
+    channelsAria: "Residual stream channel values",
+    channels: ["syntax", "position", "entity", "tone", "next-token"],
+    layers: ["Layer 1", "Layer 2", "Layer 3"],
+    riverCurrent: "River current",
+    signalScaleAria: "Signal scale",
+    quietTrickle: "quiet trickle",
+    loudSurge: "loud surge",
+    clampMeters: "Clamp meters",
+    rawTurbulence: "raw turbulence",
+    usableStability: "usable stability",
+    currentRoute: "Current route",
+    routeReadClamp: "Clamp before the block reads",
+    routeTap: "taps the bus",
+    routeMerge: "Attention + MLP packets merge back",
+    routeWriteClamp: "Clamp after the block writes",
+  },
+  de: {
+    eyebrow: "Residual-Fluss",
+    title: "Signalbus mit LayerNorm-Schleusen",
+    intro:
+      "Der Residual Stream ist eine gemeinsame Datenautobahn. Jeder Transformer-Block zapft die Strömung an, fügt ein Päckchen Veränderung hinzu, und LayerNorm wirkt wie eine stabilisierende Klemme, die die Strömung nutzbar hält.",
+    toggleAria: "LayerNorm-Platzierung",
+    preToggle: "Pre-Norm: Schleuse zuerst",
+    postToggle: "Post-Norm: Schleuse zuletzt",
+    preExplainer:
+      "Pre-Norm klemmt zuerst die Leseseite: Jeder Block sieht ein zentriertes, ruhiges Signal, bevor er sein Delta zurück in den Fluss schreibt.",
+    postExplainer:
+      "Post-Norm klemmt erst nach dem Schreiben: Der Block reitet auf dem rohen Fluss — lautere Signale können also schwappen, bevor die Schleuse sie glättet.",
+    workspaceEyebrow: "horizontale Arbeitsfläche",
+    workspaceTitle:
+      "Strömung → Abgriff → Delta schreiben → stabilisierte Strömung",
+    selectedLabel: "ausgewählt:",
+    waveAria: "Signalwelle des Residual Streams vor und nach LayerNorm",
+    tap: "Abgriff",
+    writeDelta: "Delta schreiben",
+    channelsAria: "Kanalwerte des Residual Streams",
+    channels: ["Syntax", "Position", "Entität", "Ton", "Next-Token"],
+    layers: ["Schicht 1", "Schicht 2", "Schicht 3"],
+    riverCurrent: "Flussströmung",
+    signalScaleAria: "Signalstärke",
+    quietTrickle: "leises Rinnsal",
+    loudSurge: "laute Woge",
+    clampMeters: "Klemm-Messgeräte",
+    rawTurbulence: "rohe Turbulenz",
+    usableStability: "nutzbare Stabilität",
+    currentRoute: "Aktuelle Route",
+    routeReadClamp: "Klemmen, bevor der Block liest",
+    routeTap: "zapft den Bus an",
+    routeMerge: "Attention- und MLP-Pakete fließen zurück",
+    routeWriteClamp: "Klemmen, nachdem der Block geschrieben hat",
+  },
+};
+
 function clamp(value: number, min = 0.08, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
@@ -70,6 +143,8 @@ function buildRiverPath(
 }
 
 export function ResidualStreamLayerNormVisualizer() {
+  const { locale } = useLocale();
+  const c = locale === "de" ? copy.de : copy.en;
   const [selectedLayer, setSelectedLayer] = useState(1);
   const [normMode, setNormMode] = useState<NormMode>("pre");
   const [signalScale, setSignalScale] = useState(1.6);
@@ -112,10 +187,7 @@ export function ResidualStreamLayerNormVisualizer() {
     normMode === "pre"
       ? Math.max(12, 100 - Math.round(instability * 0.35))
       : Math.max(8, 100 - instability);
-  const selectedCopy =
-    normMode === "pre"
-      ? "Pre-norm clamps the read side first: every block sees a centered, steady signal before it writes a delta back into the river."
-      : "Post-norm clamps after the write: the block rides the raw river, so louder signals can slosh before the gate smooths them.";
+  const selectedCopy = normMode === "pre" ? c.preExplainer : c.postExplainer;
 
   const riverPathBefore = buildRiverPath(
     streamVector.beforeGate,
@@ -141,15 +213,13 @@ export function ResidualStreamLayerNormVisualizer() {
             </div>
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200/70">
-                residual river
+                {c.eyebrow}
               </p>
               <h2 className="mt-1 font-heading text-xl font-bold text-white md:text-2xl">
-                Signal bus with LayerNorm gates
+                {c.title}
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-cyan-50/70">
-                The residual stream is a shared highway. Each transformer block
-                taps the flow, adds a packet of change, and LayerNorm acts like
-                a stabilizing clamp that keeps the current usable.
+                {c.intro}
               </p>
             </div>
           </div>
@@ -157,7 +227,7 @@ export function ResidualStreamLayerNormVisualizer() {
           <div
             className="inline-flex w-fit rounded-full border border-cyan-200/20 bg-slate-950/60 p-1 text-sm shadow-inner shadow-black/30"
             role="group"
-            aria-label="LayerNorm placement"
+            aria-label={c.toggleAria}
           >
             {(["pre", "post"] as NormMode[]).map((mode) => (
               <button
@@ -172,7 +242,7 @@ export function ResidualStreamLayerNormVisualizer() {
                 )}
                 aria-pressed={normMode === mode}
               >
-                {mode === "pre" ? "Pre-norm gate first" : "Post-norm gate last"}
+                {mode === "pre" ? c.preToggle : c.postToggle}
               </button>
             ))}
           </div>
@@ -186,16 +256,16 @@ export function ResidualStreamLayerNormVisualizer() {
             <div className="relative mb-4 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200/70">
-                  horizontal workspace
+                  {c.workspaceEyebrow}
                 </p>
                 <h3 className="font-heading text-lg font-semibold text-white">
-                  Flow → tap → delta write → stabilized flow
+                  {c.workspaceTitle}
                 </h3>
               </div>
               <p className="text-xs text-cyan-50/55">
-                selected:{" "}
+                {c.selectedLabel}{" "}
                 <span className="font-mono text-cyan-100">
-                  {currentLayer.name}
+                  {c.layers[selectedLayer]}
                 </span>
               </p>
             </div>
@@ -205,7 +275,7 @@ export function ResidualStreamLayerNormVisualizer() {
                 className="absolute left-4 right-4 top-20 h-40 w-[calc(100%-2rem)] overflow-visible md:left-8 md:right-8 md:w-[calc(100%-4rem)]"
                 viewBox="0 0 520 150"
                 role="img"
-                aria-label="Residual stream signal wave before and after LayerNorm"
+                aria-label={c.waveAria}
               >
                 <defs>
                   <linearGradient
@@ -309,7 +379,7 @@ export function ResidualStreamLayerNormVisualizer() {
                           }}
                         >
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full border border-white/15 bg-slate-950 px-2 py-0.5 text-[10px] font-mono uppercase tracking-wider text-cyan-100/70">
-                            tap
+                            {c.tap}
                           </div>
                           <DeltaRail
                             label="attn"
@@ -323,10 +393,10 @@ export function ResidualStreamLayerNormVisualizer() {
                           />
                         </div>
                         <div className="mt-3 rounded-full border border-white/10 bg-black/20 px-2 py-1 text-[11px] font-semibold text-white/85 md:text-xs">
-                          {layer.name}
+                          {c.layers[index]}
                         </div>
                         <div className="mt-2 flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-cyan-50/40">
-                          <GitBranch size={12} /> write delta
+                          <GitBranch size={12} /> {c.writeDelta}
                         </div>
                       </div>
 
@@ -338,7 +408,7 @@ export function ResidualStreamLayerNormVisualizer() {
 
               <div
                 className="relative mt-4 grid gap-2 md:grid-cols-5"
-                aria-label="Residual stream channel values"
+                aria-label={c.channelsAria}
               >
                 {streamVector.output.map((value, index) => (
                   <div
@@ -346,7 +416,7 @@ export function ResidualStreamLayerNormVisualizer() {
                     className="rounded-xl border border-white/10 bg-black/25 p-2"
                   >
                     <div className="mb-1 flex items-center justify-between gap-2 text-[10px] text-cyan-50/55">
-                      <span className="truncate">{vectorLabels[index]}</span>
+                      <span className="truncate">{c.channels[index]}</span>
                       <span className="font-mono">
                         {Math.round(value * 100)}
                       </span>
@@ -372,10 +442,10 @@ export function ResidualStreamLayerNormVisualizer() {
             <div className="rounded-[1.4rem] border border-amber-200/20 bg-amber-300/[0.06] p-4">
               <div className="mb-3 flex items-center gap-2 text-white">
                 <SlidersHorizontal size={18} className="text-amber-200" />
-                <h3 className="font-heading font-semibold">River current</h3>
+                <h3 className="font-heading font-semibold">{c.riverCurrent}</h3>
               </div>
               <input
-                aria-label="Signal scale"
+                aria-label={c.signalScaleAria}
                 type="range"
                 min="0.7"
                 max="2.6"
@@ -385,30 +455,30 @@ export function ResidualStreamLayerNormVisualizer() {
                 className="w-full accent-amber-300"
               />
               <div className="mt-2 flex justify-between text-xs text-cyan-50/55">
-                <span>quiet trickle</span>
+                <span>{c.quietTrickle}</span>
                 <span className="font-mono text-amber-100">
                   ×{signalScale.toFixed(1)}
                 </span>
-                <span>loud surge</span>
+                <span>{c.loudSurge}</span>
               </div>
             </div>
 
             <div className="rounded-[1.4rem] border border-cyan-200/20 bg-cyan-300/[0.06] p-4">
               <div className="mb-4 flex items-center gap-2 text-white">
                 <Gauge size={18} className="text-cyan-100" />
-                <h3 className="font-heading font-semibold">Clamp meters</h3>
+                <h3 className="font-heading font-semibold">{c.clampMeters}</h3>
               </div>
               <ClampMeter
-                label="raw turbulence"
+                label={c.rawTurbulence}
                 value={instability}
                 tone="amber"
               />
               <ClampMeter
-                label="usable stability"
+                label={c.usableStability}
                 value={stability}
                 tone="cyan"
               />
-              <p className="mt-4 rounded-2xl border border-cyan-200/15 bg-slate-950/45 p-3 text-sm leading-relaxed text-cyan-50/76">
+              <p className="mt-4 rounded-2xl border border-cyan-200/15 bg-slate-950/45 p-3 text-sm leading-relaxed text-cyan-50/75">
                 {selectedCopy}
               </p>
             </div>
@@ -416,18 +486,18 @@ export function ResidualStreamLayerNormVisualizer() {
             <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.035] p-4">
               <div className="mb-3 flex items-center gap-2 text-white">
                 <Activity size={18} className="text-emerald-200" />
-                <h3 className="font-heading font-semibold">Current route</h3>
+                <h3 className="font-heading font-semibold">{c.currentRoute}</h3>
               </div>
               <div className="space-y-2 text-sm">
+                <RouteStep active={normMode === "pre"} label={c.routeReadClamp} />
                 <RouteStep
-                  active={normMode === "pre"}
-                  label="Clamp before the block reads"
+                  active
+                  label={`${c.layers[selectedLayer]} ${c.routeTap}`}
                 />
-                <RouteStep active label={`${currentLayer.name} taps the bus`} />
-                <RouteStep active label="Attention + MLP packets merge back" />
+                <RouteStep active label={c.routeMerge} />
                 <RouteStep
                   active={normMode === "post"}
-                  label="Clamp after the block writes"
+                  label={c.routeWriteClamp}
                 />
               </div>
             </div>

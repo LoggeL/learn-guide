@@ -13,18 +13,37 @@ interface Memory {
   relevance: number
 }
 
-let memoryIdCounter = 0
+// Initial memories use fixed ids 1-5; the counter continues from there
+let memoryIdCounter = 5
+
+const copy = {
+  en: {
+    addHint: 'Store new information',
+    searchHint: 'Search stored memories',
+    noShortTerm: 'No short-term memories',
+    noLongTerm: 'No long-term memories',
+    info: 'Short-term memory has limited capacity (5 slots). When full, oldest memories migrate to long-term storage.',
+  },
+  de: {
+    addHint: 'Neue Informationen speichern',
+    searchHint: 'Gespeicherte Erinnerungen durchsuchen',
+    noShortTerm: 'Keine Kurzzeit-Erinnerungen',
+    noLongTerm: 'Keine Langzeit-Erinnerungen',
+    info: 'Das Kurzzeitgedächtnis hat eine begrenzte Kapazität (5 Plätze). Ist es voll, wandern die ältesten Erinnerungen in den Langzeitspeicher.',
+  },
+} as const
 
 export function MemorySystemVisualizer() {
-  const { t } = useTranslation()
-  const [shortTermMemory, setShortTermMemory] = useState<Memory[]>([
-    { id: ++memoryIdCounter, content: 'User prefers dark mode', type: 'short', timestamp: new Date(), relevance: 0.9 },
-    { id: ++memoryIdCounter, content: 'Current task: Write documentation', type: 'short', timestamp: new Date(), relevance: 0.95 },
-    { id: ++memoryIdCounter, content: 'Project name is "learn-guide"', type: 'short', timestamp: new Date(), relevance: 0.85 },
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
+  const [shortTermMemory, setShortTermMemory] = useState<Memory[]>(() => [
+    { id: 1, content: 'User prefers dark mode', type: 'short', timestamp: new Date(), relevance: 0.9 },
+    { id: 2, content: 'Current task: Write documentation', type: 'short', timestamp: new Date(), relevance: 0.95 },
+    { id: 3, content: 'Project name is "learn-guide"', type: 'short', timestamp: new Date(), relevance: 0.85 },
   ])
-  const [longTermMemory, setLongTermMemory] = useState<Memory[]>([
-    { id: ++memoryIdCounter, content: 'User is a software developer', type: 'long', timestamp: new Date(Date.now() - 86400000), relevance: 0.8 },
-    { id: ++memoryIdCounter, content: 'Preferred programming language: TypeScript', type: 'long', timestamp: new Date(Date.now() - 172800000), relevance: 0.75 },
+  const [longTermMemory, setLongTermMemory] = useState<Memory[]>(() => [
+    { id: 4, content: 'User is a software developer', type: 'long', timestamp: new Date(Date.now() - 86400000), relevance: 0.8 },
+    { id: 5, content: 'Preferred programming language: TypeScript', type: 'long', timestamp: new Date(Date.now() - 172800000), relevance: 0.75 },
   ])
   const [newMemory, setNewMemory] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
@@ -92,7 +111,7 @@ export function MemorySystemVisualizer() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">{t.interactive.addMemory}</h3>
-            <p className="text-xs text-muted">Store new information</p>
+            <p className="text-xs text-muted">{c.addHint}</p>
           </div>
         </div>
 
@@ -146,7 +165,7 @@ export function MemorySystemVisualizer() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">{t.interactive.recallMemory}</h3>
-            <p className="text-xs text-muted">Search stored memories</p>
+            <p className="text-xs text-muted">{c.searchHint}</p>
           </div>
         </div>
 
@@ -227,7 +246,7 @@ export function MemorySystemVisualizer() {
               ))}
             </AnimatePresence>
             {shortTermMemory.length === 0 && (
-              <p className="text-sm text-muted text-center py-4">No short-term memories</p>
+              <p className="text-sm text-muted text-center py-4">{c.noShortTerm}</p>
             )}
           </div>
         </div>
@@ -286,7 +305,7 @@ export function MemorySystemVisualizer() {
               ))}
             </AnimatePresence>
             {longTermMemory.length === 0 && (
-              <p className="text-sm text-muted text-center py-4">No long-term memories</p>
+              <p className="text-sm text-muted text-center py-4">{c.noLongTerm}</p>
             )}
           </div>
         </div>
@@ -297,7 +316,7 @@ export function MemorySystemVisualizer() {
         <div className="flex items-start gap-3">
           <Brain size={18} className="text-primary-light shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
-            <p>Short-term memory has limited capacity (5 slots). When full, oldest memories migrate to long-term storage.</p>
+            <p>{c.info}</p>
           </div>
         </div>
       </div>

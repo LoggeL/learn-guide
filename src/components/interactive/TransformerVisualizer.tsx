@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface TransformerVisualizerProps {
@@ -465,6 +465,8 @@ function LayersSection({ t }: { t: Record<string, string> }) {
   const [activeLayer, setActiveLayer] = useState<number>(0)
   const [tokenFlying, setTokenFlying] = useState(false)
   const [tokenAt, setTokenAt] = useState<number>(-1)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const layer = LAYERS[activeLayer]
 
   const sendToken = useCallback(() => {
@@ -473,11 +475,12 @@ function LayersSection({ t }: { t: Record<string, string> }) {
     setTokenAt(0)
     setActiveLayer(0)
     let current = 0
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       current++
       if (current >= LAYERS.length) {
-        clearInterval(interval)
-        setTimeout(() => { setTokenFlying(false); setTokenAt(-1) }, 600)
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        intervalRef.current = null
+        timeoutRef.current = setTimeout(() => { setTokenFlying(false); setTokenAt(-1) }, 600)
         return
       }
       setTokenAt(current)
@@ -487,7 +490,10 @@ function LayersSection({ t }: { t: Record<string, string> }) {
 
   // Cleanup on unmount
   useEffect(() => {
-    return () => { setTokenFlying(false) }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    }
   }, [])
 
   const colorMap: Record<string, string> = {
@@ -779,22 +785,35 @@ const FLOW_STEPS = [
 function DataflowSection({ t }: { t: Record<string, string> }) {
   const [step, setStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const stopPlaying = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = null
+    setIsPlaying(false)
+  }
 
   const play = () => {
     if (isPlaying) return
     setIsPlaying(true)
     setStep(0)
     let current = 0
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       current++
       if (current >= FLOW_STEPS.length) {
-        clearInterval(interval)
-        setIsPlaying(false)
+        stopPlaying()
         return
       }
       setStep(current)
     }, 800)
   }
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
 
   const colorClasses: Record<string, string> = {
     purple: 'bg-purple-500/20 border-purple-500/40 text-purple-400',
@@ -867,7 +886,7 @@ function DataflowSection({ t }: { t: Record<string, string> }) {
           min={0}
           max={FLOW_STEPS.length - 1}
           value={step}
-          onChange={(e) => { setIsPlaying(false); setStep(Number(e.target.value)) }}
+          onChange={(e) => { stopPlaying(); setStep(Number(e.target.value)) }}
           className="w-full max-w-md accent-cyan-400"
         />
         <div className="flex justify-between w-full max-w-md text-xs text-muted">

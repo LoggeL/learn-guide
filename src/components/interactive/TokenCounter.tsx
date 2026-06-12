@@ -2,6 +2,28 @@
 
 import { motion } from 'framer-motion'
 import { Database, AlertTriangle, CheckCircle, Skull } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    contextWindow: 'Context Window',
+    windowExceeded: 'Window exceeded!',
+    tokenUsage: 'Token usage',
+    messagesPushedOut: 'Messages being pushed out!',
+    contextNearlyFull: 'Context nearly full!',
+    gettingCrowded: 'Getting crowded...',
+    healthyCapacity: 'Healthy capacity',
+  },
+  de: {
+    contextWindow: 'Kontextfenster',
+    windowExceeded: 'Fenster überschritten!',
+    tokenUsage: 'Token-Auslastung',
+    messagesPushedOut: 'Nachrichten werden verdrängt!',
+    contextNearlyFull: 'Kontext fast voll!',
+    gettingCrowded: 'Es wird eng …',
+    healthyCapacity: 'Ausreichend Kapazität',
+  },
+}
 
 interface TokenCounterProps {
   current: number
@@ -10,8 +32,11 @@ interface TokenCounterProps {
   overflow?: boolean
 }
 
-export function TokenCounter({ current, max, label = 'Context Window', overflow = false }: TokenCounterProps) {
-  const percentage = (current / max) * 100
+export function TokenCounter({ current, max, label, overflow = false }: TokenCounterProps) {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
+  const displayLabel = label ?? c.contextWindow
+  const percentage = max > 0 ? (current / max) * 100 : 0
   const displayPercentage = Math.min(percentage, 100)
   const isWarning = percentage > 70 && percentage <= 100
   const isCritical = percentage > 90 && percentage <= 100
@@ -43,9 +68,9 @@ export function TokenCounter({ current, max, label = 'Context Window', overflow 
             )}
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{label}</h3>
+            <h3 className="font-semibold text-text font-heading">{displayLabel}</h3>
             <p className="text-xs text-muted">
-              {isOverflow ? "Window exceeded!" : "Token usage"}
+              {isOverflow ? c.windowExceeded : c.tokenUsage}
             </p>
           </div>
         </div>
@@ -102,22 +127,22 @@ export function TokenCounter({ current, max, label = 'Context Window', overflow 
           {isOverflow ? (
             <>
               <Skull size={14} className="text-red-400" />
-              <span className="text-xs text-red-400 font-medium">Messages being pushed out!</span>
+              <span className="text-xs text-red-400 font-medium">{c.messagesPushedOut}</span>
             </>
           ) : isCritical ? (
             <>
               <AlertTriangle size={14} className="text-red-400" />
-              <span className="text-xs text-red-400 font-medium">Context nearly full!</span>
+              <span className="text-xs text-red-400 font-medium">{c.contextNearlyFull}</span>
             </>
           ) : isWarning ? (
             <>
               <AlertTriangle size={14} className="text-yellow-400" />
-              <span className="text-xs text-yellow-400">Getting crowded...</span>
+              <span className="text-xs text-yellow-400">{c.gettingCrowded}</span>
             </>
           ) : (
             <>
               <CheckCircle size={14} className="text-success" />
-              <span className="text-xs text-muted">Healthy capacity</span>
+              <span className="text-xs text-muted">{c.healthyCapacity}</span>
             </>
           )}
         </div>

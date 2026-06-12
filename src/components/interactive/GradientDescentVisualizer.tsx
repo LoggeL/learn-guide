@@ -15,8 +15,22 @@ function gradientFunction(x: number): number {
   return 4 * Math.pow(x, 3) - 4 * x + 0.5
 }
 
+const copy = {
+  en: {
+    title: 'Gradient Descent',
+    subtitle: 'Optimizing a 2D loss function',
+    info: 'The red ball follows the gradient (slope) downhill. A higher learning rate takes bigger steps but may overshoot. Starting position determines whether you reach the global or local minimum.',
+  },
+  de: {
+    title: 'Gradientenabstieg',
+    subtitle: 'Optimierung einer 2D-Verlustfunktion',
+    info: 'Der rote Ball folgt dem Gradienten (der Steigung) bergab. Eine höhere Lernrate macht größere Schritte, kann aber über das Ziel hinausschießen. Die Startposition entscheidet, ob du das globale oder ein lokales Minimum erreichst.',
+  },
+} as const
+
 export function GradientDescentVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = copy[locale]
   const [position, setPosition] = useState(1.8)
   const [learningRate, setLearningRate] = useState(0.1)
   const [isRunning, setIsRunning] = useState(false)
@@ -29,23 +43,20 @@ export function GradientDescentVisualizer() {
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
-        setPosition((prev) => {
-          const gradient = gradientFunction(prev)
-          const newPos = prev - learningRate * gradient
+        const gradient = gradientFunction(position)
+        const newPos = position - learningRate * gradient
 
-          // Clamp to visible range
-          const clampedPos = Math.max(-2, Math.min(2, newPos))
+        // Clamp to visible range
+        const clampedPos = Math.max(-2, Math.min(2, newPos))
 
-          setHistory((h) => [...h, { x: clampedPos, y: lossFunction(clampedPos) }])
-          setIterations((i) => i + 1)
+        setPosition(clampedPos)
+        setHistory((h) => [...h, { x: clampedPos, y: lossFunction(clampedPos) }])
+        setIterations((i) => i + 1)
 
-          // Stop if gradient is very small (converged)
-          if (Math.abs(gradient) < 0.01 || iterations > 100) {
-            setIsRunning(false)
-          }
-
-          return clampedPos
-        })
+        // Stop if gradient is very small (converged)
+        if (Math.abs(gradient) < 0.01 || iterations > 100) {
+          setIsRunning(false)
+        }
       }, 200)
     }
 
@@ -54,7 +65,7 @@ export function GradientDescentVisualizer() {
         clearInterval(intervalRef.current)
       }
     }
-  }, [isRunning, learningRate, iterations])
+  }, [isRunning, learningRate, position, iterations])
 
   const reset = () => {
     setIsRunning(false)
@@ -81,8 +92,10 @@ export function GradientDescentVisualizer() {
   const height = 300
   const padding = 40
 
+  const maxLoss = Math.max(...curvePoints.map((p) => p.y))
+
   const xScale = (x: number) => padding + ((x + 2) / 4) * (width - 2 * padding)
-  const yScale = (y: number) => height - padding - ((y - 0) / 5) * (height - 2 * padding)
+  const yScale = (y: number) => height - padding - (y / maxLoss) * (height - 2 * padding)
 
   // Generate path for the curve
   const pathD = curvePoints
@@ -99,8 +112,8 @@ export function GradientDescentVisualizer() {
               <TrendingDown size={18} className="text-emerald-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">Gradient Descent</h3>
-              <p className="text-xs text-muted">Optimizing a 2D loss function</p>
+              <h3 className="font-semibold text-text font-heading">{c.title}</h3>
+              <p className="text-xs text-muted">{c.subtitle}</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -253,7 +266,7 @@ export function GradientDescentVisualizer() {
         <div className="flex items-start gap-3">
           <TrendingDown size={18} className="text-primary-light shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
-            <p>The red ball follows the gradient (slope) downhill. A higher learning rate takes bigger steps but may overshoot. Starting position determines whether you reach the global or local minimum.</p>
+            <p>{c.info}</p>
           </div>
         </div>
       </div>

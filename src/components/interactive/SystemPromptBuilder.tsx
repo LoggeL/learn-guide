@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Copy, Check, Lightbulb, Sparkles, User, Shield, BookOpen, FileText } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -98,6 +98,14 @@ export function SystemPromptBuilder() {
 
   const [copied, setCopied] = useState(false)
   const [activePreset, setActivePreset] = useState<string | null>(null)
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Clear pending copy-feedback timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
+    }
+  }, [])
 
   const assembledPrompt = useMemo(() => {
     const parts: string[] = []
@@ -132,7 +140,8 @@ export function SystemPromptBuilder() {
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(assembledPrompt)
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
+    copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   const clearAll = () => {

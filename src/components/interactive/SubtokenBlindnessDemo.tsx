@@ -3,7 +3,33 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Binary, Hash, SplitSquareHorizontal } from 'lucide-react'
-import { getEncoding } from 'js-tiktoken'
+import { getEncoding, Tiktoken } from 'js-tiktoken'
+import { useLocale } from '@/lib/i18n/context'
+
+const COPY = {
+  en: {
+    eyebrow: 'Interactive failure mode',
+    title: 'Token view vs. character task',
+    desc: 'The tokenizer sees reusable chunks. The human task often asks for letters, digits, or exact positions inside those chunks.',
+    expected: 'Expected deterministic answer',
+    workaround: 'Reliable workaround: externalize the hidden structure. Spell characters one by one, or route arithmetic to code/a calculator.',
+  },
+  de: {
+    eyebrow: 'Interaktiver Fehlermodus',
+    title: 'Token-Sicht vs. Zeichen-Aufgabe',
+    desc: 'Der Tokenizer sieht wiederverwendbare Chunks. Die menschliche Aufgabe verlangt aber oft Buchstaben, Ziffern oder exakte Positionen innerhalb dieser Chunks.',
+    expected: 'Erwartete deterministische Antwort',
+    workaround: 'Zuverlässiger Workaround: die versteckte Struktur nach außen verlagern. Buchstaben einzeln aufzählen oder Arithmetik an Code bzw. einen Taschenrechner auslagern.',
+  },
+}
+
+// Lazily-initialized module-level singleton — building the ~200k-rank encoding
+// is expensive and must not happen on every keystroke.
+let cachedEncoding: Tiktoken | null = null
+function getSharedEncoding(): Tiktoken {
+  if (!cachedEncoding) cachedEncoding = getEncoding('o200k_base')
+  return cachedEncoding
+}
 
 const TOKEN_COLORS = [
   'border-cyan-500/40 bg-cyan-500/15 text-cyan-100',
@@ -42,7 +68,7 @@ function countLetters(value: string, letter: string) {
 }
 
 function decodeTokens(text: string) {
-  const encoding = getEncoding('o200k_base')
+  const encoding = getSharedEncoding()
   const ids = encoding.encode(text)
   return ids.map((id) => ({
     id,
@@ -51,6 +77,8 @@ function decodeTokens(text: string) {
 }
 
 export function SubtokenBlindnessDemo() {
+  const { locale } = useLocale()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [selected, setSelected] = useState(examples[0])
   const [customText, setCustomText] = useState('strawberry')
 
@@ -63,11 +91,11 @@ export function SubtokenBlindnessDemo() {
         <div>
           <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-300">
             <AlertTriangle size={16} />
-            <span>Interactive failure mode</span>
+            <span>{c.eyebrow}</span>
           </div>
-          <h2 className="font-heading text-2xl font-bold text-text">Token view vs. character task</h2>
+          <h2 className="font-heading text-2xl font-bold text-text">{c.title}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
-            The tokenizer sees reusable chunks. The human task often asks for letters, digits, or exact positions inside those chunks.
+            {c.desc}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-2 text-center sm:grid-cols-3">
@@ -144,12 +172,12 @@ export function SubtokenBlindnessDemo() {
         <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4">
           <h3 className="mb-2 font-heading text-lg font-bold text-amber-300">{selected.task}</h3>
           <div className="mb-4 rounded-lg border border-border bg-background/70 p-3">
-            <div className="text-xs text-subtle">Expected deterministic answer</div>
+            <div className="text-xs text-subtle">{c.expected}</div>
             <div className="mt-1 font-mono text-xl font-bold text-text">{selected.expected}</div>
           </div>
           <p className="text-sm leading-relaxed text-muted">{selected.trap}</p>
           <div className="mt-4 rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-sm leading-relaxed text-muted">
-            Reliable workaround: externalize the hidden structure. Spell characters one by one, or route arithmetic to code/a calculator.
+            {c.workaround}
           </div>
         </div>
       </div>

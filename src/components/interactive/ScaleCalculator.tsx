@@ -20,9 +20,9 @@ interface ScaleCalculatorProps {
 }
 
 const REFERENCE_POINTS = [
-  { label: '10K', tokens: 10_000, pairs: '100M' },
-  { label: '100K', tokens: 100_000, pairs: '10B' },
-  { label: '1M', tokens: 1_000_000, pairs: '1T' },
+  { label: '10K', tokens: 10_000, pairs: '~50M' },
+  { label: '100K', tokens: 100_000, pairs: '~5B' },
+  { label: '1M', tokens: 1_000_000, pairs: '~500B' },
 ]
 
 export function ScaleCalculator({ title, inputLabel, pairwiseLabel, attentionLabel, referenceTitle }: ScaleCalculatorProps) {

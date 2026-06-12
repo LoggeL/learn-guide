@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 const POSITIONS = 20
 
 // U-shaped accuracy curve based on Liu et al. (Stanford "Lost in the Middle")
-// ~75% at start, ~45% in middle, ~72% at end
+// ~81% at start, ~44% in middle, ~77% at end
 const ACCURACY_DATA: number[] = Array.from({ length: POSITIONS + 1 }, (_, i) => {
   const t = i / POSITIONS
   const distFromMiddle = Math.abs(t - 0.5) * 2
@@ -64,7 +64,7 @@ export function AttentionHeatmap({
         {/* Accuracy bars */}
         <div className="absolute inset-x-2 bottom-0 flex items-end gap-0.5 h-full">
           {ACCURACY_DATA.map((acc, i) => {
-            const heightPct = Math.max(8, ((acc - 40) / 40) * 100)
+            const heightPct = Math.min(100, Math.max(8, ((acc - 40) / 40) * 100))
             const isSelected = i === selectedPos
             const barColor = acc >= 65 ? 'bg-emerald-500' : acc >= 55 ? 'bg-yellow-500' : 'bg-red-500'
             return (

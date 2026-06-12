@@ -38,14 +38,18 @@ export function CacheHitMissAnimation({ t }: CacheHitMissAnimationProps) {
   const missIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const hitCacheIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const hitNewIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const doneTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const replayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const cleanup = useCallback(() => {
     if (missIntervalRef.current) clearInterval(missIntervalRef.current)
     if (hitCacheIntervalRef.current) clearInterval(hitCacheIntervalRef.current)
     if (hitNewIntervalRef.current) clearInterval(hitNewIntervalRef.current)
+    if (doneTimeoutRef.current) clearTimeout(doneTimeoutRef.current)
     missIntervalRef.current = null
     hitCacheIntervalRef.current = null
     hitNewIntervalRef.current = null
+    doneTimeoutRef.current = null
   }, [])
 
   const reset = useCallback(() => {
@@ -114,14 +118,18 @@ export function CacheHitMissAnimation({ t }: CacheHitMissAnimationProps) {
     }, TICK_INTERVAL)
 
     // Mark done after miss completes (it's the longer one)
-    setTimeout(() => {
+    doneTimeoutRef.current = setTimeout(() => {
       setPhase('done')
+      doneTimeoutRef.current = null
     }, MISS_DURATION + 200)
-  }, [reset, cleanup])
+  }, [reset])
 
   // Cleanup on unmount
   useEffect(() => {
-    return cleanup
+    return () => {
+      cleanup()
+      if (replayTimeoutRef.current) clearTimeout(replayTimeoutRef.current)
+    }
   }, [cleanup])
 
   const missProgress = (missTokens / TOTAL_TOKENS) * 100
@@ -283,7 +291,7 @@ export function CacheHitMissAnimation({ t }: CacheHitMissAnimationProps) {
       {/* Play / Replay button */}
       <div className="flex justify-center">
         <button
-          onClick={phase === 'done' ? () => { reset(); setTimeout(startAnimation, 50) } : startAnimation}
+          onClick={phase === 'done' ? () => { reset(); replayTimeoutRef.current = setTimeout(startAnimation, 50) } : startAnimation}
           disabled={phase === 'running'}
           className={`
             flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-sm transition-all

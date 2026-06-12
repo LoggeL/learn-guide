@@ -27,7 +27,7 @@ const QUANT_LEVELS: QuantLevel[] = [
 function generateWeightDistribution(numPoints: number = 100): number[] {
   const weights: number[] = []
   for (let i = 0; i < numPoints; i++) {
-    const x = (i / numPoints) * 6 - 3 // Range from -3 to 3
+    const x = (i / (numPoints - 1)) * 6 - 3 // Range from -3 to 3, centered at 0
     const y = Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI)
     weights.push(y)
   }
@@ -215,9 +215,9 @@ export function QuantizationVisualizer() {
             />
 
             {/* X-axis labels */}
-            <text x={padding} y={height - 5} className="fill-muted text-xs" textAnchor="middle">-1.0</text>
+            <text x={padding} y={height - 5} className="fill-muted text-xs" textAnchor="middle">-3.0</text>
             <text x={width / 2} y={height - 5} className="fill-muted text-xs" textAnchor="middle">0</text>
-            <text x={width - padding} y={height - 5} className="fill-muted text-xs" textAnchor="middle">+1.0</text>
+            <text x={width - padding} y={height - 5} className="fill-muted text-xs" textAnchor="middle">+3.0</text>
           </svg>
         </div>
         {selectedLevel.discreteLevels && (

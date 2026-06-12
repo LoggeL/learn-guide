@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -120,6 +120,7 @@ export function DiffusionNoiseVisualizer() {
   const noiseBufferRef = useRef<Uint8ClampedArray | null>(null)
   const [noiseLevel, setNoiseLevel] = useState(0)
   const [autoDirection, setAutoDirection] = useState<AutoDirection>(null)
+  const [isCycling, setIsCycling] = useState(false)
   const [hasInitialized, setHasInitialized] = useState(false)
 
   const noiseRatio = noiseLevel / 100
@@ -176,45 +177,42 @@ export function DiffusionNoiseVisualizer() {
     ctx.putImageData(blended, 0, 0)
   }, [noiseRatio, hasInitialized])
 
-  // Autoplay
+  // Autoplay: one timeout per tick, so pause/reset/unmount always cancels cleanly.
+  // When a full cycle is running, the forward phase hands over to the reverse phase.
   useEffect(() => {
     if (!autoDirection) return
 
-    const intervalId = window.setInterval(() => {
-      setNoiseLevel((current) => {
-        if (autoDirection === 'forward') {
-          if (current >= 100) {
-            setAutoDirection(null)
-            return 100
-          }
-          return Math.min(100, current + 1)
-        }
-        if (current <= 0) {
-          setAutoDirection(null)
-          return 0
-        }
-        return Math.max(0, current - 1)
-      })
+    if (autoDirection === 'forward' && noiseLevel >= 100) {
+      if (isCycling) {
+        const pauseId = window.setTimeout(() => setAutoDirection('reverse'), 600)
+        return () => window.clearTimeout(pauseId)
+      }
+      setAutoDirection(null)
+      return
+    }
+
+    if (autoDirection === 'reverse' && noiseLevel <= 0) {
+      setAutoDirection(null)
+      setIsCycling(false)
+      return
+    }
+
+    const tickId = window.setTimeout(() => {
+      setNoiseLevel(
+        autoDirection === 'forward'
+          ? Math.min(100, noiseLevel + 1)
+          : Math.max(0, noiseLevel - 1)
+      )
     }, 40)
 
-    return () => window.clearInterval(intervalId)
-  }, [autoDirection])
+    return () => window.clearTimeout(tickId)
+  }, [autoDirection, noiseLevel, isCycling])
 
-  const runFullCycle = useCallback(() => {
+  const runFullCycle = () => {
     setNoiseLevel(0)
+    setIsCycling(true)
     setAutoDirection('forward')
-    // After reaching 100, auto-reverse
-    const checkForward = setInterval(() => {
-      setNoiseLevel((current) => {
-        if (current >= 100) {
-          clearInterval(checkForward)
-          setTimeout(() => setAutoDirection('reverse'), 600)
-        }
-        return current
-      })
-    }, 100)
-    return () => clearInterval(checkForward)
-  }, [])
+  }
 
   // Get the current step label
   const getStepLabel = () => {
@@ -263,7 +261,7 @@ export function DiffusionNoiseVisualizer() {
           {[0, 25, 50, 75, 100].map((level, i) => (
             <button
               key={level}
-              onClick={() => { setAutoDirection(null); setNoiseLevel(level) }}
+              onClick={() => { setIsCycling(false); setAutoDirection(null); setNoiseLevel(level) }}
               className={`text-center py-2 rounded-lg border text-xs transition-all cursor-pointer ${
                 Math.abs(noiseLevel - level) < 13
                   ? 'bg-violet-500/20 border-violet-400/40 text-violet-200'
@@ -304,6 +302,7 @@ export function DiffusionNoiseVisualizer() {
                 step="1"
                 value={noiseLevel}
                 onChange={(e) => {
+                  setIsCycling(false)
                   setAutoDirection(null)
                   setNoiseLevel(Number(e.target.value))
                 }}
@@ -316,7 +315,7 @@ export function DiffusionNoiseVisualizer() {
         {/* Controls */}
         <div className="mt-5 flex flex-wrap items-center gap-2">
           <button
-            onClick={() => setAutoDirection((c) => (c === 'forward' ? null : 'forward'))}
+            onClick={() => { setIsCycling(false); setAutoDirection((c) => (c === 'forward' ? null : 'forward')) }}
             className={`px-3.5 py-2 rounded-lg border text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${
               autoDirection === 'forward'
                 ? 'bg-violet-500/20 border-violet-400/40 text-violet-200'
@@ -328,7 +327,7 @@ export function DiffusionNoiseVisualizer() {
           </button>
 
           <button
-            onClick={() => setAutoDirection((c) => (c === 'reverse' ? null : 'reverse'))}
+            onClick={() => { setIsCycling(false); setAutoDirection((c) => (c === 'reverse' ? null : 'reverse')) }}
             className={`px-3.5 py-2 rounded-lg border text-xs font-medium transition-colors inline-flex items-center gap-1.5 ${
               autoDirection === 'reverse'
                 ? 'bg-fuchsia-500/20 border-fuchsia-400/40 text-fuchsia-200'
@@ -349,6 +348,7 @@ export function DiffusionNoiseVisualizer() {
 
           <button
             onClick={() => {
+              setIsCycling(false)
               setAutoDirection(null)
               setNoiseLevel(0)
             }}

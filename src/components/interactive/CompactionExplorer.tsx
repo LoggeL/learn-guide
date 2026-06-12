@@ -3,6 +3,30 @@
 import { useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Archive, ChevronRight, FileSearch, Layers3, RefreshCcw, Snowflake, Zap } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    title: 'Hot vs. Cold Context Explorer',
+    subtitle: 'See how compaction helps both overloaded live sessions and older inactive sessions.',
+    activeTitle: 'Active sessions',
+    activeHint: 'Compact when the live tail grows too large, but keep enough fresh context to continue working smoothly.',
+    inactiveTitle: 'Inactive sessions',
+    inactiveHint: 'Compact old sessions too, especially once they fall out of cache and need fast resumption later.',
+    detailsTitle: 'Exact details',
+    detailsHint: 'Use summaries for navigation. Use expansion when you need exact commands, values, or proof.',
+  },
+  de: {
+    title: 'Explorer: Heißer vs. kalter Kontext',
+    subtitle: 'Sieh, wie Compaction sowohl überlasteten Live-Sessions als auch älteren inaktiven Sessions hilft.',
+    activeTitle: 'Aktive Sessions',
+    activeHint: 'Verdichte, wenn der Live-Verlauf zu groß wird, behalte aber genug frischen Kontext, um flüssig weiterzuarbeiten.',
+    inactiveTitle: 'Inaktive Sessions',
+    inactiveHint: 'Verdichte auch alte Sessions, besonders sobald sie aus dem Cache fallen und später schnell wiederaufgenommen werden müssen.',
+    detailsTitle: 'Exakte Details',
+    detailsHint: 'Nutze Zusammenfassungen zur Navigation. Nutze Expansion, wenn du exakte Befehle, Werte oder Belege brauchst.',
+  },
+} as const
 
 type SessionMode = 'active' | 'inactive'
 type Stage = 'raw' | 'compacted' | 'retrieved' | 'expanded'
@@ -109,6 +133,8 @@ const stageMeta: Record<Stage, { title: string; desc: string }> = {
 }
 
 export function CompactionExplorer() {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const [mode, setMode] = useState<SessionMode>('active')
   const [stageIndex, setStageIndex] = useState(0)
 
@@ -132,8 +158,8 @@ export function CompactionExplorer() {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold text-text font-heading">Hot vs. Cold Context Explorer</h3>
-                <p className="text-xs text-muted">See how compaction helps both overloaded live sessions and older inactive sessions.</p>
+                <h3 className="font-semibold text-text font-heading">{c.title}</h3>
+                <p className="text-xs text-muted">{c.subtitle}</p>
               </div>
             </div>
           </div>
@@ -223,16 +249,16 @@ export function CompactionExplorer() {
 
           <div className="grid md:grid-cols-3 gap-4">
             <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4">
-              <p className="text-sm font-medium text-cyan-200 mb-1">Active sessions</p>
-              <p className="text-xs text-muted">Compact when the live tail grows too large, but keep enough fresh context to continue working smoothly.</p>
+              <p className="text-sm font-medium text-cyan-200 mb-1">{c.activeTitle}</p>
+              <p className="text-xs text-muted">{c.activeHint}</p>
             </div>
             <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4">
-              <p className="text-sm font-medium text-purple-200 mb-1">Inactive sessions</p>
-              <p className="text-xs text-muted">Compact old sessions too, especially once they fall out of cache and need fast resumption later.</p>
+              <p className="text-sm font-medium text-purple-200 mb-1">{c.inactiveTitle}</p>
+              <p className="text-xs text-muted">{c.inactiveHint}</p>
             </div>
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-              <p className="text-sm font-medium text-emerald-200 mb-1">Exact details</p>
-              <p className="text-xs text-muted">Use summaries for navigation. Use expansion when you need exact commands, values, or proof.</p>
+              <p className="text-sm font-medium text-emerald-200 mb-1">{c.detailsTitle}</p>
+              <p className="text-xs text-muted">{c.detailsHint}</p>
             </div>
           </div>
         </div>

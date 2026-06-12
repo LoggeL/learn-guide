@@ -1,6 +1,18 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useLocale } from '@/lib/i18n/context'
+
+const copy = {
+  en: {
+    title: 'Chip trade-off simulator',
+    subtitle: 'Pick a workload and watch the ranking change. The bars show chip strengths; the small percentage next to each metric shows how much that workload cares about it.',
+  },
+  de: {
+    title: 'Chip-Trade-off-Simulator',
+    subtitle: 'Wähle einen Workload und beobachte, wie sich das Ranking ändert. Die Balken zeigen die Stärken der Chips; die kleine Prozentzahl neben jeder Metrik zeigt, wie wichtig sie für diesen Workload ist.',
+  },
+} as const
 
 const metrics = [
   { id: 'throughput', label: 'Throughput', help: 'Raw tensor compute for training or high-volume serving.' },
@@ -52,6 +64,8 @@ function MetricBar({ metric, value, weight }: { metric: (typeof metrics)[number]
 }
 
 export function ChipTradeoffSimulator() {
+  const { locale } = useLocale()
+  const c = copy[locale]
   const [workload, setWorkload] = useState<Workload>('inference')
   const ranked = useMemo(
     () => [...chips].sort((a, b) => scoreChip(b, workload) - scoreChip(a, workload)),
@@ -63,8 +77,8 @@ export function ChipTradeoffSimulator() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold font-heading text-gradient mb-2">Chip trade-off simulator</h3>
-        <p className="text-muted text-sm">Pick a workload and watch the ranking change. The bars show chip strengths; the small percentage next to each metric shows how much that workload cares about it.</p>
+        <h3 className="text-xl font-bold font-heading text-gradient mb-2">{c.title}</h3>
+        <p className="text-muted text-sm">{c.subtitle}</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">

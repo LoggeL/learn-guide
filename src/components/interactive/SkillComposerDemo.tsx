@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Zap,
@@ -34,6 +34,69 @@ interface MatchResult {
   chainedSkills: Skill[]
 }
 
+// Literal class lookups — Tailwind cannot see runtime-constructed class names
+const colorStyles: Record<string, {
+  box: string
+  iconBg: string
+  text: string
+  chip: string
+  card: string
+  cardRing: string
+  tabActive: string
+  nodeActive: string
+  nodeChained: string
+  badge: string
+}> = {
+  purple: {
+    box: 'bg-purple-500/10 border border-purple-500/20',
+    iconBg: 'bg-purple-500/20',
+    text: 'text-purple-400',
+    chip: 'bg-purple-500/10 text-purple-400 border border-purple-500/20',
+    card: 'bg-purple-500/5 border border-purple-500/10',
+    cardRing: 'ring-2 ring-purple-500/50',
+    tabActive: 'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+    nodeActive: 'bg-purple-500/20 border-purple-500/50 ring-2 ring-purple-500/30',
+    nodeChained: 'bg-purple-500/10 border-purple-500/30',
+    badge: 'bg-purple-500/20 text-purple-400',
+  },
+  cyan: {
+    box: 'bg-cyan-500/10 border border-cyan-500/20',
+    iconBg: 'bg-cyan-500/20',
+    text: 'text-cyan-400',
+    chip: 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20',
+    card: 'bg-cyan-500/5 border border-cyan-500/10',
+    cardRing: 'ring-2 ring-cyan-500/50',
+    tabActive: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30',
+    nodeActive: 'bg-cyan-500/20 border-cyan-500/50 ring-2 ring-cyan-500/30',
+    nodeChained: 'bg-cyan-500/10 border-cyan-500/30',
+    badge: 'bg-cyan-500/20 text-cyan-400',
+  },
+  emerald: {
+    box: 'bg-emerald-500/10 border border-emerald-500/20',
+    iconBg: 'bg-emerald-500/20',
+    text: 'text-emerald-400',
+    chip: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+    card: 'bg-emerald-500/5 border border-emerald-500/10',
+    cardRing: 'ring-2 ring-emerald-500/50',
+    tabActive: 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+    nodeActive: 'bg-emerald-500/20 border-emerald-500/50 ring-2 ring-emerald-500/30',
+    nodeChained: 'bg-emerald-500/10 border-emerald-500/30',
+    badge: 'bg-emerald-500/20 text-emerald-400',
+  },
+  orange: {
+    box: 'bg-orange-500/10 border border-orange-500/20',
+    iconBg: 'bg-orange-500/20',
+    text: 'text-orange-400',
+    chip: 'bg-orange-500/10 text-orange-400 border border-orange-500/20',
+    card: 'bg-orange-500/5 border border-orange-500/10',
+    cardRing: 'ring-2 ring-orange-500/50',
+    tabActive: 'bg-orange-500/20 text-orange-400 border border-orange-500/30',
+    nodeActive: 'bg-orange-500/20 border-orange-500/50 ring-2 ring-orange-500/30',
+    nodeChained: 'bg-orange-500/10 border-orange-500/30',
+    badge: 'bg-orange-500/20 text-orange-400',
+  },
+}
+
 export function SkillComposerDemo() {
   const { t } = useTranslation()
   const [userInput, setUserInput] = useState('')
@@ -41,6 +104,13 @@ export function SkillComposerDemo() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [activeTab, setActiveTab] = useState<'trigger' | 'manifest' | 'chaining'>('trigger')
   const [selectedSkillForManifest, setSelectedSkillForManifest] = useState<string>('code-review')
+  const matchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (matchTimeoutRef.current) clearTimeout(matchTimeoutRef.current)
+    }
+  }, [])
 
   const skills: Skill[] = [
     {
@@ -121,13 +191,15 @@ export function SkillComposerDemo() {
 
   const handleInputChange = (value: string) => {
     setUserInput(value)
+    if (matchTimeoutRef.current) clearTimeout(matchTimeoutRef.current)
     if (value.length > 2) {
       setIsAnimating(true)
-      setTimeout(() => {
+      matchTimeoutRef.current = setTimeout(() => {
         setMatchResult(findMatchingSkill(value))
         setIsAnimating(false)
       }, 300)
     } else {
+      setIsAnimating(false)
       setMatchResult(null)
     }
   }
@@ -262,14 +334,14 @@ export function SkillComposerDemo() {
                     className="space-y-4"
                   >
                     {/* Matched Skill */}
-                    <div className={`p-4 rounded-xl bg-${matchResult.skill.color}-500/10 border border-${matchResult.skill.color}-500/20`}>
+                    <div className={`p-4 rounded-xl ${colorStyles[matchResult.skill.color].box}`}>
                       <div className="flex items-start gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-${matchResult.skill.color}-500/20 flex items-center justify-center shrink-0`}>
-                          <matchResult.skill.icon size={18} className={`text-${matchResult.skill.color}-400`} />
+                        <div className={`w-10 h-10 rounded-xl ${colorStyles[matchResult.skill.color].iconBg} flex items-center justify-center shrink-0`}>
+                          <matchResult.skill.icon size={18} className={colorStyles[matchResult.skill.color].text} />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
-                            <h4 className={`font-semibold text-${matchResult.skill.color}-400`}>{matchResult.skill.name}</h4>
+                            <h4 className={`font-semibold ${colorStyles[matchResult.skill.color].text}`}>{matchResult.skill.name}</h4>
                             <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400">
                               {Math.round(matchResult.confidence * 100)}% {t.skillComposer.confidence}
                             </span>
@@ -301,7 +373,7 @@ export function SkillComposerDemo() {
                           {matchResult.chainedSkills.map((chain) => (
                             <span
                               key={chain.id}
-                              className={`px-3 py-1.5 text-xs rounded-lg bg-${chain.color}-500/10 text-${chain.color}-400 border border-${chain.color}-500/20`}
+                              className={`px-3 py-1.5 text-xs rounded-lg ${colorStyles[chain.color].chip}`}
                             >
                               {chain.name}
                             </span>
@@ -331,13 +403,13 @@ export function SkillComposerDemo() {
                 {skills.map((skill) => (
                   <div
                     key={skill.id}
-                    className={`p-3 rounded-xl bg-${skill.color}-500/5 border border-${skill.color}-500/10 ${
-                      matchResult?.skill?.id === skill.id ? `ring-2 ring-${skill.color}-500/50` : ''
+                    className={`p-3 rounded-xl ${colorStyles[skill.color].card} ${
+                      matchResult?.skill?.id === skill.id ? colorStyles[skill.color].cardRing : ''
                     }`}
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <skill.icon size={14} className={`text-${skill.color}-400`} />
-                      <span className={`text-sm font-medium text-${skill.color}-400`}>{skill.name}</span>
+                      <skill.icon size={14} className={colorStyles[skill.color].text} />
+                      <span className={`text-sm font-medium ${colorStyles[skill.color].text}`}>{skill.name}</span>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {skill.triggers.slice(0, 3).map((trigger, i) => (
@@ -384,7 +456,7 @@ export function SkillComposerDemo() {
                     onClick={() => setSelectedSkillForManifest(skill.id)}
                     className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                       selectedSkillForManifest === skill.id
-                        ? `bg-${skill.color}-500/20 text-${skill.color}-400 border border-${skill.color}-500/30`
+                        ? colorStyles[skill.color].tabActive
                         : 'bg-surface-elevated text-muted border border-border hover:text-text'
                     }`}
                   >
@@ -507,19 +579,19 @@ function ChainingVisualization({ skills, t }: { skills: Skill[], t: Record<strin
               onClick={() => setActiveChain(isActive ? null : skill.id)}
               className={`relative p-4 rounded-xl border transition-all ${
                 isActive
-                  ? `bg-${skill.color}-500/20 border-${skill.color}-500/50 ring-2 ring-${skill.color}-500/30`
+                  ? colorStyles[skill.color].nodeActive
                   : isChained || canChainTo
-                    ? `bg-${skill.color}-500/10 border-${skill.color}-500/30`
+                    ? colorStyles[skill.color].nodeChained
                     : 'bg-surface border-border hover:border-primary/30'
               }`}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <div className="flex flex-col items-center gap-2">
-                <div className={`w-12 h-12 rounded-xl bg-${skill.color}-500/20 flex items-center justify-center`}>
-                  <skill.icon size={20} className={`text-${skill.color}-400`} />
+                <div className={`w-12 h-12 rounded-xl ${colorStyles[skill.color].iconBg} flex items-center justify-center`}>
+                  <skill.icon size={20} className={colorStyles[skill.color].text} />
                 </div>
-                <span className={`text-sm font-medium ${isActive ? `text-${skill.color}-400` : 'text-text'}`}>
+                <span className={`text-sm font-medium ${isActive ? colorStyles[skill.color].text : 'text-text'}`}>
                   {skill.name}
                 </span>
               </div>
@@ -556,7 +628,7 @@ function ChainingVisualization({ skills, t }: { skills: Skill[], t: Record<strin
 
                 return (
                   <div className="flex items-center justify-center gap-3 flex-wrap">
-                    <div className={`px-4 py-2 rounded-lg bg-${skill.color}-500/20 text-${skill.color}-400 font-medium`}>
+                    <div className={`px-4 py-2 rounded-lg ${colorStyles[skill.color].badge} font-medium`}>
                       {skill.name}
                     </div>
                     {chainedTo.length > 0 && (
@@ -565,7 +637,7 @@ function ChainingVisualization({ skills, t }: { skills: Skill[], t: Record<strin
                         {chainedTo.map((chain) => (
                           <div
                             key={chain!.id}
-                            className={`px-4 py-2 rounded-lg bg-${chain!.color}-500/10 text-${chain!.color}-400 border border-${chain!.color}-500/20`}
+                            className={`px-4 py-2 rounded-lg ${colorStyles[chain!.color].chip}`}
                           >
                             {chain!.name}
                           </div>

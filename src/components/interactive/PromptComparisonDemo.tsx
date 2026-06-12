@@ -65,8 +65,24 @@ const EXAMPLES: PromptExample[] = [
   },
 ]
 
+const COPY = {
+  en: {
+    selectExample: 'Select Example',
+    compareSub: 'Compare weak vs. strong prompts',
+    clickToSee: 'Click to see the improved version',
+    showStrong: 'Show Strong Prompt',
+  },
+  de: {
+    selectExample: 'Beispiel auswählen',
+    compareSub: 'Vergleiche schwache und starke Prompts',
+    clickToSee: 'Klicke, um die verbesserte Version zu sehen',
+    showStrong: 'Starken Prompt anzeigen',
+  },
+}
+
 export function PromptComparisonDemo() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [selectedExample, setSelectedExample] = useState<string>(EXAMPLES[0].id)
   const [showStrong, setShowStrong] = useState(false)
 
@@ -81,8 +97,8 @@ export function PromptComparisonDemo() {
             <MessageSquare size={18} className="text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">Select Example</h3>
-            <p className="text-xs text-muted">Compare weak vs. strong prompts</p>
+            <h3 className="font-semibold text-text font-heading">{c.selectExample}</h3>
+            <p className="text-xs text-muted">{c.compareSub}</p>
           </div>
         </div>
 
@@ -194,12 +210,12 @@ export function PromptComparisonDemo() {
               className="rounded-2xl bg-surface border border-dashed border-border flex flex-col items-center justify-center p-8"
             >
               <Sparkles size={40} className="text-muted mb-4" />
-              <p className="text-muted text-center mb-4">Click to see the improved version</p>
+              <p className="text-muted text-center mb-4">{c.clickToSee}</p>
               <button
                 onClick={() => setShowStrong(true)}
                 className="flex items-center gap-2 px-6 py-3 bg-primary/20 hover:bg-primary/30 text-primary-light rounded-xl transition-colors"
               >
-                <span>Show Strong Prompt</span>
+                <span>{c.showStrong}</span>
                 <ArrowRight size={16} />
               </button>
             </motion.div>

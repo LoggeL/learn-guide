@@ -328,6 +328,28 @@ function QuickstartSection({ t }: { t: Record<string, string> }) {
   )
 }
 
+// Literal class lookups — Tailwind cannot see runtime-constructed class names
+const moeColorClasses: Record<string, { tab: string; bar: string; card: string; title: string }> = {
+  cyan: {
+    tab: 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40',
+    bar: 'bg-cyan-500/60',
+    card: 'bg-cyan-500/10 border-cyan-500/30',
+    title: 'text-cyan-400',
+  },
+  purple: {
+    tab: 'bg-purple-500/20 text-purple-400 border border-purple-500/40',
+    bar: 'bg-purple-500/60',
+    card: 'bg-purple-500/10 border-purple-500/30',
+    title: 'text-purple-400',
+  },
+  orange: {
+    tab: 'bg-orange-500/20 text-orange-400 border border-orange-500/40',
+    bar: 'bg-orange-500/60',
+    card: 'bg-orange-500/10 border-orange-500/30',
+    title: 'text-orange-400',
+  },
+}
+
 const MOE_MODELS = [
   {
     id: 'mixtral-8x7b',
@@ -381,7 +403,7 @@ function MoESection({ t }: { t: Record<string, string> }) {
             onClick={() => setHighlighted(m.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               highlighted === m.id
-                ? `bg-${m.color}-500/20 text-${m.color}-400 border border-${m.color}-500/40`
+                ? moeColorClasses[m.color].tab
                 : 'bg-surface/50 text-muted border border-border hover:border-primary/30'
             }`}
           >
@@ -404,7 +426,7 @@ function MoESection({ t }: { t: Record<string, string> }) {
                 <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
                 <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
                   <div
-                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    className={`h-full rounded-lg ${moeColorClasses[m.color].bar} transition-all duration-500 flex items-center pl-2`}
                     style={{ width: `${(m.intelligence / maxIntel) * 100}%` }}
                   >
                     <span className="text-xs font-medium text-white/80">{m.intelligence}/100</span>
@@ -424,7 +446,7 @@ function MoESection({ t }: { t: Record<string, string> }) {
                 <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
                 <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
                   <div
-                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    className={`h-full rounded-lg ${moeColorClasses[m.color].bar} transition-all duration-500 flex items-center pl-2`}
                     style={{ width: `${(m.speed / maxSpeed) * 100}%` }}
                   >
                     <span className="text-xs font-medium text-white/80">~{m.speed} tok/s</span>
@@ -444,7 +466,7 @@ function MoESection({ t }: { t: Record<string, string> }) {
                 <span className="text-xs text-muted w-32 shrink-0 truncate">{m.name}</span>
                 <div className="flex-1 h-6 rounded-lg bg-surface/60 overflow-hidden">
                   <div
-                    className={`h-full rounded-lg bg-${m.color}-500/60 transition-all duration-500 flex items-center pl-2`}
+                    className={`h-full rounded-lg ${moeColorClasses[m.color].bar} transition-all duration-500 flex items-center pl-2`}
                     style={{ width: `${(m.vram / maxVram) * 100}%` }}
                   >
                     <span className="text-xs font-medium text-white/80">{m.vram} GB</span>
@@ -462,12 +484,12 @@ function MoESection({ t }: { t: Record<string, string> }) {
           <div key={m.id}
             className={`p-4 rounded-xl border transition-all cursor-pointer ${
               highlighted === m.id
-                ? `bg-${m.color}-500/10 border-${m.color}-500/30`
+                ? moeColorClasses[m.color].card
                 : 'bg-surface/30 border-border'
             }`}
             onClick={() => setHighlighted(m.id)}
           >
-            <div className={`text-sm font-semibold text-${m.color}-400 mb-2`}>{m.name}</div>
+            <div className={`text-sm font-semibold ${moeColorClasses[m.color].title} mb-2`}>{m.name}</div>
             <div className="text-xs text-muted space-y-1">
               <div>{t.moeTotalParams || 'Total'}: <span className="text-text font-medium">{m.totalParams}B</span></div>
               <div>{t.moeActiveParams || 'Active'}: <span className="text-text font-medium">{m.activeParams}B</span></div>

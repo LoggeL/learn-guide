@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Plus, Minus, Layers } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
@@ -23,7 +23,20 @@ function sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x))
 }
 
-function generateNetwork(layers: number[]): { neurons: Neuron[]; connections: Connection[] } {
+const COPY = {
+  en: {
+    architectureTitle: 'Network Architecture',
+    info: 'Each neuron computes a weighted sum of inputs and applies an activation function (sigmoid). Connection thickness represents weight magnitude; color indicates positive (green) or negative (red) weights.',
+  },
+  de: {
+    architectureTitle: 'Netzwerkarchitektur',
+    info: 'Jedes Neuron berechnet eine gewichtete Summe seiner Eingaben und wendet eine Aktivierungsfunktion (Sigmoid) an. Die Dicke der Verbindungen zeigt die Größe des Gewichts; die Farbe zeigt an, ob ein Gewicht positiv (grün) oder negativ (rot) ist.',
+  },
+}
+
+// `deterministic` produces fixed values (used for the initial render so server
+// and client markup match); the mount effect replaces them with random ones.
+function generateNetwork(layers: number[], deterministic = false): { neurons: Neuron[]; connections: Connection[] } {
   const neurons: Neuron[] = []
   const connections: Connection[] = []
 
@@ -34,7 +47,7 @@ function generateNetwork(layers: number[]): { neurons: Neuron[]; connections: Co
         id: `${layerIndex}-${i}`,
         layer: layerIndex,
         index: i,
-        value: layerIndex === 0 ? Math.random() : 0,
+        value: layerIndex === 0 ? (deterministic ? 0.5 : Math.random()) : 0,
         activated: false,
       })
     }
@@ -47,7 +60,9 @@ function generateNetwork(layers: number[]): { neurons: Neuron[]; connections: Co
         connections.push({
           from: `${l}-${i}`,
           to: `${l + 1}-${j}`,
-          weight: (Math.random() * 2 - 1) * 0.5,
+          weight: deterministic
+            ? ((((l * 7 + i * 3 + j * 5) % 11) / 10) - 0.5) * 0.5
+            : (Math.random() * 2 - 1) * 0.5,
         })
       }
     }
@@ -57,16 +72,26 @@ function generateNetwork(layers: number[]): { neurons: Neuron[]; connections: Co
 }
 
 export function NeuralNetworkVisualizer() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = COPY[locale === 'de' ? 'de' : 'en']
   const [layers, setLayers] = useState([3, 4, 4, 2])
-  const [network, setNetwork] = useState(() => generateNetwork([3, 4, 4, 2]))
+  const [network, setNetwork] = useState(() => generateNetwork([3, 4, 4, 2], true))
   const [isRunning, setIsRunning] = useState(false)
   const [currentLayer, setCurrentLayer] = useState(0)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
+  // Randomize after mount (and whenever the architecture changes)
   useEffect(() => {
     setNetwork(generateNetwork(layers))
     setCurrentLayer(0)
   }, [layers])
+
+  // Clear any running forward-pass animation on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
 
   const addLayer = () => {
     if (layers.length < 6) {
@@ -93,12 +118,14 @@ export function NeuralNetworkVisualizer() {
 
     // Animate forward pass
     let layer = 0
-    const interval = setInterval(() => {
+    if (intervalRef.current) clearInterval(intervalRef.current)
+    intervalRef.current = setInterval(() => {
       layer++
       setCurrentLayer(layer)
 
       if (layer >= layers.length) {
-        clearInterval(interval)
+        if (intervalRef.current) clearInterval(intervalRef.current)
+        intervalRef.current = null
         setIsRunning(false)
 
         // Compute final values
@@ -156,7 +183,7 @@ export function NeuralNetworkVisualizer() {
               <Layers size={18} className="text-purple-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">Network Architecture</h3>
+              <h3 className="font-semibold text-text font-heading">{c.architectureTitle}</h3>
               <p className="text-xs text-muted">{layers.length} layers, {network.neurons.length} neurons</p>
             </div>
           </div>
@@ -287,7 +314,7 @@ export function NeuralNetworkVisualizer() {
         <div className="flex items-start gap-3">
           <Layers size={18} className="text-primary-light shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
-            <p>Each neuron computes a weighted sum of inputs and applies an activation function (sigmoid). Connection thickness represents weight magnitude; color indicates positive (green) or negative (red) weights.</p>
+            <p>{c.info}</p>
           </div>
         </div>
       </div>
