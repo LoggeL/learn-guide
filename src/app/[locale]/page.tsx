@@ -120,7 +120,7 @@ export default function Home() {
                   {t.home.heroDescription}
                 </p>
                 <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                  <Link href={`/${locale}/ai/llm/mtp`} className="btn-primary inline-flex items-center justify-center gap-2 text-base">
+                  <Link href={`/${locale}/ai/getting-started`} className="btn-primary inline-flex items-center justify-center gap-2 text-base">
                     {t.home.startLearning}
                     <ArrowRight size={18} />
                   </Link>
@@ -134,7 +134,7 @@ export default function Home() {
                 {[
                   { icon: BookOpen, label: t.common.topics, value: String(allTopicCount), sub: t.common.guidesDescription },
                   { icon: Clock, label: t.common.recentlyUpdated, value: latestTopics[0]?.[0] ? (t.topicNames[latestTopics[0][0] as keyof typeof t.topicNames] || latestTopics[0][0]) : '—', sub: latestTopics[0]?.[1] ? formatTopicDate(latestTopics[0][1], locale) : '—' },
-                  { icon: Database, label: 'LLM', value: 'Architecture', sub: 'MTP · MoE · KV cache · inference' },
+                  { icon: Database, label: 'LLM', value: t.home.statArchitecture, sub: t.home.statArchitectureSub },
                 ].map((item, i) => (
                   <div key={i} className="rounded-xl border border-border bg-surface/55 p-4">
                     <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-subtle">
@@ -165,7 +165,7 @@ export default function Home() {
             </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-base font-bold text-text group-hover:text-primary-light transition-colors font-heading">LMF Blog</h3>
-              <p className="text-sm text-muted">Latest AI news, model analysis, and deep dives</p>
+              <p className="text-sm text-muted">{t.home.blogDescription}</p>
             </div>
             <ArrowRight size={18} className="text-muted group-hover:text-primary-light transition-colors shrink-0 transform group-hover:translate-x-1" />
           </a>

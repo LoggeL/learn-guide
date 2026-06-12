@@ -73,7 +73,7 @@ export default function TransformerArchitecturePage() {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <span className="px-2 py-1 text-xs rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/20">3D Interactive</span>
-                    <span className="px-2 py-1 text-xs rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/20">By Brendan Bycroft</span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/20">{t.transformerArchitecture.bycroftBadgeBy}</span>
                     <span className="px-2 py-1 text-xs rounded-full bg-pink-500/15 text-pink-300 border border-pink-500/20">bbycroft.net/llm</span>
                   </div>
                 </div>

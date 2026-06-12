@@ -3,7 +3,7 @@
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
 import { PositionalEncodingRopeVisualizer } from '@/components/interactive/PositionalEncodingRopeVisualizer'
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { useLocale } from '@/lib/i18n/context'
+import { useTranslation } from '@/lib/i18n/context'
 
 const copy = {
   en: {
@@ -91,7 +91,7 @@ const copy = {
 }
 
 export default function PositionalEncodingPage() {
-  const { locale } = useLocale()
+  const { t, locale } = useTranslation()
   const c = locale === 'de' ? copy.de : copy.en
 
   return (
@@ -100,8 +100,8 @@ export default function PositionalEncodingPage() {
       title={c.title}
       description={c.description}
       breadcrumbs={[
-        { label: 'AI', href: '/' },
-        { label: 'Large Language Models', href: '/ai/llm' },
+        { label: t.categories.ai, href: '/' },
+        { label: t.categories.llm, href: '/ai/llm' },
         { label: c.crumb },
       ]}
       prevTopic={{ label: c.prev, href: '/ai/llm/embeddings' }}

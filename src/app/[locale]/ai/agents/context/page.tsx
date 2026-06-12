@@ -34,7 +34,7 @@ export default function AgentContextPage() {
         </p>
         <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20">
           <p className="text-xl text-text font-heading font-semibold mb-0">
-            Think of context as the agent&apos;s working memory—everything it needs to understand the task and respond appropriately.
+            {t.agentContext.workingMemory}
           </p>
         </div>
       </section>
@@ -48,8 +48,8 @@ export default function AgentContextPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Explore Context Layers</h2>
-            <p className="text-sm text-muted">Click each layer to see example content</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.agentContext.exploreLayers}</h2>
+            <p className="text-sm text-muted">{t.agentContext.exploreLayersDesc}</p>
           </div>
         </div>
         <ContextAnatomyVisualizer />
@@ -57,7 +57,7 @@ export default function AgentContextPage() {
 
       {/* What Gets Sent */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">What Actually Gets Sent to the Model</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentContext.whatGetsSent}</h2>
         <div className="rounded-2xl bg-background border border-border p-6 md:p-8 font-mono text-sm md:text-base overflow-x-auto">
           <pre className="text-muted">
             <code>
@@ -100,12 +100,12 @@ export default function AgentContextPage() {
 
       {/* Context Management Strategies */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Context Management Strategies</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentContext.strategies}</h2>
         <div className="space-y-4">
           <div className="p-5 rounded-xl bg-surface/50 border border-border">
-            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">Sliding Window</h3>
+            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">{t.agentContext.slidingWindow}</h3>
             <p className="text-sm text-muted mb-3">
-              Keep the most recent N messages. Simple but may lose important early context.
+              {t.agentContext.slidingWindowDesc}
             </p>
             <div className="font-mono text-xs bg-background/50 rounded-lg p-3 text-muted">
               messages = messages[-MAX_MESSAGES:]
@@ -113,9 +113,9 @@ export default function AgentContextPage() {
           </div>
 
           <div className="p-5 rounded-xl bg-surface/50 border border-border">
-            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">Summarization</h3>
+            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">{t.agentContext.summarization}</h3>
             <p className="text-sm text-muted mb-3">
-              Periodically compress older messages into summaries. Preserves key information while reducing tokens.
+              {t.agentContext.summarizationDesc}
             </p>
             <div className="font-mono text-xs bg-background/50 rounded-lg p-3 text-muted">
               summary = llm(&quot;Summarize this conversation: &quot; + old_messages)<br/>
@@ -124,9 +124,9 @@ export default function AgentContextPage() {
           </div>
 
           <div className="p-5 rounded-xl bg-surface/50 border border-border">
-            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">Priority-based Truncation</h3>
+            <h3 className="text-lg font-bold font-heading text-primary-light mb-2">{t.agentContext.priorityTruncation}</h3>
             <p className="text-sm text-muted mb-3">
-              Assign priority scores to messages. System prompts and recent turns get highest priority.
+              {t.agentContext.priorityTruncationDesc}
             </p>
             <div className="font-mono text-xs bg-background/50 rounded-lg p-3 text-muted">
               priority: system &gt; tools &gt; recent_user &gt; recent_assistant &gt; old_history
@@ -137,34 +137,30 @@ export default function AgentContextPage() {
 
       {/* Common Pitfalls */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Common Pitfalls</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentContext.pitfalls}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="p-5 rounded-xl bg-red-500/5 border border-red-500/20">
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">Context Overflow</h3>
+            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.agentContext.pitfallOverflow}</h3>
             <p className="text-sm text-muted">
-              Exceeding the context window causes truncation. The model loses access to earlier information,
-              potentially forgetting instructions or important context.
+              {t.agentContext.pitfallOverflowDesc}
             </p>
           </div>
           <div className="p-5 rounded-xl bg-red-500/5 border border-red-500/20">
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">Tool Definition Bloat</h3>
+            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.agentContext.pitfallBloat}</h3>
             <p className="text-sm text-muted">
-              Too many tools or overly verbose descriptions eat into context space.
-              Keep tool definitions concise and only include tools relevant to the task.
+              {t.agentContext.pitfallBloatDesc}
             </p>
           </div>
           <div className="p-5 rounded-xl bg-red-500/5 border border-red-500/20">
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">Lost in the Middle</h3>
+            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.agentContext.pitfallMiddle}</h3>
             <p className="text-sm text-muted">
-              Models pay less attention to information in the middle of long contexts.
-              Place critical information at the start or end.
+              {t.agentContext.pitfallMiddleDesc}
             </p>
           </div>
           <div className="p-5 rounded-xl bg-red-500/5 border border-red-500/20">
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">Stale Retrieved Data</h3>
+            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.agentContext.pitfallStale}</h3>
             <p className="text-sm text-muted">
-              RAG results from earlier in conversation may become outdated as discussion evolves.
-              Refresh retrieved data when the topic shifts.
+              {t.agentContext.pitfallStaleDesc}
             </p>
           </div>
         </div>

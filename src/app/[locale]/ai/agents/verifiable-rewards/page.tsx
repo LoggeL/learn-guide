@@ -63,12 +63,12 @@ export default function VerifiableRewardsPage() {
   return (
     <TopicLayout
       topicId="verifiable-rewards"
-      title="Verifiable Rewards"
-      description="How LLMs and agents can be trained on tasks with objective outcome checks, from coding sandboxes to Office-style environments."
+      title={t.verifiableRewards.title}
+      description={t.verifiableRewards.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.agents, href: '/ai/agents' },
-        { label: 'Verifiable Rewards' },
+        { label: t.verifiableRewards.title },
       ]}
       prevTopic={{ label: t.topicNames['evaluation'], href: '/ai/agents/evaluation' }}
       nextTopic={{ label: t.topicNames['powerful-agents'], href: '/ai/agents/powerful' }}
@@ -79,21 +79,21 @@ export default function VerifiableRewardsPage() {
             <CheckCircle2 size={24} className="text-emerald-400" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-gradient mb-4">Training on outcomes, not opinions</h2>
+            <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.verifiableRewards.outcomesTitle}</h2>
             <p className="text-muted leading-relaxed text-lg">
-              Verifiable-reward training works when a model or agent can attempt a real task and an external checker can score the result. This is why math, code, browser tasks, and tool-using agents are so interesting: the reward can come from the world, not only from human preference labels.
+              {t.verifiableRewards.outcomesDesc}
             </p>
           </div>
         </div>
         <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 text-sm text-muted leading-relaxed">
-          The hard part is not just buying more GPUs. You also need many ordinary cloud machines running sandboxes, apps, documents, browsers, databases, and graders so the agent has something real to act inside.
+          {t.verifiableRewards.hardPartNote}
         </div>
       </section>
 
       <VerifiableRewardsSimulator />
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The reward loop</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.verifiableRewards.rewardLoopTitle}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {rewardLoop.map(({ icon: Icon, title, desc }, i) => (
             <div key={title} className="rounded-xl bg-surface/70 border border-border p-5">
@@ -109,9 +109,9 @@ export default function VerifiableRewardsPage() {
       </section>
 
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">Realistic environments are the product</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.verifiableRewards.environmentsTitle}</h2>
         <p className="text-muted leading-relaxed mb-6">
-          A verifiable task has to feel like the job you actually want the model to do. If the environment is toy-like, the model learns toy behavior. If the verifier is too narrow, the model learns to exploit the verifier.
+          {t.verifiableRewards.environmentsDesc}
         </p>
         <div className="grid md:grid-cols-2 gap-4">
           {environments.map(([title, desc]) => (
@@ -124,7 +124,7 @@ export default function VerifiableRewardsPage() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Verifier design</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.verifiableRewards.verifierDesignTitle}</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {verifierTypes.map((item) => (
             <div key={item.title} className="p-5 rounded-xl bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20">
@@ -140,25 +140,25 @@ export default function VerifiableRewardsPage() {
         <div className="rounded-2xl bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 p-6">
           <div className="flex items-center gap-3 mb-4">
             <Cpu size={22} className="text-purple-400" />
-            <h2 className="text-xl font-bold font-heading text-text">GPU work</h2>
+            <h2 className="text-xl font-bold font-heading text-text">{t.verifiableRewards.gpuWorkTitle}</h2>
           </div>
           <p className="text-sm text-muted leading-relaxed">
-            Model rollouts, policy updates, reward-model training, distillation, and inference at scale. This is the visible expensive part.
+            {t.verifiableRewards.gpuWorkDesc}
           </p>
         </div>
         <div className="rounded-2xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 border border-orange-500/20 p-6">
           <div className="flex items-center gap-3 mb-4">
             <Cloud size={22} className="text-orange-400" />
-            <h2 className="text-xl font-bold font-heading text-text">Environment work</h2>
+            <h2 className="text-xl font-bold font-heading text-text">{t.verifiableRewards.envWorkTitle}</h2>
           </div>
           <p className="text-sm text-muted leading-relaxed">
-            Thousands of resettable sandboxes, browsers, app instances, databases, documents, queues, and verifier processes. This is less glamorous but just as decisive.
+            {t.verifiableRewards.envWorkDesc}
           </p>
         </div>
       </section>
 
       <section className="rounded-2xl bg-surface border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Why this is hard</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.verifiableRewards.whyHardTitle}</h2>
         <ul className="space-y-4">
           {bottlenecks.map((item, i) => (
             <li key={item} className="flex gap-3 items-start text-text">
@@ -172,9 +172,9 @@ export default function VerifiableRewardsPage() {
       </section>
 
       <section className="rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">The strategic point</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.verifiableRewards.strategicTitle}</h2>
         <p className="text-muted leading-relaxed">
-          Whenever you can define a target metric and build a realistic environment around it, LLMs and agents become much more trainable. The frontier shifts from “can the model answer?” to “can we manufacture enough high-quality, verifiable work for the model to practice?”
+          {t.verifiableRewards.strategicDesc}
         </p>
       </section>
     </TopicLayout>

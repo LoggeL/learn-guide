@@ -209,13 +209,13 @@ export default function AttentionPage() {
                 <span className="text-2xl">🪟</span>
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold font-heading text-orange-400 mb-2">Sliding Window Attention</h3>
+                <h3 className="text-lg font-bold font-heading text-orange-400 mb-2">{t.attention.slidingWindowTitle}</h3>
                 <p className="text-muted text-sm leading-relaxed mb-3">
                   {t.attention.slidingWindowDesc}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <span className="px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-300">O(n) complexity</span>
-                  <span className="px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-300">Used in Mistral</span>
+                  <span className="px-2 py-1 text-xs rounded-full bg-orange-500/20 text-orange-300">{t.attention.usedInMistral}</span>
                 </div>
               </div>
             </div>

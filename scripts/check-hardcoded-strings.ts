@@ -157,6 +157,31 @@ function shouldSkipLine(line: string): boolean {
   return SKIP_LINE_PATTERNS.some(pattern => pattern.test(trimmed))
 }
 
+/**
+ * Detects standalone JSX text lines — text content rendered on its own line
+ * between an opening and a closing tag, e.g.
+ *   <p>
+ *     Some English sentence here
+ *   </p>
+ * Returns the trimmed text if the line looks like bare JSX text, else null.
+ * Kept deliberately strict to avoid false positives: must look like prose
+ * (capitalized multi-word sentence) and must not contain any code-like syntax.
+ */
+function getBareJsxText(line: string): string | null {
+  const trimmed = line.trim()
+  if (trimmed.length < 15) return null
+  // Must start with a capitalized word followed by lowercase (prose-like)
+  if (!/^[A-Z][a-z]/.test(trimmed)) return null
+  // Must be multi-word
+  if (trimmed.split(/\s+/).length < 3) return null
+  // Anything that looks like code rather than plain JSX text content
+  if (/[<>{}=`"\\]/.test(trimmed)) return null
+  if (trimmed.startsWith("'") || trimmed.endsWith(',') || trimmed.endsWith(';')) return null
+  // Object keys / labelled values like `title: ...`
+  if (/^[\w$]+\s*:/.test(trimmed)) return null
+  return trimmed
+}
+
 function isInTranslationContext(line: string, phraseIndex: number): boolean {
   const beforePhrase = line.substring(0, phraseIndex)
   // Check if the phrase is inside a translation call
@@ -175,16 +200,31 @@ function findHardcodedStrings(filePath: string): Finding[] {
   const lines = content.split('\n')
 
   // Skip files that don't use translations (utility files, etc.)
-  const isPageOrComponent = filePath.includes('/app/') || filePath.includes('/components/')
+  // Normalize Windows backslash paths so the check works on every platform
+  const normalizedPath = filePath.split(path.sep).join('/')
+  const isPageOrComponent = normalizedPath.includes('/app/') || normalizedPath.includes('/components/')
   if (!isPageOrComponent) return []
+
+  // Tracks whether we are inside a multi-line template literal (e.g. code or
+  // prompt samples). Bare text lines inside template literals are string data,
+  // not JSX text, so the standalone-line detection must not fire there.
+  let inTemplateLiteral = false
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]
     const lineNum = i + 1
 
+    const wasInTemplateLiteral = inTemplateLiteral
+    const backtickCount = (line.match(/`/g) || []).length
+    if (backtickCount % 2 === 1) {
+      inTemplateLiteral = !inTemplateLiteral
+    }
+
     // Skip non-JSX lines and certain patterns
     if (shouldSkipLine(line)) continue
-    if (!line.includes('>')) continue
+    // Standalone JSX text lines (between tags) don't contain '>' themselves
+    const bareJsxText = wasInTemplateLiteral ? null : getBareJsxText(line)
+    if (!line.includes('>') && bareJsxText === null) continue
 
     // Check for known English phrases that need translation
     for (const phrase of ENGLISH_PHRASES) {
@@ -197,7 +237,7 @@ function findHardcodedStrings(filePath: string): Finding[] {
 
       // Check if this phrase appears in actual JSX text content (after >)
       const beforePhrase = line.substring(0, phraseIndex)
-      if (beforePhrase.includes('>') && !beforePhrase.endsWith('={')) {
+      if (bareJsxText !== null || (beforePhrase.includes('>') && !beforePhrase.endsWith('={'))) {
         findings.push({
           file: filePath,
           line: lineNum,
@@ -228,6 +268,25 @@ function findHardcodedStrings(filePath: string): Finding[] {
 
       const textIndex = line.indexOf(text)
       if (isInTranslationContext(line, textIndex)) continue
+
+      findings.push({
+        file: filePath,
+        line: lineNum,
+        content: text,
+        context: line.trim().substring(0, 120),
+      })
+    }
+
+    // Also flag standalone JSX text lines (text between tags on its own line)
+    if (bareJsxText !== null) {
+      const text = bareJsxText
+
+      // Same filters as the inline JSX text check above
+      if (/^[\d.%BTx\-]+$/.test(text)) continue
+      if (text.match(/^[A-Z][a-z]+ \d/)) continue
+      if (isInAllowList(text)) continue
+      // Skip if already reported via the phrase check
+      if (ENGLISH_PHRASES.some(p => text.includes(p))) continue
 
       findings.push({
         file: filePath,

@@ -97,16 +97,13 @@ export default function PromptCachingPage() {
       <section className="space-y-6">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary mb-3">
-            The core idea
+            {t.promptCaching.coreIdeaTag}
           </p>
           <h2 className="text-3xl font-bold font-heading text-text mb-4">
-            Prompt caching rewards stable prefixes.
+            {t.promptCaching.coreIdeaTitle}
           </h2>
           <p className="text-lg leading-relaxed text-muted">
-            Prompt caching is not memory, retrieval, or a database. It is a way for an inference provider to
-            reuse the already-computed KV state for the beginning of a prompt when later requests start with
-            the same tokens. The changing part still has to be processed; the win comes from not recomputing
-            the repeated prefix.
+            {t.promptCaching.coreIdeaDesc}
           </p>
         </div>
 
@@ -124,12 +121,10 @@ export default function PromptCachingPage() {
       <section className="space-y-5">
         <div className="max-w-3xl">
           <h2 className="text-2xl font-bold font-heading text-text mb-3">
-            The prefix is the contract
+            {t.promptCaching.prefixContractTitle}
           </h2>
           <p className="text-muted leading-relaxed">
-            Cacheability is mostly determined before the model sees the user&apos;s actual task. If the long,
-            expensive part begins at token 500 but token 20 changes on every request, the shared prefix is
-            effectively broken. Design the prompt shape first, then tune provider settings.
+            {t.promptCaching.prefixContractDesc}
           </p>
         </div>
 
@@ -149,31 +144,26 @@ export default function PromptCachingPage() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold font-heading text-text">Cache hit versus cache miss</h2>
+        <h2 className="text-2xl font-bold font-heading text-text">{t.promptCaching.hitVsMissTitle}</h2>
         <p className="text-muted leading-relaxed max-w-3xl">
-          On a miss, the provider performs the expensive prefill for the whole prompt and may write the
-          reusable prefix. On a hit, the provider reads the cached prefix and only computes the suffix.
-          This changes input cost and latency, but output generation still costs what it costs.
+          {t.promptCaching.hitVsMissDesc}
         </p>
         <CacheHitMissAnimation t={t.promptCaching} />
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold font-heading text-text">Try the prefix rule</h2>
+        <h2 className="text-2xl font-bold font-heading text-text">{t.promptCaching.tryPrefixTitle}</h2>
         <p className="text-muted leading-relaxed max-w-3xl">
-          The fastest way to understand prompt caching is to edit the beginning of a prompt. Tiny changes
-          near the top can destroy the cache hit; changes after the stable prefix usually preserve it.
+          {t.promptCaching.tryPrefixDesc}
         </p>
         <PrefixMatchingDemo t={t.promptCaching} />
       </section>
 
       <section className="space-y-5">
         <div className="max-w-3xl">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">Provider behavior differs</h2>
+          <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.promptCaching.providerDiffTitle}</h2>
           <p className="text-muted leading-relaxed">
-            Do not build your architecture around a single marketing number. Providers differ in how caches
-            are created, how long they live, which inputs count, and how usage is reported. The portable
-            skill is prompt discipline: stable prefix first, volatile suffix last, measure every deployment.
+            {t.promptCaching.providerDiffDesc}
           </p>
         </div>
 
@@ -181,9 +171,9 @@ export default function PromptCachingPage() {
           <table className="w-full text-sm">
             <thead className="bg-surface/60 text-muted">
               <tr className="border-b border-border">
-                <th className="text-left py-3 px-4 font-semibold">Provider</th>
-                <th className="text-left py-3 px-4 font-semibold">How to think about it</th>
-                <th className="text-left py-3 px-4 font-semibold">What to verify</th>
+                <th className="text-left py-3 px-4 font-semibold">{t.promptCaching.tableProvider}</th>
+                <th className="text-left py-3 px-4 font-semibold">{t.promptCaching.tableHowToThink}</th>
+                <th className="text-left py-3 px-4 font-semibold">{t.promptCaching.tableWhatToVerify}</th>
               </tr>
             </thead>
             <tbody>
@@ -201,7 +191,7 @@ export default function PromptCachingPage() {
 
       <section className="grid md:grid-cols-2 gap-8">
         <div>
-          <h2 className="text-2xl font-bold font-heading text-text mb-4">Use it when</h2>
+          <h2 className="text-2xl font-bold font-heading text-text mb-4">{t.promptCaching.useWhenTitle}</h2>
           <ul className="space-y-3">
             {useCases.map((item) => (
               <li key={item} className="flex gap-3 text-sm text-muted leading-relaxed">
@@ -212,7 +202,7 @@ export default function PromptCachingPage() {
           </ul>
         </div>
         <div>
-          <h2 className="text-2xl font-bold font-heading text-text mb-4">Avoid expecting wins when</h2>
+          <h2 className="text-2xl font-bold font-heading text-text mb-4">{t.promptCaching.avoidWhenTitle}</h2>
           <ul className="space-y-3">
             {antiPatterns.map((item) => (
               <li key={item} className="flex gap-3 text-sm text-muted leading-relaxed">
@@ -226,19 +216,16 @@ export default function PromptCachingPage() {
 
       <section className="space-y-5">
         <div className="max-w-3xl">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">Cost model</h2>
+          <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.promptCaching.costModelTitle}</h2>
           <p className="text-muted leading-relaxed">
-            A useful rule of thumb: cache writes are often more expensive than normal input, cache reads are
-            cheaper, and the break-even point depends on how often the same prefix is reused before expiry.
-            Use the calculator as an intuition builder, then confirm with real usage fields from your API
-            responses.
+            {t.promptCaching.costModelDesc}
           </p>
         </div>
         <CostSavingsCalculator t={t.promptCaching} />
       </section>
 
       <section className="space-y-5">
-        <h2 className="text-2xl font-bold font-heading text-text">Implementation checklist</h2>
+        <h2 className="text-2xl font-bold font-heading text-text">{t.promptCaching.checklistTitle}</h2>
         <div className="border border-border rounded-lg divide-y divide-border bg-surface/30">
           {implementationChecklist.map((item, index) => (
             <div key={item} className="flex gap-4 p-4">
@@ -251,10 +238,9 @@ export default function PromptCachingPage() {
 
       <section className="space-y-5">
         <div className="max-w-3xl">
-          <h2 className="text-2xl font-bold font-heading text-text mb-3">Minimal implementation pattern</h2>
+          <h2 className="text-2xl font-bold font-heading text-text mb-3">{t.promptCaching.minimalPatternTitle}</h2>
           <p className="text-muted leading-relaxed">
-            The exact API differs by provider, but the prompt shape should look like this: stable context
-            first, cache boundary around the reusable prefix, task-specific input last.
+            {t.promptCaching.minimalPatternDesc}
           </p>
         </div>
 
@@ -289,11 +275,9 @@ print("normal input:", usage.input_tokens)`}</code>
       </section>
 
       <section className="border border-primary/30 bg-primary/10 rounded-lg p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-text mb-4">What to remember</h2>
+        <h2 className="text-2xl font-bold font-heading text-text mb-4">{t.promptCaching.rememberTitle}</h2>
         <p className="text-muted leading-relaxed max-w-3xl">
-          Prompt caching is an inference optimization for repeated prefixes. It works best when prompt
-          construction is boring and deterministic. Put the reusable mass first, keep it stable, move noisy
-          data later, and trust only the measured cache-hit fields.
+          {t.promptCaching.rememberDesc}
         </p>
       </section>
     </TopicLayout>

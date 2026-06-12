@@ -34,7 +34,7 @@ export default function AgentLoopPage() {
           </p>
           <div className="mt-6 p-6 rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/20">
             <p className="text-xl text-text font-heading font-semibold mb-0">
-              The reality? An agent is just an LLM running in a <code className="px-2 py-1 rounded bg-surface-elevated text-primary-light">while</code> loop.
+              {t.agentLoop.realityPrefix} <code className="px-2 py-1 rounded bg-surface-elevated text-primary-light">while</code>{t.agentLoop.realitySuffix}
             </p>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default function AgentLoopPage() {
 
       {/* The Pseudocode */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The Core Pattern</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentLoop.corePattern}</h2>
         <div className="rounded-2xl bg-background border border-border p-6 md:p-8 font-mono text-sm md:text-base overflow-x-auto">
           <pre className="text-muted">
             <code>
@@ -86,8 +86,8 @@ export default function AgentLoopPage() {
             </div>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">Watch It In Action</h2>
-            <p className="text-sm text-muted">See how the context builds up through the loop</p>
+            <h2 className="text-2xl font-bold font-heading text-text">{t.agentLoop.watchInAction}</h2>
+            <p className="text-sm text-muted">{t.agentLoop.watchInActionDesc}</p>
           </div>
         </div>
         <AgentLoopVisualizer />

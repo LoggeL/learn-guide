@@ -16,12 +16,13 @@ const phases: { id: Phase; num: number; emoji: string }[] = [
 ]
 
 function AbliterationVisualizer() {
+  const { t } = useTranslation()
   const [phase, setPhase] = useState<Phase>('collect')
   const phaseIdx = phases.findIndex(p => p.id === phase)
 
   const phaseContent: Record<Phase, { title: string; lines: string[]; color: string }> = {
     collect: {
-      title: 'Step 1: Collect Activations',
+      title: t.abliteration.step1Title,
       color: 'text-cyan-400',
       lines: [
         '# Run model on harmful + harmless instructions',
@@ -34,7 +35,7 @@ function AbliterationVisualizer() {
       ],
     },
     direction: {
-      title: 'Step 2: Find Refusal Direction',
+      title: t.abliteration.step2Title,
       color: 'text-yellow-400',
       lines: [
         '# Mean difference = refusal direction per layer',
@@ -48,7 +49,7 @@ function AbliterationVisualizer() {
       ],
     },
     ablate: {
-      title: 'Step 3: Ablate the Direction',
+      title: t.abliteration.step3Title,
       color: 'text-red-400',
       lines: [
         '# Weight orthogonalization — permanent removal',
@@ -61,7 +62,7 @@ function AbliterationVisualizer() {
       ],
     },
     heal: {
-      title: 'Step 4: Heal with DPO (Optional)',
+      title: t.abliteration.step4Title,
       color: 'text-emerald-400',
       lines: [
         '# Abliteration may degrade quality — heal it!',
@@ -83,8 +84,8 @@ function AbliterationVisualizer() {
   return (
     <div className="rounded-2xl bg-surface border border-border overflow-hidden">
       <div className="px-6 py-4 bg-surface-elevated border-b border-border">
-        <h3 className="font-semibold text-text font-heading">Abliteration Pipeline</h3>
-        <p className="text-xs text-muted mt-1">Click through each phase to see the code</p>
+        <h3 className="font-semibold text-text font-heading">{t.abliteration.pipelineBoxTitle}</h3>
+        <p className="text-xs text-muted mt-1">{t.abliteration.pipelineBoxDesc}</p>
       </div>
 
       {/* Phase tabs */}
@@ -139,7 +140,7 @@ function AbliterationVisualizer() {
               onClick={() => setPhase(phases[phaseIdx + 1].id)}
               className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary/20 text-primary-light border border-primary/30 hover:bg-primary/30 text-sm transition-all"
             >
-              Next <ChevronRight size={14} />
+              {t.abliteration.nextPhase} <ChevronRight size={14} />
             </button>
           </div>
         )}
@@ -149,6 +150,7 @@ function AbliterationVisualizer() {
 }
 
 function NeuralDiagram() {
+  const { t } = useTranslation()
   const [showRefusal, setShowRefusal] = useState(false)
   const [ablated, setAblated] = useState(false)
 
@@ -156,8 +158,8 @@ function NeuralDiagram() {
     <div className="rounded-2xl bg-surface border border-border overflow-hidden">
       <div className="px-6 py-4 bg-surface-elevated border-b border-border flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-text font-heading">Refusal Direction in the Residual Stream</h3>
-          <p className="text-xs text-muted mt-1">Toggle to see how abliteration removes the refusal direction</p>
+          <h3 className="font-semibold text-text font-heading">{t.abliteration.diagramTitle}</h3>
+          <p className="text-xs text-muted mt-1">{t.abliteration.diagramDesc}</p>
         </div>
         <button
           onClick={() => { setShowRefusal(!showRefusal); if (!showRefusal) setAblated(false) }}
@@ -166,7 +168,7 @@ function NeuralDiagram() {
             : 'bg-surface-elevated border-border text-muted'
             }`}
         >
-          {showRefusal ? 'Show Refusal Direction' : 'Show Refusal Direction'}
+          {showRefusal ? t.abliteration.diagramHide : t.abliteration.diagramShow}
         </button>
       </div>
 
@@ -185,7 +187,7 @@ function NeuralDiagram() {
               </div>
               {showRefusal && i === 2 && !ablated && (
                 <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] text-red-400 font-mono">
-                  ← refusal dir
+                  {t.abliteration.diagramRefusalDir}
                 </motion.span>
               )}
             </div>
@@ -201,12 +203,12 @@ function NeuralDiagram() {
                 : 'bg-red-500/20 border-red-500/30 text-red-400'
                 }`}
             >
-              {ablated ? '✂️ Direction Ablated!' : '✂️ Ablate Refusal Direction'}
+              {ablated ? t.abliteration.diagramAblatedButton : t.abliteration.diagramAblateButton}
             </button>
             <p className="text-xs text-muted text-center max-w-sm">
               {ablated
-                ? 'The model can no longer represent the refusal direction — it won\'t refuse any request.'
-                : 'Layer 16 has the strongest refusal direction. This single vector controls whether the model says "I cannot help with that."'}
+                ? t.abliteration.diagramAblatedDesc
+                : t.abliteration.diagramActiveDesc}
             </p>
           </motion.div>
         )}
@@ -220,32 +222,32 @@ export default function AbliterationPage() {
 
   const resources = [
     {
-      title: 'Unsloth Fine-Tuning Notebooks',
-      desc: '250+ free Colab notebooks for fine-tuning text, vision, and audio models. The easiest way to start.',
+      title: t.abliteration.resource1Title,
+      desc: t.abliteration.resource1Desc,
       url: 'https://github.com/unslothai/notebooks',
       emoji: '📓',
     },
     {
-      title: 'Unsloth Fine-Tuning Guide',
-      desc: 'Step-by-step guide covering SFT, LoRA, QLoRA, RL (GRPO) — with code examples.',
+      title: t.abliteration.resource2Title,
+      desc: t.abliteration.resource2Desc,
       url: 'https://unsloth.ai/docs/get-started/fine-tuning-llms-guide',
       emoji: '📚',
     },
     {
-      title: 'Abliteration Colab Notebook',
-      desc: 'mlabonne\'s interactive notebook — uncensor any LLM with weight orthogonalization.',
+      title: t.abliteration.resource3Title,
+      desc: t.abliteration.resource3Desc,
       url: 'https://colab.research.google.com/drive/1VYm3hOcvCpbGiqKZb141gJwjdmmCcVpR',
       emoji: '🔬',
     },
     {
-      title: 'TransformerLens Library',
-      desc: 'Mechanistic interpretability toolkit used to hook into and modify model internals.',
+      title: t.abliteration.resource4Title,
+      desc: t.abliteration.resource4Desc,
       url: 'https://github.com/TransformerLensOrg/TransformerLens',
       emoji: '🔍',
     },
     {
-      title: 'FailSpy\'s Abliterator Library',
-      desc: 'Simplified abliteration tool — less code, same result.',
+      title: t.abliteration.resource5Title,
+      desc: t.abliteration.resource5Desc,
       url: 'https://github.com/FailSpy/abliterator',
       emoji: '🛠️',
     },

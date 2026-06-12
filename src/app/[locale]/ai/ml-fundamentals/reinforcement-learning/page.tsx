@@ -25,23 +25,23 @@ export default function ReinforcementLearningPage() {
 
   return (
     <TopicLayout topicId="reinforcement-learning"
-      title="Reinforcement Learning"
-      description="How agents learn by acting, receiving rewards, and improving a policy over repeated experience."
+      title={t.reinforcementLearning.title}
+      description={t.reinforcementLearning.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.mlFundamentals, href: '/ai/ml-fundamentals' },
-        { label: 'Reinforcement Learning' },
+        { label: t.reinforcementLearning.title },
       ]}
       prevTopic={{ label: t.topicNames['training'], href: '/ai/ml-fundamentals/training' }}
       nextTopic={{ label: t.topicNames['world-models'], href: '/ai/ml-fundamentals/world-models' }}
     >
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">Learning from consequences</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.reinforcementLearning.consequencesTitle}</h2>
         <p className="text-muted leading-relaxed text-lg mb-4">
-          Reinforcement learning trains an agent through interaction. Instead of being shown the correct answer for every example, the agent tries actions, receives rewards, and gradually learns a policy that produces better long-term outcomes.
+          {t.reinforcementLearning.consequencesDesc}
         </p>
         <div className="p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 text-sm text-muted leading-relaxed">
-          The hard part is credit assignment: if a reward arrives after 200 steps, which earlier decisions deserve credit or blame? That is why RL is powerful, unstable, and often expensive.
+          {t.reinforcementLearning.creditAssignmentNote}
         </div>
       </section>
 
@@ -50,7 +50,7 @@ export default function ReinforcementLearningPage() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">The RL loop</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.reinforcementLearning.loopTitle}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {concepts.map(([title, desc], i) => (
             <div key={title} className="rounded-xl bg-surface/70 border border-border p-5">
@@ -65,7 +65,7 @@ export default function ReinforcementLearningPage() {
       </section>
 
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">Major method families</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.reinforcementLearning.methodsTitle}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {methods.map((method) => (
             <div key={method.name} className={`rounded-xl bg-surface/70 border border-border p-5`}>
@@ -77,12 +77,12 @@ export default function ReinforcementLearningPage() {
       </section>
 
       <section className="rounded-2xl bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border border-purple-500/20 p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">Why RL matters for modern AI</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.reinforcementLearning.whyMattersTitle}</h2>
         <p className="text-muted leading-relaxed mb-4">
-          RL is the conceptual bridge between passive prediction and agentic behavior. Robots, game-playing systems, recommender systems, tool-using agents, and LLM post-training all use the same idea: optimize choices based on feedback from the world or a reward model.
+          {t.reinforcementLearning.whyMattersDesc1}
         </p>
         <p className="text-muted leading-relaxed">
-          In LLMs, RLHF and newer verifiable-reward training methods use RL-style optimization to make models more helpful, safer, or better at reasoning. The model is not merely imitating text; it is being pushed toward behavior that earns higher reward.
+          {t.reinforcementLearning.whyMattersDesc2}
         </p>
       </section>
     </TopicLayout>

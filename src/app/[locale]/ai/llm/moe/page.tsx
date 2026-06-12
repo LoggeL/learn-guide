@@ -184,7 +184,7 @@ export default function MoEPage() {
                 <td className="py-3 px-4 font-medium">Kimi K2</td>
                 <td className="py-3 px-4">1T</td>
                 <td className="py-3 px-4 text-emerald-400">32B</td>
-                <td className="py-3 px-4">Large pool</td>
+                <td className="py-3 px-4">{t.moe.largePool}</td>
               </tr>
             </tbody>
           </table>
