@@ -1,71 +1,14 @@
-export const TOPIC_DATES: Record<string, string> = {
-  'positional-encoding': '2026-06-06',
-  'multi-head-attention-gqa': '2026-06-06',
-  'feed-forward-networks-moe': '2026-06-06',
-  'residual-stream-layer-norm': '2026-06-06',
-  'next-token-prediction': '2026-06-06',
-  'verifiable-rewards': '2026-06-01',
-  'subtoken-blindness': '2026-05-22',
-  'mtp': '2026-05-04',
-  'custom-chips': '2026-04-29',
-  'reinforcement-learning': '2026-04-29',
-  'world-models': '2026-02-15',
-  'getting-started': '2026-02-10',
-  'transformer-architecture': '2026-02-09',
-  'local-inference': '2026-02-09',
-  'vram-calc': '2026-02-27',
-  'lora': '2026-02-09',
-  'kv-cache': '2026-02-09',
-  'batching': '2026-02-09',
-  'prompt-caching': '2026-02-19',
-  'tier-list': '2026-02-19',
-  'logges-favourite-model': '2026-02-09',
-  'nested-learning': '2026-02-08',
-  'speculative-decoding': '2026-02-05',
-  'distillation': '2026-02-05',
-  'multimodality': '2026-02-01',
-  'rag': '2026-01-31',
-  'quantization': '2026-01-31',
-  'moe': '2026-01-31',
-  'attention': '2026-01-31',
-  'responsible-ai': '2026-01-29',
-  'system-prompts': '2026-01-29',
-  'advanced-prompting': '2026-01-29',
-  'gradient-descent': '2026-01-29',
-  'visual-challenges': '2026-01-29',
-  'llm-training': '2026-01-29',
-  'training-data': '2026-02-24',
-  'embeddings': '2026-01-29',
-  'diffusion-fundamentals': '2026-02-25',
-  'text-diffusion': '2026-02-25',
-  'image-diffusion': '2026-02-25',
-  'jagged-frontier': '2026-06-01',
-  'context-rot': '2026-01-29',
-  'agentic-vision': '2026-01-29',
-  'open-source': '2026-01-29',
-  'skills': '2026-01-29',
-  'agent-security': '2026-01-29',
-  'orchestration': '2026-01-29',
-  'memory': '2026-01-29',
-  'mcp': '2026-01-29',
-  'evaluation': '2026-01-29',
-  'powerful-agents': '2026-04-08',
-  'bias': '2026-01-24',
-  'prompt-basics': '2026-01-24',
-  'training': '2026-01-24',
-  'neural-networks': '2026-01-24',
-  'vision': '2026-01-24',
-  'tokenization': '2026-01-24',
-  'temperature': '2026-01-24',
-  'european-ai': '2026-01-24',
-  'tool-design': '2026-01-24',
-  'programmatic-tools': '2026-02-23',
-  'agent-problems': '2026-01-24',
-  'agentic-patterns': '2026-01-24',
-  'agent-loop': '2026-01-24',
-  'agent-context': '2026-01-24',
-  'chat-compaction': '2026-04-21',
-}
+import { flattenTopics } from './topics'
+
+/**
+ * Topic id → last-updated ISO date.
+ * Derived from the canonical `lastUpdated` metadata in topics.ts — do not edit by hand.
+ */
+export const TOPIC_DATES: Record<string, string> = Object.fromEntries(
+  flattenTopics()
+    .filter((topic) => topic.path && topic.lastUpdated)
+    .map((topic) => [topic.id, topic.lastUpdated as string])
+)
 
 export function formatTopicDate(dateStr: string, locale: string): string {
   return new Date(dateStr + 'T00:00:00').toLocaleDateString(

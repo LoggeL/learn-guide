@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap } from 'lucide-react'
+import { ChevronRight, Menu, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
@@ -145,24 +145,18 @@ function TopicNode({
 
   const Icon = getTopicIcon(topic.id, hasChildren)
 
-  const rowContent = (
+  const chevron = (
+    <motion.div
+      animate={{ rotate: expanded ? 90 : 0 }}
+      transition={{ duration: 0.15 }}
+      className="text-subtle"
+    >
+      <ChevronRight size={12} />
+    </motion.div>
+  )
+
+  const rowBody = (
     <>
-      {hasChildren ? (
-        <motion.div
-          animate={{ rotate: expanded ? 90 : 0 }}
-          transition={{ duration: 0.15 }}
-          className="text-subtle"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            setExpanded(!expanded)
-          }}
-        >
-          <ChevronRight size={12} />
-        </motion.div>
-      ) : (
-        <span className="w-3 shrink-0" />
-      )}
       <Icon
         size={13}
         className={clsx(
@@ -190,22 +184,43 @@ function TopicNode({
   return (
     <div>
       {localePath ? (
-        <Link
-          href={localePath}
-          className={rowClasses}
-          style={rowStyle}
-          onClick={onNavigate}
-        >
-          {rowContent}
-        </Link>
+        <div className={rowClasses} style={rowStyle}>
+          {hasChildren ? (
+            <button
+              type="button"
+              aria-label={`${getTopicName(topic.id)}: ${expanded ? 'collapse subtopics' : 'expand subtopics'}`}
+              aria-expanded={expanded}
+              className="shrink-0 rounded p-0.5 -m-0.5"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setExpanded(!expanded)
+              }}
+            >
+              {chevron}
+            </button>
+          ) : (
+            <span className="w-3 shrink-0" />
+          )}
+          <Link
+            href={localePath}
+            className="flex min-w-0 flex-1 items-center gap-2"
+            onClick={onNavigate}
+          >
+            {rowBody}
+          </Link>
+        </div>
       ) : (
-        <div
-          className={rowClasses}
+        <button
+          type="button"
+          className={clsx(rowClasses, 'w-full text-left')}
           style={rowStyle}
+          aria-expanded={hasChildren ? expanded : undefined}
           onClick={() => hasChildren && setExpanded(!expanded)}
         >
-          {rowContent}
-        </div>
+          {hasChildren ? chevron : <span className="w-3 shrink-0" />}
+          {rowBody}
+        </button>
       )}
       <AnimatePresence>
         {expanded && hasChildren && (
@@ -360,17 +375,40 @@ export function Sidebar() {
     return key
   }
 
-  // Check if mobile on mount and resize
+  // Auto-collapse on mobile widths, and restore the previous state when
+  // the viewport widens again (only if the collapse was automatic)
+  const wasAutoCollapsed = useRef(false)
   useEffect(() => {
     const checkMobile = () => {
       if (window.innerWidth < 768) {
-        setIsCollapsed(true)
+        setIsCollapsed((prev) => {
+          if (!prev) wasAutoCollapsed.current = true
+          return true
+        })
+      } else if (wasAutoCollapsed.current) {
+        wasAutoCollapsed.current = false
+        setIsCollapsed(false)
       }
     }
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
+
+  // Close the mobile drawer on any navigation
+  useEffect(() => {
+    setIsMobileOpen(false)
+  }, [pathname])
+
+  // Lock body scroll while the mobile drawer or search modal is open
+  useEffect(() => {
+    if (isMobileOpen || searchOpen) {
+      document.body.style.overflow = 'hidden'
+      return () => {
+        document.body.style.overflow = ''
+      }
+    }
+  }, [isMobileOpen, searchOpen])
 
   useEffect(() => {
     if (isCollapsed) {
@@ -448,20 +486,34 @@ export function Sidebar() {
       if (e.key === 'Escape') {
         setSearchOpen(false)
         setSearchQuery('')
+        setIsMobileOpen(false)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
+  // Return focus to the previously focused element when the search modal closes
+  const searchReturnFocusRef = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    if (searchOpen) {
+      searchReturnFocusRef.current = document.activeElement as HTMLElement | null
+    } else {
+      searchReturnFocusRef.current?.focus()
+      searchReturnFocusRef.current = null
+    }
+  }, [searchOpen])
+
   return (
     <>
       {/* Mobile menu button */}
       <button
         onClick={() => setIsMobileOpen(true)}
+        aria-label="Open navigation menu"
+        aria-expanded={isMobileOpen}
         className="md:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-surface border border-border text-muted hover:text-text transition-colors"
       >
-        <ChevronRight size={20} />
+        <Menu size={20} />
       </button>
 
       {/* Mobile overlay */}
@@ -486,7 +538,7 @@ export function Sidebar() {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border/80 p-4">
           {(!isCollapsed || isMobileOpen) && (
-            <Link href={`/${locale}`} className="flex items-center gap-3 group">
+            <Link href={`/${locale}`} onClick={() => setIsMobileOpen(false)} className="flex items-center gap-3 group">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
@@ -501,7 +553,7 @@ export function Sidebar() {
             </Link>
           )}
           {isCollapsed && !isMobileOpen && (
-            <Link href={`/${locale}`} className="mx-auto">
+            <Link href={`/${locale}`} onClick={() => setIsMobileOpen(false)} className="mx-auto">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
                 <div className="w-full h-full rounded-xl bg-surface flex items-center justify-center">
                   <Sparkles size={16} className="text-primary-light" />
@@ -512,6 +564,8 @@ export function Sidebar() {
           {/* Collapse/Expand toggle - desktop only */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-expanded={!isCollapsed}
             className="hidden md:flex p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
           >
             <ChevronRight size={16} className={clsx('transition-transform', !isCollapsed && 'rotate-180')} />
@@ -520,6 +574,7 @@ export function Sidebar() {
           {isMobileOpen && (
             <button
               onClick={() => setIsMobileOpen(false)}
+              aria-label="Close navigation menu"
               className="md:hidden p-2 hover:bg-surface-elevated rounded-lg text-subtle hover:text-text transition-all"
             >
               <X size={16} />
@@ -730,6 +785,9 @@ export function Sidebar() {
             }}
           >
             <motion.div
+              role="dialog"
+              aria-modal="true"
+              aria-label={t.common.searchTopics}
               initial={{ scale: 0.95, opacity: 0, y: -20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: -20 }}
@@ -742,16 +800,24 @@ export function Sidebar() {
                 <input
                   autoFocus
                   type="text"
+                  role="combobox"
+                  aria-expanded={searchResults.length > 0}
+                  aria-controls="sidebar-search-results"
+                  aria-activedescendant={searchResults.length > 0 ? `search-result-${selectedIndex}` : undefined}
                   placeholder={t.common.searchTopics}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'ArrowDown') {
                       e.preventDefault()
-                      setSelectedIndex((i) => Math.min(i + 1, searchResults.length - 1))
+                      const next = Math.min(selectedIndex + 1, searchResults.length - 1)
+                      setSelectedIndex(next)
+                      document.getElementById(`search-result-${next}`)?.scrollIntoView({ block: 'nearest' })
                     } else if (e.key === 'ArrowUp') {
                       e.preventDefault()
-                      setSelectedIndex((i) => Math.max(i - 1, 0))
+                      const next = Math.max(selectedIndex - 1, 0)
+                      setSelectedIndex(next)
+                      document.getElementById(`search-result-${next}`)?.scrollIntoView({ block: 'nearest' })
                     } else if (e.key === 'Enter' && searchResults.length > 0) {
                       e.preventDefault()
                       const topic = searchResults[selectedIndex]
@@ -769,12 +835,13 @@ export function Sidebar() {
                     setSearchOpen(false)
                     setSearchQuery('')
                   }}
+                  aria-label="Close search"
                   className="p-2 hover:bg-surface-elevated rounded-lg transition-colors"
                 >
                   <X size={18} className="text-muted" />
                 </button>
               </div>
-              <div className="max-h-80 overflow-auto p-2">
+              <div id="sidebar-search-results" role="listbox" className="max-h-80 overflow-auto p-2">
                 {searchQuery === '' ? (
                   <div className="p-6 text-center">
                     <p className="text-muted text-sm">{t.common.startTyping}</p>
@@ -788,6 +855,9 @@ export function Sidebar() {
                   searchResults.map((topic, index) => (
                     <Link
                       key={topic.id}
+                      id={`search-result-${index}`}
+                      role="option"
+                      aria-selected={index === selectedIndex}
                       href={`/${locale}${topic.path}`}
                       onClick={() => {
                         setSearchOpen(false)

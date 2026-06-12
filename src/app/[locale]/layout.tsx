@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import '../globals.css'
 import { Sidebar } from '@/components/layout/Sidebar'
+import { MotionProvider } from '@/components/providers/MotionProvider'
 import { getDictionary, isValidLocale, type Locale } from '@/lib/i18n'
 import { LocaleProvider } from '@/lib/i18n/context'
 import { getHomepageJsonLd } from '@/lib/seo'
@@ -95,10 +96,13 @@ export default function LocaleLayout({
         </div>
         
         <LocaleProvider locale={locale} dictionary={dictionary}>
-          <Sidebar />
-          <main className="main-content min-h-screen overflow-visible relative px-4 py-5 md:px-6 md:py-6 xl:px-7">
-            {children}
-          </main>
+          <MotionProvider>
+            <Sidebar />
+            {/* pt-16 on mobile keeps content clear of the fixed hamburger button */}
+            <main className="main-content min-h-screen overflow-visible relative px-4 pt-16 pb-5 md:px-6 md:py-6 xl:px-7">
+              {children}
+            </main>
+          </MotionProvider>
         </LocaleProvider>
         {/* Umami Analytics */}
         <script defer src="https://insights.logge.top/script.js" data-website-id="92a626c8-758d-4bc0-a6a6-2e4a6db1c82b" />

@@ -1,3 +1,5 @@
+import { flattenTopics } from './topics'
+
 export type Difficulty = 'beginner' | 'intermediate' | 'expert'
 
 export const DIFFICULTY_STYLES: Record<Difficulty, { label: string; color: string; bg: string; border: string }> = {
@@ -6,83 +8,12 @@ export const DIFFICULTY_STYLES: Record<Difficulty, { label: string; color: strin
   expert:       { label: 'E', color: 'text-red-400',     bg: 'bg-red-500/15',     border: 'border-red-500/30' },
 }
 
-export const TOPIC_DIFFICULTY: Record<string, Difficulty> = {
-  // Getting Started
-  'getting-started': 'beginner',
-  // Agents
-  'agent-loop': 'beginner',
-  'agent-context': 'intermediate',
-  'chat-compaction': 'intermediate',
-  'tool-design': 'intermediate',
-  'programmatic-tools': 'intermediate',
-  'memory': 'intermediate',
-  'skills': 'intermediate',
-  'mcp': 'intermediate',
-  'agentic-patterns': 'expert',
-  'orchestration': 'expert',
-  'agent-problems': 'intermediate',
-  'agent-security': 'expert',
-  'evaluation': 'expert',
-  'verifiable-rewards': 'expert',
-  'powerful-agents': 'expert',
-  // LLM Overview
-  'tier-list': 'beginner',
-  // LLM Fundamentals
-  'tokenization': 'beginner',
-  'subtoken-blindness': 'intermediate',
-  'embeddings': 'beginner',
-  'attention': 'intermediate',
-  'positional-encoding': 'intermediate',
-  'multi-head-attention-gqa': 'intermediate',
-  'diffusion-fundamentals': 'intermediate',
-  'text-diffusion': 'intermediate',
-  'image-diffusion': 'intermediate',
-  // LLM Behavior
-  'temperature': 'beginner',
-  'jagged-frontier': 'intermediate',
-  'context-rot': 'intermediate',
-  // LLM Capabilities
-  'rag': 'intermediate',
-  'vision': 'beginner',
-  'visual-challenges': 'intermediate',
-  'agentic-vision': 'expert',
-  'multimodality': 'beginner',
-  // LLM Architecture
-  'transformer-architecture': 'intermediate',
-  'feed-forward-networks-moe': 'intermediate',
-  'residual-stream-layer-norm': 'intermediate',
-  'next-token-prediction': 'beginner',
-  'llm-training': 'intermediate',
-  'training-data': 'intermediate',
-  'moe': 'expert',
-  'quantization': 'expert',
-  'nested-learning': 'expert',
-  'mtp': 'expert',
-  'distillation': 'intermediate',
-  'lora': 'intermediate',
-  'speculative-decoding': 'expert',
-  // LLM Inference
-  'kv-cache': 'expert',
-  'batching': 'intermediate',
-  'prompt-caching': 'intermediate',
-  'local-inference': 'beginner',
-  'vram-calc': 'beginner',
-  // ML Fundamentals
-  'neural-networks': 'beginner',
-  'gradient-descent': 'intermediate',
-  'training': 'beginner',
-  'reinforcement-learning': 'intermediate',
-  'world-models': 'expert',
-  // Prompting
-  'prompt-basics': 'beginner',
-  'advanced-prompting': 'intermediate',
-  'system-prompts': 'intermediate',
-  // Safety
-  'bias': 'beginner',
-  'responsible-ai': 'beginner',
-  // Industry
-  'european-ai': 'beginner',
-  'open-source': 'beginner',
-  'custom-chips': 'intermediate',
-  'logges-favourite-model': 'beginner',
-}
+/**
+ * Topic id → difficulty rating.
+ * Derived from the canonical `difficulty` metadata in topics.ts — do not edit by hand.
+ */
+export const TOPIC_DIFFICULTY: Record<string, Difficulty> = Object.fromEntries(
+  flattenTopics()
+    .filter((topic) => topic.path && topic.difficulty)
+    .map((topic) => [topic.id, topic.difficulty as Difficulty])
+)

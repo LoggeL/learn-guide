@@ -1,5 +1,5 @@
 function SkeletonBlock({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-xl bg-white/[0.07] ${className}`} />
+  return <div className={`animate-pulse motion-reduce:animate-none rounded-xl bg-white/[0.07] ${className}`} />
 }
 
 function TopicCardSkeleton() {
@@ -24,13 +24,13 @@ function TopicCardSkeleton() {
 
 export default function Loading() {
   return (
-    <div className="mx-auto w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px]">
-      <div className="glass mb-5 flex w-fit max-w-full items-center gap-2 rounded-xl px-3 py-2">
-        <SkeletonBlock className="h-4 w-4 rounded-md" />
-        <SkeletonBlock className="h-4 w-24" />
-        <SkeletonBlock className="h-4 w-32" />
-      </div>
-
+    <div
+      role="status"
+      aria-busy="true"
+      aria-label="Loading"
+      className="mx-auto w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px]"
+    >
+      {/* Neutral header — works for the homepage, category, and topic pages */}
       <header className="border-gradient mb-8 overflow-hidden rounded-2xl p-5 shadow-card md:p-7">
         <div className="relative flex flex-col gap-5 md:flex-row md:items-start">
           <SkeletonBlock className="h-14 w-14 shrink-0 rounded-2xl" />
@@ -73,7 +73,7 @@ export default function Loading() {
           <TopicCardSkeleton />
         </div>
 
-        <aside className="sticky top-6 hidden xl:block">
+        <aside className="sticky top-24 hidden xl:block">
           <div className="rounded-2xl border border-border bg-surface/45 p-4">
             <SkeletonBlock className="mb-4 h-5 w-28" />
             <div className="space-y-3">

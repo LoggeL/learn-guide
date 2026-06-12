@@ -40,15 +40,17 @@ These are enforced by TypeScript (the `TopicLeaf` type). The build will fail if 
 
 When modifying a topic page, **always update its `lastUpdated` date** in `topics.ts`.
 
-### Adding New Topics - Five Files Must Stay In Sync
+### Adding New Topics - Three Files Must Stay In Sync
 
-When adding new topics/pages, update ALL FIVE:
+The Sidebar and homepage derive their topic trees from `getTopicCategories()` in `topics.ts`, and `TOPIC_DATES` (`src/lib/dates.ts`) / `TOPIC_DIFFICULTY` (`src/lib/difficulty.ts`) are derived automatically from the `lastUpdated` / `difficulty` metadata in `topics.ts` — never edit those maps by hand.
 
-1. **`src/lib/topics.ts`** - Canonical topic registry (id, name, path)
-2. **`src/components/layout/Sidebar.tsx`** - `topicTree` constant for navigation
-3. **`src/app/[locale]/page.tsx`** - `topicData` constant for home page grid
-4. **`src/lib/i18n/dictionaries/en.ts`** - English translations
-5. **`src/lib/i18n/dictionaries/de.ts`** - German translations
+When adding new topics/pages, update ALL THREE:
+
+1. **`src/lib/topics.ts`** - Canonical topic registry (id, name, path, difficulty, lastUpdated) — also add the topic id to `learningPathGroups` (every leaf topic must be represented there)
+2. **`src/lib/i18n/dictionaries/en.ts`** - English translations
+3. **`src/lib/i18n/dictionaries/de.ts`** - German translations
+
+Prev/next navigation on topic pages is derived centrally in `TopicLayout` from the `learningPath` order (built from `learningPathGroups` in `topics.ts`). The `prevTopic`/`nextTopic` props are only a fallback for pages not in the learning path — do not hand-maintain prev/next chains in topic pages.
 
 ### i18n Requirements
 

@@ -2,10 +2,12 @@
 
 import { ReactNode, useRef } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { ChevronLeft, ChevronRight, BookOpen, Sparkles } from 'lucide-react'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
+import { flattenTopics, learningPath, type Topic } from '@/lib/topics'
 import { RightTableOfContents } from './RightTableOfContents'
 
 const DIFFICULTY_LABELS: Record<Difficulty, string> = {
@@ -13,6 +15,14 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   intermediate: 'Intermediate',
   expert: 'Expert',
 }
+
+// Canonical topic order for prev/next navigation, derived from the learning path
+const orderedPathTopics: Topic[] = (() => {
+  const byId = new Map(flattenTopics().map((topic) => [topic.id, topic]))
+  return learningPath
+    .map((id) => byId.get(id))
+    .filter((topic): topic is Topic => !!topic?.path)
+})()
 
 interface TopicLayoutProps {
   title: string
@@ -35,9 +45,31 @@ export function TopicLayout({
 }: TopicLayoutProps) {
   const { t } = useTranslation()
   const { locale } = useLocale()
+  const pathname = usePathname()
   const articleRef = useRef<HTMLElement>(null)
 
-  const localizeHref = (href: string) => `/${locale}${href}`
+  // '/' must map to `/${locale}` (a trailing slash would trigger a redirect)
+  const localizeHref = (href: string) => (href === '/' ? `/${locale}` : `/${locale}${href}`)
+
+  // Derive prev/next from the canonical learning path order so every page
+  // gets a symmetric chain; fall back to the props for pages not in the path.
+  const localePrefix = `/${locale}`
+  const currentPath = pathname.startsWith(`${localePrefix}/`)
+    ? pathname.slice(localePrefix.length)
+    : pathname
+  const currentIndex = orderedPathTopics.findIndex((topic) => topic.path === currentPath)
+  const topicLabel = (topic: Topic) =>
+    t.topicNames[topic.id as keyof typeof t.topicNames] || topic.name
+  const derivedPrev = currentIndex > 0 ? orderedPathTopics[currentIndex - 1] : undefined
+  const derivedNext = currentIndex >= 0 && currentIndex < orderedPathTopics.length - 1
+    ? orderedPathTopics[currentIndex + 1]
+    : undefined
+  const prev = derivedPrev
+    ? { label: topicLabel(derivedPrev), href: derivedPrev.path! }
+    : currentIndex === -1 ? prevTopic : undefined
+  const next = derivedNext
+    ? { label: topicLabel(derivedNext), href: derivedNext.path! }
+    : currentIndex === -1 ? nextTopic : undefined
 
   return (
     <div className="mx-auto w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px] relative">
@@ -108,31 +140,31 @@ export function TopicLayout({
           {/* Navigation */}
           <footer className="mt-20 pt-8 border-t border-border">
             <div className="flex justify-between items-center">
-              {prevTopic ? (
+              {prev ? (
                 <Link
-                  href={localizeHref(prevTopic.href)}
+                  href={localizeHref(prev.href)}
                   className="group flex items-center gap-3 rounded-xl border border-border bg-surface/70 px-5 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
                 >
                   <ChevronLeft size={18} className="text-muted group-hover:text-primary transition-colors" />
                   <div className="text-left">
                     <span className="text-xs text-subtle block">{t.common.previous}</span>
                     <span className="text-text font-medium group-hover:text-primary-light transition-colors">
-                      {prevTopic.label}
+                      {prev.label}
                     </span>
                   </div>
                 </Link>
               ) : (
                 <div />
               )}
-              {nextTopic && (
+              {next && (
                 <Link
-                  href={localizeHref(nextTopic.href)}
+                  href={localizeHref(next.href)}
                   className="group flex items-center gap-3 rounded-xl border border-border bg-surface/70 px-5 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
                 >
                   <div className="text-right">
                     <span className="text-xs text-subtle block">{t.common.next}</span>
                     <span className="text-text font-medium group-hover:text-primary-light transition-colors">
-                      {nextTopic.label}
+                      {next.label}
                     </span>
                   </div>
                   <ChevronRight size={18} className="text-muted group-hover:text-primary transition-colors" />

@@ -191,7 +191,7 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 0 18px rgba(168, 85, 247, 0.6);
 }
 
-input:focus, textarea:focus, select:focus, button:focus-visible {
+input:focus, textarea:focus, select:focus, button:focus-visible, a:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px var(--background), 0 0 0 4px rgba(168, 85, 247, 0.8);
 }
@@ -221,3 +221,17 @@ pre { overflow-x: auto; max-width: 100%; }
 }
 body.sidebar-collapsed .main-content { margin-left: 4rem; }
 @media (max-width: 768px) { .main-content { margin-left: 0 !important; } }
+
+/* Disable infinite/decorative CSS animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse-slow,
+  .animate-gradient,
+  .animate-shimmer,
+  .animate-pulse,
+  .animate-bounce,
+  .animate-ping,
+  [class*='animate-['] {
+    animation: none !important;
+  }
+}

@@ -22,8 +22,9 @@ export function LanguageSwitcher() {
     const segments = pathname.split('/')
     segments[1] = newLocale
     const newPath = segments.join('/')
-    
-    router.push(newPath)
+
+    // replace + scroll:false keeps the reading position when switching language
+    router.replace(newPath, { scroll: false })
   }
 
   return (
@@ -33,6 +34,8 @@ export function LanguageSwitcher() {
         <button
           key={locale}
           onClick={() => switchLocale(locale)}
+          aria-pressed={locale === currentLocale}
+          aria-current={locale === currentLocale ? 'true' : undefined}
           className={`px-3 py-1.5 text-sm rounded-md transition-all ${
             locale === currentLocale
               ? 'bg-primary/20 text-primary-light font-medium'
