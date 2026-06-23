@@ -4,7 +4,7 @@ import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import { models, tierConfig, hostingConfig, type TierLevel, type HostingType } from '@/lib/models'
 import { motion } from 'framer-motion'
-import { AlertTriangle, Cloud, Monitor, Globe } from 'lucide-react'
+import { AlertTriangle, Cloud, Monitor, Globe, Ban } from 'lucide-react'
 import Link from 'next/link'
 
 const hostingIcons: Record<HostingType, typeof Cloud> = {
@@ -108,7 +108,15 @@ export default function TierListPage() {
                       className="p-4 rounded-xl bg-background/50 border border-white/5 hover:border-white/10 transition-colors"
                     >
                       <div className="flex items-start justify-between gap-2 mb-1">
-                        <h4 className={`font-semibold font-heading ${tcfg.color}`}>{name}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className={`font-semibold font-heading ${tcfg.color}`}>{name}</h4>
+                          {model.available === false && (
+                            <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-[10px] text-red-400 shrink-0">
+                              <Ban size={10} />
+                              {t.tierList.unavailable}
+                            </span>
+                          )}
+                        </div>
                         <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-md border text-[10px] shrink-0 ${hcfg.bg}`} title={hcfg.label}>
                           <HIcon size={10} className={hcfg.color} />
                           <span className={hcfg.color}>{hcfg.label}</span>
@@ -116,6 +124,9 @@ export default function TierListPage() {
                       </div>
                       {model.params && (
                         <p className="text-[10px] text-subtle font-mono mb-1.5">{model.params}</p>
+                      )}
+                      {model.available === false && (
+                        <p className="text-[10px] text-red-400/80 font-medium mb-1.5">{t.tierList.unavailableDesc}</p>
                       )}
                       <p className="text-sm text-muted leading-relaxed">{desc}</p>
                     </div>

@@ -33,10 +33,20 @@ export interface ModelEntry {
   nKVHeads?: number
   /** Head dimension */
   headDim?: number
+  /** Whether the model is currently available/accessible */
+  available?: boolean
 }
 
 export const models: ModelEntry[] = [
   // S-Tier
+  {
+    id: 'claude-fable-5',
+    nameKey: 'claudeFable5',
+    descKey: 'claudeFable5Desc',
+    tier: 'S',
+    hosting: 'api',
+    available: false,
+  },
   {
     id: 'gpt-55',
     nameKey: 'gpt55',
@@ -54,9 +64,9 @@ export const models: ModelEntry[] = [
     hosting: 'api',
   },
   {
-    id: 'claude-opus-47',
-    nameKey: 'claudeOpus47',
-    descKey: 'claudeOpus47Desc',
+    id: 'claude-opus-48',
+    nameKey: 'claudeOpus48',
+    descKey: 'claudeOpus48Desc',
     tier: 'S',
     hosting: 'api',
   },
