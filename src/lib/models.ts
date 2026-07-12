@@ -48,6 +48,13 @@ export const models: ModelEntry[] = [
     available: false,
   },
   {
+    id: 'gpt-56-sol',
+    nameKey: 'gpt56Sol',
+    descKey: 'gpt56SolDesc',
+    tier: 'S',
+    hosting: 'api',
+  },
+  {
     id: 'gpt-55',
     nameKey: 'gpt55',
     descKey: 'gpt55Desc',

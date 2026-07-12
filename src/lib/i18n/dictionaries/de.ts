@@ -4643,8 +4643,8 @@ export const de: Dictionary = {
 
   // Logges Lieblingsmodell (Claude Fable 5)
   favModels: {
-    title: 'Logges Lieblingsmodell',
-    description: 'Das stärkste Modell, das Anthropic je gebaut hat — und aktuell leider nicht verfügbar.',
+    title: 'Logges Lieblingsmodelle',
+    description: 'Claude Fable 5 für maximale Leistung; GPT-5.6 Sol für fast dieselbe Intelligenz zu einem Bruchteil des Preises.',
 
     // Availability banner
     availabilityTitle: 'Aktuell nicht verfügbar',
@@ -4652,8 +4652,16 @@ export const de: Dictionary = {
     lastUpdated: 'Zuletzt aktualisiert: 23. Juni 2026',
 
     // Hero
-    heroTitle: 'Das Modell, auf das ich warte',
-    heroSubtitle: 'Claude Fable 5 ist Anthropics fähigstes Modell — ein public-safe Derivat von Mythos 5, mit 1M Kontext, 128K Output und Benchmarks, die alles Bisherige schlagen. Es ist genau das, was ich will: ein Modell, das lange Aufgaben durchhält, selbst verifiziert und auf höchstem Niveau codet.',
+    heroTitle: 'Zwei S-Tier-Favoriten',
+    heroSubtitle: 'Claude Fable 5 bleibt die Leistungsgrenze. GPT-5.6 Sol ist fast genauso intelligent, kostet aber nur einen Bruchteil — und ist damit die praktische Wahl für anspruchsvolles Coding, Agents und Infrastrukturarbeit.',
+
+    // GPT-5.6 Sol companion card
+    solName: 'GPT-5.6 Sol',
+    solMaker: 'OpenAI',
+    solTagline: 'Fast so smart wie Fable — für einen Bruchteil des Preises',
+    solDescription: 'GPT-5.6 Sol verbindet nahezu Frontier-Intelligenz mit deutlich besserer Wirtschaftlichkeit. Es ist der pragmatische Favorit: stark genug für schwieriges Reasoning, Coding und lange Agent-Läufe, ohne bei jeder Aufgabe Fable-Preise zu zahlen.',
+    solVerdict: 'Praktischer Standard',
+    solVerdictText: 'GPT-5.6 Sol für die tägliche High-End-Arbeit; Fable 5, wenn die letzten Prozent Leistung wichtiger sind als die Kosten.',
 
     // Model card
     modelName: 'Claude Fable 5',
@@ -5557,8 +5565,10 @@ export const de: Dictionary = {
     fTierDesc: 'Unterste Schublade — einfach nicht',
     gpt53Codex: 'GPT-5.3-Codex',
     gpt53CodexDesc: 'Intelligent, logisch und effizient. Das beste Coding-Modell auf dem Markt.',
+    gpt56Sol: 'GPT-5.6 Sol',
+    gpt56SolDesc: 'Fast so intelligent wie Claude Fable 5, aber für einen Bruchteil des Preises. Herausragendes Reasoning, Coding und agentische Ausführung machen es zum praktischen S-Tier-Standard.',
     gpt55: 'GPT-5.5',
-    gpt55Desc: 'Neue S-Tier-Wahl. Schärferer Operator-Flow, sauberere Tool-Nutzung und aktuell das beste Gefühl für OpenClaw-artige Coding- und Infrastrukturarbeit.',
+    gpt55Desc: 'Weiterhin ein exzellentes Operator-Modell mit sauberer Tool-Nutzung und starkem Gespür für OpenClaw-artige Coding- und Infrastrukturarbeit.',
     claudeFable5: 'Claude Fable 5',
     claudeFable5Desc: '95% SWE-bench Verified. 1M Kontext, 128K Output. Das fähigste Modell, das je veröffentlicht wurde — Mythos-Klasse mit Guardrails. Absurd teuer bei $10/$50 pro MTok und aktuell offline wegen US-Exportkontrolle.',
     claudeOpus48: 'Claude Opus 4.8',

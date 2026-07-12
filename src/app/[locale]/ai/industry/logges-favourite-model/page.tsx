@@ -154,6 +154,36 @@ export default function FavouriteModelsPage() {
         </p>
       </motion.section>
 
+      {/* Practical favourite: GPT-5.6 Sol */}
+      <motion.section
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.14 }}
+        className="rounded-2xl bg-gradient-to-br from-cyan-500/10 via-blue-500/10 to-violet-500/10 border border-cyan-500/30 p-6 md:p-8"
+      >
+        <div className="flex flex-col md:flex-row md:items-center gap-5">
+          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500 to-violet-500 p-0.5 shrink-0">
+            <div className="w-full h-full rounded-2xl bg-surface flex items-center justify-center">
+              <Zap size={26} className="text-cyan-400" />
+            </div>
+          </div>
+          <div className="flex-1">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <h2 className="text-2xl font-bold font-heading text-text">{f.solName}</h2>
+              <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1 text-xs font-semibold text-cyan-300">
+                {f.solVerdict}
+              </span>
+            </div>
+            <p className="text-sm text-cyan-400 mb-3">{f.solMaker} · {f.solTagline}</p>
+            <p className="text-sm text-muted leading-relaxed">{f.solDescription}</p>
+          </div>
+        </div>
+        <div className="mt-5 rounded-xl border border-cyan-400/20 bg-background/40 p-4 text-sm text-text">
+          <strong className="text-cyan-300">{f.solVerdict}:</strong>{' '}
+          {f.solVerdictText}
+        </div>
+      </motion.section>
+
       {/* Model Card */}
       <section>
         <motion.div
