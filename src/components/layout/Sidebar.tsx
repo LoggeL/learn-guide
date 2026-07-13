@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { type ChangeEvent, useState, useEffect, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Menu, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap } from 'lucide-react'
+import { ChevronRight, Menu, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap, Download, Upload } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { getTopicCategories, flattenTopics, learningPath, learningPathGroups, type LearningPathGroup, type Topic } from '@/lib/topics'
+import { COMPLETED_LEARNING_PATH_STORAGE_KEY, VISITED_PATHS_STORAGE_KEY, createLearningProgressExport, validateLearningProgressExport } from '@/lib/progress/schema'
 
 const topicTree = getTopicCategories()
 
@@ -360,6 +361,7 @@ export function Sidebar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [viewMode, setViewMode] = useState<'default' | 'learning-path'>('default')
   const [visitedPaths, setVisitedPaths] = useState<Set<string>>(new Set())
+  const importInputRef = useRef<HTMLInputElement | null>(null)
 
   const getTopicName = (key: string): string => {
     // First check topicNames, then categories
@@ -421,8 +423,11 @@ export function Sidebar() {
   // Load persisted state from localStorage
   useEffect(() => {
     try {
-      const storedPaths = localStorage.getItem('visitedPaths')
-      if (storedPaths) setVisitedPaths(new Set(JSON.parse(storedPaths)))
+      const storedPaths = localStorage.getItem(VISITED_PATHS_STORAGE_KEY)
+      if (storedPaths) {
+        const parsedPaths = JSON.parse(storedPaths)
+        if (Array.isArray(parsedPaths)) setVisitedPaths(new Set(parsedPaths.filter((path): path is string => typeof path === 'string')))
+      }
       const storedViewMode = localStorage.getItem('sidebarViewMode')
       if (storedViewMode === 'learning-path' || storedViewMode === 'default') {
         setViewMode(storedViewMode)
@@ -436,7 +441,7 @@ export function Sidebar() {
     setVisitedPaths(prev => {
       const next = new Set(prev)
       next.add(pathname)
-      try { localStorage.setItem('visitedPaths', JSON.stringify(Array.from(next))) } catch {}
+      try { localStorage.setItem(VISITED_PATHS_STORAGE_KEY, JSON.stringify(Array.from(next))) } catch {}
       return next
     })
   }, [pathname])
@@ -459,8 +464,88 @@ export function Sidebar() {
   }, [learningPathTopics, visitedPaths, locale])
 
   const resetProgress = () => {
+    const confirmed = window.confirm(t.common.resetProgressConfirm)
+    if (!confirmed) return
     setVisitedPaths(new Set())
-    try { localStorage.removeItem('visitedPaths') } catch {}
+    try { localStorage.removeItem(VISITED_PATHS_STORAGE_KEY) } catch {}
+  }
+
+  const persistVisitedPaths = (paths: Set<string>) => {
+    setVisitedPaths(paths)
+    try { localStorage.setItem(VISITED_PATHS_STORAGE_KEY, JSON.stringify(Array.from(paths))) } catch {}
+  }
+
+  const exportProgress = () => {
+    let completedLearningPathTopics: string[] = []
+    try {
+      const stored = JSON.parse(localStorage.getItem(COMPLETED_LEARNING_PATH_STORAGE_KEY) ?? '[]')
+      if (Array.isArray(stored)) completedLearningPathTopics = stored.filter((id): id is string => typeof id === 'string')
+    } catch {}
+    const progressExport = createLearningProgressExport(visitedPaths, completedLearningPathTopics)
+    const blob = new Blob([`${JSON.stringify(progressExport, null, 2)}\n`], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `learn-guide-progress-${new Date().toISOString().slice(0, 10)}.json`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    URL.revokeObjectURL(url)
+  }
+
+  const importProgress = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ''
+    if (!file) return
+
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(await file.text())
+    } catch {
+      window.alert(t.common.importProgressInvalidJson)
+      return
+    }
+
+    const result = validateLearningProgressExport(parsed)
+    if (!result.ok) {
+      window.alert(`${t.common.importProgressInvalidFile} ${result.error}`)
+      return
+    }
+
+    const currentPaths = Array.from(visitedPaths)
+    const importedPaths = result.data.progress.visitedTopics
+    const importedCompletedTopics = result.data.progress.completedLearningPathTopics
+    const droppedNote = result.droppedPaths.length > 0
+      ? `\n\n${t.common.importProgressSkipped} ${result.droppedPaths.length}.`
+      : ''
+    const mergedPaths = new Set([...currentPaths, ...importedPaths])
+    const hasExistingProgress = currentPaths.length > 0
+    const shouldReplace = hasExistingProgress
+      ? window.confirm(
+        `${t.common.importProgressFound} ${importedPaths.length} ${t.common.importProgressTopics}.${droppedNote}\n\n${t.common.importProgressReplaceQuestion}\n\n${t.common.importProgressReplaceHint}`
+      )
+      : true
+
+    if (hasExistingProgress && !shouldReplace) {
+      const shouldMerge = window.confirm(
+        `${t.common.importProgressMergeQuestion}${droppedNote}\n\n${t.common.importProgressMergeHint}`
+      )
+      if (!shouldMerge) return
+      persistVisitedPaths(mergedPaths)
+      const existingCompleted = (() => {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(COMPLETED_LEARNING_PATH_STORAGE_KEY) ?? '[]')
+          return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : []
+        } catch { return [] }
+      })()
+      localStorage.setItem(COMPLETED_LEARNING_PATH_STORAGE_KEY, JSON.stringify(Array.from(new Set([...existingCompleted, ...importedCompletedTopics]))))
+      window.alert(`${t.common.importProgressMerged} ${mergedPaths.size} ${t.common.importProgressTopics}.${droppedNote}`)
+      return
+    }
+
+    persistVisitedPaths(new Set(importedPaths))
+    localStorage.setItem(COMPLETED_LEARNING_PATH_STORAGE_KEY, JSON.stringify(importedCompletedTopics))
+    window.alert(`${t.common.importProgressReplaced} ${importedPaths.length} ${t.common.importProgressTopics}.${droppedNote}`)
   }
 
   const searchResults = useMemo(() => {
@@ -664,6 +749,33 @@ export function Sidebar() {
                   initial={{ width: 0 }}
                   animate={{ width: `${learningPathTopics.length > 0 ? (visitedLPCount / learningPathTopics.length) * 100 : 0}%` }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
+                />
+              </div>
+              <div className="mt-2 flex items-center gap-3 text-[10px]">
+                <button
+                  type="button"
+                  onClick={exportProgress}
+                  className="inline-flex items-center gap-1 text-subtle hover:text-muted transition-colors"
+                  title={t.common.exportProgress}
+                >
+                  <Download size={10} />
+                  {t.common.exportProgress}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => importInputRef.current?.click()}
+                  className="inline-flex items-center gap-1 text-subtle hover:text-muted transition-colors"
+                  title={t.common.importProgress}
+                >
+                  <Upload size={10} />
+                  {t.common.importProgress}
+                </button>
+                <input
+                  ref={importInputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  className="hidden"
+                  onChange={importProgress}
                 />
               </div>
             </div>

@@ -158,7 +158,7 @@ export function TokenizerDemo() {
             o200k_base
           </span>
           <span className="text-xs text-muted">
-            GPT-4o / GPT-4.1 tokenizer
+            GPT-5 family · o200k_base approximation
           </span>
           {isTokenizing && (
             <span className="inline-flex items-center gap-1 text-xs text-amber-400">

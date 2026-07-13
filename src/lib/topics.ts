@@ -104,6 +104,7 @@ export const topics: Topic[] = [
             name: 'Behavior',
             children: [
               { id: 'temperature', name: 'Temperature', path: '/ai/llm/temperature', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+              { id: 'reasoning-models', name: 'Reasoning Models & Inference-Time Compute', path: '/ai/llm/reasoning-models', difficulty: 'expert', lastUpdated: '2026-07-12' },
               { id: 'jagged-frontier', name: 'Jagged Frontier', path: '/ai/llm/jagged-frontier', difficulty: 'intermediate', lastUpdated: '2026-06-01' },
               { id: 'context-rot', name: 'Context Rot', path: '/ai/llm/context-rot', difficulty: 'intermediate', lastUpdated: '2026-03-18' },
             ],
@@ -282,6 +283,7 @@ export const learningPathGroups: LearningPathGroup[] = [
       'feed-forward-networks-moe',
       'residual-stream-layer-norm',
       'next-token-prediction',
+      'reasoning-models',
       'llm-training',
       'training-data',
       'jagged-frontier',

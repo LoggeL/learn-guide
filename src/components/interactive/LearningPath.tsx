@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n/context'
 import { CheckCircle2, Circle, ChevronDown, ChevronUp, Sparkles, BookOpen, Rocket, GraduationCap } from 'lucide-react'
+import { COMPLETED_LEARNING_PATH_STORAGE_KEY } from '@/lib/progress/schema'
 
 interface PathTopic {
   id: string
@@ -91,13 +92,13 @@ export function LearningPath() {
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('learning-path-completed')
+      const stored = localStorage.getItem(COMPLETED_LEARNING_PATH_STORAGE_KEY)
       if (stored) setCompleted(new Set(JSON.parse(stored)))
     } catch { /* ignore */ }
   }, [])
 
   const persistCompleted = (next: Set<string>) => {
-    try { localStorage.setItem('learning-path-completed', JSON.stringify(Array.from(next))) } catch {}
+    try { localStorage.setItem(COMPLETED_LEARNING_PATH_STORAGE_KEY, JSON.stringify(Array.from(next))) } catch {}
   }
 
   const toggleCompleted = (id: string, e: React.MouseEvent) => {

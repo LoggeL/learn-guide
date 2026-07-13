@@ -10,12 +10,6 @@ import { TOPIC_DIFFICULTY, DIFFICULTY_STYLES, type Difficulty } from '@/lib/diff
 import { flattenTopics, learningPath, type Topic } from '@/lib/topics'
 import { RightTableOfContents } from './RightTableOfContents'
 
-const DIFFICULTY_LABELS: Record<Difficulty, string> = {
-  beginner: 'Beginner',
-  intermediate: 'Intermediate',
-  expert: 'Expert',
-}
-
 // Canonical topic order for prev/next navigation, derived from the learning path
 const orderedPathTopics: Topic[] = (() => {
   const byId = new Map(flattenTopics().map((topic) => [topic.id, topic]))
@@ -110,9 +104,14 @@ export function TopicLayout({
               {topicId && TOPIC_DIFFICULTY[topicId] && (() => {
                 const d = TOPIC_DIFFICULTY[topicId]
                 const s = DIFFICULTY_STYLES[d]
+                const difficultyLabel: Record<Difficulty, string> = {
+                  beginner: t.common.difficultyBeginner,
+                  intermediate: t.common.difficultyIntermediate,
+                  expert: t.common.difficultyExpert,
+                }
                 return (
                   <span className={`text-xs font-bold px-2.5 py-1 rounded-lg border shrink-0 ${s.color} ${s.bg} ${s.border}`}>
-                    {DIFFICULTY_LABELS[d]}
+                    {difficultyLabel[d]}
                   </span>
                 )
               })()}
