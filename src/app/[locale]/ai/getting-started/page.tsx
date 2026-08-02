@@ -43,7 +43,7 @@ export default function GettingStartedPage() {
           <div className="rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20 p-5">
             <div className="flex items-center gap-2 mb-3">
               <Globe className="w-5 h-5 text-violet-400" />
-              <h3 className="text-lg font-bold font-heading text-violet-400">OpenRouter · Auto (Free)</h3>
+              <h3 className="text-lg font-bold font-heading text-violet-400">OpenRouter · Free Models Router</h3>
             </div>
             <p className="text-sm text-muted mb-4">{gs.openrouterAutoOnlyDesc}</p>
             <a

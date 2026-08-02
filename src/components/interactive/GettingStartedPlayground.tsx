@@ -37,7 +37,7 @@ const PROVIDERS: Record<Provider, ProviderConfig> = {
     name: 'OpenRouter',
     endpoint: 'https://openrouter.ai/api/v1/chat/completions',
     models: [
-      { id: 'openrouter/auto:free', name: 'Auto (Free)' },
+      { id: 'openrouter/free', name: 'Free Models Router' },
     ],
     keyPrefix: 'sk-or-',
   },
@@ -238,7 +238,7 @@ console.log(data.choices[0].message.content);`
       <div className="rounded-xl border border-violet-500/25 bg-violet-500/10 p-4">
         <div className="flex items-center gap-2 mb-1">
           <Globe className="w-4 h-4 text-violet-400" />
-          <span className="text-sm font-semibold text-violet-300">OpenRouter · Auto (Free)</span>
+          <span className="text-sm font-semibold text-violet-300">OpenRouter · Free Models Router</span>
         </div>
         <p className="text-xs leading-relaxed text-muted">{gs.openrouterAutoOnlyNote}</p>
       </div>
