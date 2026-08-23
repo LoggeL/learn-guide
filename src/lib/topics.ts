@@ -198,7 +198,7 @@ export const topics: Topic[] = [
           { id: 'open-source', name: 'Open Source Advantages', path: '/ai/industry/open-source', difficulty: 'beginner', lastUpdated: '2026-02-09' },
           { id: 'custom-chips', name: 'Custom Chips for AI', path: '/ai/industry/custom-chips', difficulty: 'intermediate', lastUpdated: '2026-06-12' },
           { id: 'logges-favourite-model', name: "Logge's Favourite Models", path: '/ai/industry/logges-favourite-model', difficulty: 'beginner', lastUpdated: '2026-07-12' },
-          { id: 'tier-list', name: 'LLM Tier List', path: '/ai/industry/tier-list', difficulty: 'beginner', lastUpdated: '2026-07-12' },
+          { id: 'tier-list', name: 'LLM Tier List', path: '/ai/industry/tier-list', difficulty: 'beginner', lastUpdated: '2026-08-22' },
         ],
       },
     ],

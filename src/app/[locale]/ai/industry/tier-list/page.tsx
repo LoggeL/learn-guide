@@ -2,7 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
-import { models, tierConfig, hostingConfig, type TierLevel, type HostingType } from '@/lib/models'
+import { tierListModels, tierConfig, hostingConfig, type TierLevel, type HostingType } from '@/lib/models'
 import { motion } from 'framer-motion'
 import { AlertTriangle, Cloud, Monitor, Globe, Ban } from 'lucide-react'
 import Link from 'next/link'
@@ -13,19 +13,20 @@ const hostingIcons: Record<HostingType, typeof Cloud> = {
   local: Monitor,
 }
 
-const tierOrder: TierLevel[] = ['S', 'A', 'B', 'C', 'D', 'F']
+const tierOrder: TierLevel[] = ['S+', 'A', 'B', 'C', 'D', 'F', 'Google']
 
 export default function TierListPage() {
   const { t } = useTranslation()
   const tl = t.tierList
 
   const tierLabels: Record<TierLevel, { label: string; desc: string }> = {
-    S: { label: tl.sTier, desc: tl.sTierDesc },
-    A: { label: tl.aTier, desc: tl.aTierDesc },
-    B: { label: tl.bTier, desc: tl.bTierDesc },
-    C: { label: tl.cTier, desc: tl.cTierDesc },
-    D: { label: tl.dTier, desc: tl.dTierDesc },
-    F: { label: tl.fTier, desc: tl.fTierDesc },
+    'S+': { label: 'S+', desc: tl.sPlusTierDesc },
+    A: { label: 'A', desc: tl.aTierDesc },
+    B: { label: 'B', desc: tl.bTierDesc },
+    C: { label: 'C', desc: tl.cTierDesc },
+    D: { label: 'D', desc: tl.dTierDesc },
+    F: { label: 'F', desc: tl.fTierDesc },
+    Google: { label: 'Google', desc: tl.googleTierDesc },
   }
 
   return (
@@ -80,7 +81,7 @@ export default function TierListPage() {
         {tierOrder.map((tier, tierIdx) => {
           const tcfg = tierConfig[tier]
           const tlab = tierLabels[tier]
-          const tierModels = models.filter(m => m.tier === tier)
+          const tierModels = tierListModels.filter(m => m.tier === tier)
 
           return (
             <motion.div
