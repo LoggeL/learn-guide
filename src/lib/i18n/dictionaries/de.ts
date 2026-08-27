@@ -182,6 +182,7 @@ export const de: Dictionary = {
     'quantization': 'Quantisierung',
     'nested-learning': 'Verschachteltes Lernen',
     'mtp': 'Multi-Token Prediction (MTP)',
+    'n-gram-embeddings': 'N-Gramm-Embeddings',
     'distillation': 'Destillation',
     'lora': 'Fine-Tuning & LoRA',
     'abliteration': 'Abliteration',
@@ -236,6 +237,7 @@ export const de: Dictionary = {
     'tokenization': 'Wie Text in Teile zerlegt wird, die das Modell versteht',
     'subtoken-blindness': 'Warum Modelle Buchstaben, Ziffern und exakte Zählungen innerhalb von Tokens verfehlen',
     'embeddings': 'Wörter in Zahlen verwandeln, die Bedeutung erfassen',
+    'n-gram-embeddings': 'Gelernte Lookup-Tabellen für kurze lokale Tokenmuster',
     'diffusion-fundamentals': 'Vorwärtsrauschen, Rückwärts-Entrauschen und Score-Intuition',
     'text-diffusion': 'Mask-and-Predict-Generierung mit Token-Rastern fester Länge',
     'image-diffusion': 'Latente Entrauschungs-Pipelines moderner Text-zu-Bild-Systeme',
@@ -6021,4 +6023,104 @@ export const de: Dictionary = {
     whyMattersDesc2: 'In LLMs nutzen RLHF und neuere Trainingsmethoden mit verifizierbaren Rewards RL-artige Optimierung, um Modelle hilfreicher, sicherer oder besser im Schlussfolgern zu machen. Das Modell imitiert nicht bloß Text; es wird zu Verhalten gedrängt, das höheren Reward erzielt.',
   },
 
+  nGramEmbeddings: {
+  "title": "N-Gramm-Embeddings",
+  "description": "Gelernte Lookup-Tabellen ergänzen lokales Tokenmuster-Gedächtnis, ohne alle Tabellenparameter als Dense Compute auszuführen.",
+  "whatTitle": "Eine gelernte Abkürzung für lokale Muster",
+  "whatBody": "Kurze N-Gramme bis zum aktuellen Token adressieren deterministisch Tabellenzeilen. Deren gelernte Vektoren ergänzen die Tokenrepräsentation nahe einem frühen Layer; danach läuft das normale Backbone weiter.",
+  "trainingBody": "Beim Training werden gelesene Zeilen mit dem Backbone aktualisiert. Bei der Inferenz werden Adressen ohne Suche berechnet.",
+  "keyExplorer": {
+    "title": "Lokale Schlüssel bilden",
+    "description": "Jede Zeile ist das kurze N-Gramm, das an Position t endet.",
+    "tokensLabel": "Tokenfolge",
+    "orderLabel": "N-Gramm-Ordnung",
+    "position": "Position",
+    "key": "Lokaler Schlüssel",
+    "slot": "Beispiel-Slot",
+    "value": "Gelernter Wertvektor",
+    "illustrative": "Diese Slot-Funktion ist nur ein Beispiel. Der Report nennt deterministische Lookups, aber nicht Qwens exakte produktive Hashformel.",
+    "empty": "Füge genug Tokens hinzu."
+  },
+  "caseTitle": "Qwen3.8-Flash-Next: das konkrete Design",
+  "facts": [
+    "125B Parameter im Hauptmodell",
+    "6B aktive Hauptmodell-Parameter pro Token",
+    "+51B N-Gramm-Embedding-Parameter",
+    "20 Mio. Bigramm- und Trigramm-Einträge",
+    "Einfügung an Layer 2",
+    "Nativer Kontext mit 262.144 Tokens"
+  ],
+  "activeCaveat": "Die zusätzlichen 51B sind Lookup-Kapazität, kein Beleg dafür, dass alle pro Token rechnen. Nur adressierte Zeilen werden gelesen; 6B aktiv/Token bezieht sich auf das Hauptmodell.",
+  "inference": {
+    "title": "Ein Inferenzschritt",
+    "description": "Adressierung, Speicherbewegung, Vektoreinfügung und normales Backbone.",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "step": "Schritt",
+    "compute": "Rechenarbeit",
+    "memory": "Speicher / Transfer",
+    "vector": "Gespeicherter gelernter Vektor",
+    "steps": [
+      {
+        "title": "Address",
+        "body": "Form bigram and trigram keys ending at the current token and deterministically compute table addresses.",
+        "detail": "key = (token[t−n+1], …, token[t]) → address",
+        "kind": "small integer compute"
+      },
+      {
+        "title": "Prefetch",
+        "body": "Fetch rows from GPU or offloaded host memory. Qwen overlaps asynchronous host prefetch with first-layer compute.",
+        "detail": "CPU RAM ⇢ async transfer ⇢ accelerator",
+        "kind": "bandwidth and latency"
+      },
+      {
+        "title": "Inject at Layer 2",
+        "body": "Add the learned vector to the token representation. Qwen chose one table layer at Layer 2; one layer was sufficient.",
+        "detail": "h₂′ = h₂ + projection(embedding rows)",
+        "kind": "small vector operation"
+      },
+      {
+        "title": "Backbone",
+        "body": "Continue through the ordinary sparse backbone; lookup does not replace attention, MoE, or decoding.",
+        "detail": "h₂′ → layers 3…N → logits",
+        "kind": "ordinary model compute"
+      }
+    ]
+  },
+  "whyTitle": "Warum Kapazität günstig sein kann",
+  "benefits": [
+    "Große Tabellen speichern viele lokale Muster; jedes Token berührt nur wenige Zeilen.",
+    "Deterministische Adressen vermeiden Suche und ermöglichen Prefetching.",
+    "Host-Offload tauscht günstigen RAM gegen Transferverkehr."
+  ],
+  "limitsTitle": "Grenzen und Kompromisse",
+  "limits": [
+    "Hash-Kollisionen lassen unverbundene Muster Zeilen teilen.",
+    "Seltene Muster lernen wenig; lokale N-Gramme bilden Fernbezüge nicht direkt ab.",
+    "Bandbreite, Host-Link, Cache-Lokalität und Batching können die Latenz bestimmen.",
+    "Der Loss sinkt mit der Tabellengröße, doch Downstream-Genauigkeit sättigt oder schwankt."
+  ],
+  "notTitle": "Drei Mechanismen, drei Aufgaben",
+  "specTitle": "Kein N-Gramm Speculative Decoding",
+  "specBody": "Speculative Decoding entwirft und prüft zukünftige Tokens. N-Gramm-Embeddings laden einen Vektor für die aktuelle Repräsentation.",
+  "mtpTitle": "Keine Multi-Token Prediction (MTP)",
+  "mtpBody": "MTP trainiert mehrere zukünftige Abstände. N-Gramm-Embeddings sind Schlüsselgedächtnis für beobachtete lokale Folgen.",
+  "evidenceTitle": "Was die Fallstudie zeigt – und was nicht",
+  "evidenceBody": "Der Qwen-Report stützt die Details und enthält eigene Ablationen. Er ordnet nicht unabhängig jeden Benchmark-Gewinn dieser Komponente zu; ohne isolierende Ablation gehören Systemwerte zum Gesamtmodell.",
+  "sourcesTitle": "Offizielle Quellen",
+  "sources": [
+    {
+      "label": "Offizieller Qwen-Blog",
+      "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"
+    },
+    {
+      "label": "Hugging-Face-Modellkarte",
+      "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next"
+    },
+    {
+      "label": "Technischer Report (PDF)",
+      "url": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"
+    }
+  ]
+},
 }

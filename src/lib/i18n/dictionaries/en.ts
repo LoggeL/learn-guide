@@ -180,6 +180,7 @@ export const en = {
     'quantization': 'Quantization',
     'nested-learning': 'Nested Learning',
     'mtp': 'Multi-Token Prediction (MTP)',
+    'n-gram-embeddings': 'N-gram Embeddings',
     'distillation': 'Distillation',
     'lora': 'Fine-Tuning & LoRA',
     'abliteration': 'Abliteration',
@@ -234,6 +235,7 @@ export const en = {
     'tokenization': 'How text gets broken into pieces the model understands',
     'subtoken-blindness': 'Why models miss letters, digits, and exact counts hidden inside tokens',
     'embeddings': 'Turning words into numbers that capture meaning',
+    'n-gram-embeddings': 'Learned lookup tables for short local token patterns',
     'diffusion-fundamentals': 'Forward noise, reverse denoising, and why score estimation works',
     'text-diffusion': 'Mask-and-predict generation with fixed-length token grids',
     'image-diffusion': 'Latent denoising pipelines behind modern text-to-image systems',
@@ -6046,11 +6048,113 @@ export const en = {
     whyMattersDesc2: 'In LLMs, RLHF and newer verifiable-reward training methods use RL-style optimization to make models more helpful, safer, or better at reasoning. The model is not merely imitating text; it is being pushed toward behavior that earns higher reward.',
   },
 
+  nGramEmbeddings: {
+  "title": "N-gram Embeddings",
+  "description": "Learned lookup tables that add local token-pattern memory without running every table parameter as dense compute.",
+  "whatTitle": "A learned shortcut for local patterns",
+  "whatBody": "At each position, short n-grams ending at that token deterministically address table rows. Their learned vectors augment the token representation near an early layer; the ordinary backbone then continues.",
+  "trainingBody": "Training updates retrieved rows with the backbone. At inference, addresses are computed without search and the same learned rows are fetched.",
+  "keyExplorer": {
+    "title": "Build the local keys",
+    "description": "Each row is the short n-gram ending at position t.",
+    "tokensLabel": "Token sequence",
+    "orderLabel": "N-gram order",
+    "position": "Position",
+    "key": "Local key",
+    "slot": "Illustrative slot",
+    "value": "Learned value vector",
+    "illustrative": "This slot function is illustrative. The report specifies deterministic lookup but does not publish Qwen’s exact production hash formula.",
+    "empty": "Add enough tokens to form this n-gram."
+  },
+  "caseTitle": "Qwen3.8-Flash-Next: the concrete design",
+  "facts": [
+    "125B main-model parameters",
+    "6B active main-model parameters per token",
+    "+51B n-gram embedding parameters",
+    "20M bigram and trigram entries",
+    "Injected at Layer 2",
+    "Native 262,144-token context"
+  ],
+  "activeCaveat": "The extra 51B are lookup capacity, not evidence that all 51B compute for every token. Only addressed rows are fetched; 6B active/token refers to the main model.",
+  "inference": {
+    "title": "One inference step",
+    "description": "Address work, memory movement, vector injection, and normal backbone compute.",
+    "previous": "Previous",
+    "next": "Next",
+    "step": "Step",
+    "compute": "Compute work",
+    "memory": "Memory / transfer work",
+    "vector": "Stored learned vector",
+    "steps": [
+      {
+        "title": "Address",
+        "body": "Form bigram and trigram keys ending at the current token and deterministically compute table addresses.",
+        "detail": "key = (token[t−n+1], …, token[t]) → address",
+        "kind": "small integer compute"
+      },
+      {
+        "title": "Prefetch",
+        "body": "Fetch rows from GPU or offloaded host memory. Qwen overlaps asynchronous host prefetch with first-layer compute.",
+        "detail": "CPU RAM ⇢ async transfer ⇢ accelerator",
+        "kind": "bandwidth and latency"
+      },
+      {
+        "title": "Inject at Layer 2",
+        "body": "Add the learned vector to the token representation. Qwen chose one table layer at Layer 2; one layer was sufficient.",
+        "detail": "h₂′ = h₂ + projection(embedding rows)",
+        "kind": "small vector operation"
+      },
+      {
+        "title": "Backbone",
+        "body": "Continue through the ordinary sparse backbone; lookup does not replace attention, MoE, or decoding.",
+        "detail": "h₂′ → layers 3…N → logits",
+        "kind": "ordinary model compute"
+      }
+    ]
+  },
+  "whyTitle": "Why capacity can be cheap",
+  "benefits": [
+    "A large table stores many reusable local-pattern vectors while each token touches only a few rows.",
+    "Deterministic addressing avoids nearest-neighbor search and enables predictable prefetch.",
+    "Host offload trades cheap RAM capacity for transfer traffic; early compute can hide some latency."
+  ],
+  "limitsTitle": "Limits and trade-offs",
+  "limits": [
+    "Hash collisions make unrelated patterns share rows.",
+    "Rare patterns get little signal; local n-grams do not directly encode long-range structure.",
+    "Memory bandwidth, host links, cache locality, and batching can dominate latency.",
+    "Loss improves with table size in the report, but downstream accuracy saturates or fluctuates."
+  ],
+  "notTitle": "Three mechanisms, three jobs",
+  "specTitle": "Not n-gram speculative decoding",
+  "specBody": "Speculative decoding drafts and verifies future tokens. N-gram embeddings retrieve a vector for the current representation; they draft nothing.",
+  "mtpTitle": "Not Multi-Token Prediction (MTP)",
+  "mtpBody": "MTP trains several future offsets. N-gram embeddings are keyed memory for already observed local sequences.",
+  "evidenceTitle": "What the case study proves—and does not",
+  "evidenceBody": "The Qwen report supports these implementation details and reports its own ablations. It does not independently attribute every benchmark gain to this component; without an isolating ablation, system scores belong to the complete model.",
+  "sourcesTitle": "Official sources",
+  "sources": [
+    {
+      "label": "Qwen official blog",
+      "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"
+    },
+    {
+      "label": "Hugging Face model card",
+      "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next"
+    },
+    {
+      "label": "Technical report (PDF)",
+      "url": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"
+    }
+  ]
+},
 }
 
 // Create a recursive string type for the dictionary
 type DeepStringify<T> = {
-  [K in keyof T]: T[K] extends Record<string, unknown> ? DeepStringify<T[K]> : string
+  [K in keyof T]: T[K] extends readonly (infer U)[]
+    ? U extends Record<string, unknown> ? DeepStringify<U>[] : string[]
+    : T[K] extends Record<string, unknown> ? DeepStringify<T[K]> : string
 }
 
 export type Dictionary = DeepStringify<typeof en>
