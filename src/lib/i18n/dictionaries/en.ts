@@ -6050,102 +6050,110 @@ export const en = {
 
   nGramEmbeddings: {
   "title": "N-gram Embeddings",
-  "description": "Learned lookup tables that add local token-pattern memory without running every table parameter as dense compute.",
-  "whatTitle": "A learned shortcut for local patterns",
-  "whatBody": "At each position, short n-grams ending at that token deterministically address table rows. Their learned vectors augment the token representation near an early layer; the ordinary backbone then continues.",
-  "trainingBody": "Training updates retrieved rows with the backbone. At inference, addresses are computed without search and the same learned rows are fetched.",
+  "description": "See how learned local-pattern vectors can steer generation without replacing the language model.",
+  "whatTitle": "Local memory, not a token shortcut",
+  "whatBody": "An n-gram table maps short token sequences to learned vectors. A retrieved vector is added to the current token representation near the embedding or an early hidden layer; the backbone still computes the hidden state and next-token logits.",
+  "trainingBody": "The table and backbone learn together. Frequent local regularities can occupy table capacity and add little dense compute, but a lookup neither outputs nor guarantees the next token.",
+  "generation": {
+    "title": "Generate with vs. without n-gram memory",
+    "description": "Both paths start with the same tokens, base representation, and pre-lookup logits. Switch examples to see when a local lookup helps—and when it cannot.",
+    "scenarioLabel": "Scenario",
+    "sharedInput": "Same context on both paths",
+    "baseRepresentation": "Same base token representation",
+    "baseLogits": "Same illustrative starting scores",
+    "withoutTitle": "Without n-gram embeddings",
+    "withTitle": "With n-gram embeddings",
+    "backboneOnly": "Normal model path",
+    "lookup": "Bigram / trigram lookup",
+    "addVector": "Add retrieved vector",
+    "downstream": "Illustrative downstream logits",
+    "important": "The vector changes the hidden representation, not the answer directly. The backbone and LM head still produce and sample the next-token distribution; a lookup is a learned bias, never a guaranteed continuation.",
+    "scenarios": [
+      {
+        "id": "phrase",
+        "tab": "Useful phrase",
+        "badge": "Frequent local match",
+        "context": "The capital of France is",
+        "key": "[France · is] + [of · France · is]",
+        "lookupResult": "learned rows found",
+        "vector": "e_phrase",
+        "baseLogits": [{"token":"Paris","score":"4.2"},{"token":"the","score":"3.8"},{"token":"located","score":"2.9"}],
+        "withoutLogits": [{"token":"Paris","score":"6.1"},{"token":"the","score":"4.0"},{"token":"located","score":"3.1"}],
+        "withLogits": [{"token":"Paris","score":"7.8"},{"token":"the","score":"3.5"},{"token":"located","score":"2.7"}],
+        "withoutNote": "The backbone must recover the familiar continuation from its ordinary hidden state.",
+        "withNote": "The matching local patterns retrieve a trained vector. After addition, downstream layers put more mass on the fitting continuation.",
+        "useful": "true"
+      },
+      {
+        "id": "code",
+        "tab": "Useful code pattern",
+        "badge": "Syntax regularity",
+        "context": "for (const item of items) {\n  console.log(item",
+        "key": "[log · ( · item]",
+        "lookupResult": "learned syntax row found",
+        "vector": "e_syntax",
+        "baseLogits": [{"token":")","score":"4.0"},{"token":".","score":"3.7"},{"token":",","score":"3.1"}],
+        "withoutLogits": [{"token":")","score":"5.9"},{"token":".","score":"4.0"},{"token":",","score":"3.4"}],
+        "withLogits": [{"token":")","score":"7.4"},{"token":".","score":"3.6"},{"token":",","score":"3.0"}],
+        "withoutNote": "Attention and learned syntax in the backbone can close the call on their own.",
+        "withNote": "A repeated local syntax pattern supplies extra evidence for the closing parenthesis; it still does not emit it.",
+        "useful": "true"
+      },
+      {
+        "id": "useless",
+        "tab": "No useful gain",
+        "badge": "Unseen / distant information",
+        "context": "Use the project codename stated 8,000 tokens ago:",
+        "key": "[tokens · ago · : ]",
+        "lookupResult": "miss or unhelpful collision",
+        "vector": "0 or noisy e_collision",
+        "baseLogits": [{"token":"Orion","score":"3.4"},{"token":"Atlas","score":"3.3"},{"token":"Nova","score":"3.2"}],
+        "withoutLogits": [{"token":"Atlas","score":"5.1"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.2"}],
+        "withLogits": [{"token":"Atlas","score":"5.0"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.3"}],
+        "withoutNote": "Only the normal model can retrieve and reason over the distant context.",
+        "withNote": "The local n-gram contains no codename. A miss adds nothing; a collision may add noise, so the backbone still does the work.",
+        "useful": "false"
+      }
+    ]
+  },
   "keyExplorer": {
-    "title": "Build the local keys",
-    "description": "Each row is the short n-gram ending at position t.",
+    "title": "Inspect keys and values",
+    "description": "A compact view of how local token sequences address learned rows.",
     "tokensLabel": "Token sequence",
     "orderLabel": "N-gram order",
     "position": "Position",
     "key": "Local key",
     "slot": "Illustrative slot",
     "value": "Learned value vector",
-    "illustrative": "This slot function is illustrative. The report specifies deterministic lookup but does not publish Qwen’s exact production hash formula.",
+    "illustrative": "The hash and vector values here are illustrative; production systems choose their own addressing and collision strategy.",
     "empty": "Add enough tokens to form this n-gram."
   },
-  "caseTitle": "Qwen3.8-Flash-Next: the concrete design",
-  "facts": [
-    "125B main-model parameters",
-    "6B active main-model parameters per token",
-    "+51B n-gram embedding parameters",
-    "20M bigram and trigram entries",
-    "Injected at Layer 2",
-    "Native 262,144-token context"
-  ],
-  "activeCaveat": "The extra 51B are lookup capacity, not evidence that all 51B compute for every token. Only addressed rows are fetched; 6B active/token refers to the main model.",
-  "inference": {
-    "title": "One inference step",
-    "description": "Address work, memory movement, vector injection, and normal backbone compute.",
-    "previous": "Previous",
-    "next": "Next",
-    "step": "Step",
-    "compute": "Compute work",
-    "memory": "Memory / transfer work",
-    "vector": "Stored learned vector",
-    "steps": [
-      {
-        "title": "Address",
-        "body": "Form bigram and trigram keys ending at the current token and deterministically compute table addresses.",
-        "detail": "key = (token[t−n+1], …, token[t]) → address",
-        "kind": "small integer compute"
-      },
-      {
-        "title": "Prefetch",
-        "body": "Fetch rows from GPU or offloaded host memory. Qwen overlaps asynchronous host prefetch with first-layer compute.",
-        "detail": "CPU RAM ⇢ async transfer ⇢ accelerator",
-        "kind": "bandwidth and latency"
-      },
-      {
-        "title": "Inject at Layer 2",
-        "body": "Add the learned vector to the token representation. Qwen chose one table layer at Layer 2; one layer was sufficient.",
-        "detail": "h₂′ = h₂ + projection(embedding rows)",
-        "kind": "small vector operation"
-      },
-      {
-        "title": "Backbone",
-        "body": "Continue through the ordinary sparse backbone; lookup does not replace attention, MoE, or decoding.",
-        "detail": "h₂′ → layers 3…N → logits",
-        "kind": "ordinary model compute"
-      }
-    ]
-  },
-  "whyTitle": "Why capacity can be cheap",
+  "whyTitle": "Where gains come from",
   "benefits": [
-    "A large table stores many reusable local-pattern vectors while each token touches only a few rows.",
-    "Deterministic addressing avoids nearest-neighbor search and enables predictable prefetch.",
-    "Host offload trades cheap RAM capacity for transfer traffic; early compute can hide some latency."
+    "Frequent phrases and syntax patterns become reusable local vectors instead of being reconstructed entirely by dense layers.",
+    "Large lookup tables add parameter capacity while each token reads only a few rows, so added FLOPs can stay small.",
+    "Deterministic addressing is cheap and can be prefetched; useful vectors reshape later logits through the normal backbone."
   ],
-  "limitsTitle": "Limits and trade-offs",
+  "limitsTitle": "Where the lookup is useless",
   "limits": [
-    "Hash collisions make unrelated patterns share rows.",
-    "Rare patterns get little signal; local n-grams do not directly encode long-range structure.",
-    "Memory bandwidth, host links, cache locality, and batching can dominate latency.",
-    "Loss improves with table size in the report, but downstream accuracy saturates or fluctuates."
+    "Novel combinations and rare or unseen n-grams have no well-trained local row.",
+    "Long-range dependencies, semantic reasoning, and facts outside the local window still require the backbone.",
+    "Hash collisions can mix unrelated patterns; bandwidth, cache locality, host transfers, and batching can erase latency gains.",
+    "Extra capacity does not guarantee downstream accuracy: an unhelpful vector may do nothing or add noise."
   ],
-  "notTitle": "Three mechanisms, three jobs",
+  "caseTitle": "Real-world case study: Qwen3.8-Flash-Next",
+  "caseBody": "Qwen uses bigram and trigram tables as one component of a larger sparse model. The implementation shows the technique at production scale; system-level benchmark gains cannot be assigned to this component alone.",
+  "facts": ["+51B lookup parameters", "20M bigram + trigram entries", "Injected at Layer 2", "Host-memory prefetch"],
+  "activeCaveat": "These are lookup-capacity parameters, not 51B dense parameters evaluated for every token. Only addressed rows are fetched.",
+  "notTitle": "Do not confuse the mechanism",
   "specTitle": "Not n-gram speculative decoding",
   "specBody": "Speculative decoding drafts and verifies future tokens. N-gram embeddings retrieve a vector for the current representation; they draft nothing.",
   "mtpTitle": "Not Multi-Token Prediction (MTP)",
   "mtpBody": "MTP trains several future offsets. N-gram embeddings are keyed memory for already observed local sequences.",
-  "evidenceTitle": "What the case study proves—and does not",
-  "evidenceBody": "The Qwen report supports these implementation details and reports its own ablations. It does not independently attribute every benchmark gain to this component; without an isolating ablation, system scores belong to the complete model.",
-  "sourcesTitle": "Official sources",
   "sources": [
-    {
-      "label": "Qwen official blog",
-      "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"
-    },
-    {
-      "label": "Hugging Face model card",
-      "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next"
-    },
-    {
-      "label": "Technical report (PDF)",
-      "url": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"
-    }
+    {"label":"Qwen official blog","url":"https://qwen.ai/blog?id=qwen3.8-flash-next"},
+    {"label":"Model card","url":"https://huggingface.co/Qwen/Qwen3.8-Flash-Next"},
+    {"label":"Technical report","url":"https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"}
   ]
 },
 }

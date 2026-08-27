@@ -6025,102 +6025,110 @@ export const de: Dictionary = {
 
   nGramEmbeddings: {
   "title": "N-Gramm-Embeddings",
-  "description": "Gelernte Lookup-Tabellen ergänzen lokales Tokenmuster-Gedächtnis, ohne alle Tabellenparameter als Dense Compute auszuführen.",
-  "whatTitle": "Eine gelernte Abkürzung für lokale Muster",
-  "whatBody": "Kurze N-Gramme bis zum aktuellen Token adressieren deterministisch Tabellenzeilen. Deren gelernte Vektoren ergänzen die Tokenrepräsentation nahe einem frühen Layer; danach läuft das normale Backbone weiter.",
-  "trainingBody": "Beim Training werden gelesene Zeilen mit dem Backbone aktualisiert. Bei der Inferenz werden Adressen ohne Suche berechnet.",
+  "description": "Sieh, wie gelernte Vektoren für lokale Muster die Generierung lenken, ohne das Sprachmodell zu ersetzen.",
+  "whatTitle": "Lokales Gedächtnis, kein Token-Shortcut",
+  "whatBody": "Eine N-Gramm-Tabelle ordnet kurzen Tokenfolgen gelernte Vektoren zu. Ein geladener Vektor wird nahe dem Embedding oder einem frühen Hidden Layer zur aktuellen Tokenrepräsentation addiert; das Backbone berechnet weiterhin Hidden State und Next-Token-Logits.",
+  "trainingBody": "Tabelle und Backbone lernen gemeinsam. Häufige lokale Regelmäßigkeiten können Tabellenkapazität belegen und wenig Dense Compute ergänzen – doch ein Lookup gibt weder das nächste Token aus noch garantiert es dieses.",
+  "generation": {
+    "title": "Generieren mit und ohne N-Gramm-Gedächtnis",
+    "description": "Beide Pfade starten mit denselben Tokens, derselben Basisrepräsentation und denselben Logits vor dem Lookup. Wechsle das Beispiel und sieh, wann lokales Gedächtnis hilft – und wann nicht.",
+    "scenarioLabel": "Szenario",
+    "sharedInput": "Derselbe Kontext in beiden Pfaden",
+    "baseRepresentation": "Dieselbe Basis-Tokenrepräsentation",
+    "baseLogits": "Dieselben beispielhaften Ausgangsscores",
+    "withoutTitle": "Ohne N-Gramm-Embeddings",
+    "withTitle": "Mit N-Gramm-Embeddings",
+    "backboneOnly": "Normaler Modellpfad",
+    "lookup": "Bigramm-/Trigramm-Lookup",
+    "addVector": "Geladenen Vektor addieren",
+    "downstream": "Beispielhafte spätere Logits",
+    "important": "Der Vektor verändert die Hidden-Repräsentation, nicht direkt die Antwort. Backbone und LM Head erzeugen und sampeln weiterhin die Next-Token-Verteilung; ein Lookup ist ein gelernter Bias, nie eine garantierte Fortsetzung.",
+    "scenarios": [
+      {
+        "id": "phrase",
+        "tab": "Nützliche Phrase",
+        "badge": "Häufiger lokaler Treffer",
+        "context": "The capital of France is",
+        "key": "[France · is] + [of · France · is]",
+        "lookupResult": "gelernte Zeilen gefunden",
+        "vector": "e_phrase",
+        "baseLogits": [{"token":"Paris","score":"4.2"},{"token":"the","score":"3.8"},{"token":"located","score":"2.9"}],
+        "withoutLogits": [{"token":"Paris","score":"6.1"},{"token":"the","score":"4.0"},{"token":"located","score":"3.1"}],
+        "withLogits": [{"token":"Paris","score":"7.8"},{"token":"the","score":"3.5"},{"token":"located","score":"2.7"}],
+        "withoutNote": "Das Backbone muss die vertraute Fortsetzung aus seinem normalen Hidden State ableiten.",
+        "withNote": "Die passenden lokalen Muster laden einen trainierten Vektor. Nach der Addition geben spätere Layer der passenden Fortsetzung mehr Gewicht.",
+        "useful": "true"
+      },
+      {
+        "id": "code",
+        "tab": "Nützliches Codemuster",
+        "badge": "Syntax-Regelmäßigkeit",
+        "context": "for (const item of items) {\n  console.log(item",
+        "key": "[log · ( · item]",
+        "lookupResult": "gelernte Syntaxzeile gefunden",
+        "vector": "e_syntax",
+        "baseLogits": [{"token":")","score":"4.0"},{"token":".","score":"3.7"},{"token":",","score":"3.1"}],
+        "withoutLogits": [{"token":")","score":"5.9"},{"token":".","score":"4.0"},{"token":",","score":"3.4"}],
+        "withLogits": [{"token":")","score":"7.4"},{"token":".","score":"3.6"},{"token":",","score":"3.0"}],
+        "withoutNote": "Attention und gelernte Syntax im Backbone können den Aufruf selbst schließen.",
+        "withNote": "Ein wiederkehrendes lokales Syntaxmuster liefert zusätzliche Evidenz für die schließende Klammer, gibt sie aber nicht selbst aus.",
+        "useful": "true"
+      },
+      {
+        "id": "useless",
+        "tab": "Kein nützlicher Gewinn",
+        "badge": "Ungesehen / Ferninformation",
+        "context": "Nutze den Projektnamen von vor 8.000 Tokens:",
+        "key": "[Tokens · ago · : ]",
+        "lookupResult": "Miss oder nutzlose Kollision",
+        "vector": "0 oder verrauschtes e_collision",
+        "baseLogits": [{"token":"Orion","score":"3.4"},{"token":"Atlas","score":"3.3"},{"token":"Nova","score":"3.2"}],
+        "withoutLogits": [{"token":"Atlas","score":"5.1"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.2"}],
+        "withLogits": [{"token":"Atlas","score":"5.0"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.3"}],
+        "withoutNote": "Nur das normale Modell kann den fernen Kontext abrufen und darüber schlussfolgern.",
+        "withNote": "Das lokale N-Gramm enthält keinen Projektnamen. Ein Miss addiert nichts, eine Kollision womöglich Rauschen – das Backbone erledigt weiter die Arbeit.",
+        "useful": "false"
+      }
+    ]
+  },
   "keyExplorer": {
-    "title": "Lokale Schlüssel bilden",
-    "description": "Jede Zeile ist das kurze N-Gramm, das an Position t endet.",
+    "title": "Schlüssel und Werte untersuchen",
+    "description": "Eine kompakte Ansicht, wie lokale Tokenfolgen gelernte Zeilen adressieren.",
     "tokensLabel": "Tokenfolge",
     "orderLabel": "N-Gramm-Ordnung",
     "position": "Position",
     "key": "Lokaler Schlüssel",
     "slot": "Beispiel-Slot",
     "value": "Gelernter Wertvektor",
-    "illustrative": "Diese Slot-Funktion ist nur ein Beispiel. Der Report nennt deterministische Lookups, aber nicht Qwens exakte produktive Hashformel.",
-    "empty": "Füge genug Tokens hinzu."
+    "illustrative": "Hash und Vektorwerte sind Beispiele; produktive Systeme wählen eigene Adressierungs- und Kollisionsstrategien.",
+    "empty": "Füge genug Tokens für dieses N-Gramm hinzu."
   },
-  "caseTitle": "Qwen3.8-Flash-Next: das konkrete Design",
-  "facts": [
-    "125B Parameter im Hauptmodell",
-    "6B aktive Hauptmodell-Parameter pro Token",
-    "+51B N-Gramm-Embedding-Parameter",
-    "20 Mio. Bigramm- und Trigramm-Einträge",
-    "Einfügung an Layer 2",
-    "Nativer Kontext mit 262.144 Tokens"
-  ],
-  "activeCaveat": "Die zusätzlichen 51B sind Lookup-Kapazität, kein Beleg dafür, dass alle pro Token rechnen. Nur adressierte Zeilen werden gelesen; 6B aktiv/Token bezieht sich auf das Hauptmodell.",
-  "inference": {
-    "title": "Ein Inferenzschritt",
-    "description": "Adressierung, Speicherbewegung, Vektoreinfügung und normales Backbone.",
-    "previous": "Zurück",
-    "next": "Weiter",
-    "step": "Schritt",
-    "compute": "Rechenarbeit",
-    "memory": "Speicher / Transfer",
-    "vector": "Gespeicherter gelernter Vektor",
-    "steps": [
-      {
-        "title": "Address",
-        "body": "Form bigram and trigram keys ending at the current token and deterministically compute table addresses.",
-        "detail": "key = (token[t−n+1], …, token[t]) → address",
-        "kind": "small integer compute"
-      },
-      {
-        "title": "Prefetch",
-        "body": "Fetch rows from GPU or offloaded host memory. Qwen overlaps asynchronous host prefetch with first-layer compute.",
-        "detail": "CPU RAM ⇢ async transfer ⇢ accelerator",
-        "kind": "bandwidth and latency"
-      },
-      {
-        "title": "Inject at Layer 2",
-        "body": "Add the learned vector to the token representation. Qwen chose one table layer at Layer 2; one layer was sufficient.",
-        "detail": "h₂′ = h₂ + projection(embedding rows)",
-        "kind": "small vector operation"
-      },
-      {
-        "title": "Backbone",
-        "body": "Continue through the ordinary sparse backbone; lookup does not replace attention, MoE, or decoding.",
-        "detail": "h₂′ → layers 3…N → logits",
-        "kind": "ordinary model compute"
-      }
-    ]
-  },
-  "whyTitle": "Warum Kapazität günstig sein kann",
+  "whyTitle": "Woher Gewinne kommen",
   "benefits": [
-    "Große Tabellen speichern viele lokale Muster; jedes Token berührt nur wenige Zeilen.",
-    "Deterministische Adressen vermeiden Suche und ermöglichen Prefetching.",
-    "Host-Offload tauscht günstigen RAM gegen Transferverkehr."
+    "Häufige Phrasen und Syntaxmuster werden zu wiederverwendbaren lokalen Vektoren, statt vollständig von Dense Layers rekonstruiert zu werden.",
+    "Große Lookup-Tabellen ergänzen Parameterkapazität, während jedes Token nur wenige Zeilen liest; die zusätzlichen FLOPs können klein bleiben.",
+    "Deterministische Adressierung ist günstig und lässt sich vorladen; nützliche Vektoren verändern spätere Logits über das normale Backbone."
   ],
-  "limitsTitle": "Grenzen und Kompromisse",
+  "limitsTitle": "Wo der Lookup nutzlos ist",
   "limits": [
-    "Hash-Kollisionen lassen unverbundene Muster Zeilen teilen.",
-    "Seltene Muster lernen wenig; lokale N-Gramme bilden Fernbezüge nicht direkt ab.",
-    "Bandbreite, Host-Link, Cache-Lokalität und Batching können die Latenz bestimmen.",
-    "Der Loss sinkt mit der Tabellengröße, doch Downstream-Genauigkeit sättigt oder schwankt."
+    "Neue Kombinationen sowie seltene oder ungesehene N-Gramme haben keine gut trainierte lokale Zeile.",
+    "Fernbezüge, semantisches Schlussfolgern und Fakten außerhalb des lokalen Fensters bleiben Aufgabe des Backbones.",
+    "Hash-Kollisionen können fremde Muster mischen; Bandbreite, Cache-Lokalität, Host-Transfers und Batching können Latenzgewinne aufheben.",
+    "Mehr Kapazität garantiert keine Downstream-Genauigkeit: Ein unpassender Vektor kann wirkungslos bleiben oder Rauschen addieren."
   ],
-  "notTitle": "Drei Mechanismen, drei Aufgaben",
+  "caseTitle": "Praxisbeispiel: Qwen3.8-Flash-Next",
+  "caseBody": "Qwen nutzt Bigramm- und Trigramm-Tabellen als eine Komponente eines größeren Sparse-Modells. Die Implementierung zeigt die Technik im Produktionseinsatz; systemweite Benchmark-Gewinne lassen sich nicht allein dieser Komponente zuschreiben.",
+  "facts": ["+51B Lookup-Parameter", "20 Mio. Bigramm- und Trigramm-Einträge", "Einfügung an Layer 2", "Prefetch aus Host-Speicher"],
+  "activeCaveat": "Das sind Parameter für Lookup-Kapazität, nicht 51B Dense Parameter pro Token. Nur adressierte Zeilen werden geladen.",
+  "notTitle": "Mechanismen nicht verwechseln",
   "specTitle": "Kein N-Gramm Speculative Decoding",
-  "specBody": "Speculative Decoding entwirft und prüft zukünftige Tokens. N-Gramm-Embeddings laden einen Vektor für die aktuelle Repräsentation.",
+  "specBody": "Speculative Decoding entwirft und prüft zukünftige Tokens. N-Gramm-Embeddings laden einen Vektor für die aktuelle Repräsentation; sie entwerfen nichts.",
   "mtpTitle": "Keine Multi-Token Prediction (MTP)",
-  "mtpBody": "MTP trainiert mehrere zukünftige Abstände. N-Gramm-Embeddings sind Schlüsselgedächtnis für beobachtete lokale Folgen.",
-  "evidenceTitle": "Was die Fallstudie zeigt – und was nicht",
-  "evidenceBody": "Der Qwen-Report stützt die Details und enthält eigene Ablationen. Er ordnet nicht unabhängig jeden Benchmark-Gewinn dieser Komponente zu; ohne isolierende Ablation gehören Systemwerte zum Gesamtmodell.",
-  "sourcesTitle": "Offizielle Quellen",
+  "mtpBody": "MTP trainiert mehrere zukünftige Abstände. N-Gramm-Embeddings sind adressiertes Gedächtnis für bereits beobachtete lokale Folgen.",
   "sources": [
-    {
-      "label": "Offizieller Qwen-Blog",
-      "url": "https://qwen.ai/blog?id=qwen3.8-flash-next"
-    },
-    {
-      "label": "Hugging-Face-Modellkarte",
-      "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next"
-    },
-    {
-      "label": "Technischer Report (PDF)",
-      "url": "https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"
-    }
+    {"label":"Offizieller Qwen-Blog","url":"https://qwen.ai/blog?id=qwen3.8-flash-next"},
+    {"label":"Modellkarte","url":"https://huggingface.co/Qwen/Qwen3.8-Flash-Next"},
+    {"label":"Technischer Report","url":"https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"}
   ]
 },
 }
