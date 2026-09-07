@@ -1,4 +1,125 @@
 export const en = {
+  loopedTransformers: {
+    "title": "Looped Transformers",
+    "description": "Explore how recurrent depth updates a hidden state, reuses model weights, and changes the tradeoffs between memory, compute, latency, and monitorability.",
+    "heroTitle": "More computation before the next token",
+    "heroBody": "A standard autoregressive transformer traverses its fixed layer stack for each new token. A depth-recurrent model can apply a shared core several times before decoding a token. It must be trained for this recurrence; adding a loop to an arbitrary trained model is not enough.",
+    "demoTitle": "Same weights. A changing hidden state.",
+    "demoNote": "Schematic states, not measured activations. One loop is not necessarily one human-readable reasoning step.",
+    "compareLabel": "Compare the loop model with",
+    "directOption": "Larger standard model · direct answer",
+    "cotOption": "Standard model · explicit chain of thought",
+    "quality": "Comparison target: similar task quality",
+    "standard": "Standard model",
+    "loop": "Loop model",
+    "block": "Block",
+    "input": "Input",
+    "core": "Shared core",
+    "output": "Next token",
+    "directCaption": "One traversal per new token",
+    "cotCaption": "Reasoning token → another traversal → reasoning token",
+    "returnLabel": "Feed the updated state back into the same core",
+    "state": "Hidden state",
+    "iteration": "Iteration",
+    "fixed": "Weights unchanged",
+    "step": "Next loop",
+    "reset": "Start again",
+    "unroll": "Unroll the core",
+    "monitor": "Text-monitor view",
+    "monitorDirect": "Direct answer: no explicit intermediate text in either model.",
+    "monitorCot": "Explicit CoT can expose intermediate text to a monitor. Latent loop updates produce no corresponding text tokens.",
+    "monitorLimit": "This view represents a monitor with access to reasoning tokens, not necessarily the user interface. CoT is useful evidence, not a complete or guaranteed faithful account of the computation.",
+    "metricsTitle": "What changes at similar quality?",
+    "metricsNote": "Conditional comparisons, not benchmark scores. Stepping the schematic does not establish quality parity.",
+    "metrics": [
+        {
+            "name": "Model memory",
+            "unit": "GB of model weights ↓",
+            "directTitle": "Less is possible",
+            "directBody": "A smaller shared core can reach the target quality through recurrence. Compare at the same numerical precision.",
+            "cotTitle": "Depends on model size",
+            "cotBody": "Fewer reasoning tokens do not shrink the weights. Weight savings require a smaller parameter count."
+        },
+        {
+            "name": "Speed",
+            "unit": "Seconds per complete answer ↓",
+            "directTitle": "No fixed advantage",
+            "directBody": "A smaller core may be faster per pass, but serial loops add latency. Measure time to the completed answer.",
+            "cotTitle": "Can be faster",
+            "cotBody": "Avoiding many sequential text-generation steps can outweigh the additional internal loops."
+        },
+        {
+            "name": "Compute",
+            "unit": "TFLOP per complete answer ↓",
+            "directTitle": "Can be similar or higher",
+            "directBody": "Fewer stored parameters do not imply fewer operations. Include every core iteration and attention operation.",
+            "cotTitle": "Can be lower or higher",
+            "cotBody": "Count all CoT token traversals against all latent iterations, including input processing and the final answer."
+        },
+        {
+            "name": "Memory bandwidth",
+            "unit": "GB transferred from/to HBM per answer ↓",
+            "directTitle": "Fewer weights ≠ fewer transfers",
+            "directBody": "Shared weights save capacity, but may still be read from GPU memory on each loop. Reuse in fast cache is not guaranteed.",
+            "cotTitle": "Less KV traffic is possible",
+            "cotBody": "Fewer text positions may reduce cache traffic. Include loop-specific caches and repeated weight reads. Report achieved GB/s alongside total transferred bytes."
+        },
+        {
+            "name": "Interpretability",
+            "unit": "Monitor recall at a fixed false-positive rate ↑",
+            "directTitle": "Both have opaque internal states",
+            "directBody": "Direct answers provide little intermediate text in either model. There is no universal ranking of their interpretability.",
+            "cotTitle": "Less visibility through text",
+            "cotBody": "Latent steps are absent from the CoT trace. Measure the effect on monitor recall using the same labeled tasks and false-positive rate."
+        }
+    ],
+    "methodsTitle": "How to measure fairly",
+    "methods": [
+        {
+            "title": "Match quality first",
+            "body": "Use the same held-out tasks, scoring rule, and success-rate tolerance. Adjust model size and reasoning budget, then report uncertainty. No universal same-quality conversion exists."
+        },
+        {
+            "title": "Fix the serving conditions",
+            "body": "Use the same hardware, precision, batch size, inputs, and output requirements. Report p50/p95 end-to-end latency and throughput separately. Tokens per second alone is misleading when reasoning lengths differ."
+        },
+        {
+            "title": "Separate memory quantities",
+            "body": "Report weight storage, KV cache, and peak activations separately. Bandwidth is a hardware rate; transferred bytes per answer measure demand. Profile actual transfers rather than deriving them from parameter count."
+        },
+        {
+            "title": "Measure a specific kind of visibility",
+            "body": "Monitor recall at a fixed false-positive rate measures monitorability, not all interpretability. Complement it with activation probes and causal interventions across layers and loop indices."
+        }
+    ],
+    "hiddenTitle": "What happens to the hidden state?",
+    "hiddenBody": "In a simple fixed-width design, each iteration updates a continuous workspace of the same shape. The state can change while the weights stay fixed. Unrolling shows multiple applications of the same function, not independent copies of the parameters.",
+    "formula": "hᵣ₊₁ = Fθ(hᵣ, input)",
+    "hiddenLimit": "The state is a tensor associated with token positions, not a single stored sentence. Additional loops do not automatically enlarge its capacity or improve the answer. Input injection, caches, and stopping rules vary by architecture.",
+    "motivationTitle": "Memory and compute are different constraints",
+    "motivationBody": "Recurrence lets a model spend more inference compute without adding a new set of weights for every depth step. Avoiding explicit reasoning tokens can also reduce sequence growth. This separates parameter storage from executed depth, but does not make the extra work free.",
+    "bottlenecks": [
+        {
+            "title": "Weight capacity",
+            "body": "Can the parameters fit in device memory? Reusing a core can reduce storage relative to a larger model that reaches comparable quality."
+        },
+        {
+            "title": "Bandwidth versus compute",
+            "body": "How many operations run per byte moved? Weight reuse does not guarantee that a workload becomes compute-bound. Batch size, kernels, caching, and hardware determine the bottleneck."
+        },
+        {
+            "title": "Hidden-state capacity",
+            "body": "A fixed-size latent workspace has finite representational capacity. More iterations add computation, not automatically more working memory. Saving a history of states introduces its own memory cost."
+        }
+    ],
+    "visibilityTitle": "Harder to monitor does not mean impossible to interpret",
+    "visibilityBody": "A text monitor cannot read a latent update that was never decoded. Probing a recurrent model also requires tracking the loop index, and a decoded token is not proof of the actual internal algorithm. Huginn studies find probe-dependent results; LOTUS shows that explicit supervision can make latent steps more readable.",
+    "astraTitle": "Where Astra fits",
+    "astraBody": "The September 3, 2026 Astra System Card reports reduced CoT monitorability relative to GPT-5.6 Sol. It does not document a looped-transformer architecture or establish recurrence as the cause. This lesson illustrates the general research idea, not a confirmed blueprint of Astra.",
+    "sourcesTitle": "Sources and further reading",
+    "relatedTitle": "Continue exploring"
+},
+
   // Common UI
   common: {
     learnAi: 'Learn AI',
@@ -117,6 +238,7 @@ export const en = {
 
   // Topic names
   topicNames: {
+    'looped-transformers': 'Looped Transformers',
     // Getting Started
     'hands-on': 'Hands-On',
     'getting-started': 'Getting Started',
@@ -215,6 +337,7 @@ export const en = {
 
   // Topic descriptions (short, for cards and search results)
   topicDescriptions: {
+    'looped-transformers': "Explore how recurrent depth updates a hidden state, reuses model weights, and changes the tradeoffs between memory, compute, latency, and monitorability.",
     'getting-started': 'Make your first LLM API call in 10 minutes — for free',
     'agent-loop': 'The observe-think-act cycle that powers autonomous agents',
     'agent-context': 'How agents structure and manage their context window',

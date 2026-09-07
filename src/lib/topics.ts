@@ -125,6 +125,7 @@ export const topics: Topic[] = [
             name: 'Architecture',
             children: [
               { id: 'transformer-architecture', name: 'Transformer Architecture', path: '/ai/llm/transformer-architecture', difficulty: 'intermediate', lastUpdated: '2026-06-12' },
+              { id: 'looped-transformers', name: 'Looped Transformers', path: '/ai/llm/looped-transformers', difficulty: 'expert', lastUpdated: '2026-09-07' },
               { id: 'feed-forward-networks-moe', name: 'Feed-Forward Networks & MoE', path: '/ai/llm/feed-forward-networks-moe', difficulty: 'intermediate', lastUpdated: '2026-06-06' },
               { id: 'residual-stream-layer-norm', name: 'Residual Stream & LayerNorm', path: '/ai/llm/residual-stream-layer-norm', difficulty: 'intermediate', lastUpdated: '2026-06-12' },
               { id: 'next-token-prediction', name: 'Next-Token Prediction', path: '/ai/llm/next-token-prediction', difficulty: 'beginner', lastUpdated: '2026-06-06' },
@@ -285,6 +286,7 @@ export const learningPathGroups: LearningPathGroup[] = [
       'residual-stream-layer-norm',
       'next-token-prediction',
       'reasoning-models',
+      'looped-transformers',
       'llm-training',
       'training-data',
       'jagged-frontier',

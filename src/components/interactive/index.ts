@@ -119,3 +119,5 @@ export { FeedForwardMoeVisualizer } from './FeedForwardMoeVisualizer'
 export { ResidualStreamLayerNormVisualizer } from './ResidualStreamLayerNormVisualizer'
 export { NextTokenPredictionVisualizer } from './NextTokenPredictionVisualizer'
 export { InferenceBudgetVisualizer } from './InferenceBudgetVisualizer'
+
+export { LoopedTransformerVisualizer } from './LoopedTransformerVisualizer'
