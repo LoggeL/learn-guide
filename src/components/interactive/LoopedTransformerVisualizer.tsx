@@ -147,17 +147,22 @@ export function LoopedTransformerVisualizer() {
             <h3 className="mb-5 font-heading font-bold text-text">{c.latentTitle}</h3>
             <StateStrip stage={loopStage} label={c.state} symbol="h" />
             <div className="my-4 flex flex-wrap gap-2 font-mono text-sm">{[0, 1, 2].map((index) => <span key={index} className={index === loopStage ? 'text-primary-light' : 'text-muted'}>h<sub>{index}</sub>{index < 2 ? ' →' : ''}</span>)}</div>
+            <div data-latent-output role="status" className={`mb-4 rounded-lg border p-3 ${progress === 1 ? 'border-emerald-400/40 bg-emerald-400/10' : 'border-border bg-background/40'}`}>
+              <p className={`font-mono text-sm ${progress === 1 ? 'text-emerald-200' : 'text-muted'}`}>{progress === 1 ? c.cotSteps[c.cotSteps.length - 1] : c.latentOutputPending}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted">{progress === 1 ? c.latentOutputTokens : c.latentOutputInternal}</p>
+            </div>
             <p className="text-xs leading-relaxed text-muted">{c.latentNote}</p>
           </article>
           <article className="min-w-0 rounded-xl border border-cyan-400/25 bg-cyan-400/5 p-4">
             <h3 className="mb-5 font-heading font-bold text-text">{c.cotLaneTitle}</h3>
             <StateStrip stage={textCount} label={c.state} symbol="s" />
             <div className="mt-4 flex min-h-28 flex-wrap content-start gap-2" data-cot-trace>
-              {textCount === 0 ? <span className="text-xs text-muted">{c.cotEmpty}</span> : c.cotSteps.slice(0, textCount).map((text, index) => <span key={index} className="rounded-md border border-cyan-400/30 bg-cyan-400/10 px-2 py-1.5 font-mono text-xs text-cyan-100">{text}</span>)}
+              {textCount === 0 ? <span className="text-xs text-muted">{c.cotEmpty}</span> : c.cotSteps.slice(0, textCount).map((text, index) => <span key={index} className={`rounded-md border px-2 py-1.5 font-mono text-xs ${index === c.cotSteps.length - 1 ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200' : 'border-cyan-400/30 bg-cyan-400/10 text-cyan-100'}`}>{text}</span>)}
             </div>
             <p className="mt-4 text-xs leading-relaxed text-muted">{c.cotNote}</p>
           </article>
         </div>
+        {progress === 1 && <p data-token-comparison className="mt-4 rounded-lg border border-emerald-400/25 bg-emerald-400/5 p-4 text-sm text-emerald-200">{c.sameResultFewerTokens}</p>}
         <p className="mt-4 text-xs text-muted">{c.cotExample}</p>
         <button type="button" onClick={togglePlayback} className={`${buttonClass} mt-4`}><PlaybackIcon size={16} aria-hidden="true" />{playbackLabel}</button>
         <p className="mt-5 border-t border-border pt-5 text-sm leading-relaxed text-muted">{c.monitorExplanation}</p>
