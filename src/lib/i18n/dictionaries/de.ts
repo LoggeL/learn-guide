@@ -6,96 +6,51 @@ export const de: Dictionary = {
     "description": "Wie rekurrente Tiefe den Hidden State aktualisiert, Modellgewichte wiederverwendet und das Verhältnis von Speicher, Compute, Geschwindigkeit und Monitorbarkeit verändert.",
     "heroTitle": "Mehr Rechenschritte vor dem nächsten Token",
     "heroBody": "Ein normaler autoregressiver Transformer durchläuft für jedes neue Token seinen festen Schichtenstapel. Ein Modell mit rekurrenter Tiefe kann denselben Kern mehrfach anwenden, bevor es ein Token ausgibt. Diese Rekurrenz muss trainiert werden; eine Schleife um ein beliebiges fertiges Modell reicht nicht.",
-    "demoTitle": "Gleiche Gewichte. Ein veränderlicher Hidden State.",
-    "demoNote": "Schematische Zustände, keine gemessenen Aktivierungen. Eine Schleife entspricht nicht zwingend einem lesbaren Denkschritt.",
-    "compareLabel": "Loop-Modell vergleichen mit",
-    "directOption": "Größerem Standardmodell · direkte Antwort",
-    "cotOption": "Standardmodell · ausgeschriebene Zwischenschritte",
+    "demoTitle": "Ein kleines Modell zweimal. Ein großes einmal.",
+    "demoNote": "Der bewegte Punkt ist eine Token-Repräsentation. Zwei Schleifen und sechs unterschiedliche Schichten dienen der Erklärung; Animationszeit und Blockgröße sind keine Benchmarkwerte.",
     "quality": "Vergleichsziel: ungefähr gleiche Aufgabenqualität",
-    "standard": "Standardmodell",
-    "loop": "Loop-Modell",
-    "block": "Block",
+    "standard": "Größeres Standardmodell",
+    "loop": "Kleineres Loop-Modell",
     "input": "Eingabe",
     "core": "Gemeinsamer Kern",
     "output": "Nächstes Token",
-    "directCaption": "Ein Durchlauf pro neuem Token",
-    "cotCaption": "Reasoning-Token → neuer Durchlauf → Reasoning-Token",
-    "returnLabel": "Aktualisierten Zustand in denselben Kern zurückführen",
     "state": "Hidden State",
-    "iteration": "Schleife",
-    "fixed": "Gewichte unverändert",
-    "step": "Nächste Schleife",
-    "reset": "Von vorn beginnen",
-    "unroll": "Kern aufklappen",
-    "monitor": "Ansicht für Textmonitor",
-    "monitorDirect": "Direkte Antwort: Beide Modelle liefern hier keine expliziten Textzwischenschritte.",
-    "monitorCot": "Explizite CoT kann einem Monitor Textzwischenschritte zeigen. Die latenten Zustandsupdates erzeugen keine entsprechenden Texttokens.",
-    "monitorLimit": "Diese Ansicht zeigt einen Monitor mit Zugriff auf Reasoning-Tokens, nicht unbedingt die Benutzeroberfläche. CoT liefert nützliche Hinweise, aber kein vollständiges oder garantiert getreues Protokoll der Berechnung.",
     "metricsTitle": "Was verändert sich bei ähnlicher Qualität?",
-    "metricsNote": "Bedingte Vergleiche, keine Benchmarkwerte. Das Durchklicken der Skizze stellt keine gleiche Qualität her.",
+    "metricsNote": "Gegenüber dem größeren Modell mit direkter Antwort, bei ähnlicher Aufgabenqualität. Das Ergebnis hängt von Modell, Aufgabe und Hardware ab.",
     "metrics": [
         {
             "name": "Modellspeicher",
             "unit": "GB Modellgewichte ↓",
             "directTitle": "Weniger möglich",
-            "directBody": "Ein kleinerer gemeinsamer Kern kann die Zielqualität durch Wiederholung erreichen. Voraussetzung ist ein Vergleich bei gleicher Zahlenpräzision.",
-            "cotTitle": "Abhängig von der Modellgröße",
-            "cotBody": "Weniger Reasoning-Tokens verkleinern die Gewichte nicht. Dafür braucht es einen kleineren Parametersatz."
+            "directBody": "Ein kleinerer gemeinsamer Kern kann die Zielqualität durch Wiederholung erreichen. Voraussetzung ist ein Vergleich bei gleicher Zahlenpräzision."
         },
         {
             "name": "Geschwindigkeit",
             "unit": "Sekunden pro vollständiger Antwort ↓",
             "directTitle": "Kein fester Vorteil",
-            "directBody": "Ein kleinerer Kern kann pro Durchlauf schneller sein; serielle Schleifen kosten Zeit. Gemessen wird die Zeit bis zur fertigen Antwort.",
-            "cotTitle": "Schneller möglich",
-            "cotBody": "Entfallende Textgenerierungsschritte können die zusätzlichen internen Durchläufe überwiegen."
+            "directBody": "Ein kleinerer Kern kann pro Durchlauf schneller sein; serielle Schleifen kosten Zeit. Gemessen wird die Zeit bis zur fertigen Antwort."
         },
         {
             "name": "Compute",
             "unit": "TFLOP pro vollständiger Antwort ↓",
             "directTitle": "Kann ähnlich oder höher sein",
-            "directBody": "Weniger gespeicherte Parameter bedeuten nicht weniger Operationen. Jede Kernwiederholung und Attention-Berechnung zählt mit.",
-            "cotTitle": "Weniger oder mehr möglich",
-            "cotBody": "Alle Token-Durchläufe der CoT gegen alle latenten Schleifen zählen, einschließlich Eingabeverarbeitung und finaler Antwort."
+            "directBody": "Weniger gespeicherte Parameter bedeuten nicht weniger Operationen. Jede Kernwiederholung und Attention-Berechnung zählt mit."
         },
         {
             "name": "Speicherbandbreite",
             "unit": "GB HBM-Transfer pro Antwort ↓",
             "directTitle": "Weniger Gewichte ≠ weniger Transfers",
-            "directBody": "Geteilte Gewichte sparen Kapazität, können aber pro Schleife erneut aus dem GPU-Speicher gelesen werden. Wiederverwendung im schnellen Cache ist nicht garantiert.",
-            "cotTitle": "Weniger KV-Verkehr möglich",
-            "cotBody": "Weniger Textpositionen können Cache-Verkehr sparen. Loop-Caches und wiederholte Gewichtslesezugriffe mitzählen. Zusätzlich zum Datenvolumen die erreichten GB/s berichten."
+            "directBody": "Geteilte Gewichte sparen Kapazität, können aber pro Schleife erneut aus dem GPU-Speicher gelesen werden. Wiederverwendung im schnellen Cache ist nicht garantiert."
         },
         {
             "name": "Interpretability",
             "unit": "Monitor-Erkennungsrate bei fixer Fehlalarmrate ↑",
             "directTitle": "Beide intern schwer lesbar",
-            "directBody": "Direkte Antworten liefern in beiden Modellen kaum Textzwischenschritte. Eine allgemeine Rangfolge der Interpretierbarkeit gibt es nicht.",
-            "cotTitle": "Weniger Einblick über Text",
-            "cotBody": "Latente Schritte fehlen im CoT-Protokoll. Den Einfluss auf die Erkennungsrate mit denselben markierten Aufgaben und derselben Fehlalarmrate messen."
-        }
-    ],
-    "methodsTitle": "So würden wir fair messen",
-    "methods": [
-        {
-            "title": "Qualität zuerst abgleichen",
-            "body": "Dieselben zurückgehaltenen Aufgaben, Bewertungsregeln und Toleranzen der Erfolgsquote verwenden. Modellgröße und Reasoning-Budget anpassen und Unsicherheit ausweisen. Eine allgemeine Umrechnung bei gleicher Qualität gibt es nicht."
-        },
-        {
-            "title": "Betriebsbedingungen festhalten",
-            "body": "Gleiche Hardware, Präzision, Batchgröße, Eingaben und Ausgabeanforderungen verwenden. p50/p95 der Gesamtlatenz und Durchsatz getrennt berichten. Tokens pro Sekunde allein täuschen bei unterschiedlich langen Denkprozessen."
-        },
-        {
-            "title": "Speichergrößen trennen",
-            "body": "Modellgewichte, KV-Cache und maximale Aktivierungen separat ausweisen. Bandbreite ist eine Hardware-Rate; transferierte Bytes pro Antwort messen den Bedarf. Tatsächliche Transfers profilieren, nicht aus der Parameterzahl ableiten."
-        },
-        {
-            "title": "Eine konkrete Art von Einblick messen",
-            "body": "Die Erkennungsrate bei fixer Fehlalarmrate misst Monitorbarkeit, nicht sämtliche Interpretierbarkeit. Ergänzend Aktivierungsproben und kausale Eingriffe über Schichten und Schleifenpositionen untersuchen."
+            "directBody": "Direkte Antworten liefern in beiden Modellen kaum Textzwischenschritte. Eine allgemeine Rangfolge der Interpretierbarkeit gibt es nicht."
         }
     ],
     "hiddenTitle": "Was passiert mit dem Hidden State?",
-    "hiddenBody": "In einem einfachen Design mit fester Breite aktualisiert jede Schleife einen kontinuierlichen Arbeitsbereich derselben Form. Der Zustand verändert sich, die Gewichte bleiben gleich. Aufgeklappt sieht man mehrere Anwendungen derselben Funktion, keine unabhängigen Kopien der Parameter.",
+    "hiddenBody": "Ein trainierter rekurrenter Kern transformiert seinen aktuellen Hidden State und führt das Ergebnis durch dieselben Gewichte zurück. In diesem Beispiel läuft er zweimal vor der Ausgabe. Ein Standard-Transformer durchläuft dagegen seine unterschiedlichen Schichten einmal pro neuem Token.",
     "formula": "hᵣ₊₁ = Fθ(hᵣ, Eingabe)",
     "hiddenLimit": "Der Zustand ist ein Tensor an Tokenpositionen, kein einzelner gespeicherter Satz. Mehr Schleifen vergrößern weder automatisch seine Kapazität noch verbessern sie zwingend die Antwort. Eingabeanbindung, Caches und Abbruchregeln hängen von der Architektur ab.",
     "motivationTitle": "Speicher und Compute setzen verschiedene Grenzen",
@@ -115,11 +70,41 @@ export const de: Dictionary = {
         }
     ],
     "visibilityTitle": "Schwerer zu überwachen heißt nicht uninterpretierbar",
-    "visibilityBody": "Ein Textmonitor kann ein nie dekodiertes Zustandsupdate nicht lesen. Die Analyse eines rekurrenten Modells muss zudem die Schleifenposition berücksichtigen. Ein ausgelesenes Token beweist noch nicht den internen Algorithmus. Huginn-Untersuchungen zeigen vom Ausleseverfahren abhängige Ergebnisse; LOTUS zeigt, dass gezieltes Training latente Schritte lesbarer machen kann.",
-    "astraTitle": "Die Einordnung von Astra",
-    "astraBody": "Die Astra System Card vom 3. September 2026 berichtet geringere CoT-Monitorbarkeit gegenüber GPT-5.6 Sol. Sie dokumentiert keine Loop-Transformer-Architektur und belegt Rekurrenz nicht als Ursache. Diese Lektion erklärt das allgemeine Forschungsprinzip, keinen bestätigten Bauplan von Astra.",
+    "visibilityBody": "Bei Zugriff auf das Modellinnere lassen sich latente Zustände weiterhin mit Aktivierungsproben und kausalen Eingriffen untersuchen. Huginn-Studien zeigen vom Ausleseverfahren abhängige Ergebnisse; LOTUS zeigt, dass gezieltes Training latente Schritte lesbarer machen kann. Wiederholte Transformation macht die Analyse anspruchsvoller, nicht grundsätzlich unmöglich.",
+    "astraTitle": "Durch Astra im Rampenlicht",
+    "astraBody": "Die Astra System Card berichtet geringere CoT-Monitorbarkeit, dokumentiert aber keine Loop-Transformer-Architektur und belegt Rekurrenz nicht als Ursache. Diese Grafik erklärt das allgemeine Forschungsprinzip.",
     "sourcesTitle": "Quellen und weiterführende Literatur",
-    "relatedTitle": "Weiterlernen"
+    "relatedTitle": "Weiterlernen",
+    "smallCaption": "2 Durchläufe · dieselben Gewichte θ",
+    "largeCaption": "1 Durchlauf · eigene Gewichte je Schicht",
+    "tokenLabel": "Token-Repräsentation",
+    "play": "Tokenfluss abspielen",
+    "pause": "Pause",
+    "replay": "Erneut abspielen",
+    "progress": "Tokenfluss",
+    "ready": "Bereit",
+    "done": "Nächstes Token dekodiert",
+    "flowStatus": "Fortschritt des Tokenflusses",
+    "loopPass": "Kern-Durchläufe abgeschlossen",
+    "largePass": "Stapel-Durchläufe abgeschlossen",
+    "cotTitle": "Latente Updates oder eine wachsende Chain of Thought",
+    "cotIntro": "Derselbe schematische Ablauf zeigt unten den Unterschied: Rekurrente Tiefe aktualisiert einen begrenzten Zustand vor der Tokenausgabe. Explizite CoT erzeugt zusätzliche Tokens, jeweils mit einem weiteren Modelldurchlauf, und hält sie im Kontext fest.",
+    "latentTitle": "Loop: Arbeitsbereich aktualisieren",
+    "latentNote": "Gleiche Form, neue Werte. Keine neue Textposition für jede interne Schleife.",
+    "cotLaneTitle": "CoT: Textzwischenschritte anhängen",
+    "cotNote": "Jede Kachel steht für eine Phrase aus mehreren Tokens. Der Text bleibt im Kontext; auch die Hidden States verändern sich bei jedem Durchlauf.",
+    "cotSteps": [
+        "17 = 10 + 7",
+        "10 × 6 = 60",
+        "7 × 6 = 42",
+        "60 + 42 = 102",
+        "102 + 8 = 110",
+        "Ergebnis: 110"
+    ],
+    "cotEmpty": "Zwischentext erscheint während der Generierung.",
+    "cotExample": "Beispielrechnung: (17 × 6) + 8. Die latenten Farben sind keine ausgelesenen Rechenschritte.",
+    "monitorExplanation": "Wiederholte Updates können Informationen im latenten Zustand umformen und vermischen, ohne lesbaren Zwischentext zu hinterlassen. Ein Textmonitor sieht diese Updates deshalb nicht. Explizite CoT liefert eine zusätzliche Spur, aber keine vollständige oder garantiert getreue Erklärung. Aktivierungsanalysen müssen Schicht und Schleifenposition berücksichtigen.",
+    "astraNews": "Astra-Berichte rückten Looped Transformers ins Rampenlicht."
 },
 
   // Common UI

@@ -13,6 +13,7 @@ const SOURCES = [
   { title: 'Depth-Recurrent Attention Mixtures', url: 'https://arxiv.org/abs/2601.21582' },
   { title: 'NVIDIA GPU Performance Background', url: 'https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html' },
   { title: 'GPT-6 Astra System Card', url: 'https://deploymentsafety.openai.com/gpt-6-astra' },
+  { title: 'The Information', url: 'https://www.theinformation.com/articles/secret-technique-behind-openais-astra-model-sparks-security-concerns' },
 ]
 
 export default function LoopedTransformersPage() {
@@ -63,6 +64,7 @@ export default function LoopedTransformersPage() {
 
       <section className="rounded-2xl border border-border bg-surface/50 p-6">
         <h2 className="font-heading text-xl font-bold text-text">{c.astraTitle}</h2>
+        <p className="mt-3 text-sm text-text">{c.astraNews} <a href={SOURCES[6].url} target="_blank" rel="noopener noreferrer" className="text-primary-light hover:underline">{SOURCES[6].title}</a></p>
         <p className="mt-3 text-sm leading-relaxed text-muted">{c.astraBody}</p>
         <a href={SOURCES[5].url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs text-primary-light hover:underline">{SOURCES[5].title}<ExternalLink size={13} aria-hidden="true" /></a>
       </section>
