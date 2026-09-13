@@ -210,6 +210,7 @@ export default function MemoryPage() {
           </ul>
         </div>
       </section>
+<section className="rounded-xl border border-border p-5"><h2 className="text-xl font-semibold mb-3">{t.agentReview.retentionTitle}</h2><p className="text-sm text-muted leading-relaxed">{t.agentReview.retentionBody}</p></section>
     </TopicLayout>
   )
 }

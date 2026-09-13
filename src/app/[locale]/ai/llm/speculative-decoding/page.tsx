@@ -5,7 +5,7 @@ import { SpeculativeDecodingVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function SpeculativeDecodingPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   return (
     <TopicLayout topicId="speculative-decoding"
@@ -85,36 +85,6 @@ export default function SpeculativeDecodingPage() {
               <h4 className="font-semibold text-text mb-1">{t.speculativeDecoding.step4Title}</h4>
               <p className="text-sm text-muted">{t.speculativeDecoding.step4Desc}</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Visual Example */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.speculativeDecoding.visualExample}</h2>
-        <p className="text-muted leading-relaxed mb-4">{t.speculativeDecoding.visualExampleDesc}</p>
-        <div className="p-4 bg-background rounded-xl border border-border font-mono text-sm space-y-4">
-          <div>
-            <div className="text-muted mb-2">{t.speculativeDecoding.examplePrompt}</div>
-            <div className="text-text">"The quick brown fox"</div>
-          </div>
-          <div className="border-t border-border pt-4">
-            <div className="text-purple-400 mb-2">{t.speculativeDecoding.exampleDraft}</div>
-            <div className="text-muted">{t.speculativeDecoding.exampleDraftTokens}</div>
-          </div>
-          <div className="border-t border-border pt-4">
-            <div className="text-cyan-400 mb-2">{t.speculativeDecoding.exampleVerify}</div>
-            <div className="space-y-1">
-              <div><span className="text-emerald-400">✓</span> <span className="text-muted">"jumps" - {t.speculativeDecoding.accepted}</span></div>
-              <div><span className="text-emerald-400">✓</span> <span className="text-muted">"over" - {t.speculativeDecoding.accepted}</span></div>
-              <div><span className="text-emerald-400">✓</span> <span className="text-muted">"the" - {t.speculativeDecoding.accepted}</span></div>
-              <div><span className="text-red-400">✗</span> <span className="text-muted">"lazy" → "sleeping" - {t.speculativeDecoding.rejected}</span></div>
-            </div>
-          </div>
-          <div className="border-t border-border pt-4">
-            <div className="text-emerald-400 mb-2">{t.speculativeDecoding.exampleResult}</div>
-            <div className="text-text">"The quick brown fox jumps over the sleeping"</div>
-            <div className="text-muted text-xs mt-2">{t.speculativeDecoding.exampleSavings}</div>
           </div>
         </div>
       </section>
@@ -245,6 +215,7 @@ export default function SpeculativeDecodingPage() {
           </ul>
         </div>
       </section>
+<section><h2 className="mb-3 text-xl font-semibold">{locale === 'de' ? 'Primärquellen' : 'Primary sources'}</h2><ul className="space-y-2"><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/2211.17192">Speculative Decoding</a></li><li><a className="text-cyan-300 underline" href="https://huggingface.co/blog/universal_assisted_generation">Universal Assisted Generation</a></li></ul></section>
     </TopicLayout>
   )
 }

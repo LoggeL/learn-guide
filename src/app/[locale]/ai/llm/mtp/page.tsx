@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
 import type { Dictionary } from '@/lib/i18n/dictionaries/en'
@@ -101,52 +102,22 @@ function TokenBlock({ label, input, output, active = false }: { label: string; i
 }
 
 function MtpLossDemo({ copy }: { copy: MtpCopy }) {
-  const offsets = [
-    { label: 't+1', weight: '1.00', width: '100%', tone: 'bg-primary' },
-    { label: 't+2', weight: '0.50', width: '62%', tone: 'bg-cyan-400' },
-    { label: 't+3', weight: '0.25', width: '38%', tone: 'bg-purple-400' },
-  ]
-
-  return (
-    <section className="rounded-2xl border border-border bg-surface/50 p-6 md:p-8">
-      <div className="mb-6 flex items-start gap-4">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary-light">
-          <Route size={24} />
-        </div>
-        <div>
-          <h2 className="font-heading text-2xl font-bold text-gradient">{copy.demoTitle}</h2>
-          <p className="mt-2 leading-relaxed text-muted">{copy.demoDesc}</p>
-        </div>
-      </div>
-      <div className="grid gap-4 lg:grid-cols-[1fr_1.1fr]">
-        <div className="rounded-xl border border-border bg-background p-5">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-muted">{copy.demoPrefix}</p>
-          <div className="flex flex-wrap gap-2 font-mono text-sm">
-            {['The', 'model', 'learns', 'to'].map((token) => (
-              <span key={token} className="rounded-lg border border-border bg-surface px-3 py-2 text-text">{token}</span>
-            ))}
-            <span className="rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-primary-light">?</span>
-            <span className="rounded-lg border border-dashed border-cyan-400/40 bg-cyan-500/5 px-3 py-2 text-cyan-300">?</span>
-            <span className="rounded-lg border border-dashed border-purple-400/40 bg-purple-500/5 px-3 py-2 text-purple-300">?</span>
-          </div>
-        </div>
-        <div className="rounded-xl border border-border bg-background p-5">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-muted">{copy.demoLoss}</p>
-          <div className="space-y-3">
-            {offsets.map((item) => (
-              <div key={item.label} className="grid grid-cols-[3.5rem_1fr_3.5rem] items-center gap-3 text-sm">
-                <span className="font-mono text-text">{item.label}</span>
-                <div className="h-3 overflow-hidden rounded-full bg-border">
-                  <div className={`h-full rounded-full ${item.tone}`} style={{ width: item.width }} />
-                </div>
-                <span className="font-mono text-muted">×{item.weight}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-  )
+  const { locale } = useTranslation()
+  const de = locale === 'de'
+  const [probabilities, setProbabilities] = useState([0.7, 0.4, 0.2])
+  const [weighted, setWeighted] = useState(false)
+  const weights = weighted ? [1, 0.5, 0.25] : [1, 1, 1]
+  const contributions = probabilities.map((p, i) => -Math.log(p) * weights[i])
+  const total = contributions.reduce((sum, value) => sum + value, 0)
+  return <section className="space-y-5 rounded-2xl border border-border bg-surface p-6">
+    <h2 className="text-xl font-semibold">{copy.demoTitle}</h2><p className="text-sm text-muted">{copy.demoDesc}</p>
+    <p className="text-sm text-muted">{de ? 'Spielmodell: Die Regler setzen die Wahrscheinlichkeit des richtigen Tokens an drei zukünftigen Positionen. Berechnet wird die Summe ihrer gewichteten Cross-Entropy-Terme in Nats. Kein Sprachmodell wird ausgeführt.' : 'Toy model: the sliders set the probability of the correct token at three future positions. We calculate the sum of their weighted cross-entropy terms in nats. No language model is run.'}</p>
+    <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={weighted} onChange={e => setWeighted(e.target.checked)} />{de ? 'Alternative Beispielgewichte 1 / 0,5 / 0,25 verwenden' : 'Use alternative example weights 1 / 0.5 / 0.25'}</label>
+    {probabilities.map((p, i) => <div key={i} className="rounded-lg border border-border p-4"><label className="block text-sm">t+{i + 1}: p = {p.toFixed(2)}, λ = {weights[i]}<input type="range" className="mt-2 w-full" min={0.01} max={1} step={0.01} value={p} onChange={e => setProbabilities(previous => previous.map((v, j) => i === j ? Number(e.target.value) : v))} /></label><p className="mt-2 font-mono text-sm">−λ log(p) = {contributions[i].toFixed(3)}</p><div className="mt-2 h-2 rounded bg-background"><div className="h-full rounded bg-cyan-400" style={{ width: `${contributions[i] / Math.log(100) * 100}%` }} /></div></div>)}
+    <p aria-live="polite" className="font-mono text-lg text-cyan-300">L = {total.toFixed(3)} nats</p>
+    <p className="text-sm text-muted">{de ? 'Balkenskala: 0 bis −log(0,01), für alle Positionen gleich. Das MTP-Paper von Gloeckle et al. summiert die Kopfverluste gleichgewichtet. Andere Architekturen wie DeepSeek-V3 verwenden eigene MTP-Module und Lossgewichte.' : 'Bar scale: 0 to −log(0.01), shared across positions. Gloeckle et al. sum head losses with equal weights. Other architectures such as DeepSeek-V3 use their own MTP modules and loss weights.'}</p>
+    <div className="flex flex-wrap gap-4 text-sm text-cyan-300"><a href="https://arxiv.org/html/2404.19737v1" className="underline">Gloeckle et al. (2024)</a><a href="https://arxiv.org/abs/2412.19437" className="underline">DeepSeek-V3</a></div>
+  </section>
 }
 
 function ComparisonBox({ copy }: { copy: MtpCopy }) {

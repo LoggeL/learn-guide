@@ -218,17 +218,13 @@ export default function AgentSkillsPage() {
 {`---
 name: code-reviewer
 description: ${t.agentSkills.exampleDesc}
-triggers:
-  - "review this code"
-  - "check for bugs"
-  - "code review"
 ---
 
-# Code Reviewer Skill
+# ${t.agentSkills.exampleTitle}
 
 ${t.agentSkills.exampleInstructions}
 
-## Checklist
+## ${t.agentReview.test}
 - [ ] ${t.agentSkills.exampleCheck1}
 - [ ] ${t.agentSkills.exampleCheck2}
 - [ ] ${t.agentSkills.exampleCheck3}
@@ -276,6 +272,7 @@ ${t.agentSkills.exampleInstructions}
           </ul>
         </div>
       </section>
+<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://agentskills.io/specification">Agent Skills specification</a></li><li><a className="text-primary-light underline" href="https://agentskills.io/client-implementation/adding-skills-support">Skill selection and progressive loading</a></li></ul></section>
     </TopicLayout>
   )
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { List } from 'lucide-react'
+import { useLocale } from '@/lib/i18n/context'
 
 interface TocEntry {
   id: string
@@ -23,6 +24,8 @@ function slugify(text: string): string {
 }
 
 export function RightTableOfContents({ articleRef, variant }: RightTableOfContentsProps) {
+  const { locale } = useLocale()
+  const label = locale === 'de' ? 'Auf dieser Seite' : 'On this page'
   const [entries, setEntries] = useState<TocEntry[]>([])
   const [activeId, setActiveId] = useState<string>('')
   const observerRef = useRef<IntersectionObserver | null>(null)
@@ -105,7 +108,7 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
   if (variant === 'mobile') {
     return (
       <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 py-2 mb-8 bg-background/90 backdrop-blur-sm border-b border-border/50">
-        <nav aria-label="Table of contents" className="overflow-x-auto scrollbar-none">
+        <nav aria-label={label} className="overflow-x-auto scrollbar-none">
           <ul className="flex gap-1.5 w-max">
             {entries.map(({ id, text }) => {
               const isActive = activeId === id
@@ -136,13 +139,13 @@ export function RightTableOfContents({ articleRef, variant }: RightTableOfConten
   }
 
   return (
-    <aside data-right-toc className="hidden xl:col-start-2 xl:block xl:self-stretch">
+    <aside data-right-toc className="topic-toc min-w-0 self-stretch">
       <div className="sticky top-24 max-h-[calc(100vh-7rem)] w-full overflow-y-auto rounded-2xl border border-border/80 bg-background/55 p-4 pr-3 shadow-card backdrop-blur-xl">
         <div className="mb-3 flex items-center gap-2 px-1">
           <List size={13} className="text-primary-light shrink-0" />
-          <span className="text-xs font-semibold text-gradient uppercase tracking-widest">On this page</span>
+          <span className="text-xs font-semibold text-gradient uppercase tracking-widest">{label}</span>
         </div>
-        <nav aria-label="Table of contents">
+        <nav aria-label={label}>
           <ul className="flex flex-col gap-0.5">
             {entries.map(({ id, text }) => (
               <li key={id}>

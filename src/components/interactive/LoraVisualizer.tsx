@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
 
 // ── Types ─────────────────────────────────────────────────────────────
 interface LoraVisualizerProps {
@@ -163,311 +164,47 @@ function MatrixSection({ t }: { t: Record<string, string> }) {
   )
 }
 
-// ── 2. Memory Comparison ──────────────────────────────────────────────
-interface ModelConfig {
-  name: string
-  params: string
-  fullVram: number
-  fullStorage: number
-  hiddenDim: number
-  targetLayers: number
-  baseVramQ4: number // 4-bit quantized base model VRAM
-}
-
-const MODELS: ModelConfig[] = [
-  { name: '7B', params: '7B', fullVram: 28, fullStorage: 28, hiddenDim: 4096, targetLayers: 64, baseVramQ4: 4.5 },
-  { name: '13B', params: '13B', fullVram: 52, fullStorage: 52, hiddenDim: 5120, targetLayers: 80, baseVramQ4: 8 },
-  { name: '70B', params: '70B', fullVram: 280, fullStorage: 280, hiddenDim: 8192, targetLayers: 160, baseVramQ4: 38 },
-]
-
-const MEMORY_RANKS = [4, 8, 16, 32, 64, 128]
-
-function computeLoraStats(model: ModelConfig, rank: number) {
-  // Adapter storage: 2 matrices × hidden_dim × rank × target_layers × 2 bytes (fp16)
-  const adapterBytes = 2 * model.hiddenDim * rank * model.targetLayers * 2
-  const adapterGB = adapterBytes / 1e9
-
-  // VRAM: base (4-bit) + LoRA params (fp16) + optimizer states (8 bytes per param for AdamW) + activation overhead
-  const loraParams = 2 * model.hiddenDim * rank * model.targetLayers
-  const loraParamsGB = (loraParams * 2) / 1e9 // fp16
-  const optimizerGB = (loraParams * 8) / 1e9 // AdamW states
-  const activationOverhead = 1.5 + rank * 0.02 // rough estimate, scales slightly with rank
-  const loraVram = model.baseVramQ4 + loraParamsGB + optimizerGB + activationOverhead
-
-  return { adapterGB, loraVram: Math.round(loraVram * 10) / 10 }
-}
-
 function MemorySection({ t }: { t: Record<string, string> }) {
-  const [modelIdx, setModelIdx] = useState(0)
-  const [rankIdx, setRankIdx] = useState(1) // default r=8
-  const model = MODELS[modelIdx]
-  const rank = MEMORY_RANKS[rankIdx]
-  const { adapterGB, loraVram } = computeLoraStats(model, rank)
-  const maxVram = 300
-
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-xl font-bold font-heading text-gradient mb-2">{t.memoryTitle}</h3>
-        <p className="text-muted text-sm max-w-2xl mx-auto">{t.memoryDesc}</p>
-      </div>
-
-      {/* Model selector */}
-      <div className="flex justify-center gap-3">
-        {MODELS.map((m, i) => (
-          <button
-            key={m.name}
-            onClick={() => setModelIdx(i)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-              i === modelIdx
-                ? 'bg-cyan-500/20 border border-cyan-500/50 text-cyan-400'
-                : 'bg-surface border border-border text-muted hover:text-text'
-            }`}
-          >
-            {m.name}
-          </button>
-        ))}
-      </div>
-
-      {/* Rank slider */}
-      <div className="flex flex-col items-center gap-2">
-        <label className="text-sm text-muted font-medium">
-          {t.rankLabel}: <span className="font-bold text-cyan-400">r = {rank}</span>
-        </label>
-        <input
-          type="range" min={0} max={MEMORY_RANKS.length - 1} value={rankIdx}
-          onChange={e => setRankIdx(Number(e.target.value))}
-          className="w-full max-w-md accent-cyan-400"
-        />
-        <div className="flex justify-between w-full max-w-md text-xs text-muted">
-          <span>r=4</span><span>r=128</span>
-        </div>
-        <p className="text-xs text-muted">{t.rankAffectsMemory}</p>
-      </div>
-
-      {/* VRAM comparison */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
-          <div className="text-sm text-muted mb-1">{t.fullFineTune}</div>
-          <div className="text-3xl font-bold font-mono text-purple-400">
-            {model.fullVram} GB
-          </div>
-          <div className="mt-3 h-4 rounded-full bg-surface overflow-hidden border border-border">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-purple-500 to-purple-600"
-              initial={false}
-              animate={{ width: `${(model.fullVram / maxVram) * 100}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <div className="text-xs text-muted mt-2">{t.vramNeeded}</div>
-        </div>
-
-        <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
-          <div className="text-sm text-muted mb-1">{t.loraFineTune}</div>
-          <motion.div
-            key={`${modelIdx}-${rank}`}
-            className="text-3xl font-bold font-mono text-cyan-400"
-            initial={{ scale: 1.2 }}
-            animate={{ scale: 1 }}
-          >
-            {loraVram} GB
-          </motion.div>
-          <div className="mt-3 h-4 rounded-full bg-surface overflow-hidden border border-border">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
-              initial={false}
-              animate={{ width: `${(loraVram / maxVram) * 100}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <div className="text-xs text-muted mt-2">{t.vramNeeded}</div>
-        </div>
-      </div>
-
-      {/* Storage comparison */}
-      <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-        <div className="text-sm text-muted mb-3">{t.adapterStorage}</div>
-        <div className="flex items-center gap-4">
-          <div className="flex-1">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-purple-400">{t.fullModel}</span>
-              <span className="text-purple-400 font-mono">{model.fullStorage} GB</span>
-            </div>
-            <div className="h-6 rounded-full bg-surface overflow-hidden border border-border">
-              <motion.div
-                className="h-full rounded-full bg-purple-500/40"
-                initial={false}
-                animate={{ width: '100%' }}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 mt-3">
-          <div className="flex-1">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-emerald-400">{t.loraAdapter}</span>
-              <span className="text-emerald-400 font-mono">{adapterGB < 0.01 ? adapterGB.toFixed(4) : adapterGB.toFixed(2)} GB</span>
-            </div>
-            <div className="h-6 rounded-full bg-surface overflow-hidden border border-border">
-              <motion.div
-                className="h-full rounded-full bg-emerald-500/40"
-                initial={false}
-                animate={{ width: `${Math.max(0.5, (adapterGB / model.fullStorage) * 100)}%` }}
-                transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-              />
-            </div>
-          </div>
-        </div>
-        <p className="text-xs text-emerald-400 mt-3">{t.storageSavings.replace('{x}', Math.round(model.fullStorage / adapterGB).toLocaleString())}</p>
-      </div>
-
-      {/* Key advantages */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[
-          { icon: '💾', title: t.memoryBenefit, desc: t.memoryBenefitDesc, color: 'cyan' },
-          { icon: '⚡', title: t.speedBenefit, desc: t.speedBenefitDesc, color: 'emerald' },
-          { icon: '🔀', title: t.swapBenefit, desc: t.swapBenefitDesc, color: 'purple' },
-        ].map((item) => (
-          <div key={item.title} className={`p-4 rounded-xl ${accentClasses[item.color].card}`}>
-            <span className="text-2xl">{item.icon}</span>
-            <h4 className={`${accentClasses[item.color].text} font-semibold mt-2 mb-1`}>{item.title}</h4>
-            <p className="text-muted text-xs leading-relaxed">{item.desc}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+  const { locale } = useLocale()
+  const de = locale === 'de'
+  const [rank, setRank] = useState(16)
+  const [bits, setBits] = useState(16)
+  // Explicit example: 7B frozen parameters, 64 square 4096×4096 target matrices.
+  const adapterParams = 64 * rank * (4096 + 4096)
+  const baseGB = 7 * bits / 8
+  const adapterGB = adapterParams * 2 / 1e9
+  const gradientGB = adapterParams * 2 / 1e9
+  const adamGB = adapterParams * 8 / 1e9
+  return <div className="space-y-5">
+    <h3 className="text-xl font-semibold">{de ? 'Parameter und Speicher nachrechnen' : 'Count parameters and storage'}</h3>
+    <p className="text-sm text-muted">{de ? 'Beispielkonfiguration: 7 Milliarden eingefrorene Parameter und 64 Zielmatrizen mit je 4096 × 4096 Einträgen. Adapter und Gradienten sind FP16, zwei Adam-Zustände FP32. Dies ist eine offengelegte Rechenannahme, keine Hardwareempfehlung.' : 'Example configuration: 7 billion frozen parameters and 64 target matrices of 4096 × 4096 entries each. Adapter weights and gradients are FP16; the two Adam states are FP32. These are explicit accounting assumptions, not a hardware recommendation.'}</p>
+    <label className="block text-sm">{t.rankLabel}: {rank}<input type="range" min={1} max={128} value={rank} onChange={e => setRank(Number(e.target.value))} className="mt-2 block w-full" /></label>
+    <label className="block text-sm">{de ? 'Basispräzision' : 'Base precision'}<select className="mt-2 block w-full rounded-lg border border-border bg-background p-2" value={bits} onChange={e => setBits(Number(e.target.value))}><option value={16}>LoRA · FP16</option><option value={4}>QLoRA · 4-bit</option></select></label>
+    <p className="font-mono text-sm">64 × r × (4096 + 4096) = {adapterParams.toLocaleString(locale)}</p>
+    <dl className="grid grid-cols-2 gap-3 text-sm">{[
+      [de ? 'Basisgewichte, roh' : 'Raw base weights', baseGB],
+      [de ? 'Adaptergewichte' : 'Adapter weights', adapterGB],
+      [de ? 'Adaptergradienten' : 'Adapter gradients', gradientGB],
+      [de ? 'Adam-Zustände' : 'Adam states', adamGB],
+    ].map(([name, value]) => <div key={String(name)} className="rounded-lg border border-border p-3"><dt className="text-muted">{String(name)}</dt><dd className="mt-1 font-mono text-cyan-300">{Number(value).toFixed(3)} GB</dd></div>)}</dl>
+    <p className="text-sm text-muted">{de ? 'Dezimale GB. Nicht enthalten: Aktivierungen, temporäre Puffer, Quantisierungsskalen und gegebenenfalls FP32-Mastergewichte. Batchgröße, Kontextlänge, Zielmodule und Optimizer verändern den tatsächlichen Trainingsspeicher. QLoRA quantisiert die eingefrorene Basis; LoRA allein verlangt keine quantisierte Basis.' : 'Decimal GB. Excludes activations, temporary buffers, quantization scales and any FP32 master weights. Batch size, context length, target modules and optimizer change actual training memory. QLoRA quantizes the frozen base; LoRA itself does not require a quantized base.'}</p>
+  </div>
 }
 
-// ── 3. Rank vs Quality ────────────────────────────────────────────────
-function RankQualitySection({ t }: { t: Record<string, string> }) {
-  const [rankIdx, setRankIdx] = useState(3)
-  const ranks = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512]
-  const r = ranks[rankIdx]
-
-  // Simulated reconstruction quality (logarithmic curve)
-  const quality = Math.min(100, 20 * Math.log2(r + 1))
-  const taskAdaptation = Math.min(100, 30 * Math.log2(r + 1)) // saturates faster
-  const generalKnowledge = Math.min(100, 8 * Math.log2(r + 1)) // much lower ceiling with low rank
-
-  const isOverkill = r >= 256
-
-  return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-xl font-bold font-heading text-gradient mb-2">{t.rankQualityTitle}</h3>
-        <p className="text-muted text-sm max-w-2xl mx-auto">{t.rankQualityDesc}</p>
-      </div>
-
-      {/* Slider */}
-      <div className="flex flex-col items-center gap-2">
-        <label className="text-sm text-muted font-medium">
-          {t.rankLabel}: <span className={`font-bold ${isOverkill ? 'text-orange-400' : 'text-cyan-400'}`}>r = {r}</span>
-        </label>
-        <input
-          type="range" min={0} max={ranks.length - 1} value={rankIdx}
-          onChange={e => setRankIdx(Number(e.target.value))}
-          className="w-full max-w-md accent-cyan-400"
-        />
-        <div className="flex justify-between w-full max-w-md text-xs text-muted">
-          <span>r=1</span><span>r=512</span>
-        </div>
-      </div>
-
-      {/* Quality bars */}
-      <div className="space-y-4">
-        <div className="p-5 rounded-xl bg-surface border border-border">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-emerald-400 font-semibold">{t.taskSpecific}</span>
-            <span className="text-emerald-400 font-mono">{taskAdaptation.toFixed(0)}%</span>
-          </div>
-          <div className="h-5 rounded-full bg-surface overflow-hidden border border-border">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"
-              initial={false}
-              animate={{ width: `${taskAdaptation}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <p className="text-xs text-muted mt-1">{t.taskSpecificHint}</p>
-        </div>
-
-        <div className="p-5 rounded-xl bg-surface border border-border">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-purple-400 font-semibold">{t.generalKnowledge}</span>
-            <span className="text-purple-400 font-mono">{generalKnowledge.toFixed(0)}%</span>
-          </div>
-          <div className="h-5 rounded-full bg-surface overflow-hidden border border-border">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
-              initial={false}
-              animate={{ width: `${generalKnowledge}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <p className="text-xs text-muted mt-1">{t.generalKnowledgeHint}</p>
-        </div>
-
-        <div className="p-5 rounded-xl bg-surface border border-border">
-          <div className="flex justify-between text-sm mb-2">
-            <span className="text-cyan-400 font-semibold">{t.reconstructionQuality}</span>
-            <span className="text-cyan-400 font-mono">{quality.toFixed(0)}%</span>
-          </div>
-          <div className="h-5 rounded-full bg-surface overflow-hidden border border-border">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-blue-500"
-              initial={false}
-              animate={{ width: `${quality}%` }}
-              transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-            />
-          </div>
-          <p className="text-xs text-muted mt-1">{t.reconstructionHint}</p>
-        </div>
-      </div>
-
-      {/* Insight box */}
-      <AnimatePresence mode="wait">
-        {isOverkill ? (
-          <motion.div
-            key="overkill"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="p-4 rounded-xl bg-orange-500/10 border border-orange-500/30"
-          >
-            <p className="text-sm text-orange-400">
-              <span className="font-bold">⚠️ {t.overkillTitle}</span> {t.overkillDesc}
-            </p>
-          </motion.div>
-        ) : r <= 4 ? (
-          <motion.div
-            key="lowrank"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/30"
-          >
-            <p className="text-sm text-cyan-400">
-              <span className="font-bold">💡 {t.sweetSpotTitle}</span> {t.lowRankDesc}
-            </p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="sweetspot"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30"
-          >
-            <p className="text-sm text-emerald-400">
-              <span className="font-bold">✅ {t.sweetSpotTitle}</span> {t.sweetSpotDesc}
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
+function RankQualitySection() {
+  const { locale } = useLocale()
+  const de = locale === 'de'
+  const [rank, setRank] = useState(2)
+  const singular = [4, 2, 1, 0.5]
+  const residual = Math.sqrt(singular.slice(rank).reduce((sum, value) => sum + value ** 2, 0))
+  return <div className="space-y-5">
+    <h3 className="text-xl font-semibold">{de ? 'Was ein Ranglimit mathematisch bedeutet' : 'What a rank limit means mathematically'}</h3>
+    <p className="text-sm text-muted">{de ? 'Eine konstruierte Zielmatrix diag(4, 2, 1, 0,5). Die beste Rang-r-Näherung in Frobeniusnorm behält hier die r größten Diagonaleinträge. Wir messen einen Matrixfehler, keine Sprachfähigkeit und keinen Wissenserhalt.' : 'A constructed target matrix diag(4, 2, 1, 0.5). Its best rank-r approximation in Frobenius norm keeps the r largest diagonal entries. We measure a matrix error, not language ability or knowledge retention.'}</p>
+    <label className="block text-sm">r = {rank}<input className="mt-2 block w-full" type="range" min={1} max={4} value={rank} onChange={e => setRank(Number(e.target.value))} /></label>
+    <div className="grid grid-cols-4 gap-2">{singular.map((value, i) => <div key={i} className={`rounded-lg border p-3 text-center font-mono ${i < rank ? 'border-cyan-500/40 text-cyan-300' : 'border-border text-muted'}`}>{value} → {i < rank ? value : 0}</div>)}</div>
+    <p className="font-mono text-sm">‖ΔW − B A‖F = √Σᵢ₎ᵣ σᵢ² = {residual.toFixed(3)}</p>
+    <p className="text-sm text-muted">{de ? 'LoRA lernt A und B durch Training; es kennt die optimale Zielmatrix nicht vorher. Ein größerer Rang erlaubt mehr unabhängige Update-Richtungen, garantiert aber keine bessere Evaluation. Daten, Zielmodule und Training müssen mitgeprüft werden.' : 'LoRA learns A and B during training; it does not know an optimal target matrix in advance. Higher rank permits more independent update directions, but does not guarantee better evaluation results. Data, target modules and training must be evaluated too.'}</p>
+  </div>
 }
 
 // ── 4. Variants ───────────────────────────────────────────────────────
@@ -564,7 +301,7 @@ export function LoraVisualizer({ section, t }: LoraVisualizerProps) {
     case 'memory':
       return <MemorySection t={t} />
     case 'rank-quality':
-      return <RankQualitySection t={t} />
+      return <RankQualitySection />
     case 'variants':
       return <VariantsSection t={t} />
     default:

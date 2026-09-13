@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
+import Link from 'next/link'
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { TransformerVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function TransformerArchitecturePage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const [modern, setModern] = useState(true)
 
   const concepts = [
     { title: t.transformerArchitecture.concept1Title, desc: t.transformerArchitecture.concept1Desc, color: 'purple' },
@@ -72,7 +75,7 @@ export default function TransformerArchitecturePage() {
                     {t.transformerArchitecture.bycroftDesc}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <span className="px-2 py-1 text-xs rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/20">3D Interactive</span>
+                    <span className="px-2 py-1 text-xs rounded-full bg-cyan-500/15 text-cyan-300 border border-cyan-500/20">{locale === 'de' ? 'Interaktiv in 3D' : 'Interactive 3D'}</span>
                     <span className="px-2 py-1 text-xs rounded-full bg-purple-500/15 text-purple-300 border border-purple-500/20">{t.transformerArchitecture.bycroftBadgeBy}</span>
                     <span className="px-2 py-1 text-xs rounded-full bg-pink-500/15 text-pink-300 border border-pink-500/20">bbycroft.net/llm</span>
                   </div>
@@ -88,7 +91,13 @@ export default function TransformerArchitecturePage() {
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.transformerArchitecture.layersHeading}</h2>
         <p className="text-muted mb-6">{t.transformerArchitecture.layersIntro}</p>
         <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <TransformerVisualizer section="layers" t={t.transformerArchitecture as unknown as Record<string, string>} />
+          <div className="mb-5 flex flex-wrap gap-2"><button type="button" aria-pressed={modern} onClick={() => setModern(true)} className={`rounded-lg border px-4 py-2 text-sm ${modern ? 'border-cyan-400 text-cyan-200' : 'border-border'}`}>{locale === 'de' ? 'Decoder mit Pre-Norm' : 'Pre-Norm decoder'}</button><button type="button" aria-pressed={!modern} onClick={() => setModern(false)} className={`rounded-lg border px-4 py-2 text-sm ${!modern ? 'border-cyan-400 text-cyan-200' : 'border-border'}`}>2017 · Post-Norm</button></div>
+          {modern ? <div className="space-y-4">
+            <p className="text-sm leading-relaxed text-muted">{locale === 'de' ? 'Beispiel nach LLaMA (2023): RMSNorm vor Attention und FFN, RoPE in Queries/Keys und ein SwiGLU-FFN. Andere Modelle können andere Blöcke verwenden.' : 'Example following LLaMA (2023): RMSNorm before attention and FFN, RoPE in queries/keys, and a SwiGLU FFN. Other models can use different blocks.'}</p>
+            <div className="space-y-2 font-mono text-sm">{['x = token embeddings', 'a = CausalAttention(RMSNorm(x)); RoPE(Q, K)', 'x₁ = x + a', 'f = SwiGLU(RMSNorm(x₁))', 'x₂ = x₁ + f'].map((line, i) => <div className="rounded-lg border border-border bg-background p-3" key={line}><span className="mr-3 text-cyan-300">{i + 1}</span>{line}</div>)}</div>
+            <p className="text-sm text-muted">{locale === 'de' ? 'Der Block wiederholt sich. Danach folgen finale Normalisierung und LM-Head. Beide Additionen erhalten einen direkten Residualpfad. RoPE wird auf Q und K angewendet, nicht als Positionsvektor pauschal zu x addiert.' : 'Repeat the block, then apply final normalization and the LM head. Both additions preserve a direct residual path. RoPE acts on Q and K, rather than adding a position vector to x.'}</p>
+            <div className="flex flex-wrap gap-4 text-sm text-cyan-300"><a href="https://arxiv.org/abs/2302.13971" className="underline">LLaMA (2023)</a><Link href={`/${locale}/ai/llm/attention`} className="underline">{t.topicNames.attention}</Link><Link href={`/${locale}/ai/llm/residual-stream-layer-norm`} className="underline">{t.topicNames['residual-stream-layer-norm']}</Link></div>
+          </div> : <div className="space-y-4"><p className="text-sm text-muted">{locale === 'de' ? 'Historische Grundstruktur nach dem Transformer-Paper von 2017: additive Positionsinformation und Normalisierung nach der Residualaddition. Ein Decoder benötigt zusätzlich eine kausale Maske; die vollständige Encoder-Decoder-Architektur hat Cross-Attention.' : 'Historical structure from the 2017 Transformer paper: additive position information and normalization after residual addition. A decoder also needs a causal mask; the full encoder-decoder architecture includes cross-attention.'}</p><TransformerVisualizer section="layers" t={t.transformerArchitecture as unknown as Record<string, string>} /></div>}
         </div>
       </section>
 
@@ -115,8 +124,8 @@ export default function TransformerArchitecturePage() {
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.transformerArchitecture.conceptsTitle}</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {concepts.map((c) => (
-            <div key={c.title} className={`p-6 rounded-xl bg-gradient-to-br from-${c.color}-500/10 to-${c.color}-500/5 border border-${c.color}-500/20`}>
-              <h3 className={`text-lg font-bold font-heading text-${c.color}-400 mb-2`}>{c.title}</h3>
+            <div key={c.title} className={`p-6 rounded-xl bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 border border-cyan-500/20`}>
+              <h3 className={`text-lg font-bold font-heading text-cyan-400 mb-2`}>{c.title}</h3>
               <p className="text-sm text-muted leading-relaxed">{c.desc}</p>
             </div>
           ))}

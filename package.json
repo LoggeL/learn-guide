@@ -11,7 +11,8 @@
     "check-hardcoded": "tsx scripts/check-hardcoded-strings.ts",
     "check-topic-metadata": "tsx scripts/check-topic-metadata.ts",
     "check-i18n": "npm run check-translations && npm run check-hardcoded",
-    "check-progress-schema": "tsx scripts/check-progress-schema.ts"
+    "check-progress-schema": "tsx scripts/check-progress-schema.ts",
+    "test:lessons": "tsx scripts/test-lesson-models.ts && tsx scripts/test-agent-demos.ts && tsx scripts/check-llm-learning-math.ts && tsx scripts/check-inference-demos.ts && npm run check-progress-schema"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",

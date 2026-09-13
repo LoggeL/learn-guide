@@ -1,290 +1,36 @@
 'use client'
 
+import Link from 'next/link'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { MoEVisualizer } from '@/components/interactive/MoEVisualizer'
 import { useTranslation } from '@/lib/i18n/context'
-import { MoEVisualizer } from '@/components/interactive'
 
-export default function MoEPage() {
-  const { t } = useTranslation()
-
-  const experts = [
-    { num: 1, title: t.moe.expert1Title, desc: t.moe.expert1Desc, color: 'purple' },
-    { num: 2, title: t.moe.expert2Title, desc: t.moe.expert2Desc, color: 'cyan' },
-    { num: 3, title: t.moe.expert3Title, desc: t.moe.expert3Desc, color: 'emerald' },
-  ]
-
-  const advantages = [
-    { num: 1, title: t.moe.advantage1Title, desc: t.moe.advantage1Desc, color: 'purple' },
-    { num: 2, title: t.moe.advantage2Title, desc: t.moe.advantage2Desc, color: 'cyan' },
-    { num: 3, title: t.moe.advantage3Title, desc: t.moe.advantage3Desc, color: 'emerald' },
-    { num: 4, title: t.moe.advantage4Title, desc: t.moe.advantage4Desc, color: 'orange' },
-  ]
-
-  const challenges = [
-    { title: t.moe.challenge1Title, desc: t.moe.challenge1Desc },
-    { title: t.moe.challenge2Title, desc: t.moe.challenge2Desc },
-    { title: t.moe.challenge3Title, desc: t.moe.challenge3Desc },
-  ]
-
-  return (
-    <TopicLayout topicId="moe"
-      title={t.moe.title}
-      description={t.moe.description}
-      breadcrumbs={[
-        { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/ai/llm' },
-        { label: t.moe.title },
-      ]}
-      prevTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
-      nextTopic={{ label: t.topicNames['quantization'], href: '/ai/llm/quantization' }}
-    >
-      {/* Introduction */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.whatIs}</h2>
-        <div className="prose prose-invert max-w-none">
-          <p className="text-muted leading-relaxed text-lg">
-            <span className="text-primary-light font-semibold">Mixture of Experts (MoE)</span> {t.moe.whatIsDesc}
-          </p>
-          <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
-            <p className="text-lg text-text italic font-heading">
-              {t.moe.brainAnalogy}
-            </p>
-            <p className="text-sm text-muted mt-2">
-              {t.moe.brainAnalogyDesc}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.howItWorks}</h2>
-        <div className="space-y-4">
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">1</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.moe.step1Title}</h3>
-                <p className="text-muted">{t.moe.step1Desc}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">2</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.moe.step2Title}</h3>
-                <p className="text-muted">{t.moe.step2Desc}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">3</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.moe.step3Title}</h3>
-                <p className="text-muted">{t.moe.step3Desc}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Visualizer */}
-      <section>
-        <MoEVisualizer />
-      </section>
-
-      {/* Router/Gating Network */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <span className="text-lg">🎯</span>
-            </div>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.moe.routerTitle}</h2>
-            <p className="text-sm text-muted">{t.moe.routerSubtitle}</p>
-          </div>
-        </div>
-        <div className="p-6 rounded-xl bg-surface/50 border border-border">
-          <p className="text-muted leading-relaxed mb-6">{t.moe.routerDesc}</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
-              <h4 className="font-semibold text-purple-400 mb-2">{t.moe.topKRouting}</h4>
-              <p className="text-sm text-muted">{t.moe.topKRoutingDesc}</p>
-            </div>
-            <div className="p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-              <h4 className="font-semibold text-cyan-400 mb-2">{t.moe.loadBalancing}</h4>
-              <p className="text-sm text-muted">{t.moe.loadBalancingDesc}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Expert Specialization */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.expertSpecialization}</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          {experts.map((expert) => (
-            <div key={expert.num} className={`p-6 rounded-xl bg-gradient-to-br from-${expert.color}-500/10 to-${expert.color}-500/5 border border-${expert.color}-500/20`}>
-              <div className={`w-12 h-12 rounded-xl bg-${expert.color}-500/20 flex items-center justify-center mb-4`}>
-                <span className={`text-2xl font-bold text-${expert.color}-400`}>{expert.num}</span>
-              </div>
-              <h3 className={`text-lg font-bold font-heading text-${expert.color}-400 mb-2`}>{expert.title}</h3>
-              <p className="text-sm text-muted">{expert.desc}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 p-5 rounded-xl bg-surface border border-border">
-          <p className="text-muted text-center">{t.moe.expertNote}</p>
-        </div>
-      </section>
-
-      {/* Scale Examples */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.scaleTitle}</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left py-3 px-4 text-muted font-medium">{t.moe.modelColumn}</th>
-                <th className="text-left py-3 px-4 text-muted font-medium">{t.moe.totalParams}</th>
-                <th className="text-left py-3 px-4 text-muted font-medium">{t.moe.activeParams}</th>
-                <th className="text-left py-3 px-4 text-muted font-medium">{t.moe.expertsColumn}</th>
-              </tr>
-            </thead>
-            <tbody className="text-text">
-              <tr className="border-b border-border/50">
-                <td className="py-3 px-4 font-medium">Mixtral 8x7B</td>
-                <td className="py-3 px-4">46.7B</td>
-                <td className="py-3 px-4 text-emerald-400">12.9B</td>
-                <td className="py-3 px-4">8 (top-2)</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-3 px-4 font-medium">DeepSeek-V3</td>
-                <td className="py-3 px-4">671B</td>
-                <td className="py-3 px-4 text-emerald-400">37B</td>
-                <td className="py-3 px-4">256 (top-8)</td>
-              </tr>
-              <tr className="border-b border-border/50">
-                <td className="py-3 px-4 font-medium">Qwen3-235B</td>
-                <td className="py-3 px-4">235B</td>
-                <td className="py-3 px-4 text-emerald-400">22B</td>
-                <td className="py-3 px-4">128 (top-8)</td>
-              </tr>
-              <tr>
-                <td className="py-3 px-4 font-medium">Kimi K2</td>
-                <td className="py-3 px-4">1T</td>
-                <td className="py-3 px-4 text-emerald-400">32B</td>
-                <td className="py-3 px-4">{t.moe.largePool}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p className="text-sm text-muted mt-4 text-center">{t.moe.scaleNote}</p>
-      </section>
-
-      {/* Advantages */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.advantagesTitle}</h2>
-        <div className="space-y-4">
-          {advantages.map((item) => (
-            <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
-              <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/20 flex items-center justify-center shrink-0`}>
-                <span className={`text-xl font-bold text-${item.color}-400`}>{item.num}</span>
-              </div>
-              <div>
-                <h3 className="text-text font-semibold font-heading mb-1">{item.title}</h3>
-                <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Challenges */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.challengesTitle}</h2>
-        <div className="space-y-4">
-          {challenges.map((challenge, i) => (
-            <div key={i} className="p-5 rounded-xl bg-orange-500/5 border border-orange-500/20">
-              <h3 className="text-orange-400 font-semibold font-heading mb-2">{challenge.title}</h3>
-              <p className="text-muted text-sm leading-relaxed">{challenge.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Dense vs Sparse Comparison */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.comparisonTitle}</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <h3 className="text-lg font-bold text-text mb-4">{t.moe.denseModel}</h3>
-            <ul className="space-y-3 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.moe.dense1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.moe.dense2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.moe.dense3}</span>
-              </li>
-            </ul>
-          </div>
-          <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20">
-            <h3 className="text-lg font-bold text-primary-light mb-4">{t.moe.sparseModel}</h3>
-            <ul className="space-y-3 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.moe.sparse1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.moe.sparse2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.moe.sparse3}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Key Takeaways */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.moe.keyTakeaways}</h2>
-        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
-          <ul className="space-y-4 text-text">
-            {[
-              t.moe.takeaway1,
-              t.moe.takeaway2,
-              t.moe.takeaway3,
-              t.moe.takeaway4,
-            ].map((item, i) => (
-              <li key={i} className="flex gap-3 items-start">
-                <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-primary-light text-sm font-bold">{i + 1}</span>
-                </span>
-                <span className="leading-relaxed">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    </TopicLayout>
-  )
+const copy = {
+  en: {
+    title: 'Mixture of Experts', description: 'Learned routing among multiple feed-forward networks: what is active per token, what must be stored, and where the costs move.',
+    intro: 'A sparse MoE layer replaces one dense feed-forward block with several expert blocks and a router. The router consumes the current token representation at that layer and selects a subset of experts. Their weighted outputs return an update to the residual stream. Routing can change at the next layer or position; it does not choose a whole model for the entire prompt.',
+    routing: 'Routing and specialization', routingBody: 'Top-k selection keeps only a few experts active for each token. A router can be trained with auxiliary balancing losses or other strategies, such as bias-based balancing in DeepSeek-V3. Experts may develop patterns of specialization, but they are not reliably labelled code, facts or grammar modules. Inspect measured routing before making such claims.',
+    memory: 'Available weights are not the same as GPU-resident weights', memoryBody: 'All experts must be available somewhere. They do not all have to reside in GPU memory: implementations can keep some expert weights on the CPU or move data between devices. Full GPU residency can avoid transfers, while offloading trades memory placement against bandwidth and latency. Active parameters alone therefore do not determine either total memory or end-to-end speed.',
+    compute: 'Top-k does not make every cost constant', computeBody: 'With fixed expert size and k, the selected expert arithmetic can stay similar as the number of experts grows. Router work, weight storage, device communication and load imbalance can still grow. Batch size and token distribution matter because different tokens can activate different experts.',
+    example: 'A concrete reference: Mixtral 8x7B', exampleBody: 'The Mixtral paper (2024) describes eight feed-forward experts per layer, with two selected per token. It reports 46.7B total parameters and 12.9B active parameters per token. These are properties of that architecture, not a general formula for every model with eight experts.',
+    sources: 'Primary sources', ffn: 'Review the dense feed-forward calculation →',
+  },
+  de: {
+    title: 'Mixture of Experts', description: 'Gelerntes Routing zwischen mehreren Feed-Forward-Netzen: Welche Parameter aktiv sind, welche gespeichert werden müssen und wo Aufwand entsteht.',
+    intro: 'Ein sparsamer MoE-Layer ersetzt einen dichten Feed-Forward-Block durch mehrere Expertenblöcke und einen Router. Der Router verarbeitet die aktuelle Token-Repräsentation dieses Layers und wählt eine Teilmenge aus. Ihre gewichteten Ausgaben liefern ein Update für den Residual Stream. Routing kann sich am nächsten Layer oder an der nächsten Position ändern; es wählt kein vollständiges Modell für den gesamten Prompt.',
+    routing: 'Routing und Spezialisierung', routingBody: 'Top-k aktiviert pro Token nur wenige Experten. Ein Router kann mit zusätzlichen Balancing-Losses oder anderen Strategien trainiert werden, etwa dem biasbasierten Balancing von DeepSeek-V3. Experten können Spezialisierungsmuster entwickeln, sind aber keine zuverlässig beschrifteten Code-, Fakten- oder Grammatikmodule. Solche Zuordnungen brauchen gemessenes Routing.',
+    memory: 'Verfügbare Gewichte sind nicht gleich GPU-residente Gewichte', memoryBody: 'Alle Experten müssen irgendwo verfügbar sein. Sie müssen nicht vollständig im GPU-Speicher liegen: Implementierungen können Gewichte auf der CPU halten oder Daten zwischen Geräten bewegen. Vollständige GPU-Residenz kann Transfers vermeiden. Offloading tauscht Speicherplatzierung gegen Bandbreite und Latenz. Aktive Parameter allein bestimmen daher weder Gesamtspeicher noch End-to-End-Geschwindigkeit.',
+    compute: 'Top-k hält nicht jeden Aufwand konstant', computeBody: 'Bei gleicher Expertengröße und gleichem k kann die ausgewählte Expertenrechnung ähnlich bleiben, wenn die Expertenzahl wächst. Routerarbeit, Gewichtsspeicher, Gerätekommunikation und ungleiche Auslastung können trotzdem zunehmen. Batchgröße und Token-Verteilung zählen mit, weil unterschiedliche Tokens verschiedene Experten aktivieren können.',
+    example: 'Eine konkrete Referenz: Mixtral 8x7B', exampleBody: 'Das Mixtral-Paper (2024) beschreibt acht Feed-Forward-Experten pro Layer, von denen pro Token zwei ausgewählt werden. Es nennt 46,7B Gesamtparameter und 12,9B aktive Parameter pro Token. Das sind Eigenschaften dieser Architektur, keine allgemeine Formel für jedes Modell mit acht Experten.',
+    sources: 'Primärquellen', ffn: 'Zur dichten Feed-Forward-Rechnung →',
+  },
+}
+export default function MoePage() {
+  const { t, locale } = useTranslation()
+  const c = copy[locale === 'de' ? 'de' : 'en']
+  return <TopicLayout topicId="moe" title={c.title} description={c.description} breadcrumbs={[{ label: t.categories.ai, href: '/' }, { label: t.categories.llm, href: '/ai/llm' }, { label: c.title }]}>
+    <p className="text-lg leading-relaxed text-muted">{c.intro}</p><MoEVisualizer />
+    {[[c.routing, c.routingBody], [c.memory, c.memoryBody], [c.compute, c.computeBody], [c.example, c.exampleBody]].map(([title, body]) => <section key={title} className="rounded-xl border border-border bg-surface p-6"><h2 className="mb-3 text-xl font-semibold">{title}</h2><p className="leading-relaxed text-muted">{body}</p></section>)}
+    <section><h2 className="mb-3 text-xl font-semibold">{c.sources}</h2><ul className="space-y-2 text-cyan-300">{[['Mixtral', 'https://arxiv.org/abs/2401.04088'], ['DeepSeek-V3', 'https://arxiv.org/abs/2412.19437'], ['llama.cpp CPU-MoE', 'https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md']].map(([name, href]) => <li key={href}><a href={href} className="underline">{name}</a></li>)}</ul><Link href={`/${locale}/ai/llm/feed-forward-networks-moe`} className="mt-4 inline-block text-cyan-300">{c.ffn}</Link></section>
+  </TopicLayout>
 }

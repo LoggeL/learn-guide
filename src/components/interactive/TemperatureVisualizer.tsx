@@ -64,7 +64,7 @@ export function TemperatureVisualizer({ temperature }: TemperatureVisualizerProp
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <span className="w-14 text-sm font-mono font-medium text-text px-2 py-0.5 rounded bg-surface-elevated border border-border">
-                  "{p.token}"
+                  &quot;{p.token}&quot;
                 </span>
               </div>
               <motion.span 

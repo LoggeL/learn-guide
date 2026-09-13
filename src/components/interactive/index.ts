@@ -1,15 +1,11 @@
 export { TokenCounter } from './TokenCounter'
-export { AttentionHeatmap } from './AttentionHeatmap'
-export { DistractorDemo } from './DistractorDemo'
 export { ScaleCalculator } from './ScaleCalculator'
 export { MemoryFadeVisualizer } from './MemoryFadeVisualizer'
-export { ContextRotSimulator } from './ContextRotSimulator'
 export { TemperatureDemo } from './TemperatureDemo'
 export { TemperatureVisualizer } from './TemperatureVisualizer'
 export { AttentionVisualizer } from './AttentionVisualizer'
 export { AgentLoopVisualizer } from './AgentLoopVisualizer'
 export { ContextAnatomyVisualizer } from './ContextAnatomyVisualizer'
-export { AgenticPatternsVisualizer } from './AgenticPatternsVisualizer'
 export { PatchGridVisualizer } from './PatchGridVisualizer'
 
 // Phase 1: LLM components

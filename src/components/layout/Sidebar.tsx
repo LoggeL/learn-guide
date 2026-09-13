@@ -1,6 +1,6 @@
 'use client'
 
-import { type ChangeEvent, useState, useEffect, useMemo, useRef } from 'react'
+import { type ChangeEvent, useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,7 +10,7 @@ import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import { DIFFICULTY_STYLES } from '@/lib/difficulty'
 import { getTopicCategories, flattenTopics, learningPath, learningPathGroups, type LearningPathGroup, type Topic } from '@/lib/topics'
-import { COMPLETED_LEARNING_PATH_STORAGE_KEY, VISITED_PATHS_STORAGE_KEY, createLearningProgressExport, validateLearningProgressExport } from '@/lib/progress/schema'
+import { COMPLETED_LEARNING_PATH_STORAGE_KEY, VISITED_PATHS_STORAGE_KEY, createLearningProgressExport, validateLearningProgressExport, normalizeVisitedPaths } from '@/lib/progress/schema'
 
 const topicTree = getTopicCategories()
 
@@ -127,7 +127,7 @@ function TopicNode({
   const hasChildren = topic.children && topic.children.length > 0
   const localePath = topic.path ? `/${locale}${topic.path}` : undefined
   const isActive = localePath === pathname
-  const isFavourite = topic.id === 'logges-favourite-model'
+  const isFavourite = topic.id === 'tier-list'
 
   // Update expanded state when active path changes (e.g. navigation)
   useEffect(() => {
@@ -363,7 +363,7 @@ export function Sidebar() {
   const [visitedPaths, setVisitedPaths] = useState<Set<string>>(new Set())
   const importInputRef = useRef<HTMLInputElement | null>(null)
 
-  const getTopicName = (key: string): string => {
+  const getTopicName = useCallback((key: string): string => {
     // First check topicNames, then categories
     if (key in t.topicNames) {
       return t.topicNames[key as keyof typeof t.topicNames]
@@ -375,7 +375,7 @@ export function Sidebar() {
       return t.learningPath[key as keyof typeof t.learningPath]
     }
     return key
-  }
+  }, [t])
 
   // Auto-collapse on mobile widths, and restore the previous state when
   // the viewport widens again (only if the collapse was automatic)
@@ -426,7 +426,7 @@ export function Sidebar() {
       const storedPaths = localStorage.getItem(VISITED_PATHS_STORAGE_KEY)
       if (storedPaths) {
         const parsedPaths = JSON.parse(storedPaths)
-        if (Array.isArray(parsedPaths)) setVisitedPaths(new Set(parsedPaths.filter((path): path is string => typeof path === 'string')))
+        if (Array.isArray(parsedPaths)) setVisitedPaths(new Set(normalizeVisitedPaths(parsedPaths).paths))
       }
       const storedViewMode = localStorage.getItem('sidebarViewMode')
       if (storedViewMode === 'learning-path' || storedViewMode === 'default') {
@@ -555,7 +555,7 @@ export function Sidebar() {
       const name = getTopicName(topic.id).toLowerCase()
       return name.includes(q) || topic.id.includes(q)
     })
-  }, [searchQuery, allTopics, t])
+  }, [searchQuery, allTopics, getTopicName])
 
   // Reset selected index when search results change
   useEffect(() => {
@@ -961,7 +961,7 @@ export function Sidebar() {
                   </div>
                 ) : searchResults.length === 0 ? (
                   <div className="p-6 text-center">
-                    <p className="text-muted text-sm">{t.common.noResults} "{searchQuery}"</p>
+                    <p className="text-muted text-sm">{t.common.noResults} &quot;{searchQuery}&quot;</p>
                   </div>
                 ) : (
                   searchResults.map((topic, index) => (

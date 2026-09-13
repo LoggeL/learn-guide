@@ -68,7 +68,7 @@ const copy = {
         bullets: [
       'Temperature formt die Verteilung um.',
       'Top-k behält nur die k wahrscheinlichsten Tokens.',
-      'Top-p behält die kleinste Tokenmenge mit Wahrscheinlichkeitsmasse p.'
+      'Top-p behält die kleinste Menge der wahrscheinlichsten Token mit insgesamt mindestens p Wahrscheinlichkeitsmasse.'
     ],
       },
       {
@@ -107,16 +107,6 @@ export default function NextTokenPredictionPage() {
       prevTopic={{ label: c.prev, href: '/ai/llm/residual-stream-layer-norm' }}
       nextTopic={{ label: c.next, href: '/ai/llm/training' }}
     >
-      <section className="rounded-2xl border border-border bg-surface/50 p-6 md:p-8">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/30 bg-primary/15">
-            <Cpu size={21} className="text-primary-light" />
-          </div>
-          <h2 className="font-heading text-2xl font-bold text-gradient">{c.title}</h2>
-        </div>
-        <p className="text-lg leading-relaxed text-muted">{c.description}</p>
-      </section>
-
       <NextTokenPredictionVisualizer />
 
       <section className="grid gap-4 md:grid-cols-2">

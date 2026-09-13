@@ -27,8 +27,9 @@ export default function VisualChallengesPage() {
       </section>
 
       {/* Interactive Demo */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+      <section>
         <VisualChallengesDemo />
+        <p className="mt-3 text-sm"><a className="text-primary-light underline" href="https://arxiv.org/abs/2010.11929" target="_blank" rel="noopener noreferrer">ViT: patch projection</a></p>
       </section>
 
       {/* Challenge 1: Counting Objects */}

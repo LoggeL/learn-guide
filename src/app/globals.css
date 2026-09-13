@@ -1,8 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+.topic-shell { container-type: inline-size; container-name: topic; }
+.topic-columns { min-width: 0; }
+.topic-toc { display: none; }
+.topic-article { container-type: inline-size; container-name: lesson; }
+@container topic (min-width: 1040px) {
+  .topic-columns { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 28px; align-items: start; }
+  .topic-toc { display: block; }
+}
+
 
 :root {
   --background: #050914;

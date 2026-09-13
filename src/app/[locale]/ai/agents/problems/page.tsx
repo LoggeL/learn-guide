@@ -5,7 +5,18 @@ import { useTranslation } from '@/lib/i18n/context'
 import { AlertTriangle, Repeat, Clock, Bug } from 'lucide-react'
 
 export default function AgentProblemsPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = t.agentReview
+  const calls = [
+    { label: c.costChat, input: 1000, output: 200, seconds: 2 },
+    { label: `${c.costAgent} 1`, input: 1000, output: 100, seconds: 2 },
+    { label: `${c.costAgent} 2`, input: 1800, output: 200, seconds: 3 },
+    { label: `${c.costAgent} 3`, input: 1200, output: 300, seconds: 1 },
+  ]
+  const price = (input: number, output: number) => (input + 4 * output) / 1e6
+  const money = (value: number) => new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', minimumFractionDigits: 4 }).format(value)
+  const agentCost = calls.slice(1).reduce((sum, call) => sum + price(call.input, call.output), 0)
+  const agentSeconds = calls.slice(1).reduce((sum, call) => sum + call.seconds, 0) + 0.4 + 0.6
 
   const problems = [
     { title: t.agentProblems.problem1, desc: t.agentProblems.problem1Desc, icon: '🔧', color: 'red' },
@@ -90,28 +101,22 @@ export default function AgentProblemsPage() {
             <Clock size={24} className="text-purple-400" />
             <h2 className="text-2xl font-bold font-heading text-text">{t.agentProblems.costLatency}</h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div>
-              <p className="text-muted leading-relaxed mb-4">
-                {t.agentProblems.costLatencyDesc}
-              </p>
-              <div className="space-y-2">
-                <div className="h-2 rounded-full bg-surface-elevated overflow-hidden flex">
-                  <div className="w-[20%] bg-green-500/50" />
-                  <div className="w-[80%] bg-purple-500/50" />
-                </div>
-                <div className="flex justify-between text-xs text-muted">
-                  <span>Chat (1 Call)</span>
-                  <span>Agent Task (5+ Calls)</span>
-                </div>
-              </div>
+          <div className="space-y-4">
+            <p className="text-muted leading-relaxed">{t.agentProblems.costLatencyDesc}</p>
+            <h3 className="font-semibold text-purple-300">{c.costExampleTitle}</h3>
+            <p className="text-sm text-muted">{c.costAssumptions}</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-right text-sm">
+                <thead><tr>{[c.costCall, c.costInput, c.costOutput, c.costSeconds, c.costAmount].map(label => <th key={label} className="p-2 font-medium">{label}</th>)}</tr></thead>
+                <tbody>{calls.map(call => <tr key={call.label} className="border-t border-border"><th scope="row" className="p-2 text-left font-normal">{call.label}</th><td className="p-2 font-mono">{call.input.toLocaleString(locale)}</td><td className="p-2 font-mono">{call.output.toLocaleString(locale)}</td><td className="p-2 font-mono">{call.seconds}</td><td className="p-2 font-mono">{money(price(call.input, call.output))}</td></tr>)}</tbody>
+              </table>
             </div>
-            <div className="p-5 rounded-xl bg-purple-500/10 border border-purple-500/20">
-              <h4 className="font-semibold text-purple-300 mb-2">{t.agentProblems.costFactor}</h4>
-              <p className="text-sm text-muted">
-                {t.agentProblems.costFactorDesc}
-              </p>
+            <p className="text-sm text-muted">{c.costFormula}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <p className="rounded-lg border border-border p-4">{c.costChatTotal}: <strong>{money(price(calls[0].input, calls[0].output))} · {calls[0].seconds} s</strong></p>
+              <p className="rounded-lg border border-purple-500/30 p-4">{c.costAgentTotal}: <strong>{money(agentCost)} · {agentSeconds} s</strong></p>
             </div>
+            <p className="text-sm text-muted">{c.costTiming}</p>
           </div>
         </div>
       </section>
@@ -137,6 +142,7 @@ export default function AgentProblemsPage() {
           </ul>
         </div>
       </section>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.costModel}</p>
     </TopicLayout>
   )
 }

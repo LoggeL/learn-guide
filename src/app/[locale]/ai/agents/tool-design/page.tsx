@@ -63,22 +63,17 @@ export default function ToolDesignPage() {
           <div className="p-4 bg-emerald-500/5 border border-emerald-500/20 rounded-xl">
             <h4 className="text-sm font-bold text-emerald-400 mb-3">{t.toolDesign.goodSchema}</h4>
             <pre className="text-xs text-muted font-mono overflow-x-auto">
-{`{
-  "name": "search_web",
-  "description": "Search the web for information",
-  "parameters": {
-    "query": {
-      "type": "string",
-      "description": "The search query",
-      "required": true
+{JSON.stringify({
+  name: 'search_web', description: t.agentReview.schemaDefault,
+  parameters: {
+    type: 'object',
+    properties: {
+      query: {type:'string',description:t.agentReview.schemaQuery},
+      max_results: {type:'integer',description:t.agentReview.schemaMax,minimum:1,maximum:10,default:5}
     },
-    "max_results": {
-      "type": "integer",
-      "description": "Maximum results (1-10)",
-      "default": 5
-    }
+    required:['query'],additionalProperties:false
   }
-}`}
+},null,2)}
             </pre>
           </div>
           <div className="p-4 bg-red-500/5 border border-red-500/20 rounded-xl">

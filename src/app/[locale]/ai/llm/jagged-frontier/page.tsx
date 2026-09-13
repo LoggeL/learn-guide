@@ -25,7 +25,7 @@ const copy = {
     intro:
       'A stronger model is not simply a model that is a little better at everything. The frontier is jagged: huge peaks appear in domains with clear feedback, abundant practice data, and verifiable rewards, while nearby-looking tasks can remain surprisingly brittle.',
     thesis:
-      'That is why a model can solve hard math, write useful code, or pass a benchmark, then stumble on a tiny exactness task such as counting the letters in "strawberry". The mistake feels absurd because humans expect intelligence to transfer smoothly. LLMs do not always transfer that way.',
+      'Success on a benchmark does not establish success on every similar-looking task. Letter-counting errors such as the historical "strawberry" example illustrate this point; they are not a current universal failure of language models. Evaluate the exact model, prompt, tools and task you intend to use.',
     peaksTitle: 'Where the peaks come from',
     peaks: [
       {
@@ -59,19 +59,19 @@ const copy = {
     examplesTitle: 'The contrast that confuses people',
     examples: [
       {
-        label: 'High peak',
+        label: 'Possible strength',
         title: 'Olympiad-style math',
         body: 'The final answer can often be checked. Training can reward correct derivations, reject wrong attempts, and build strong reasoning traces around the task format.',
       },
       {
-        label: 'High peak',
+        label: 'Possible strength',
         title: 'Coding with tests',
         body: 'A coding agent can edit files, run tests, inspect failures, and improve. The feedback loop is expensive, but the success signal can be very concrete.',
       },
       {
-        label: 'Sharp valley',
-        title: 'Strawberry-style letter counting',
-        body: 'The task is easy for humans, but it asks the model to reason over character structure hidden inside tokens. This is closer to string inspection than language understanding.',
+        label: 'Separate check',
+        title: 'Exact character operations',
+        body: 'Character-level operations have a different success criterion from fluent language. Check exact output and tool use; do not assume that a given current model will fail this task.',
       },
       {
         label: 'Messy frontier',
@@ -88,7 +88,7 @@ const copy = {
       'Prefer workflows with tests, validators, scripts, checklists, or reviewable artifacts.',
       'Use tools for exact operations: counting, arithmetic, file inspection, spreadsheet logic, and browser state.',
       'Benchmark your actual workflow instead of trusting demos from a nearby but cleaner task.',
-      'Treat impressive peaks and embarrassing valleys as the same phenomenon: uneven trainability.',
+      'Treat task format, training, available tools and evaluation criteria as separate contributors.',
     ],
     relatedTitle: 'Related concepts',
     related: [
@@ -107,7 +107,7 @@ const copy = {
     intro:
       'Ein stärkeres Modell ist nicht einfach ein Modell, das überall ein bisschen besser ist. Die Frontier ist gezackt: enorme Spitzen entstehen in Bereichen mit klarem Feedback, vielen Übungsdaten und verifizierbaren Rewards, während nahe wirkende Aufgaben überraschend brüchig bleiben.',
     thesis:
-      'Deshalb kann ein Modell schwere Mathematik lösen, nützlichen Code schreiben oder Benchmarks bestehen und dann bei einer winzigen Exaktheitsfrage wie den Buchstaben in "strawberry" stolpern. Der Fehler wirkt absurd, weil Menschen erwarten, dass Intelligenz glatt überträgt. LLMs übertragen nicht immer so.',
+      'Erfolg auf einem Benchmark belegt keinen Erfolg bei jeder ähnlich wirkenden Aufgabe. Historische Zählfehler wie beim Wort "strawberry" illustrieren das, sind aber kein allgemeiner aktueller Fehler aller Sprachmodelle. Prüfe das konkrete Modell, den Prompt, die Werkzeuge und die tatsächliche Aufgabe.',
     peaksTitle: 'Woher die Spitzen kommen',
     peaks: [
       {
@@ -141,19 +141,19 @@ const copy = {
     examplesTitle: 'Der Kontrast, der Menschen verwirrt',
     examples: [
       {
-        label: 'Hohe Spitze',
+        label: 'Mögliche Stärke',
         title: 'Olympiade-Mathematik',
         body: 'Die finale Antwort lässt sich oft prüfen. Training kann korrekte Ableitungen belohnen, falsche Versuche verwerfen und starke Reasoning-Spuren rund um das Aufgabenformat aufbauen.',
       },
       {
-        label: 'Hohe Spitze',
+        label: 'Mögliche Stärke',
         title: 'Coding mit Tests',
         body: 'Ein Coding Agent kann Dateien ändern, Tests ausführen, Fehler inspizieren und nachbessern. Der Feedback-Loop ist teuer, aber das Erfolgssignal kann sehr konkret sein.',
       },
       {
-        label: 'Scharfes Tal',
-        title: 'Strawberry-artiges Buchstabenzählen',
-        body: 'Die Aufgabe ist für Menschen leicht, verlangt vom Modell aber Character-Struktur innerhalb von Tokens. Das ist eher String-Inspektion als Sprachverständnis.',
+        label: 'Getrennte Prüfung',
+        title: 'Exakte Zeichenoperationen',
+        body: 'Zeichenoperationen haben andere Erfolgskriterien als flüssige Sprache. Prüfe die exakte Ausgabe und Werkzeugnutzung; unterstelle keinem konkreten aktuellen Modell einen Fehler.',
       },
       {
         label: 'Messy Frontier',
@@ -170,7 +170,7 @@ const copy = {
       'Bevorzuge Workflows mit Tests, Validatoren, Skripten, Checklisten oder prüfbaren Artefakten.',
       'Nutze Tools für exakte Operationen: Zählen, Arithmetik, Dateiinspektion, Tabellenlogik und Browser-State.',
       'Benchmarke den echten Workflow, statt Demos aus einer nahen, aber saubereren Aufgabe zu vertrauen.',
-      'Behandle beeindruckende Spitzen und peinliche Täler als dasselbe Phänomen: ungleichmäßige Trainierbarkeit.',
+      'Betrachte Aufgabenformat, Training, verfügbare Werkzeuge und Prüfkriterien als getrennte Einflüsse.',
     ],
     relatedTitle: 'Verwandte Konzepte',
     related: [

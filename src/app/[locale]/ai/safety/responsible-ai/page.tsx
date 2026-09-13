@@ -207,6 +207,7 @@ export default function ResponsibleAIPage() {
           </ul>
         </div>
       </section>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.actNote}</p><section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://digital-strategy.ec.europa.eu/en/faqs/navigating-ai-act">European Commission: Navigating the AI Act</a></li></ul></section>
     </TopicLayout>
   )
 }

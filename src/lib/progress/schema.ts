@@ -1,3 +1,5 @@
+import { canonicalTopicId, canonicalTopicPath } from '../topic-aliases'
+
 export const LEARNING_PROGRESS_SCHEMA_VERSION = 1
 export const LEARNING_PROGRESS_EXPORT_KIND = 'learn-guide.progress'
 export const VISITED_PATHS_STORAGE_KEY = 'visitedPaths'
@@ -35,7 +37,7 @@ export function normalizeVisitedPaths(value: unknown): { paths: string[]; droppe
       continue
     }
 
-    const path = item.trim()
+    const path = canonicalTopicPath(item.trim())
     const isValidPath = /^\/[a-z]{2}(?:\/[A-Za-z0-9._~!$&'()*+,;=:@%-]+)*\/?$/.test(path)
       && !path.includes('//')
       && path.length <= 240
@@ -52,12 +54,12 @@ export function normalizeVisitedPaths(value: unknown): { paths: string[]; droppe
   return { paths: Array.from(seen).sort(), droppedPaths }
 }
 
-function normalizeTopicIds(value: unknown): { ids: string[]; droppedIds: string[] } {
+export function normalizeTopicIds(value: unknown): { ids: string[]; droppedIds: string[] } {
   if (!Array.isArray(value)) return { ids: [], droppedIds: [] }
   const ids = new Set<string>()
   const droppedIds: string[] = []
   for (const item of value) {
-    const id = typeof item === 'string' ? item.trim() : ''
+    const id = typeof item === 'string' ? canonicalTopicId(item.trim()) : ''
     if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id) && id.length <= 100) ids.add(id)
     else droppedIds.push(String(item))
   }

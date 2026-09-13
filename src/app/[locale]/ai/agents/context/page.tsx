@@ -187,6 +187,7 @@ export default function AgentContextPage() {
           </ul>
         </div>
       </section>
+<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://developers.openai.com/api/reference/resources/responses/methods/create">OpenAI Responses: truncation options</a></li></ul></section>
     </TopicLayout>
   )
 }

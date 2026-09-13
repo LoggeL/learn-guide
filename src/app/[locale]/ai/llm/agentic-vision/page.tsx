@@ -7,7 +7,7 @@ import { motion } from 'framer-motion'
 import { Eye, Brain, Play, RotateCcw, Scan, Calculator, PenTool, RefreshCw, Cpu, Sparkles, FileText, CheckCircle, MapPin, Receipt, ArrowRight } from 'lucide-react'
 
 export default function AgenticVisionPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   const loopSteps = [
     {
@@ -270,6 +270,7 @@ export default function AgenticVisionPage() {
         </div>
       </section>
 
+      <p className="text-sm text-muted"><a className="text-primary-light underline" href="https://blog.google/innovation-and-ai/technology/developers-tools/agentic-vision-gemini-3-flash/" target="_blank" rel="noopener noreferrer">Google: Introducing Agentic Vision in Gemini 3 Flash</a> ({locale === 'de' ? 'Herstellerquelle zum genannten Benchmarkbefund' : 'vendor source for the cited benchmark result'})</p>
       {/* Applications */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-2">{t.agenticVision.applicationsTitle}</h2>

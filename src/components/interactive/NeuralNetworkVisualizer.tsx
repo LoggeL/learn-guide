@@ -26,10 +26,22 @@ function sigmoid(x: number): number {
 const COPY = {
   en: {
     architectureTitle: 'Network Architecture',
+    reroll: 'New inputs and weights',
+    addLayer: 'Add a hidden layer',
+    removeLayer: 'Remove a hidden layer',
+    layers: 'layers',
+    neurons: 'neurons',
+    replayNote: 'Forward repeats the calculation with the same inputs and weights. The New inputs and weights button creates a new example. Changing the architecture also creates a new example.',
     info: 'Each neuron computes a weighted sum of inputs and applies an activation function (sigmoid). Connection thickness represents weight magnitude; color indicates positive (green) or negative (red) weights.',
   },
   de: {
     architectureTitle: 'Netzwerkarchitektur',
+    reroll: 'Neu würfeln',
+    addLayer: 'Versteckte Schicht hinzufügen',
+    removeLayer: 'Versteckte Schicht entfernen',
+    layers: 'Schichten',
+    neurons: 'Neuronen',
+    replayNote: 'Vorwärts wiederholt die Rechnung mit denselben Eingaben und Gewichten. Neu würfeln erzeugt andere Eingaben und Gewichte. Eine geänderte Architektur erzeugt ebenfalls ein neues Beispiel.',
     info: 'Jedes Neuron berechnet eine gewichtete Summe seiner Eingaben und wendet eine Aktivierungsfunktion (Sigmoid) an. Die Dicke der Verbindungen zeigt die Größe des Gewichts; die Farbe zeigt an, ob ein Gewicht positiv (grün) oder negativ (rot) ist.',
   },
 }
@@ -112,9 +124,15 @@ export function NeuralNetworkVisualizer() {
     setIsRunning(true)
     setCurrentLayer(0)
 
-    // Reset network with random inputs
-    const newNetwork = generateNetwork(layers)
-    setNetwork(newNetwork)
+    // Replay the same network: preserve inputs and weights, clear derived values.
+    setNetwork((prev) => ({
+      ...prev,
+      neurons: prev.neurons.map((neuron) => ({
+        ...neuron,
+        value: neuron.layer === 0 ? neuron.value : 0,
+        activated: false,
+      })),
+    }))
 
     // Animate forward pass
     let layer = 0
@@ -177,19 +195,20 @@ export function NeuralNetworkVisualizer() {
     <div className="space-y-6">
       {/* Controls */}
       <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
               <Layers size={18} className="text-purple-400" />
             </div>
             <div>
               <h3 className="font-semibold text-text font-heading">{c.architectureTitle}</h3>
-              <p className="text-xs text-muted">{layers.length} layers, {network.neurons.length} neurons</p>
+              <p className="text-xs text-muted">{layers.length} {c.layers}, {network.neurons.length} {c.neurons}</p>
             </div>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               onClick={removeLayer}
+              aria-label={c.removeLayer}
               disabled={layers.length <= 3 || isRunning}
               className="p-2 bg-surface-elevated border border-border rounded-lg text-muted hover:text-text transition-colors disabled:opacity-50"
             >
@@ -197,10 +216,22 @@ export function NeuralNetworkVisualizer() {
             </button>
             <button
               onClick={addLayer}
+              aria-label={c.addLayer}
               disabled={layers.length >= 6 || isRunning}
               className="p-2 bg-surface-elevated border border-border rounded-lg text-muted hover:text-text transition-colors disabled:opacity-50"
             >
               <Plus size={16} />
+            </button>
+            <button
+              onClick={() => {
+                if (isRunning) return
+                setNetwork(generateNetwork(layers))
+                setCurrentLayer(0)
+              }}
+              disabled={isRunning}
+              className="px-4 py-2 bg-surface-elevated border border-border rounded-lg text-muted hover:text-text transition-colors disabled:opacity-50"
+            >
+              {c.reroll}
             </button>
             <button
               onClick={runForwardPass}
@@ -315,6 +346,7 @@ export function NeuralNetworkVisualizer() {
           <Layers size={18} className="text-primary-light shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
             <p>{c.info}</p>
+            <p className="mt-2">{c.replayNote}</p>
           </div>
         </div>
       </div>

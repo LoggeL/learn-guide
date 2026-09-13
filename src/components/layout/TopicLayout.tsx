@@ -66,9 +66,9 @@ export function TopicLayout({
     : currentIndex === -1 ? nextTopic : undefined
 
   return (
-    <div className="mx-auto w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px] relative">
+    <div className="topic-shell mx-auto min-w-0 w-full max-w-4xl xl:max-w-[1180px] 2xl:max-w-[1260px] relative">
       {/* Topic-local glow */}
-      <div className="absolute -top-32 right-0 w-[520px] h-[520px] bg-gradient-radial from-primary/12 via-secondary/5 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute -top-32 right-0 w-full max-w-[520px] h-[520px] bg-gradient-radial from-primary/12 via-secondary/5 to-transparent blur-3xl pointer-events-none" />
       
       {/* Breadcrumbs */}
       <nav className="glass mb-5 flex w-fit max-w-full items-center gap-2 overflow-x-auto rounded-xl px-3 py-2 text-sm text-muted scrollbar-none">
@@ -129,23 +129,23 @@ export function TopicLayout({
       </header>
 
       {/* Content grid: article + right sidebar TOC on desktop */}
-      <div className="xl:grid xl:grid-cols-[minmax(760px,1fr)_220px] xl:gap-7 2xl:gap-8 xl:items-start">
+      <div className="topic-columns">
         {/* Left column: article + nav */}
-        <div>
-          <article ref={articleRef} className="space-y-8 relative">
+        <div className="min-w-0">
+          <article ref={articleRef} className="topic-article min-w-0 space-y-8 relative">
             {children}
           </article>
 
           {/* Navigation */}
           <footer className="mt-20 pt-8 border-t border-border">
-            <div className="flex justify-between items-center">
+            <div className="grid grid-cols-2 gap-3 items-stretch">
               {prev ? (
                 <Link
                   href={localizeHref(prev.href)}
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-surface/70 px-5 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
+                  className="group min-w-0 flex items-center gap-2 rounded-xl border border-border bg-surface/70 px-3 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
                 >
                   <ChevronLeft size={18} className="text-muted group-hover:text-primary transition-colors" />
-                  <div className="text-left">
+                  <div className="min-w-0 break-words text-left">
                     <span className="text-xs text-subtle block">{t.common.previous}</span>
                     <span className="text-text font-medium group-hover:text-primary-light transition-colors">
                       {prev.label}
@@ -158,9 +158,9 @@ export function TopicLayout({
               {next && (
                 <Link
                   href={localizeHref(next.href)}
-                  className="group flex items-center gap-3 rounded-xl border border-border bg-surface/70 px-5 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
+                  className="group min-w-0 flex items-center justify-end gap-2 rounded-xl border border-border bg-surface/70 px-3 py-3 transition-all hover:border-primary/45 hover:bg-surface-elevated/80"
                 >
-                  <div className="text-right">
+                  <div className="min-w-0 break-words text-right">
                     <span className="text-xs text-subtle block">{t.common.next}</span>
                     <span className="text-text font-medium group-hover:text-primary-light transition-colors">
                       {next.label}

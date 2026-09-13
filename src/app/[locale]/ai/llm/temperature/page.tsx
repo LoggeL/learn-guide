@@ -6,7 +6,7 @@ import { Latex, LatexBlock } from '@/components/ui/Latex'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function TemperaturePage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   return (
     <TopicLayout topicId="temperature"
@@ -108,47 +108,11 @@ export default function TemperaturePage() {
         </div>
       </section>
 
-      {/* When to use which */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.temperature.practicalGuidelines}</h2>
-        <div className="overflow-hidden rounded-2xl border border-border">
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="bg-surface-elevated border-b border-border text-muted uppercase text-[10px] tracking-widest">
-                <th className="py-4 px-6">{t.temperature.useCase}</th>
-                <th className="py-4 px-6">{t.temperature.tempLabel}</th>
-                <th className="py-4 px-6">{t.temperature.why}</th>
-              </tr>
-            </thead>
-            <tbody className="text-muted">
-              <tr className="border-b border-border/50 hover:bg-surface/50 transition-colors">
-                <td className="py-4 px-6 text-text font-medium">{t.temperature.codingMath}</td>
-                <td className="py-4 px-6"><span className="font-mono px-2 py-1 rounded bg-cyan-500/10 text-cyan-400">0.0 - 0.2</span></td>
-                <td className="py-4 px-6 italic">{t.temperature.codingMathWhy}</td>
-              </tr>
-              <tr className="border-b border-border/50 hover:bg-surface/50 transition-colors">
-                <td className="py-4 px-6 text-text font-medium">{t.temperature.factRetrieval}</td>
-                <td className="py-4 px-6"><span className="font-mono px-2 py-1 rounded bg-blue-500/10 text-blue-400">0.1 - 0.4</span></td>
-                <td className="py-4 px-6 italic">{t.temperature.factRetrievalWhy}</td>
-              </tr>
-              <tr className="border-b border-border/50 hover:bg-surface/50 transition-colors">
-                <td className="py-4 px-6 text-text font-medium">{t.temperature.generalChat}</td>
-                <td className="py-4 px-6"><span className="font-mono px-2 py-1 rounded bg-purple-500/10 text-purple-400">0.7 - 0.8</span></td>
-                <td className="py-4 px-6 italic">{t.temperature.generalChatWhy}</td>
-              </tr>
-              <tr className="border-b border-border/50 hover:bg-surface/50 transition-colors">
-                <td className="py-4 px-6 text-text font-medium">{t.temperature.creativeWriting}</td>
-                <td className="py-4 px-6"><span className="font-mono px-2 py-1 rounded bg-orange-500/10 text-orange-400">1.0 - 1.2</span></td>
-                <td className="py-4 px-6 italic">{t.temperature.creativeWritingWhy}</td>
-              </tr>
-              <tr className="border-b border-border/50 hover:bg-surface/50 transition-colors">
-                <td className="py-4 px-6 text-text font-medium">{t.temperature.brainstorming}</td>
-                <td className="py-4 px-6"><span className="font-mono px-2 py-1 rounded bg-red-500/10 text-red-400">1.2 - 1.5</span></td>
-                <td className="py-4 px-6 italic">{t.temperature.brainstormingWhy}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
+        <h2 className="text-2xl font-semibold">{t.temperature.practicalGuidelines}</h2>
+        <p className="text-muted">{locale === 'de' ? 'Beginne mit der Empfehlung für dein konkretes Modell und deinen Modus. Vergleiche danach Einstellungen anhand derselben Aufgaben, Referenzantworten und mehrerer Läufe. Fakten brauchen Quellen, Code braucht Tests; Temperature ersetzt diese Prüfung nicht.' : 'Start with guidance for the specific model and mode. Then compare settings on the same tasks and reference answers over multiple runs. Facts need sources and code needs tests; temperature does not replace these checks.'}</p>
+        <p className="text-muted">{locale === 'de' ? 'Beispiel: Qwen3 empfiehlt für Thinking T = 0,6 und warnt vor Greedy Decoding. Ein allgemeines Rezept wie "Mathe immer mit T = 0" wäre damit unpassend.' : 'For example, Qwen3 recommends T = 0.6 for thinking and warns against greedy decoding. A universal recipe such as "always use T = 0 for math" would not fit this model.'}</p>
+        <a href="https://huggingface.co/Qwen/Qwen3-32B#best-practices" target="_blank" rel="noopener noreferrer" className="text-primary-light underline">Qwen3-32B: Best practices</a>
       </section>
 
       {/* Key takeaways */}

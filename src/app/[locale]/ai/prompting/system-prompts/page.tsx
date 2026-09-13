@@ -73,12 +73,7 @@ export default function SystemPromptsPage() {
         <div>
           <h3 className="text-lg font-bold font-heading text-text mb-3">{t.systemPrompts.apiExample}</h3>
           <pre className="p-4 bg-background rounded-xl border border-border overflow-x-auto text-sm text-muted font-mono">
-{`[
-  {"role": "system", "content": "You are a helpful assistant..."},
-  {"role": "user", "content": "Hello!"},
-  {"role": "assistant", "content": "Hi there!"},
-  {"role": "user", "content": "What's 2+2?"}
-]`}
+{JSON.stringify({model:'gpt-5',input:[{role:'developer',content:t.agentReview.checkInstruction},{role:'user',content:t.agentReview.promptTask+'\n\n'+t.agentReview.promptSource}],truncation:'disabled'},null,2)}
           </pre>
         </div>
       </section>
@@ -266,6 +261,7 @@ export default function SystemPromptsPage() {
           </ul>
         </div>
       </section>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.apiNote}</p><p className="text-sm text-muted leading-relaxed">{t.agentReview.historyNote}</p><section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://developers.openai.com/api/docs/guides/reasoning-best-practices">OpenAI reasoning guidance</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2307.09288">Llama 2 (2023)</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2404.13208">Instruction hierarchy (2024)</a></li></ul></section>
     </TopicLayout>
   )
 }

@@ -237,6 +237,7 @@ export default function AdvancedPromptingPage() {
           </ul>
         </div>
       </section>
+<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://developers.openai.com/api/docs/guides/reasoning-best-practices">OpenAI reasoning guidance</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2305.10601">Tree of Thoughts (2023)</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2308.09687">Graph of Thoughts (2023)</a></li><li><a className="text-primary-light underline" href="https://www.anthropic.com/research/reasoning-models-dont-say-think">Anthropic: reasoning trace faithfulness</a></li></ul></section>
     </TopicLayout>
   )
 }

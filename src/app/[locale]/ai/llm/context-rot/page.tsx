@@ -1,266 +1,47 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { ContextRotSimulator, AttentionHeatmap, DistractorDemo, ScaleCalculator } from '@/components/interactive'
+import { ScaleCalculator } from '@/components/interactive/ScaleCalculator'
 import { useTranslation } from '@/lib/i18n/context'
-import { motion } from 'framer-motion'
-import { AlertTriangle, Target, Layers, Users, Brain, CheckCircle, BarChart3, Cpu } from 'lucide-react'
+
+const measured = [['LongChat-13B (16K)',35,83.4],['MPT-30B-Instruct',31.5,81.9],['GPT-3.5-Turbo (0613)',56.1,88.3],['Claude-1.3',48.3,76.1]] as const
 
 export default function ContextRotPage() {
-  const { t } = useTranslation()
-
-  const heroStats = [
-    { value: t.contextRot.heroStat1Value, label: t.contextRot.heroStat1Label, color: 'purple' },
-    { value: t.contextRot.heroStat2Value, label: t.contextRot.heroStat2Label, color: 'orange' },
-    { value: t.contextRot.heroStat3Value, label: t.contextRot.heroStat3Label, color: 'cyan' },
-    { value: t.contextRot.heroStat4Value, label: t.contextRot.heroStat4Label, color: 'emerald' },
-  ]
-
-  const chromaFindings = [
-    { title: t.contextRot.chromaFinding1Title, desc: t.contextRot.chromaFinding1Desc, color: 'red' },
-    { title: t.contextRot.chromaFinding2Title, desc: t.contextRot.chromaFinding2Desc, color: 'orange' },
-    { title: t.contextRot.chromaFinding3Title, desc: t.contextRot.chromaFinding3Desc, color: 'yellow' },
-    { title: t.contextRot.chromaFinding4Title, desc: t.contextRot.chromaFinding4Desc, color: 'cyan' },
-  ]
-
-  const mitigations = [
-    { title: t.contextRot.mitigation1Title, desc: t.contextRot.mitigation1, icon: Target },
-    { title: t.contextRot.mitigation2Title, desc: t.contextRot.mitigation2, icon: Layers },
-    { title: t.contextRot.mitigation3Title, desc: t.contextRot.mitigation3, icon: BarChart3 },
-    { title: t.contextRot.mitigation4Title, desc: t.contextRot.mitigation4, icon: Users },
-    { title: t.contextRot.mitigation5Title, desc: t.contextRot.mitigation5, icon: Brain },
-  ]
-
-  const checklistItems = [
-    t.contextRot.checklist1,
-    t.contextRot.checklist2,
-    t.contextRot.checklist3,
-    t.contextRot.checklist4,
-    t.contextRot.checklist5,
-    t.contextRot.checklist6,
-  ]
-
-  const takeaways = [
-    t.contextRot.takeaway1,
-    t.contextRot.takeaway2,
-    t.contextRot.takeaway3,
-    t.contextRot.takeaway4,
-    t.contextRot.takeaway5,
-    t.contextRot.takeaway6,
-  ]
-
-  return (
-    <TopicLayout
-      topicId="context-rot"
-      title={t.contextRot.title}
-      description={t.contextRot.description}
-      breadcrumbs={[
-        { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/ai/llm' },
-        { label: t.contextRot.title },
-      ]}
-      prevTopic={{ label: t.topicNames.rag, href: '/ai/llm/rag' }}
-      nextTopic={{ label: t.topicNames.temperature, href: '/ai/llm/temperature' }}
-    >
-
-      {/* ── 1. Hero / Intro ─────────────────────────────────────────────────── */}
-      <section className="rounded-2xl bg-gradient-to-br from-red-500/10 via-orange-500/5 to-surface/50 border border-red-500/20 p-6 md:p-8">
-        <div className="flex items-start gap-4 mb-6">
-          <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center shrink-0">
-            <AlertTriangle className="w-6 h-6 text-red-400" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-gradient mb-2">{t.contextRot.whatIs}</h2>
-            <p className="text-muted leading-relaxed">
-              <span className="text-primary-light font-semibold">Context rot</span>{' '}
-              {t.contextRot.whatIsDesc}
-            </p>
-          </div>
-        </div>
-
-        <p className="text-muted leading-relaxed mb-8 pl-16">{t.contextRot.heroIntro}</p>
-
-        {/* Stats grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {heroStats.map((stat, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className={`p-4 rounded-xl bg-${stat.color}-500/10 border border-${stat.color}-500/25 text-center`}
-            >
-              <div className={`text-2xl md:text-3xl font-bold font-heading text-${stat.color}-400 mb-1 tabular-nums`}>
-                {stat.value}
-              </div>
-              <div className="text-xs text-muted leading-tight">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 2. The Science: Lost in the Middle + AttentionHeatmap ───────────── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.contextRot.scienceTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.contextRot.scienceDesc}</p>
-
-        {/* U-curve explainer */}
-        <div className="grid md:grid-cols-3 gap-3 mb-6">
-          {[
-            { pos: 'Start', acc: '~75%', color: 'emerald', note: t.contextRot.attentionStartLabel },
-            { pos: 'Middle', acc: '~45%', color: 'red', note: t.contextRot.attentionMiddleLabel },
-            { pos: 'End', acc: '~72%', color: 'emerald', note: t.contextRot.attentionEndLabel },
-          ].map((item) => (
-            <div key={item.pos} className={`p-4 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20 text-center`}>
-              <div className={`text-3xl font-bold font-heading text-${item.color}-400 mb-1`}>{item.acc}</div>
-              <div className="text-sm text-muted">{item.note}</div>
-            </div>
-          ))}
-        </div>
-
-        <AttentionHeatmap
-          title={t.contextRot.attentionHeatmapTitle}
-          desc={t.contextRot.attentionHeatmapDesc}
-          clickHint={t.contextRot.attentionClickHint}
-          accuracyLabel={t.contextRot.attentionAccuracyLabel}
-          startLabel={t.contextRot.attentionStartLabel}
-          middleLabel={t.contextRot.attentionMiddleLabel}
-          endLabel={t.contextRot.attentionEndLabel}
-          positionLabel={t.contextRot.attentionPositionLabel}
-        />
-      </section>
-
-      {/* ── 3. Chroma 2025 Findings + DistractorDemo ────────────────────────── */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.contextRot.chromaTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.contextRot.chromaDesc}</p>
-
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
-          {chromaFindings.map((item, i) => (
-            <div key={i} className={`p-4 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
-              <h3 className={`text-text font-semibold font-heading mb-2 text-${item.color}-300`}>{item.title}</h3>
-              <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <DistractorDemo
-          title={t.contextRot.distractorTitle}
-          desc={t.contextRot.distractorDesc}
-          sliderLabel={t.contextRot.distractorSliderLabel}
-          shuffledLabel={t.contextRot.distractorShuffledLabel}
-          coherentLabel={t.contextRot.distractorCoherentLabel}
-          modeLabel={t.contextRot.distractorModeLabel}
-          accuracyLabel={t.contextRot.distractorAccuracyLabel}
-          paradoxNote={t.contextRot.distractorParadoxNote}
-        />
-      </section>
-
-      {/* ── 4. The Scale Problem + ScaleCalculator ──────────────────────────── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.contextRot.scaleTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.contextRot.scaleDesc}</p>
-
-        {/* Visual comparison */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          {[
-            { tokens: '10K', pairs: '100M', width: '20%' },
-            { tokens: '100K', pairs: '10B', width: '50%' },
-            { tokens: '1M', pairs: '1T', width: '100%' },
-          ].map((item) => (
-            <div key={item.tokens} className="p-4 rounded-xl bg-surface border border-border">
-              <div className="text-sm font-mono font-bold text-purple-400 mb-1">{item.tokens}</div>
-              <div className="text-xs text-muted mb-2">= {item.pairs} pairs</div>
-              <div className="h-1.5 rounded-full bg-surface-elevated overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500"
-                  style={{ width: item.width }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <ScaleCalculator
-          title={t.contextRot.scaleCalculatorTitle}
-          inputLabel={t.contextRot.scaleInputLabel}
-          pairwiseLabel={t.contextRot.scalePairwiseLabel}
-          attentionLabel={t.contextRot.scaleAttentionLabel}
-          referenceTitle={t.contextRot.scaleReferenceTitle}
-        />
-      </section>
-
-      {/* ── 5. ContextRotSimulator (existing) ───────────────────────────────── */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <Cpu className="w-5 h-5 text-primary-light" />
-            </div>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.contextRot.interactiveDemo}</h2>
-            <p className="text-sm text-muted">{t.contextRot.demoDesc}</p>
-          </div>
-        </div>
-        <ContextRotSimulator />
-      </section>
-
-      {/* ── 6. Evidence-Based Mitigations ───────────────────────────────────── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.mitigation}</h2>
-        <div className="space-y-3">
-          {mitigations.map((item, i) => {
-            const Icon = item.icon
-            return (
-              <div
-                key={i}
-                className="flex gap-5 p-5 rounded-xl bg-surface border border-border hover:border-primary/40 transition-all group"
-              >
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center shrink-0 group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors">
-                  <Icon className="w-5 h-5 text-primary-light" />
-                </div>
-                <div>
-                  <h3 className="text-text font-semibold font-heading mb-1">{item.title}</h3>
-                  <p className="text-muted text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      {/* ── 7. Practical Checklist ──────────────────────────────────────────── */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.checklistTitle}</h2>
-        <div className="space-y-3">
-          {checklistItems.map((item, i) => (
-            <div key={i} className="flex gap-3 items-start p-3 rounded-xl hover:bg-surface transition-colors">
-              <div className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-              </div>
-              <span className="text-text leading-relaxed text-sm">{item}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── 8. Key Takeaways ────────────────────────────────────────────────── */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.contextRot.keyTakeaways}</h2>
-        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
-          <ul className="space-y-4 text-text">
-            {takeaways.map((item, i) => (
-              <li key={i} className="flex gap-3 items-start">
-                <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-primary-light text-sm font-bold">{i + 1}</span>
-                </span>
-                <span className="leading-relaxed">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    </TopicLayout>
-  )
+  const { t,locale }=useTranslation()
+  const de=locale==='de'
+  const title='Context Rot'
+  return <TopicLayout topicId="context-rot" title={title} description={de ? 'Wie Länge, Position und Ablenkungen die Nutzung von Kontext beeinflussen können.' : 'How length, position and distractors can affect the use of context.'} breadcrumbs={[{label:t.categories.ai,href:'/'},{label:t.categories.llm,href:'/ai/llm'},{label:title}]}>
+    <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
+      <h2 className="text-2xl font-semibold">{de ? 'Was mit Context Rot gemeint ist' : 'What context rot means'}</h2>
+      <p className="text-muted">{de ? 'Ein großes Kontextfenster sagt, wie viel Eingabe ein Modell annehmen kann. Es garantiert nicht, dass jedes Detail zuverlässig genutzt wird. Je nach Modell und Aufgabe können zusätzliche Dokumente helfen, ablenken oder den Zugriff auf relevante Informationen erschweren. Das ist ein empirisches Verhalten und keine Regel, nach der Qualität mit jedem Token sinken muss.' : 'A large context window describes how much input a model can accept. It does not guarantee reliable use of every detail. Depending on the model and task, extra documents may help, distract or make relevant information harder to use. This is empirical behavior, not a rule that quality must decline with every token.'}</p>
+    </section>
+    <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
+      <h2 className="text-2xl font-semibold">Lost in the Middle: {de ? 'ein konkretes Experiment' : 'a concrete experiment'}</h2>
+      <p className="text-muted">{de ? 'Liu et al. (2023, revidiert 2024) prüften Fragen aus NaturalQuestions-Open. In der Multi-Dokument-Aufgabe enthielt ein Wikipedia-Text die Antwort, weitere Texte dienten als Ablenkung. Die Autoren variierten die Position der Antwortquelle und nutzten Greedy Decoding. Gemessen wurde, ob eine akzeptierte Antwort im Modelloutput vorkam.' : 'Liu et al. (2023, revised 2024) tested NaturalQuestions-Open questions. In the multi-document task, one Wikipedia passage contained the answer and other passages served as distractors. They varied the answer passage position and used greedy decoding. Accuracy checked whether an accepted answer appeared in the output.'}</p>
+      <p className="text-muted">{de ? 'Mehrere damals geprüfte Modelle schnitten bei Antwortquellen am Anfang oder Ende besser ab als in der Mitte. Die Kurven messen Aufgabenerfolg, keine Attentiongewichte. Andere Aufgaben und Modelle zeigten andere Verläufe.' : 'Several models tested then did better when the answer passage was near the start or end than in the middle. These curves measure task accuracy, not attention weights. Other tasks and models showed different patterns.'}</p>
+      <div className="overflow-x-auto"><table className="w-full text-sm text-left"><caption className="text-left text-muted mb-3">{de ? 'Originalwerte aus Tabelle 1: Kontrollbedingungen, keine Positionskurve' : 'Original values from Table 1: control conditions, not a position curve'}</caption><thead><tr><th className="py-3">{de?'Modell':'Model'}</th><th className="px-3">{de?'Ohne Dokument':'Closed-book'}</th><th>{de?'Nur Antwortdokument':'Oracle'}</th></tr></thead><tbody>{measured.map(([model,closed,oracle])=><tr key={model} className="border-t border-border"><th className="py-3 font-medium">{model}</th><td className="px-3">{closed}%</td><td>{oracle}%</td></tr>)}</tbody></table></div>
+      <p className="text-xs text-muted">{de ? 'Historische Messwerte für diese Aufgabe und Modellversionen. Daraus folgt keine Erfolgsquote für heutige Modelle oder eigene Dokumente.' : 'Historical measurements for these model versions and task. They do not predict current models or your own documents.'}</p>
+      <a className="text-primary-light underline" href="https://arxiv.org/html/2307.03172v3" target="_blank" rel="noopener noreferrer">Liu et al., §2, {de?'Tabelle':'Table'} 1, {de?'Abbildung':'Figure'} 5</a>
+    </section>
+    <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
+      <h2 className="text-2xl font-semibold">{de ? 'Länge und Ablenkung getrennt testen' : 'Test length and distraction separately'}</h2>
+      <p className="text-muted">{de ? 'Chromas Context-Rot-Untersuchung (2025) verglich 18 Modelle und variierte unter anderem Eingabelänge und Distraktoren. Die Ergebnisse hängen von Modell und Versuchsaufbau ab. Eine synthetische Suchaufgabe bildet nicht automatisch den Umgang mit widersprüchlichen Quellen oder langen Gesprächen ab.' : 'Chroma’s Context Rot study (2025) compared 18 models while varying input length and distractors. Results depend on model and setup. A synthetic retrieval task does not automatically represent contradictory sources or long conversations.'}</p>
+      <a className="text-primary-light underline" href="https://www.trychroma.com/research/context-rot" target="_blank" rel="noopener noreferrer">Chroma: Context Rot</a>
+    </section>
+    <ScaleCalculator />
+    <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
+      <h2 className="text-2xl font-semibold">{de ? 'So prüfst du deinen eigenen Workflow' : 'How to test your own workflow'}</h2>
+      <ol className="list-decimal pl-5 space-y-3 text-muted">{(de ? [
+        'Lege Fragen, Referenzantworten und relevante Quellen fest. Friere Modellversion, Prompt und Decoding-Einstellungen ein.',
+        'Vergleiche nur die Antwortquelle, dieselbe Quelle plus Distraktoren und unterschiedliche Positionen bei gleicher Gesamtlänge.',
+        'Miss Antwortkorrektheit und Quellenbelege getrennt. Wiederhole stochastische Läufe und dokumentiere Streuung, Kosten und Latenz.',
+        'Teste Retrieval, strukturierte Notizen oder Compaction gegen dieselben Fälle. Prüfe auch, ob dabei wichtige Einschränkungen verloren gehen.'
+      ] : [
+        'Define questions, reference answers and relevant sources. Fix model version, prompt and decoding settings.',
+        'Compare the answer source alone, the same source with distractors, and different positions at equal total length.',
+        'Measure answer correctness and source support separately. Repeat stochastic runs and record variation, cost and latency.',
+        'Test retrieval, structured notes or compaction on the same cases. Check whether important qualifications are lost.'
+      ]).map(item=><li key={item}>{item}</li>)}</ol>
+    </section>
+  </TopicLayout>
 }

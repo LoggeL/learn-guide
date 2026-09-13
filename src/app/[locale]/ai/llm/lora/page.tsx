@@ -5,7 +5,7 @@ import { LoraVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function LoraPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   const useCases = [
     { icon: '💻', title: t.lora.useCase1Title, desc: t.lora.useCase1Desc, color: 'cyan' },
@@ -73,11 +73,11 @@ export default function LoraPage() {
         <p className="text-muted mb-6">{t.lora.useCasesDesc}</p>
         <div className="grid md:grid-cols-2 gap-4">
           {useCases.map((uc) => (
-            <div key={uc.title} className={`p-5 rounded-xl bg-${uc.color}-500/5 border border-${uc.color}-500/20`}>
-              <div className="w-10 h-10 rounded-lg bg-${uc.color}-500/20 flex items-center justify-center mb-3">
+            <div key={uc.title} className={`p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3">
                 <span className="text-xl">{uc.icon}</span>
               </div>
-              <h3 className={`text-${uc.color}-400 font-semibold font-heading mb-2`}>{uc.title}</h3>
+              <h3 className={`text-cyan-400 font-semibold font-heading mb-2`}>{uc.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{uc.desc}</p>
             </div>
           ))}
@@ -95,11 +95,11 @@ export default function LoraPage() {
             { icon: '🗑️', title: t.lora.antiUseCase3Title, desc: t.lora.antiUseCase3Desc, color: 'amber' },
             { icon: '⏱️', title: t.lora.antiUseCase4Title, desc: t.lora.antiUseCase4Desc, color: 'rose' },
           ].map((uc) => (
-            <div key={uc.title} className={`p-5 rounded-xl bg-${uc.color}-500/5 border border-${uc.color}-500/20`}>
-              <div className={`w-10 h-10 rounded-lg bg-${uc.color}-500/20 flex items-center justify-center mb-3`}>
+            <div key={uc.title} className={`p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <div className={`w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3`}>
                 <span className="text-xl">{uc.icon}</span>
               </div>
-              <h3 className={`text-${uc.color}-400 font-semibold font-heading mb-2`}>{uc.title}</h3>
+              <h3 className={`text-cyan-400 font-semibold font-heading mb-2`}>{uc.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{uc.desc}</p>
             </div>
           ))}
@@ -119,9 +119,9 @@ export default function LoraPage() {
             { num: 2, title: t.lora.whyNot2Title, desc: t.lora.whyNot2Desc, color: 'cyan' },
             { num: 3, title: t.lora.whyNot3Title, desc: t.lora.whyNot3Desc, color: 'emerald' },
           ].map((item) => (
-            <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
-              <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/20 flex items-center justify-center shrink-0`}>
-                <span className={`text-xl font-bold text-${item.color}-400`}>{item.num}</span>
+            <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <div className={`w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0`}>
+                <span className={`text-xl font-bold text-cyan-400`}>{item.num}</span>
               </div>
               <div>
                 <h3 className="text-text font-semibold font-heading mb-1">{item.title}</h3>
@@ -159,6 +159,7 @@ export default function LoraPage() {
           </ul>
         </div>
       </section>
+<section><h2 className="mb-3 text-xl font-semibold">{locale === 'de' ? 'Primärquellen' : 'Primary sources'}</h2><ul className="space-y-2"><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/2106.09685">LoRA</a></li><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/2305.14314">QLoRA</a></li><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/2405.09673">LoRA Learns Less and Forgets Less</a></li></ul></section>
     </TopicLayout>
   )
 }

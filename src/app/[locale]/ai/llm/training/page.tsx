@@ -5,7 +5,7 @@ import { TrainingPipelineVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function LLMTrainingPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   return (
     <TopicLayout topicId="llm-training"
@@ -60,12 +60,12 @@ export default function LLMTrainingPage() {
             { n: 7, color: 'red', title: t.llmTraining.stage7Title, desc: t.llmTraining.stage7Desc },
             { n: 8, color: 'teal', title: t.llmTraining.stage8Title, desc: t.llmTraining.stage8Desc },
           ].map(({ n, color, title, desc }) => (
-            <div key={n} className={`p-5 bg-gradient-to-br from-${color}-500/10 to-${color}-500/5 border border-${color}-500/20 rounded-xl`}>
+            <div key={n} className={`p-5 bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 border border-cyan-500/20 rounded-xl`}>
               <div className="flex items-center gap-3 mb-2">
-                <span className={`w-7 h-7 rounded-lg bg-${color}-500/20 flex items-center justify-center shrink-0`}>
-                  <span className={`text-${color}-400 text-xs font-bold`}>{n}</span>
+                <span className={`w-7 h-7 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0`}>
+                  <span className={`text-cyan-400 text-xs font-bold`}>{n}</span>
                 </span>
-                <h3 className={`text-base font-bold font-heading text-${color}-300`}>{title}</h3>
+                <h3 className={`text-base font-bold font-heading text-cyan-300`}>{title}</h3>
               </div>
               <p className="text-sm text-muted">{desc}</p>
             </div>
@@ -108,34 +108,18 @@ export default function LLMTrainingPage() {
           </div>
         </div>
 
-        {/* Comparison Table */}
-        <div className="rounded-2xl bg-surface/50 border border-border p-6">
-          <h3 className="text-lg font-bold font-heading text-gradient mb-4">{t.llmTraining.comparisonTable}</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="text-left py-3 px-4 text-muted font-medium">{t.llmTraining.aspect}</th>
-                  <th className="text-left py-3 px-4 text-purple-400 font-medium">RLHF</th>
-                  <th className="text-left py-3 px-4 text-cyan-400 font-medium">DPO</th>
-                </tr>
-              </thead>
-              <tbody className="text-muted">
-                {[
-                  [t.llmTraining.complexity, t.llmTraining.rlhfComplexity, t.llmTraining.dpoComplexity],
-                  [t.llmTraining.rewardModel, t.llmTraining.rlhfRewardModel, t.llmTraining.dpoRewardModel],
-                  [t.llmTraining.stability, t.llmTraining.rlhfStability, t.llmTraining.dpoStability],
-                  [t.llmTraining.usedBy, t.llmTraining.rlhfUsedBy, t.llmTraining.dpoUsedBy],
-                ].map(([label, rlhf, dpo], i) => (
-                  <tr key={i} className="border-b border-border/50 last:border-0">
-                    <td className="py-3 px-4 font-medium text-text">{label}</td>
-                    <td className="py-3 px-4">{rlhf}</td>
-                    <td className="py-3 px-4">{dpo}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <div className="overflow-x-auto rounded-xl border border-border bg-surface p-4">
+          <table className="w-full text-left text-sm"><thead><tr>{[locale === 'de' ? 'Eigenschaft' : 'Property', 'PPO', 'DPO', 'GRPO'].map(name => <th className="p-3" key={name}>{name}</th>)}</tr></thead><tbody>{(locale === 'de' ? [
+            ['Lernsignal', 'Reward pro Rollout', 'Bevorzugte / verworfene Paare', 'Rewards einer Rollout-Gruppe'],
+            ['Separater Critic', 'Üblicherweise ja', 'Nein', 'Nein, gruppenbasierte Baseline'],
+            ['Reward-Modell', 'Möglich, je nach Aufgabe', 'Kein separat trainiertes Modell', 'Möglich; Regeln sind ebenfalls möglich'],
+            ['Arbeitslast', 'Rollouts und Policy-/Value-Updates', 'Im Offline-Fall Training auf festen Paaren', 'Gruppen-Rollouts und Policy-Updates'],
+          ] : [
+            ['Learning signal', 'Reward per rollout', 'Preferred / rejected pairs', 'Rewards for a rollout group'],
+            ['Separate critic', 'Usually yes', 'No', 'No; group-based baseline'],
+            ['Reward model', 'Possible, task-dependent', 'No separately trained model', 'Possible; rules can also provide rewards'],
+            ['Workload', 'Rollouts and policy/value updates', 'Training on fixed pairs in the offline recipe', 'Grouped rollouts and policy updates'],
+          ]).map(([name, ...values]) => <tr key={name} className="border-t border-border"><th className="p-3 font-medium">{name}</th>{values.map((value, i) => <td className="p-3 text-muted" key={i}>{value}</td>)}</tr>)}</tbody></table>
         </div>
       </section>
 
@@ -162,6 +146,7 @@ export default function LLMTrainingPage() {
           </ul>
         </div>
       </section>
+<section><h2 className="mb-3 text-xl font-semibold">{locale === 'de' ? 'Primärquellen' : 'Primary sources'}</h2><ul className="space-y-2"><li><a className="text-cyan-300 underline" href="https://arxiv.org/html/2402.03300v3">DeepSeekMath: GRPO</a></li></ul></section>
     </TopicLayout>
   )
 }

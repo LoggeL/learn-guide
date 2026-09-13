@@ -1,338 +1,107 @@
 'use client'
-
-import { useState, useCallback, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useLocale } from '@/lib/i18n/context'
-
-const copy = {
-  en: {
-    emptyHint: 'Press Play or Step to start generating tokens...',
-  },
-  de: {
-    emptyHint: 'Drücke Play oder Step, um Tokens zu generieren...',
-  },
-} as const
-
-interface CacheEntry {
-  token: string
-  key: number[]
-  value: number[]
-  step: number
-}
-
-const SAMPLE_TOKENS = ['The', 'cat', 'sat', 'on', 'the', 'mat', 'and', 'purred']
-
-function randomVector(seed: number): number[] {
-  // Deterministic pseudo-random for consistent display
-  const vals: number[] = []
-  for (let i = 0; i < 4; i++) {
-    vals.push(Math.round((Math.sin(seed * (i + 1) * 9.1 + i * 3.7) * 0.5 + 0.5) * 100) / 100)
-  }
-  return vals
-}
-
-function VectorCell({ values, color }: { values: number[]; color: string }) {
-  return (
-    <div className={`flex gap-1 font-mono text-xs ${color}`}>
-      [
-      {values.map((v, i) => (
-        <span key={i}>
-          {v.toFixed(2)}
-          {i < values.length - 1 ? ',' : ''}
-        </span>
-      ))}
-      ]
-    </div>
-  )
-}
-
-// Main KV Cache step-by-step demo
-function KVCacheStepDemo() {
-  const { locale } = useLocale()
-  const c = copy[locale]
-  const [currentStep, setCurrentStep] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [cache, setCache] = useState<CacheEntry[]>([])
-  const maxStep = SAMPLE_TOKENS.length
-
-  const advanceStep = useCallback(() => {
-    if (currentStep >= maxStep) {
-      setIsPlaying(false)
-      return
-    }
-    const next = currentStep + 1
-    const newEntry: CacheEntry = {
-      token: SAMPLE_TOKENS[next - 1],
-      key: randomVector(next * 7),
-      value: randomVector(next * 13),
-      step: next,
-    }
-    setCurrentStep(next)
-    setCache((c) => [...c, newEntry])
-    if (next >= maxStep) {
-      setIsPlaying(false)
-    }
-  }, [currentStep, maxStep])
-
-  useEffect(() => {
-    if (!isPlaying) return
-    const id = setInterval(advanceStep, 1200)
-    return () => clearInterval(id)
-  }, [isPlaying, advanceStep])
-
-  const reset = () => {
-    setCurrentStep(0)
-    setCache([])
-    setIsPlaying(false)
-  }
-
-  const computationsWithout = currentStep > 0 ? (currentStep * (currentStep + 1)) / 2 : 0
-  const computationsWith = currentStep
-
+import { useState } from 'react'
+import { useTranslation } from '@/lib/i18n/context'
+export function KVCacheVisualizer() {
+  const { t } = useTranslation(),
+    c = t.vramCalc.audit
+  const [step, setStep] = useState(0),
+    [tokens, setTokens] = useState(8192),
+    [heads, setHeads] = useState(8)
+  const vector = (seed: number) =>
+    Array.from({ length: 4 }, (_, i) =>
+      Math.sin(seed * (i + 1)).toFixed(2),
+    ).join(', ')
+  const memory = (2 * 32 * heads * 128 * tokens * 2) / 2 ** 30
   return (
     <div className="space-y-6">
-      {/* Controls */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <button
-          onClick={() => {
-            if (currentStep >= maxStep) reset()
-            else setIsPlaying(!isPlaying)
-          }}
-          className="px-4 py-2 rounded-lg bg-primary/20 text-primary-light hover:bg-primary/30 transition-colors font-medium text-sm"
-        >
-          {currentStep >= maxStep ? '↺ Reset' : isPlaying ? '⏸ Pause' : '▶ Play'}
-        </button>
-        {!isPlaying && currentStep < maxStep && (
+      <div className="space-y-4 rounded-xl border border-border bg-surface/50 p-5">
+        <p className="text-sm text-muted">{c.kvAttentionNote}</p>
+        <div className="flex gap-3">
           <button
-            onClick={advanceStep}
-            className="px-4 py-2 rounded-lg bg-surface-elevated border border-border text-text hover:border-primary/40 transition-colors text-sm"
+            disabled={step >= 8}
+            onClick={() => setStep((s) => s + 1)}
+            className="rounded-lg border border-primary px-4 py-2 disabled:opacity-50"
           >
-            Step →
+            {c.step}
           </button>
-        )}
-        <span className="text-sm text-muted">
-          Step {currentStep} / {maxStep}
-        </span>
-      </div>
-
-      {/* Token sequence */}
-      <div>
-        <div className="text-xs text-muted uppercase tracking-wider mb-2">Input Sequence</div>
-        <div className="flex flex-wrap gap-2">
-          {SAMPLE_TOKENS.map((token, i) => {
-            const processed = i < currentStep
-            const isCurrently = i === currentStep - 1
-            return (
-              <motion.div
-                key={i}
-                animate={{
-                  scale: isCurrently ? 1.1 : 1,
-                  borderColor: isCurrently
-                    ? 'rgb(var(--color-primary))'
-                    : processed
-                      ? 'rgba(var(--color-primary), 0.3)'
-                      : 'rgba(255,255,255,0.1)',
-                }}
-                className={`px-3 py-1.5 rounded-lg text-sm font-mono border transition-colors ${
-                  processed
-                    ? 'bg-primary/10 text-primary-light'
-                    : 'bg-surface text-muted'
-                }`}
-              >
-                {token}
-              </motion.div>
-            )
-          })}
+          <button
+            onClick={() => setStep(0)}
+            className="rounded-lg border border-border px-4 py-2"
+          >
+            {c.reset}
+          </button>
         </div>
-      </div>
-
-      {/* KV Cache table */}
-      <div>
-        <div className="text-xs text-muted uppercase tracking-wider mb-2">KV Cache</div>
-        <div className="overflow-x-auto rounded-xl border border-border">
+        <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-surface-elevated border-b border-border text-xs sm:text-[10px] uppercase tracking-widest text-muted">
-                <th className="py-3 px-4 text-left">Pos</th>
-                <th className="py-3 px-4 text-left">Token</th>
-                <th className="py-3 px-4 text-left">Key Vector</th>
-                <th className="py-3 px-4 text-left">Value Vector</th>
+              <tr>
+                <th className="text-left">Token</th>
+                <th className="text-left">K</th>
+                <th className="text-left">V</th>
               </tr>
             </thead>
             <tbody>
-              <AnimatePresence>
-                {cache.map((entry, i) => (
-                  <motion.tr
-                    key={entry.step}
-                    initial={{ opacity: 0, x: -20, backgroundColor: 'rgba(var(--color-primary), 0.15)' }}
-                    animate={{ opacity: 1, x: 0, backgroundColor: 'transparent' }}
-                    transition={{ duration: 0.5 }}
-                    className="border-b border-border/50"
-                  >
-                    <td className="py-2 px-4 text-muted font-mono">{i}</td>
-                    <td className="py-2 px-4 text-text font-medium font-mono">{entry.token}</td>
-                    <td className="py-2 px-4">
-                      <VectorCell values={entry.key} color="text-cyan-400" />
-                    </td>
-                    <td className="py-2 px-4">
-                      <VectorCell values={entry.value} color="text-orange-400" />
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-              {cache.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="py-8 text-center text-muted text-sm">
-                    {c.emptyHint}
-                  </td>
+              {Array.from({ length: step }, (_, i) => (
+                <tr key={i} className="border-t border-border font-mono">
+                  <td className="p-2">x{i + 1}</td>
+                  <td>[{vector(i + 1)}]</td>
+                  <td>[{vector(i + 17)}]</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
         </div>
-      </div>
-
-      {/* Computation comparison */}
-      {currentStep > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="grid md:grid-cols-2 gap-4"
-        >
-          <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-            <div className="text-xs text-red-400 uppercase tracking-wider mb-1">Without KV Cache</div>
-            <div className="text-2xl font-bold text-red-400">{computationsWithout}</div>
-            <div className="text-xs text-muted mt-1">
-              attention computations (recompute all previous tokens each step)
-            </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div>
+            {c.withoutCache}: <strong>{(step * (step + 1)) / 2}</strong>{' '}
+            {c.kvProjection}
           </div>
-          <div className="p-4 rounded-xl bg-green-500/5 border border-green-500/20">
-            <div className="text-xs text-green-400 uppercase tracking-wider mb-1">With KV Cache</div>
-            <div className="text-2xl font-bold text-green-400">{computationsWith}</div>
-            <div className="text-xs text-muted mt-1">
-              new computations (only the new token against cached K/V)
-            </div>
+          <div>
+            {c.withCache}: <strong>{step}</strong> {c.kvProjection}
           </div>
-        </motion.div>
-      )}
-    </div>
-  )
-}
-
-// Memory growth visualization
-function MemoryGrowthChart() {
-  const [seqLen, setSeqLen] = useState(512)
-  const [numLayers, setNumLayers] = useState(32)
-
-  // KV cache memory: 2 * num_layers * seq_len * d_head * num_kv_heads * 2 bytes (fp16)
-  const dModel = 4096
-  const dHead = dModel / 32 // assume 32 heads for d_head calculation
-
-  // Compare MHA vs GQA vs MQA
-  const mhaMemMB = (2 * numLayers * seqLen * dHead * 32 * 2) / (1024 * 1024)
-  const gqaMemMB = (2 * numLayers * seqLen * dHead * 8 * 2) / (1024 * 1024)
-  const mqaMemMB = (2 * numLayers * seqLen * dHead * 1 * 2) / (1024 * 1024)
-  const maxMem = Math.max(mhaMemMB, 0.1)
-
-  return (
-    <div className="space-y-6">
-      {/* Controls */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label className="text-xs text-muted uppercase tracking-wider">
-            Sequence Length: <span className="text-text font-mono">{seqLen}</span>
-          </label>
-          <input
-            type="range"
-            min={128}
-            max={32768}
-            step={128}
-            value={seqLen}
-            onChange={(e) => setSeqLen(Number(e.target.value))}
-            className="w-full mt-2 accent-primary"
-          />
-        </div>
-        <div>
-          <label className="text-xs text-muted uppercase tracking-wider">
-            Layers: <span className="text-text font-mono">{numLayers}</span>
-          </label>
-          <input
-            type="range"
-            min={8}
-            max={80}
-            step={8}
-            value={numLayers}
-            onChange={(e) => setNumLayers(Number(e.target.value))}
-            className="w-full mt-2 accent-primary"
-          />
         </div>
       </div>
-
-      {/* Memory bars comparison */}
-      <div className="space-y-3">
-        <div className="text-xs text-muted uppercase tracking-wider">KV Cache Memory by Attention Type</div>
-        {[
-          { label: 'MHA (32 heads)', mem: mhaMemMB, color: 'bg-red-500', textColor: 'text-red-400' },
-          { label: 'GQA (8 groups)', mem: gqaMemMB, color: 'bg-yellow-500', textColor: 'text-yellow-400' },
-          { label: 'MQA (1 head)', mem: mqaMemMB, color: 'bg-green-500', textColor: 'text-green-400' },
-        ].map(({ label, mem, color, textColor }) => (
-          <div key={label} className="space-y-1">
-            <div className="flex justify-between text-sm">
-              <span className={textColor}>{label}</span>
-              <span className="text-muted font-mono">{mem.toFixed(1)} MB</span>
-            </div>
-            <div className="h-4 bg-surface rounded-full overflow-hidden">
-              <motion.div
-                className={`h-full ${color} rounded-full`}
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.max((mem / maxMem) * 100, 1)}%` }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-              />
-            </div>
-          </div>
-        ))}
+      <div className="space-y-4 rounded-xl border border-border bg-surface/50 p-5">
+        <h3 className="text-xl text-gradient">{c.memoryGrowth}</h3>
+        <code className="block text-xs">
+          2 × 32 × {heads} × 128 × {tokens} × 2 bytes
+        </code>
+        <label className="block">
+          {c.sequence}: {tokens}
+          <input
+            className="w-full"
+            aria-label={c.sequence}
+            type="range"
+            min={1024}
+            max={131072}
+            step={1024}
+            value={tokens}
+            onChange={(e) => setTokens(+e.target.value)}
+          />
+        </label>
+        <div className="flex flex-wrap gap-3">
+          {[
+            [32, 'MHA'],
+            [8, 'GQA'],
+            [1, 'MQA'],
+          ].map(([n, label]) => (
+            <button
+              key={label}
+              className={`rounded-lg border px-4 py-2 ${heads === n ? 'border-primary' : 'border-border'}`}
+              onClick={() => setHeads(Number(n))}
+              aria-pressed={heads === n}
+            >
+              {label}: {n} {c.heads}
+            </button>
+          ))}
+        </div>
+        <p className="text-xl font-mono">
+          {c.memory}: {memory.toFixed(2)}
+        </p>
+        <p className="text-xs text-muted">
+          {c.example}: 32 {t.vramCalc.layersLabel}, 128 {c.headDim}, FP16.
+        </p>
       </div>
-
-      <div className="p-4 rounded-xl bg-surface border border-border text-sm text-muted">
-        <strong className="text-text">Formula:</strong>{' '}
-        Memory = 2 × layers × seq_len × d_head × num_kv_heads × 2 bytes (FP16)
-        <br />
-        <span className="text-xs mt-1 block">
-          GQA uses 8 KV heads (¼ of MHA), MQA uses just 1 KV head (1/32 of MHA).
-          This is why models like Llama 3 use GQA — massive memory savings with minimal quality loss.
-        </span>
-      </div>
-    </div>
-  )
-}
-
-export function KVCacheVisualizer() {
-  const [tab, setTab] = useState<'mechanism' | 'memory'>('mechanism')
-
-  return (
-    <div className="space-y-4">
-      {/* Tab switcher */}
-      <div className="flex gap-2">
-        {[
-          { id: 'mechanism' as const, label: '⚙️ Cache Mechanism' },
-          { id: 'memory' as const, label: '📊 Memory Impact' },
-        ].map(({ id, label }) => (
-          <button
-            key={id}
-            onClick={() => setTab(id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              tab === id
-                ? 'bg-primary/20 text-primary-light border border-primary/40'
-                : 'bg-surface border border-border text-muted hover:text-text hover:border-primary/20'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      {tab === 'mechanism' ? <KVCacheStepDemo /> : <MemoryGrowthChart />}
     </div>
   )
 }

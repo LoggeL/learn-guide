@@ -5,7 +5,7 @@ import { DistillationVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function DistillationPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   const benefits = [
     { num: 1, title: t.distillation.benefit1Title, desc: t.distillation.benefit1Desc, color: 'purple' },
@@ -138,9 +138,9 @@ export default function DistillationPage() {
         <p className="text-muted mb-6">{t.distillation.whyWorksDesc}</p>
         <div className="space-y-4">
           {benefits.map((item) => (
-            <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
-              <div className={`w-12 h-12 rounded-xl bg-${item.color}-500/20 flex items-center justify-center shrink-0`}>
-                <span className={`text-xl font-bold text-${item.color}-400`}>{item.num}</span>
+            <div key={item.num} className={`flex gap-5 p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <div className={`w-12 h-12 rounded-xl bg-cyan-500/20 flex items-center justify-center shrink-0`}>
+                <span className={`text-xl font-bold text-cyan-400`}>{item.num}</span>
               </div>
               <div>
                 <h3 className="text-text font-semibold font-heading mb-1">{item.title}</h3>
@@ -189,8 +189,8 @@ export default function DistillationPage() {
         <p className="text-muted mb-6">{t.distillation.typesDesc}</p>
         <div className="grid md:grid-cols-2 gap-4">
           {types.map((type) => (
-            <div key={type.id} className={`p-5 rounded-xl bg-${type.color}-500/5 border border-${type.color}-500/20`}>
-              <h3 className={`text-${type.color}-400 font-semibold font-heading mb-2`}>{type.title}</h3>
+            <div key={type.id} className={`p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <h3 className={`text-cyan-400 font-semibold font-heading mb-2`}>{type.title}</h3>
               <p className="text-muted text-sm leading-relaxed">{type.desc}</p>
             </div>
           ))}
@@ -239,6 +239,7 @@ export default function DistillationPage() {
           </ul>
         </div>
       </section>
+<section><h2 className="mb-3 text-xl font-semibold">{locale === 'de' ? 'Primärquellen' : 'Primary sources'}</h2><ul className="space-y-2"><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/1910.01108">DistilBERT</a></li><li><a className="text-cyan-300 underline" href="https://arxiv.org/html/2501.12948v1">DeepSeek-R1</a></li></ul></section>
     </TopicLayout>
   )
 }

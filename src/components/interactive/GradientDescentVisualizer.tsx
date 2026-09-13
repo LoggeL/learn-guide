@@ -1,273 +1,160 @@
 'use client'
-
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { Play, Pause, RotateCcw, TrendingDown } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from '@/lib/i18n/context'
-
-// Simple 2D loss function: f(x) = x^4 - 2x^2 + x (has local and global minima)
-function lossFunction(x: number): number {
-  return Math.pow(x, 4) - 2 * Math.pow(x, 2) + 0.5 * x + 2
-}
-
-// Derivative of loss function
-function gradientFunction(x: number): number {
-  return 4 * Math.pow(x, 3) - 4 * x + 0.5
-}
-
-const copy = {
-  en: {
-    title: 'Gradient Descent',
-    subtitle: 'Optimizing a 2D loss function',
-    info: 'The red ball follows the gradient (slope) downhill. A higher learning rate takes bigger steps but may overshoot. Starting position determines whether you reach the global or local minimum.',
-  },
-  de: {
-    title: 'Gradientenabstieg',
-    subtitle: 'Optimierung einer 2D-Verlustfunktion',
-    info: 'Der rote Ball folgt dem Gradienten (der Steigung) bergab. Eine höhere Lernrate macht größere Schritte, kann aber über das Ziel hinausschießen. Die Startposition entscheidet, ob du das globale oder ein lokales Minimum erreichst.',
-  },
-} as const
+import {
+  loss,
+  gradient,
+  descentStep,
+  stationaryPoint,
+} from '@/lib/learning-math'
 
 export function GradientDescentVisualizer() {
-  const { t, locale } = useTranslation()
-  const c = copy[locale]
-  const [position, setPosition] = useState(1.8)
-  const [learningRate, setLearningRate] = useState(0.1)
-  const [isRunning, setIsRunning] = useState(false)
-  const [history, setHistory] = useState<{ x: number; y: number }[]>([])
-  const [iterations, setIterations] = useState(0)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  const currentLoss = lossFunction(position)
-
-  useEffect(() => {
-    if (isRunning) {
-      intervalRef.current = setInterval(() => {
-        const gradient = gradientFunction(position)
-        const newPos = position - learningRate * gradient
-
-        // Clamp to visible range
-        const clampedPos = Math.max(-2, Math.min(2, newPos))
-
-        setPosition(clampedPos)
-        setHistory((h) => [...h, { x: clampedPos, y: lossFunction(clampedPos) }])
-        setIterations((i) => i + 1)
-
-        // Stop if gradient is very small (converged)
-        if (Math.abs(gradient) < 0.01 || iterations > 100) {
-          setIsRunning(false)
-        }
-      }, 200)
-    }
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-      }
-    }
-  }, [isRunning, learningRate, position, iterations])
-
-  const reset = () => {
-    setIsRunning(false)
-    setPosition(1.8)
+  const { t } = useTranslation(),
+    c = t.vramCalc.audit
+  const [start, setStart] = useState(1.8),
+    [x, setX] = useState(1.8),
+    [rate, setRate] = useState(0.1),
+    [running, setRunning] = useState(false),
+    [history, setHistory] = useState<number[]>([])
+  const outside = !Number.isFinite(x) || Math.abs(x) > 2
+  const reset = (value = start) => {
+    setRunning(false)
+    setX(value)
     setHistory([])
-    setIterations(0)
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-    }
   }
-
-  const toggleRun = () => {
-    setIsRunning(!isRunning)
+  const step = () => {
+    if (outside) return
+    const next = descentStep(x, rate)
+    setX(next)
+    setHistory((h) => [...h, next])
+    if (Math.abs(next) > 2 || Math.abs(gradient(next)) < 0.001)
+      setRunning(false)
   }
-
-  // Generate points for the loss curve
-  const curvePoints: { x: number; y: number }[] = []
-  for (let x = -2; x <= 2; x += 0.1) {
-    curvePoints.push({ x, y: lossFunction(x) })
-  }
-
-  // SVG dimensions and scaling
-  const width = 500
-  const height = 300
-  const padding = 40
-
-  const maxLoss = Math.max(...curvePoints.map((p) => p.y))
-
-  const xScale = (x: number) => padding + ((x + 2) / 4) * (width - 2 * padding)
-  const yScale = (y: number) => height - padding - (y / maxLoss) * (height - 2 * padding)
-
-  // Generate path for the curve
-  const pathD = curvePoints
-    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${xScale(p.x)} ${yScale(p.y)}`)
+  useEffect(() => {
+    if (!running) return
+    const id = setTimeout(step, 300)
+    return () => clearTimeout(id)
+  })
+  const sx = (v: number) => 40 + (v + 2) * 125,
+    sy = (v: number) => 260 - (v / 12) * 220
+  const curve = Array.from({ length: 161 }, (_, i) => -2 + i / 40)
+    .map((v) => `${sx(v)},${sy(loss(v))}`)
     .join(' ')
-
+  const minima = [stationaryPoint(-1), stationaryPoint(1)]
   return (
-    <div className="space-y-6">
-      {/* Controls */}
-      <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 flex items-center justify-center">
-              <TrendingDown size={18} className="text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-text font-heading">{c.title}</h3>
-              <p className="text-xs text-muted">{c.subtitle}</p>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={reset}
-              className="flex items-center gap-2 px-4 py-2 bg-surface-elevated border border-border rounded-lg text-muted hover:text-text transition-colors"
-            >
-              <RotateCcw size={14} />
-              {t.interactive.resetDescent}
-            </button>
-            <button
-              onClick={toggleRun}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                isRunning
-                  ? 'bg-yellow-500/20 text-yellow-400'
-                  : 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-              }`}
-            >
-              {isRunning ? <Pause size={14} /> : <Play size={14} />}
-              {isRunning ? t.interactive.pauseDescent : t.interactive.startDescent}
-            </button>
-          </div>
-        </div>
-
-        {/* Learning Rate Slider */}
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <label className="text-sm text-muted">{t.interactive.learningRate}</label>
-            <span className="text-sm font-mono font-bold text-primary-light">{learningRate.toFixed(2)}</span>
-          </div>
+    <div className="space-y-5 rounded-2xl border border-border bg-surface/50 p-5 sm:p-8">
+      <h3 className="text-xl text-gradient">{c.descentTitle}</h3>
+      <p className="text-sm text-muted">{c.descentNote}</p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label>
+          {c.startPoint}: {start.toFixed(2)}
           <input
-            type="range"
-            min="0.01"
-            max="0.3"
-            step="0.01"
-            value={learningRate}
-            onChange={(e) => setLearningRate(parseFloat(e.target.value))}
-            disabled={isRunning}
+            aria-label={c.startPoint}
             className="w-full"
+            type="range"
+            min={-2}
+            max={2}
+            step={0.01}
+            value={start}
+            onChange={(e) => {
+              const n = +e.target.value
+              setStart(n)
+              reset(n)
+            }}
           />
-          <div className="flex justify-between text-xs text-muted">
-            <span>0.01 (slow)</span>
-            <span>0.3 (fast)</span>
-          </div>
-        </div>
+        </label>
+        <label>
+          {c.rate}: {rate.toFixed(2)}
+          <input
+            aria-label={c.rate}
+            className="w-full"
+            type="range"
+            min={0.01}
+            max={0.3}
+            step={0.01}
+            value={rate}
+            onChange={(e) => {
+              setRate(+e.target.value)
+              reset()
+            }}
+          />
+        </label>
       </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        <div className="rounded-xl bg-surface border border-border p-4 text-center">
-          <motion.div
-            key={iterations}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-3xl font-mono font-bold text-gradient"
-          >
-            {iterations}
-          </motion.div>
-          <p className="text-xs text-muted mt-1">{t.interactive.iterations}</p>
-        </div>
-        <div className="rounded-xl bg-surface border border-border p-4 text-center">
-          <motion.div
-            key={currentLoss.toFixed(2)}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-3xl font-mono font-bold text-cyan-400"
-          >
-            {currentLoss.toFixed(2)}
-          </motion.div>
-          <p className="text-xs text-muted mt-1">{t.interactive.currentLoss}</p>
-        </div>
-        <div className="rounded-xl bg-surface border border-border p-4 text-center">
-          <motion.div
-            key={position.toFixed(2)}
-            initial={{ scale: 1.2, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-3xl font-mono font-bold text-purple-400"
-          >
-            {position.toFixed(2)}
-          </motion.div>
-          <p className="text-xs text-muted mt-1">Position (x)</p>
-        </div>
+      <div className="flex gap-3 flex-wrap">
+        <button
+          disabled={outside}
+          className="rounded-lg border border-primary px-4 py-2 disabled:opacity-50"
+          onClick={() => setRunning(!running)}
+        >
+          {running ? c.pause : c.run}
+        </button>
+        <button
+          disabled={outside || running}
+          className="rounded-lg border border-border px-4 py-2 disabled:opacity-50"
+          onClick={step}
+        >
+          {c.step}
+        </button>
+        <button
+          className="rounded-lg border border-border px-4 py-2"
+          onClick={() => reset()}
+        >
+          {c.reset}
+        </button>
       </div>
-
-      {/* Visualization */}
-      <div className="rounded-2xl bg-surface border border-border p-6">
-        <div className="relative w-full overflow-x-auto">
-          <svg width={width} height={height} className="mx-auto bg-background rounded-xl">
-            {/* Grid */}
-            <defs>
-              <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
-                <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#333" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width={width} height={height} fill="url(#grid)" />
-
-            {/* Axes */}
-            <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="#666" strokeWidth="1" />
-            <line x1={padding} y1={padding} x2={padding} y2={height - padding} stroke="#666" strokeWidth="1" />
-
-            {/* Loss curve */}
-            <path d={pathD} fill="none" stroke="#a78bfa" strokeWidth="2" />
-
-            {/* History trail */}
-            {history.map((point, i) => (
-              <motion.circle
-                key={i}
-                cx={xScale(point.x)}
-                cy={yScale(point.y)}
-                r={3}
-                fill="#22c55e"
-                opacity={0.3 + (i / history.length) * 0.5}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-              />
-            ))}
-
-            {/* Current position */}
-            <motion.circle
-              cx={xScale(position)}
-              cy={yScale(currentLoss)}
-              r={10}
-              fill="#ef4444"
-              stroke="#fff"
-              strokeWidth="2"
-              animate={{
-                cx: xScale(position),
-                cy: yScale(currentLoss),
-              }}
-              transition={{ type: 'spring', stiffness: 200 }}
+      {outside && (
+        <p role="status" className="text-orange-400">
+          {c.divergence}
+        </p>
+      )}
+      <svg
+        viewBox="0 0 580 300"
+        className="w-full rounded-xl bg-background"
+        role="img"
+        aria-label={c.descentTitle}
+      >
+        <polyline points={curve} fill="none" stroke="#a78bfa" strokeWidth="2" />
+        {history
+          .filter((v) => Math.abs(v) <= 2)
+          .map((v, i) => (
+            <circle key={i} cx={sx(v)} cy={sy(loss(v))} r="3" fill="#22c55e" />
+          ))}
+        {!outside && (
+          <circle cx={sx(x)} cy={sy(loss(x))} r="8" fill="#ef4444" />
+        )}
+        {minima.map((v, i) => (
+          <g key={v}>
+            <circle
+              cx={sx(v)}
+              cy={sy(loss(v))}
+              r="5"
+              fill="none"
+              stroke="#22c55e"
             />
-
-            {/* Global minimum marker */}
-            <circle cx={xScale(-1.1)} cy={yScale(lossFunction(-1.1))} r={5} fill="none" stroke="#22c55e" strokeWidth="2" strokeDasharray="4" />
-            <text x={xScale(-1.1)} y={yScale(lossFunction(-1.1)) - 15} textAnchor="middle" className="text-xs sm:text-[10px] fill-green-400">
-              {t.interactive.globalMinimum}
+            <text
+              x={sx(v)}
+              y={sy(loss(v)) + 20}
+              textAnchor="middle"
+              fill="#94a3b8"
+              fontSize="12"
+            >
+              {i === 0 ? c.globalMinimum : c.localMinimum}
             </text>
-
-            {/* Local minimum marker */}
-            <circle cx={xScale(1.0)} cy={yScale(lossFunction(1.0))} r={5} fill="none" stroke="#eab308" strokeWidth="2" strokeDasharray="4" />
-            <text x={xScale(1.0)} y={yScale(lossFunction(1.0)) - 15} textAnchor="middle" className="text-xs sm:text-[10px] fill-yellow-400">
-              {t.interactive.localMinimum}
-            </text>
-          </svg>
+          </g>
+        ))}
+      </svg>
+      <div className="grid grid-cols-2 gap-3 text-sm font-mono">
+        <div>
+          {c.position}: {x.toFixed(5)}
         </div>
-      </div>
-
-      {/* Info */}
-      <div className="rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 p-4">
-        <div className="flex items-start gap-3">
-          <TrendingDown size={18} className="text-primary-light shrink-0 mt-0.5" />
-          <div className="text-sm text-muted">
-            <p>{c.info}</p>
-          </div>
+        <div>
+          {c.loss}: {loss(x).toFixed(5)}
+        </div>
+        <div>
+          {c.gradient}: {gradient(x).toFixed(5)}
+        </div>
+        <div>
+          {c.iteration}: {history.length}
         </div>
       </div>
     </div>

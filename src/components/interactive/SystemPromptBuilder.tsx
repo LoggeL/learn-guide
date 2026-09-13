@@ -22,15 +22,7 @@ interface PromptPreset {
   }
 }
 
-// Approximate token count (rough estimate: ~4 chars per token for English)
-function estimateTokenCount(text: string): number {
-  if (!text.trim()) return 0
-  // More accurate estimation considering whitespace and punctuation
-  const words = text.trim().split(/\s+/).length
-  const chars = text.length
-  // Average: words * 1.3 + special chars
-  return Math.ceil(words * 1.3 + (chars - words) * 0.1)
-}
+function countCharacters(text: string): number { return Array.from(text).length }
 
 const SECTION_ICONS = {
   identity: User,
@@ -49,38 +41,10 @@ const SECTION_COLORS = {
 export function SystemPromptBuilder() {
   const { t } = useTranslation()
 
-  const PRESETS: PromptPreset[] = [
-    {
-      id: 'coding',
-      name: t.interactive.presetCoding,
-      sections: {
-        identity: 'You are an expert software developer specializing in TypeScript, React, and Node.js. You write clean, maintainable code following industry best practices.',
-        capabilities: '- Code review and refactoring suggestions\n- Debugging assistance\n- Architecture design advice\n- Writing tests and documentation\n- Explaining complex technical concepts',
-        limitations: '- Do not execute code or access external systems\n- Do not provide solutions that bypass security measures\n- Always recommend testing before deploying\n- Avoid providing outdated or deprecated patterns',
-        guidelines: '- Use TypeScript strict mode conventions\n- Prefer functional and declarative patterns\n- Include type annotations in all examples\n- Explain trade-offs when multiple approaches exist\n- Format code with consistent 2-space indentation',
-      },
-    },
-    {
-      id: 'support',
-      name: t.interactive.presetSupport,
-      sections: {
-        identity: 'You are a friendly and professional customer support agent for TechCorp. You help users with product issues, billing questions, and general inquiries.',
-        capabilities: '- Answer product-related questions\n- Guide users through troubleshooting steps\n- Explain billing and subscription details\n- Escalate complex issues to human agents\n- Provide information about features and updates',
-        limitations: '- Cannot access or modify user accounts directly\n- Cannot process refunds without human approval\n- Cannot share internal company information\n- Do not make promises about future features\n- Cannot diagnose hardware issues remotely',
-        guidelines: '- Maintain a warm, empathetic tone\n- Use the customer\'s name when provided\n- Apologize for any inconvenience sincerely\n- Provide step-by-step instructions clearly\n- Always offer additional help before closing',
-      },
-    },
-    {
-      id: 'research',
-      name: t.interactive.presetResearch,
-      sections: {
-        identity: 'You are an academic research assistant with expertise in literature review, data analysis, and scientific writing. You help researchers and students with their work.',
-        capabilities: '- Summarize and analyze academic papers\n- Suggest relevant research methodologies\n- Help structure research arguments\n- Identify gaps in existing literature\n- Assist with citation formatting',
-        limitations: '- Cannot access paywalled content or databases\n- Do not fabricate citations or statistics\n- Cannot conduct original experiments\n- Avoid making definitive claims without evidence\n- Do not write entire papers for users',
-        guidelines: '- Cite sources when referencing specific claims\n- Use formal academic language\n- Present multiple viewpoints on contested topics\n- Distinguish between established facts and hypotheses\n- Encourage critical thinking and verification',
-      },
-    },
-  ]
+  const PRESETS: PromptPreset[] = t.agentReview.systemPresets.map((preset, index) => ({
+    id: String(index), name: preset.name,
+    sections: {identity:preset.identity, capabilities:preset.capabilities, limitations:preset.limitations, guidelines:preset.guidelines}
+  }))
 
   const TIPS: Record<string, string> = {
     identity: t.interactive.tipIdentity,
@@ -120,7 +84,7 @@ export function SystemPromptBuilder() {
     return parts.join('\n\n')
   }, [sections, t.systemPrompts])
 
-  const tokenCount = useMemo(() => estimateTokenCount(assembledPrompt), [assembledPrompt])
+  const tokenCount = useMemo(() => countCharacters(assembledPrompt), [assembledPrompt])
 
   const updateSection = (id: string, updates: Partial<PromptSection>) => {
     setSections(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))
@@ -212,7 +176,7 @@ export function SystemPromptBuilder() {
                   <div>
                     <h3 className="font-semibold text-text font-heading">{sectionName}</h3>
                     <p className="text-xs text-muted">
-                      {section.content ? `~${estimateTokenCount(section.content)} ${t.interactive.tokens}` : t.interactive.notConfigured}
+                      {section.content ? `${countCharacters(section.content)} ${t.agentReview.characters}` : t.interactive.notConfigured}
                     </p>
                   </div>
                 </div>
@@ -264,7 +228,7 @@ export function SystemPromptBuilder() {
             <div>
               <h3 className="font-semibold text-text font-heading">{t.interactive.livePreview}</h3>
               <p className="text-xs text-muted">
-                ~{tokenCount} {t.interactive.tokens} {t.interactive.estimated}
+                {tokenCount} {t.agentReview.characters}
               </p>
             </div>
           </div>
@@ -298,7 +262,7 @@ export function SystemPromptBuilder() {
         {/* Token estimation info */}
         {assembledPrompt && (
           <p className="mt-3 text-xs text-muted text-center">
-            {t.interactive.tokenEstimateNote}
+            {t.agentReview.systemCountNote}
           </p>
         )}
       </div>

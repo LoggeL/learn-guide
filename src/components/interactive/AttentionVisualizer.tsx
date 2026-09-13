@@ -1,230 +1,57 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { motion } from 'framer-motion'
-import clsx from 'clsx'
-import { Eye } from 'lucide-react'
-import { useTranslation } from '@/lib/i18n/context'
+import { useState } from 'react'
+import { useLocale } from '@/lib/i18n/context'
+import { scaledAttention } from '@/lib/llmLearningMath'
 
+// Row-vector convention: q = x Wq. Deliberately tiny, fixed toy projections.
+const WQ = [[1, 0.5], [0, 1]]
+const WK = [[0.5, 1], [1, 0]]
+const WV = [[1, -1], [0.5, 1]]
+const initial = [[1, 0], [0, 1], [1, 1]]
+const project = (x: number[], w: number[][]) => [0, 1].map(j => x.reduce((sum, value, i) => sum + value * w[i][j], 0))
+const fmt = (v: number[]) => `[${v.map(n => n.toFixed(2)).join(', ')}]`
 const copy = {
   en: {
-    title: 'Attention Map Simulator',
+    title: 'Calculate one attention head', words: ['The', 'cat', 'sleeps'],
+    note: 'This example contains three words. Each word is treated as one token here. Input vectors and projection weights are chosen for easy arithmetic, not learned from language. Attention weights and the output below are computed from them.',
+    choose: '1. Choose the querying token', input: '2. Edit its input vector x', projections: 'Fixed projections (row vectors: Q = XWQ, K = XWK, V = XWV)',
+    mask: 'Causal mask: this token can only use itself and earlier tokens', vectors: '3. Inspect all token vectors', token: 'Token', scores: '4. Dot product → scale → mask → softmax', dot: 'Q · K', scaled: '÷ √2', weight: 'Attention weight', weighted: 'Weight × V', result: '5. Sum the weighted values', reset: 'Reset vectors',
+    explain: 'The selected query scores every key. Divide by √dₖ, set forbidden positions to −∞, then apply softmax across the row. The weights sum to 1; masked positions contribute zero.',
+    limit: 'This output is a contextual vector for the selected position, not a next-token probability. Later projections and layers process it. Large attention weight alone does not establish grammar, importance or a causal explanation of the model’s answer.',
+    bidirectional: 'Without the mask, the selected token can also use later positions, as in bidirectional encoder attention.',
   },
   de: {
-    title: 'Attention-Map-Simulator',
+    title: 'Einen Attention-Head ausrechnen', words: ['Die', 'Katze', 'schläft'],
+    note: 'Das Beispiel enthält drei Wörter. Jedes Wort wird hier als ein Token behandelt. Eingangsvektoren und Projektionsgewichte sind für einfache Rechnungen gewählt und nicht aus Sprache gelernt. Die Attention-Gewichte und die Ausgabe werden daraus berechnet.',
+    choose: '1. Das abfragende Token wählen', input: '2. Seinen Eingangsvektor x ändern', projections: 'Feste Projektionen (Zeilenvektoren: Q = XWQ, K = XWK, V = XWV)',
+    mask: 'Kausale Maske: nur dieses und vorherige Tokens sind erlaubt', vectors: '3. Alle Token-Vektoren ansehen', token: 'Token', scores: '4. Skalarprodukt → Skalierung → Maske → Softmax', dot: 'Q · K', scaled: '÷ √2', weight: 'Attention-Gewicht', weighted: 'Gewicht × V', result: '5. Gewichtete Values summieren', reset: 'Vektoren zurücksetzen',
+    explain: 'Die ausgewählte Query bewertet jeden Key. Danach wird durch √dₖ geteilt, verbotene Positionen werden auf −∞ gesetzt und Softmax wird auf die Zeile angewendet. Die Gewichte summieren sich zu 1; maskierte Positionen tragen null bei.',
+    limit: 'Die Ausgabe ist ein kontextueller Vektor dieser Position, keine Next-Token-Wahrscheinlichkeit. Weitere Projektionen und Layer verarbeiten ihn. Ein großes Attention-Gewicht allein belegt weder Grammatik noch Wichtigkeit oder eine kausale Erklärung der Modellantwort.',
+    bidirectional: 'Ohne Maske kann das ausgewählte Token auch spätere Positionen nutzen, wie bei bidirektionaler Encoder-Attention.',
   },
-} as const
+}
 
 export function AttentionVisualizer() {
-  const { t, locale } = useTranslation()
-  const c = copy[locale]
-  const [selectedWordIndex, setSelectedWordIndex] = useState<number | null>(null)
-  const [sentenceIndex, setSentenceIndex] = useState(0)
-
-  // Sentence definitions with hardcoded attention matrices
-  // These represent realistic attention patterns from a transformer model
-  const SENTENCES = useMemo(() => [
-    {
-      text: "The cat sat on the mat because it was warm.",
-      focus: "pronoun 'it' → cat or mat?",
-      words: ['The', 'cat', 'sat', 'on', 'the', 'mat', 'because', 'it', 'was', 'warm.'],
-      // 10x10 attention matrix: rows = source (attending), cols = target (attended to)
-      attention: [
-        //      The   cat   sat   on    the   mat   bec   it    was   warm
-        /*The*/   [0.35, 0.45, 0.08, 0.03, 0.02, 0.03, 0.01, 0.01, 0.01, 0.01],
-        /*cat*/   [0.25, 0.40, 0.18, 0.05, 0.03, 0.04, 0.02, 0.01, 0.01, 0.01],
-        /*sat*/   [0.08, 0.52, 0.22, 0.06, 0.03, 0.04, 0.02, 0.01, 0.01, 0.01],
-        /*on*/    [0.04, 0.15, 0.35, 0.18, 0.08, 0.12, 0.03, 0.02, 0.02, 0.01],
-        /*the*/   [0.03, 0.05, 0.08, 0.12, 0.28, 0.38, 0.02, 0.02, 0.01, 0.01],
-        /*mat*/   [0.03, 0.08, 0.12, 0.18, 0.32, 0.22, 0.02, 0.01, 0.01, 0.01],
-        /*bec*/   [0.02, 0.08, 0.15, 0.04, 0.03, 0.12, 0.25, 0.12, 0.10, 0.09],
-        /*it*/    [0.03, 0.42, 0.06, 0.02, 0.03, 0.28, 0.04, 0.05, 0.04, 0.03], // "it" → cat (0.42) or mat (0.28)
-        /*was*/   [0.02, 0.12, 0.08, 0.02, 0.02, 0.08, 0.06, 0.38, 0.18, 0.04],
-        /*warm*/  [0.02, 0.15, 0.05, 0.02, 0.02, 0.22, 0.05, 0.18, 0.12, 0.17],
-      ],
-    },
-    {
-      text: "The robot picked up the ball and put it in the box.",
-      focus: "tracking 'it' → ball",
-      words: ['The', 'robot', 'picked', 'up', 'the', 'ball', 'and', 'put', 'it', 'in', 'the', 'box.'],
-      // 12x12 attention matrix
-      attention: [
-        //       The   rob   pick  up    the   ball  and   put   it    in    the   box
-        /*The*/   [0.32, 0.48, 0.06, 0.03, 0.02, 0.03, 0.01, 0.02, 0.01, 0.01, 0.00, 0.01],
-        /*robot*/ [0.28, 0.38, 0.16, 0.05, 0.03, 0.04, 0.02, 0.02, 0.01, 0.00, 0.00, 0.01],
-        /*picked*/[0.05, 0.48, 0.22, 0.12, 0.03, 0.05, 0.02, 0.01, 0.01, 0.00, 0.00, 0.01],
-        /*up*/    [0.03, 0.18, 0.42, 0.18, 0.05, 0.08, 0.02, 0.02, 0.01, 0.00, 0.00, 0.01],
-        /*the*/   [0.02, 0.04, 0.06, 0.05, 0.28, 0.45, 0.03, 0.03, 0.02, 0.01, 0.00, 0.01],
-        /*ball*/  [0.02, 0.08, 0.15, 0.08, 0.35, 0.22, 0.04, 0.02, 0.02, 0.01, 0.00, 0.01],
-        /*and*/   [0.02, 0.12, 0.18, 0.04, 0.04, 0.15, 0.18, 0.15, 0.04, 0.03, 0.02, 0.03],
-        /*put*/   [0.02, 0.35, 0.22, 0.05, 0.03, 0.12, 0.06, 0.08, 0.03, 0.02, 0.01, 0.01],
-        /*it*/    [0.01, 0.08, 0.06, 0.02, 0.04, 0.58, 0.03, 0.06, 0.05, 0.03, 0.02, 0.02], // "it" → ball (0.58)
-        /*in*/    [0.01, 0.04, 0.05, 0.02, 0.02, 0.08, 0.03, 0.18, 0.12, 0.15, 0.12, 0.18],
-        /*the*/   [0.01, 0.02, 0.03, 0.01, 0.02, 0.04, 0.02, 0.04, 0.05, 0.18, 0.25, 0.33],
-        /*box*/   [0.01, 0.05, 0.08, 0.02, 0.02, 0.08, 0.02, 0.12, 0.08, 0.22, 0.15, 0.15],
-      ],
-    },
-    {
-      text: "She gave him the book because he needed it.",
-      focus: "multiple references",
-      words: ['She', 'gave', 'him', 'the', 'book', 'because', 'he', 'needed', 'it.'],
-      // 9x9 attention matrix
-      attention: [
-        //       She   gave  him   the   book  bec   he    need  it
-        /*She*/   [0.45, 0.28, 0.12, 0.04, 0.05, 0.02, 0.02, 0.01, 0.01],
-        /*gave*/  [0.42, 0.25, 0.18, 0.04, 0.06, 0.02, 0.01, 0.01, 0.01],
-        /*him*/   [0.18, 0.35, 0.28, 0.05, 0.08, 0.02, 0.02, 0.01, 0.01],
-        /*the*/   [0.04, 0.08, 0.06, 0.32, 0.42, 0.03, 0.02, 0.02, 0.01],
-        /*book*/  [0.05, 0.15, 0.12, 0.35, 0.25, 0.03, 0.02, 0.02, 0.01],
-        /*bec*/   [0.08, 0.15, 0.08, 0.04, 0.12, 0.22, 0.12, 0.10, 0.09],
-        /*he*/    [0.05, 0.08, 0.52, 0.03, 0.06, 0.06, 0.12, 0.05, 0.03], // "he" → him (0.52)
-        /*needed*/[0.04, 0.12, 0.08, 0.03, 0.15, 0.05, 0.32, 0.15, 0.06],
-        /*it*/    [0.03, 0.08, 0.05, 0.05, 0.55, 0.04, 0.06, 0.08, 0.06], // "it" → book (0.55)
-      ],
-    },
-  ], [])
-
-  const currentSentence = SENTENCES[sentenceIndex]
-  const words = currentSentence.words
-  const attentionMatrix = currentSentence.attention
-
-  const getAttentionWeight = (sourceIdx: number, targetIdx: number): number => {
-    if (sourceIdx === null || sourceIdx < 0 || sourceIdx >= words.length) return 0.05
-    return attentionMatrix[sourceIdx][targetIdx]
-  }
-
-  const getWeightColor = (weight: number) => {
-    if (weight >= 0.4) return 'from-purple-500 to-pink-500'
-    if (weight >= 0.2) return 'from-cyan-500 to-blue-500'
-    if (weight >= 0.1) return 'from-emerald-500/50 to-teal-500/50'
-    return 'from-transparent to-transparent'
-  }
-
-  return (
-    <div className="rounded-2xl bg-surface border border-border overflow-hidden">
-      {/* Header */}
-      <div className="px-6 py-4 bg-surface-elevated border-b border-border flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-            <Eye size={18} className="text-primary-light" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-text font-heading">{c.title}</h3>
-            <p className="text-xs text-muted">{t.interactive.hoverToSee}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Sentence Tabs */}
-      <div className="px-6 py-3 border-b border-border bg-background/50 flex gap-2 overflow-x-auto">
-        {SENTENCES.map((s, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              setSentenceIndex(i)
-              setSelectedWordIndex(null)
-            }}
-            className={clsx(
-              "px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap",
-              i === sentenceIndex
-                ? "bg-primary/20 text-primary-light border border-primary/30"
-                : "bg-surface text-muted border border-border hover:border-primary/30 hover:text-text"
-            )}
-          >
-            Example {i + 1}
-          </button>
-        ))}
-      </div>
-
-      {/* Words Display */}
-      <div className="p-8 md:p-12">
-        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
-          {words.map((word, i) => {
-            const weight = selectedWordIndex !== null ? getAttentionWeight(selectedWordIndex, i) : 0.05
-            const isSelected = selectedWordIndex === i
-            const isHighAttention = weight > 0.3
-
-            return (
-              <motion.div
-                key={i}
-                className="relative"
-                onMouseEnter={() => setSelectedWordIndex(i)}
-                onMouseLeave={() => setSelectedWordIndex(null)}
-              >
-                <motion.span
-                  className={clsx(
-                    "relative block px-5 py-3 rounded-xl cursor-default transition-all duration-200",
-                    "text-xl md:text-2xl font-medium",
-                    isSelected && "ring-2 ring-primary ring-offset-2 ring-offset-surface"
-                  )}
-                  animate={{
-                    scale: isHighAttention ? 1.1 : 1,
-                  }}
-                >
-                  {/* Attention glow background */}
-                  <motion.div
-                    className={clsx(
-                      "absolute inset-0 rounded-xl bg-gradient-to-r",
-                      getWeightColor(weight)
-                    )}
-                    animate={{ opacity: Math.min(weight * 2, 0.9) }}
-                    transition={{ duration: 0.2 }}
-                  />
-
-                  <span className={clsx(
-                    "relative z-10 transition-colors duration-200",
-                    isHighAttention ? "text-white font-semibold" : "text-text"
-                  )}>
-                    {word}
-                  </span>
-                </motion.span>
-
-                {/* Attention score badge */}
-                {selectedWordIndex !== null && weight > 0.05 && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.8, y: 5 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    className={clsx(
-                      "absolute -bottom-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded-full text-xs font-mono whitespace-nowrap",
-                      weight >= 0.4 ? "bg-purple-500/20 text-purple-300" :
-                      weight >= 0.2 ? "bg-cyan-500/20 text-cyan-300" :
-                      "bg-surface-elevated text-muted"
-                    )}
-                  >
-                    {(weight * 100).toFixed(0)}%
-                  </motion.span>
-                )}
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* Focus hint */}
-        <div className="mt-10 text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface-elevated border border-border text-sm text-muted">
-            <span className="text-primary">Focus:</span>
-            {currentSentence.focus}
-          </span>
-        </div>
-      </div>
-
-      {/* Legend */}
-      <div className="px-6 py-4 border-t border-border bg-background/50">
-        <div className="flex flex-wrap items-center justify-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-r from-purple-500 to-pink-500" />
-            <span className="text-xs text-muted">{t.interactive.strongConnection} (40%+)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-r from-cyan-500 to-blue-500" />
-            <span className="text-xs text-muted">Medium (20-40%)</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gradient-to-r from-emerald-500/50 to-teal-500/50" />
-            <span className="text-xs text-muted">{t.interactive.weakConnection} (10-20%)</span>
-          </div>
-        </div>
-      </div>
+  const { locale } = useLocale()
+  const c = copy[locale === 'de' ? 'de' : 'en']
+  const [input, setInput] = useState(initial)
+  const [selected, setSelected] = useState(1)
+  const [causal, setCausal] = useState(true)
+  const queries = input.map(x => project(x, WQ))
+  const keys = input.map(x => project(x, WK))
+  const values = input.map(x => project(x, WV))
+  const attention = scaledAttention(queries[selected], keys, values, selected, causal)
+  return <div className="space-y-6 rounded-2xl border border-border bg-surface p-5 md:p-6">
+    <div><h3 className="text-xl font-semibold">{c.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{c.note}</p></div>
+    <fieldset><legend className="mb-3 font-medium">{c.choose}</legend><div className="flex flex-wrap gap-2">{c.words.map((word, i) => <button type="button" key={word} aria-pressed={selected === i} onClick={() => setSelected(i)} className={`rounded-xl border px-4 py-3 text-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-400 ${selected === i ? 'border-cyan-400 bg-cyan-500/15 text-cyan-200' : 'border-border bg-background'}`}>{word}</button>)}</div></fieldset>
+    <fieldset><legend className="mb-3 font-medium">{c.input}: {c.words[selected]}</legend><div className="grid grid-cols-2 gap-5">{input[selected].map((value, j) => <label key={j} className="font-mono text-sm">x{j} = {value.toFixed(1)}<input className="mt-2 w-full" type="range" min={-2} max={2} step={0.1} value={value} onChange={e => setInput(previous => previous.map((row, i) => i === selected ? row.map((v, k) => j === k ? Number(e.target.value) : v) : row))} /></label>)}</div></fieldset>
+    <div><p className="mb-3 text-sm text-muted">{c.projections}</p><div className="grid grid-cols-3 gap-2">{[['WQ', WQ], ['WK', WK], ['WV', WV]].map(([name, matrix]) => <div key={String(name)} className="rounded-lg border border-border bg-background p-3 text-center font-mono text-xs sm:text-sm"><p className="mb-2 text-cyan-300">{String(name)}</p>{(matrix as number[][]).map((row, i) => <p key={i}>{fmt(row)}</p>)}</div>)}</div></div>
+    <div><h4 className="mb-3 font-medium">{c.vectors}</h4><div className="overflow-x-auto"><table className="w-full text-right font-mono text-sm"><thead><tr>{[c.token, 'x', 'Q', 'K', 'V'].map(name => <th key={name} className="p-2">{name}</th>)}</tr></thead><tbody>{input.map((x, i) => <tr key={i} className={`border-t border-border ${i === selected ? 'bg-cyan-500/10' : ''}`}><th className="p-2 font-normal">{c.words[i]}</th>{[x, queries[i], keys[i], values[i]].map((row, j) => <td className="whitespace-nowrap p-2" key={j}>{fmt(row)}</td>)}</tr>)}</tbody></table></div></div>
+    <div><h4 className="mb-3 font-medium">{c.scores}</h4><label className="flex items-start gap-2 text-sm"><input type="checkbox" checked={causal} onChange={e => setCausal(e.target.checked)} className="mt-1" />{c.mask}</label><p className="mt-3 text-sm text-muted">{causal ? c.explain : `${c.explain} ${c.bidirectional}`}</p>
+      <div className="mt-3 overflow-x-auto"><table className="w-full text-right font-mono text-sm"><thead><tr>{[c.token, c.dot, c.scaled, c.weight, c.weighted].map(name => <th key={name} className="p-2 font-sans">{name}</th>)}</tr></thead><tbody>{c.words.map((word, i) => <tr key={word} className="border-t border-border"><th className="p-2 font-normal">{word}</th><td className="p-2">{attention.dots[i].toFixed(3)}</td><td className="p-2">{Number.isFinite(attention.scores[i]) ? attention.scores[i].toFixed(3) : '−∞'}</td><td className="p-2 text-cyan-300">{attention.weights[i].toFixed(3)}<div className="mt-1 h-1 rounded bg-cyan-400" style={{ width: `${attention.weights[i] * 100}%` }} /></td><td className="whitespace-nowrap p-2">{fmt(values[i].map(v => v * attention.weights[i]))}</td></tr>)}</tbody></table></div>
     </div>
-  )
+    <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4"><h4 className="mb-2 font-medium">{c.result}</h4><p aria-live="polite" className="font-mono text-xl text-cyan-200">Σⱼ aⱼVⱼ = {fmt(attention.output)}</p></div>
+    <p className="text-sm leading-relaxed text-muted">{c.limit}</p><button type="button" className="rounded-lg border border-border px-4 py-2 text-sm" onClick={() => setInput(initial)}>{c.reset}</button>
+  </div>
 }

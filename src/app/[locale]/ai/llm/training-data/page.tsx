@@ -1,265 +1,36 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { DataSourceExplorer } from '@/components/interactive'
+import { DataSourceExplorer } from '@/components/interactive/DataSourceExplorer'
 import { useTranslation } from '@/lib/i18n/context'
 
+const copy = {
+  en: {
+    title: 'Training data', description: 'Where training examples come from, how they are processed, and what a useful dataset description must disclose.',
+    quality: 'Quality is a pipeline decision', qualityBody: 'Deduplication, language coverage, filtering and sampling change what a model learns. Keep a held-out evaluation set, check overlap with training data and evaluate target tasks. A larger corpus is not automatically a better corpus. Aggressive filters can also remove useful dialects, languages or minority viewpoints.',
+    synthetic: 'Synthetic data needs its own provenance', syntheticBody: 'Model-generated data can expand instruction, code and reasoning examples. Preserve the generator version, prompts, source material and acceptance criteria. Validate answers with task-specific checks where possible and evaluate diversity and contamination. Repeatedly training on unchecked model outputs can amplify errors or lose coverage; the outcome depends on selection, fresh data and the training setup.',
+    rights: 'Access, licences and personal data are separate fields', rightsBody: 'Do not treat public, open, licensed and lawful as interchangeable labels. A dataset can combine components with different conditions. Document acquisition, original licences, opt-outs and personal-data handling. A lawsuit or allegation needs a source and procedural date; it is not itself a final ruling on every training use.',
+    regulation: 'EU general-purpose model documentation', regulationBody: 'The AI Act includes obligations for providers of general-purpose AI models, including technical documentation, a copyright-compliance policy and a sufficiently detailed public summary of training content. Scope, exceptions and transition rules depend on the provider and model. This is not limited to high-risk downstream systems. Use the Commission guidelines for the current requirements.',
+    checklist: 'What to record before comparing datasets', fields: ['Publisher and exact release or revision', 'Source domains, acquisition and transformations', 'Size, unit, tokenizer and filtering stage', 'Licence conditions and known provenance gaps', 'Split construction, benchmark overlap and evaluation results'],
+    source: 'European Commission: guidelines for GPAI providers',
+  },
+  de: {
+    title: 'Trainingsdaten', description: 'Woher Trainingsbeispiele kommen, wie sie verarbeitet werden und was eine brauchbare Datensatzbeschreibung offenlegt.',
+    quality: 'Qualität entsteht in der Verarbeitung', qualityBody: 'Deduplizierung, Sprachabdeckung, Filter und Sampling verändern, was ein Modell lernt. Einen getrennten Evaluationssatz halten, Überschneidungen mit Trainingsdaten prüfen und die Zielaufgaben messen. Ein größerer Korpus ist nicht automatisch besser. Strenge Filter können auch nützliche Dialekte, Sprachen oder Minderheitenperspektiven entfernen.',
+    synthetic: 'Synthetische Daten brauchen eine Herkunft', syntheticBody: 'Modellerzeugte Daten können Instruktions-, Code- und Reasoning-Beispiele ergänzen. Generatorversion, Prompts, Ausgangsmaterial und Auswahlkriterien festhalten. Antworten möglichst mit aufgabenspezifischen Prüfungen validieren; Vielfalt und Kontamination evaluieren. Wiederholtes Training auf ungeprüften Modellausgaben kann Fehler verstärken oder Abdeckung verlieren. Das Ergebnis hängt von Auswahl, frischen Daten und Trainingsaufbau ab.',
+    rights: 'Zugang, Lizenzen und personenbezogene Daten getrennt erfassen', rightsBody: 'Öffentlich, offen, lizenziert und rechtmäßig sind keine austauschbaren Labels. Ein Datensatz kann Komponenten mit unterschiedlichen Bedingungen enthalten. Beschaffung, ursprüngliche Lizenzen, Opt-outs und Umgang mit personenbezogenen Daten dokumentieren. Eine Klage oder Behauptung braucht Quelle und Verfahrensstand; sie ist kein abschließendes Urteil über jede Trainingsnutzung.',
+    regulation: 'Dokumentation allgemeiner KI-Modelle in der EU', regulationBody: 'Der AI Act enthält Pflichten für Anbieter von KI-Modellen mit allgemeinem Verwendungszweck (GPAI), darunter technische Dokumentation, eine Strategie zur Einhaltung des Urheberrechts und eine hinreichend detaillierte öffentliche Zusammenfassung der Trainingsinhalte. Anwendungsbereich, Ausnahmen und Übergangsregeln hängen von Anbieter und Modell ab. Die Pflichten betreffen nicht nur nachgelagerte Hochrisikosysteme. Maßgeblich für die aktuelle Einordnung sind die Leitlinien der Kommission.',
+    checklist: 'Was ein Datensatzvergleich festhalten sollte', fields: ['Herausgeber und genaue Veröffentlichung oder Revision', 'Quelldomains, Beschaffung und Verarbeitungsschritte', 'Größe, Einheit, Tokenizer und Filterstufe', 'Lizenzbedingungen und bekannte Herkunftslücken', 'Aufteilung, Benchmark-Überschneidung und Evaluationsergebnisse'],
+    source: 'Europäische Kommission: Leitlinien für GPAI-Anbieter',
+  },
+}
 export default function TrainingDataPage() {
-  const { t } = useTranslation()
-
-  return (
-    <TopicLayout topicId="training-data"
-      title={t.trainingData.title}
-      description={t.trainingData.description}
-      breadcrumbs={[
-        { label: t.categories.ai, href: '/' },
-        { label: t.categories.llm, href: '/ai/llm' },
-        { label: t.trainingData.title },
-      ]}
-      prevTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
-      nextTopic={{ label: t.topicNames['moe'], href: '/ai/llm/moe' }}
-    >
-      {/* Overview */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.overview}</h2>
-        <p className="text-muted leading-relaxed text-lg mb-6">
-          {t.trainingData.overviewDesc}
-        </p>
-        <div className="p-4 rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
-          <p className="text-muted leading-relaxed text-sm">
-            {t.trainingData.overviewWhy}
-          </p>
-        </div>
-      </section>
-
-      {/* Interactive Data Source Explorer */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.interactiveTitle}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.interactiveDesc}
-        </p>
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <DataSourceExplorer />
-        </div>
-      </section>
-
-      {/* Legitimate Sources */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.legitimateSources}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.legitimateSourcesDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {[
-            { color: 'emerald', title: t.trainingData.sourceCommonCrawl, desc: t.trainingData.sourceCommonCrawlDesc, scale: t.trainingData.sourceCommonCrawlScale },
-            { color: 'blue', title: t.trainingData.sourceWikipedia, desc: t.trainingData.sourceWikipediaDesc, scale: t.trainingData.sourceWikipediaScale },
-            { color: 'amber', title: t.trainingData.sourceBooks, desc: t.trainingData.sourceBooks3Desc, scale: t.trainingData.sourceBooksScale },
-            { color: 'cyan', title: t.trainingData.sourceGitHub, desc: t.trainingData.sourceGitHubDesc, scale: t.trainingData.sourceGitHubScale },
-            { color: 'purple', title: t.trainingData.sourceAcademic, desc: t.trainingData.sourceAcademicDesc, scale: t.trainingData.sourceAcademicScale },
-            { color: 'teal', title: t.trainingData.sourcePile, desc: t.trainingData.sourcePileDesc, scale: t.trainingData.sourcePileScale },
-            { color: 'indigo', title: t.trainingData.sourceRedPajama, desc: t.trainingData.sourceRedPajamaDesc, scale: t.trainingData.sourceRedPajamaScale },
-            { color: 'orange', title: t.trainingData.sourceFineWeb, desc: t.trainingData.sourceFineWebDesc, scale: t.trainingData.sourceFineWebScale },
-          ].map(({ color, title, desc, scale }) => (
-            <div key={title} className={`p-5 bg-gradient-to-br from-${color}-500/10 to-${color}-500/5 border border-${color}-500/20 rounded-xl`}>
-              <h3 className={`text-base font-bold font-heading text-${color}-300 mb-2`}>{title}</h3>
-              <p className="text-sm text-muted mb-3">{desc}</p>
-              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-${color}-500/10 border border-${color}-500/20`}>
-                <span className={`text-xs font-mono font-bold text-${color}-400`}>{scale}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Controversial & Illegal Sources */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.controversialSources}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.controversialSourcesDesc}
-        </p>
-        <div className="space-y-4">
-          {[
-            { title: t.trainingData.controvBooks3, desc: t.trainingData.controvBooks3Desc },
-            { title: t.trainingData.controvNYT, desc: t.trainingData.controvNYTDesc },
-            { title: t.trainingData.controvReddit, desc: t.trainingData.controvRedditDesc },
-            { title: t.trainingData.controvGDPR, desc: t.trainingData.controvGDPRDesc },
-            { title: t.trainingData.controvArt, desc: t.trainingData.controvArtDesc },
-            { title: t.trainingData.controvLicense, desc: t.trainingData.controvLicenseDesc },
-          ].map(({ title, desc }) => (
-            <div key={title} className="p-5 bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 rounded-xl">
-              <h3 className="text-base font-bold font-heading text-red-300 mb-2">{title}</h3>
-              <p className="text-sm text-muted">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Data Quality Problem */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.dataQuality}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.dataQualityDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {[
-            { color: 'slate', title: t.trainingData.qualityGIGO, desc: t.trainingData.qualityGIGODesc },
-            { color: 'blue', title: t.trainingData.qualityDedup, desc: t.trainingData.qualityDedupDesc },
-            { color: 'red', title: t.trainingData.qualityToxic, desc: t.trainingData.qualityToxicDesc },
-            { color: 'amber', title: t.trainingData.qualityLanguage, desc: t.trainingData.qualityLanguageDesc },
-            { color: 'purple', title: t.trainingData.qualityContamination, desc: t.trainingData.qualityContaminationDesc },
-          ].map(({ color, title, desc }) => (
-            <div key={title} className={`p-5 bg-gradient-to-br from-${color}-500/10 to-${color}-500/5 border border-${color}-500/20 rounded-xl`}>
-              <h3 className={`text-base font-bold font-heading text-${color}-300 mb-2`}>{title}</h3>
-              <p className="text-sm text-muted">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Synthetic Data Deep Dive */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.syntheticData}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.syntheticDataDesc}
-        </p>
-
-        {/* What is synthetic data */}
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-bold font-heading text-purple-400 mb-3">{t.trainingData.syntheticWhat}</h3>
-          <p className="text-muted leading-relaxed">{t.trainingData.syntheticWhatDesc}</p>
-        </div>
-
-        {/* Synthetic techniques grid */}
-        <div className="grid md:grid-cols-2 gap-4 mb-6">
-          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl">
-            <h3 className="text-base font-bold font-heading text-purple-300 mb-2">{t.trainingData.syntheticSelfPlay}</h3>
-            <p className="text-sm text-muted mb-3">{t.trainingData.syntheticSelfPlayDesc}</p>
-            <div className="p-3 rounded-lg bg-purple-500/5 border border-purple-500/10">
-              <p className="text-xs text-purple-300/80 italic">{t.trainingData.syntheticSelfPlayExample}</p>
-            </div>
-          </div>
-
-          <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/5 border border-cyan-500/20 rounded-xl">
-            <h3 className="text-base font-bold font-heading text-cyan-300 mb-2">{t.trainingData.syntheticDistillation}</h3>
-            <p className="text-sm text-muted mb-3">{t.trainingData.syntheticDistillationDesc}</p>
-            <div className="p-3 rounded-lg bg-cyan-500/5 border border-cyan-500/10">
-              <p className="text-xs text-cyan-300/80 italic">{t.trainingData.syntheticDistillationExamples}</p>
-            </div>
-          </div>
-
-          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border border-emerald-500/20 rounded-xl">
-            <h3 className="text-base font-bold font-heading text-emerald-300 mb-2">{t.trainingData.syntheticConstitutional}</h3>
-            <p className="text-sm text-muted mb-3">{t.trainingData.syntheticConstitutionalDesc}</p>
-            <div className="p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
-              <p className="text-xs text-emerald-300/80 italic">{t.trainingData.syntheticConstitutionalHow}</p>
-            </div>
-          </div>
-
-          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-amber-500/5 border border-orange-500/20 rounded-xl">
-            <h3 className="text-base font-bold font-heading text-orange-300 mb-2">{t.trainingData.syntheticRejection}</h3>
-            <p className="text-sm text-muted mb-3">{t.trainingData.syntheticRejectionDesc}</p>
-            <div className="p-3 rounded-lg bg-orange-500/5 border border-orange-500/10">
-              <p className="text-xs text-orange-300/80 italic">{t.trainingData.syntheticRejectionHow}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* RLHF/DPO synthetic data */}
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-bold font-heading text-indigo-400 mb-3">{t.trainingData.syntheticRLHF}</h3>
-          <p className="text-muted leading-relaxed mb-3">{t.trainingData.syntheticRLHFDesc}</p>
-          <p className="text-sm text-muted/80">{t.trainingData.syntheticRLHFScale}</p>
-        </div>
-
-        {/* Model Collapse */}
-        <div className="rounded-2xl bg-gradient-to-br from-red-500/10 to-orange-500/5 border border-red-500/20 p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-bold font-heading text-red-400 mb-3">{t.trainingData.syntheticCollapse}</h3>
-          <p className="text-muted leading-relaxed mb-4">{t.trainingData.syntheticCollapseDesc}</p>
-          <p className="text-sm text-muted/80 mb-4">{t.trainingData.syntheticCollapseWhy}</p>
-          <div className="p-3 rounded-lg bg-red-500/5 border border-red-500/10">
-            <p className="text-xs text-red-300/80">{t.trainingData.syntheticCollapseResearch}</p>
-          </div>
-        </div>
-
-        {/* Scaling Laws */}
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8 mb-6">
-          <h3 className="text-lg font-bold font-heading text-gradient mb-3">{t.trainingData.syntheticScaling}</h3>
-          <p className="text-muted leading-relaxed mb-4">{t.trainingData.syntheticScalingDesc}</p>
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-              <p className="text-sm text-emerald-300">{t.trainingData.syntheticScalingWhen}</p>
-            </div>
-            <div className="p-4 rounded-xl bg-red-500/5 border border-red-500/20">
-              <p className="text-sm text-red-300">{t.trainingData.syntheticScalingNot}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Real-World Examples */}
-        <h3 className="text-xl font-bold font-heading text-gradient mb-4">{t.trainingData.syntheticExamples}</h3>
-        <p className="text-muted leading-relaxed mb-4">{t.trainingData.syntheticExamplesDesc}</p>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { color: 'blue', title: t.trainingData.syntheticPhi, desc: t.trainingData.syntheticPhiDesc },
-            { color: 'cyan', title: t.trainingData.syntheticOrca, desc: t.trainingData.syntheticOrcaDesc },
-            { color: 'purple', title: t.trainingData.syntheticWizard, desc: t.trainingData.syntheticWizardDesc },
-            { color: 'emerald', title: t.trainingData.syntheticNemotron, desc: t.trainingData.syntheticNemotronDesc },
-            { color: 'orange', title: t.trainingData.syntheticCosmopedia, desc: t.trainingData.syntheticCosmopediaDesc },
-          ].map(({ color, title, desc }) => (
-            <div key={title} className={`p-5 bg-gradient-to-br from-${color}-500/10 to-${color}-500/5 border border-${color}-500/20 rounded-xl`}>
-              <h4 className={`text-sm font-bold font-heading text-${color}-300 mb-2`}>{title}</h4>
-              <p className="text-xs text-muted">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* The Future */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.trainingData.future}</h2>
-        <p className="text-muted leading-relaxed mb-6">
-          {t.trainingData.futureDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {[
-            { color: 'slate', title: t.trainingData.futureWall, desc: t.trainingData.futureWallDesc },
-            { color: 'cyan', title: t.trainingData.futureMultimodal, desc: t.trainingData.futureMultimodalDesc },
-            { color: 'purple', title: t.trainingData.futureRegulation, desc: t.trainingData.futureRegulationDesc },
-            { color: 'emerald', title: t.trainingData.futureLicensing, desc: t.trainingData.futureLicensingDesc },
-          ].map(({ color, title, desc }) => (
-            <div key={title} className={`p-5 bg-gradient-to-br from-${color}-500/10 to-${color}-500/5 border border-${color}-500/20 rounded-xl`}>
-              <h3 className={`text-base font-bold font-heading text-${color}-300 mb-2`}>{title}</h3>
-              <p className="text-sm text-muted">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Key Takeaways */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.trainingData.keyTakeaways}</h2>
-        <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
-          <ul className="space-y-4 text-text">
-            {[
-              t.trainingData.takeaway1,
-              t.trainingData.takeaway2,
-              t.trainingData.takeaway3,
-              t.trainingData.takeaway4,
-              t.trainingData.takeaway5,
-              t.trainingData.takeaway6,
-              t.trainingData.takeaway7,
-              t.trainingData.takeaway8,
-            ].map((item, i) => (
-              <li key={i} className="flex gap-3 items-start">
-                <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                  <span className="text-primary-light text-sm font-bold">{i + 1}</span>
-                </span>
-                <span className="leading-relaxed">{item}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    </TopicLayout>
-  )
+  const { t, locale } = useTranslation()
+  const c = copy[locale === 'de' ? 'de' : 'en']
+  return <TopicLayout topicId="training-data" title={c.title} description={c.description} breadcrumbs={[{ label: t.categories.ai, href: '/' }, { label: t.categories.llm, href: '/ai/llm' }, { label: c.title }]}>
+    <DataSourceExplorer />
+    {[[c.quality, c.qualityBody], [c.synthetic, c.syntheticBody], [c.rights, c.rightsBody]].map(([title, body]) => <section key={title} className="rounded-xl border border-border bg-surface p-6"><h2 className="mb-3 text-xl font-semibold">{title}</h2><p className="leading-relaxed text-muted">{body}</p></section>)}
+    <section className="rounded-xl border border-border bg-surface p-6"><h2 className="mb-3 text-xl font-semibold">{c.regulation}</h2><p className="leading-relaxed text-muted">{c.regulationBody}</p><a className="mt-4 inline-block text-cyan-300 underline" href="https://digital-strategy.ec.europa.eu/en/policies/guidelines-gpai-providers">{c.source}</a></section>
+    <section><h2 className="mb-3 text-xl font-semibold">{c.checklist}</h2><ul className="list-disc space-y-2 pl-5 text-muted">{c.fields.map(field => <li key={field}>{field}</li>)}</ul></section>
+  </TopicLayout>
 }

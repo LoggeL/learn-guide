@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
 
 /* ─── 1. Catastrophic Forgetting Demo ─── */
 interface ForgettingDemoProps {
@@ -19,109 +20,20 @@ interface ForgettingDemoProps {
 }
 
 export function ForgettingDemo({ labels }: ForgettingDemoProps) {
-  const [phase, setPhase] = useState<'idle' | 'trainA' | 'doneA' | 'trainB' | 'doneB'>('idle')
-  const [taskAKnowledge, setTaskAKnowledge] = useState(0)
-  const [taskBKnowledge, setTaskBKnowledge] = useState(0)
+  const { locale } = useLocale()
+  const de = locale === 'de'
+  const [weight, setWeight] = useState(0)
   const [step, setStep] = useState(0)
-
-  useEffect(() => {
-    if (phase === 'trainA') {
-      const interval = setInterval(() => {
-        setTaskAKnowledge(prev => Math.min(95, prev + 5))
-        setStep(s => s + 1)
-      }, 80)
-      return () => clearInterval(interval)
-    }
-    if (phase === 'trainB') {
-      const interval = setInterval(() => {
-        setTaskBKnowledge(prev => Math.min(95, prev + 5))
-        setTaskAKnowledge(prev => Math.max(0, prev - 4))
-        setStep(s => s + 1)
-      }, 80)
-      return () => clearInterval(interval)
-    }
-  }, [phase])
-
-  // Phase transitions once a task is fully trained
-  useEffect(() => {
-    if (phase === 'trainA' && taskAKnowledge >= 95) setPhase('doneA')
-    if (phase === 'trainB' && taskBKnowledge >= 95) setPhase('doneB')
-  }, [phase, taskAKnowledge, taskBKnowledge])
-
-  const reset = () => { setPhase('idle'); setTaskAKnowledge(0); setTaskBKnowledge(0); setStep(0) }
-
-  const barColor = (val: number, good: string, bad: string) =>
-    val > 60 ? good : val > 30 ? 'bg-yellow-500' : bad
-
-  return (
-    <div className="bg-surface border border-border rounded-2xl p-6">
-      <h3 className="text-lg font-bold text-text mb-4">{labels.title}</h3>
-      <div className="space-y-4 mb-6">
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-cyan-400">{labels.taskA}</span>
-            <span className="text-muted">{taskAKnowledge}%</span>
-          </div>
-          <div className="h-4 bg-surface-elevated rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full rounded-full ${barColor(taskAKnowledge, 'bg-cyan-500', 'bg-red-500')}`}
-              animate={{ width: `${taskAKnowledge}%` }}
-              transition={{ duration: 0.15 }}
-            />
-          </div>
-        </div>
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-emerald-400">{labels.taskB}</span>
-            <span className="text-muted">{taskBKnowledge}%</span>
-          </div>
-          <div className="h-4 bg-surface-elevated rounded-full overflow-hidden">
-            <motion.div
-              className={`h-full rounded-full ${barColor(taskBKnowledge, 'bg-emerald-500', 'bg-red-500')}`}
-              animate={{ width: `${taskBKnowledge}%` }}
-              transition={{ duration: 0.15 }}
-            />
-          </div>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {phase === 'doneB' && taskAKnowledge < 30 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm"
-          >
-            ⚠️ {labels.forgettingWarning}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="flex gap-3 flex-wrap">
-        <button
-          onClick={() => { reset(); setPhase('trainA') }}
-          disabled={phase === 'trainA' || phase === 'trainB'}
-          className="px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 disabled:opacity-40 text-sm font-medium transition-colors"
-        >
-          {labels.trainA}
-        </button>
-        <button
-          onClick={() => setPhase('trainB')}
-          disabled={phase !== 'doneA'}
-          className="px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 disabled:opacity-40 text-sm font-medium transition-colors"
-        >
-          {labels.trainB}
-        </button>
-        <button onClick={reset} className="px-4 py-2 rounded-lg bg-surface-elevated text-muted hover:text-text text-sm transition-colors">
-          {labels.reset}
-        </button>
-        <span className="text-xs text-muted self-center ml-auto">{labels.step}: {step}</span>
-      </div>
-    </div>
-  )
+  const update = (target: number) => { setWeight(w => w - 0.25 * (w - target)); setStep(s => s + 1) }
+  return <div className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <h3 className="font-semibold">{de ? 'Zwei widersprüchliche Aufgaben, ein Parameter' : 'Two conflicting tasks, one parameter'}</h3>
+    <p className="text-sm text-muted">{de ? 'Echte Gradientenrechnung im Spielmodell: Aufgabe A möchte w = 1, Aufgabe B möchte w = −1. Loss = ½(w − Ziel)², Lernrate = 0,25. Das erklärt Interferenz in einem gemeinsamen Parameter, bildet aber weder ein LLM noch HOPE ab.' : 'Actual gradient updates in a toy model: task A wants w = 1, task B wants w = −1. Loss = ½(w − target)², learning rate = 0.25. This explains interference in one shared parameter, but models neither an LLM nor HOPE.'}</p>
+    <p className="font-mono">w = {weight.toFixed(3)} · {labels.step}: {step}</p>
+    <div className="grid grid-cols-2 gap-3"><p className="rounded-lg border border-border p-3 font-mono">Loss A: {(0.5 * (weight - 1) ** 2).toFixed(4)}</p><p className="rounded-lg border border-border p-3 font-mono">Loss B: {(0.5 * (weight + 1) ** 2).toFixed(4)}</p></div>
+    <div className="flex flex-wrap gap-2"><button type="button" className="rounded-lg border border-cyan-500/30 px-3 py-2" onClick={() => update(1)}>{de ? 'Schritt für A' : 'Step on A'}</button><button type="button" className="rounded-lg border border-purple-500/30 px-3 py-2" onClick={() => update(-1)}>{de ? 'Schritt für B' : 'Step on B'}</button><button type="button" className="rounded-lg border border-border px-3 py-2" onClick={() => { setWeight(0); setStep(0) }}>{labels.reset}</button></div>
+  </div>
 }
 
-/* ─── 2. Animated Nested Loops ─── */
 interface NestedLoopsProps {
   labels: {
     title: string
@@ -241,100 +153,17 @@ interface ComparisonDemoProps {
   }
 }
 
-export function ComparisonDemo({ labels }: ComparisonDemoProps) {
-  const [phase, setPhase] = useState(0) // 0=idle, 1=taskA, 2=taskB, 3=taskC, 4=done
-  const [trad, setTrad] = useState([0, 0, 0])
-  const [nested, setNested] = useState([0, 0, 0])
-  const tradRef = useRef([0, 0, 0])
-  const nestedRef = useRef([0, 0, 0])
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    if (phase === 0 || phase === 4) return
-    const taskIdx = phase - 1
-    const interval = setInterval(() => {
-      const t = [...tradRef.current]
-      t[taskIdx] = Math.min(90, t[taskIdx] + 5)
-      for (let i = 0; i < taskIdx; i++) t[i] = Math.max(5, t[i] - 3)
-      tradRef.current = t
-      setTrad(t)
-
-      const n = [...nestedRef.current]
-      n[taskIdx] = Math.min(85, n[taskIdx] + 5)
-      for (let i = 0; i < taskIdx; i++) n[i] = Math.max(n[i] - 0.5, 60)
-      nestedRef.current = n
-      setNested(n)
-
-      if (t[taskIdx] >= 90 && n[taskIdx] >= 85) {
-        clearInterval(interval)
-        timeoutRef.current = setTimeout(() => setPhase(p => p === 0 ? 0 : p < 3 ? p + 1 : 4), 400)
-      }
-    }, 80)
-    return () => {
-      clearInterval(interval)
-      if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
-    }
-  }, [phase])
-
-  const reset = () => {
-    if (timeoutRef.current) { clearTimeout(timeoutRef.current); timeoutRef.current = null }
-    setPhase(0)
-    tradRef.current = [0, 0, 0]
-    nestedRef.current = [0, 0, 0]
-    setTrad([0, 0, 0])
-    setNested([0, 0, 0])
-  }
-  const taskLabels = [labels.taskA, labels.taskB, labels.taskC]
-  const taskColors = ['#22d3ee', '#a78bfa', '#f59e0b']
-
-  const renderBars = (values: number[], label: string, bad: boolean) => (
-    <div className="flex-1">
-      <p className={`text-sm font-semibold mb-3 ${bad ? 'text-red-400' : 'text-emerald-400'}`}>{label}</p>
-      <div className="space-y-2">
-        {values.map((v, i) => (
-          <div key={i}>
-            <div className="flex justify-between text-xs mb-1">
-              <span style={{ color: taskColors[i] }}>{taskLabels[i]}</span>
-              <span className="text-muted">{Math.round(v)}%</span>
-            </div>
-            <div className="h-3 bg-surface-elevated rounded-full overflow-hidden">
-              <motion.div
-                className="h-full rounded-full"
-                style={{ backgroundColor: bad && v < 30 ? '#ef4444' : taskColors[i] }}
-                animate={{ width: `${v}%` }}
-                transition={{ duration: 0.1 }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  return (
-    <div className="bg-surface border border-border rounded-2xl p-6">
-      <h3 className="text-lg font-bold text-text mb-4">{labels.title}</h3>
-      <div className="flex gap-6 flex-col sm:flex-row">
-        {renderBars(trad, labels.traditional, true)}
-        {renderBars(nested, labels.nested, false)}
-      </div>
-      <div className="mt-4 flex gap-3">
-        <button
-          onClick={() => { reset(); setPhase(1) }}
-          disabled={phase > 0 && phase < 4}
-          className="px-4 py-2 rounded-lg bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 disabled:opacity-40 text-sm font-medium transition-colors"
-        >
-          {labels.runDemo}
-        </button>
-        <button onClick={reset} className="px-4 py-2 rounded-lg bg-surface-elevated text-muted hover:text-text text-sm transition-colors">
-          {labels.reset}
-        </button>
-      </div>
-    </div>
-  )
+export function ComparisonDemo(_props: ComparisonDemoProps) {
+  const { locale } = useLocale()
+  const de = locale === 'de'
+  return <div className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <h3 className="font-semibold">{de ? 'Was ein belastbarer Vergleich messen müsste' : 'What a useful comparison must measure'}</h3>
+    <p className="text-sm text-muted">{de ? 'Die HOPE-Arbeit berichtet Experimente zu Sprachmodellierung, langem Kontext und fortlaufendem Lernen. Daraus folgt kein universeller Prozentsatz für erhaltenes Wissen. Für einen Vergleich braucht es dieselben Daten, Aufgabenfolgen und Rechenbudgets sowie eine Evaluation früherer Aufgaben nach jedem Update.' : 'The HOPE work reports experiments on language modeling, long context and continual learning. It does not establish a universal percentage of retained knowledge. A comparison needs matched data, task sequences and compute budgets, with earlier tasks evaluated again after each update.'}</p>
+    <ol className="list-decimal space-y-2 pl-5 text-sm text-muted">{(de ? ['Leistung auf A vor und nach Training auf B messen.', 'Leistung auf der neuen Aufgabe und Aufwand ebenfalls berichten.', 'Updatefrequenzen und Speicherbudget dokumentieren.', 'Mehrere Aufgabenfolgen und Seeds vergleichen.'] : ['Measure A before and after training on B.', 'Report performance on the new task and its cost as well.', 'Document update frequencies and memory budget.', 'Compare multiple task orders and random seeds.']).map(item => <li key={item}>{item}</li>)}</ol>
+    <a className="inline-block text-sm text-cyan-300 underline" href="https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/">{de ? 'Primärquelle: Google Research zu Nested Learning und HOPE' : 'Primary source: Google Research on Nested Learning and HOPE'}</a>
+  </div>
 }
 
-/* ─── 4. Hope Architecture Diagram ─── */
 interface HopeDiagramProps {
   labels: {
     title: string

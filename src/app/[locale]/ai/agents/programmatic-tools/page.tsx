@@ -60,14 +60,14 @@ export default function ProgrammaticToolCallingPage() {
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { num: '1', title: t.programmaticTools.step1, desc: t.programmaticTools.step1Desc, color: 'cyan' },
-            { num: '2', title: t.programmaticTools.step2, desc: t.programmaticTools.step2Desc, color: 'purple' },
-            { num: '3', title: t.programmaticTools.step3, desc: t.programmaticTools.step3Desc, color: 'emerald' },
-            { num: '4', title: t.programmaticTools.step4, desc: t.programmaticTools.step4Desc, color: 'orange' },
+            { num: '1', title: t.programmaticTools.step1, desc: t.programmaticTools.step1Desc, bg:'bg-cyan-500/20', text:'text-cyan-400' },
+            { num: '2', title: t.programmaticTools.step2, desc: t.programmaticTools.step2Desc, bg:'bg-purple-500/20', text:'text-purple-400' },
+            { num: '3', title: t.programmaticTools.step3, desc: t.programmaticTools.step3Desc, bg:'bg-emerald-500/20', text:'text-emerald-400' },
+            { num: '4', title: t.programmaticTools.step4, desc: t.programmaticTools.step4Desc, bg:'bg-orange-500/20', text:'text-orange-400' },
           ].map((step) => (
             <div key={step.num} className="relative p-4 bg-background rounded-xl border border-border">
-              <div className={`w-8 h-8 rounded-lg bg-${step.color}-500/20 flex items-center justify-center mb-3`}>
-                <span className={`text-sm font-bold font-mono text-${step.color}-400`}>{step.num}</span>
+              <div className={`w-8 h-8 rounded-lg ${step.bg} flex items-center justify-center mb-3`}>
+                <span className={`text-sm font-bold font-mono ${step.text}`}>{step.num}</span>
               </div>
               <h3 className="text-sm font-bold text-text mb-1">{step.title}</h3>
               <p className="text-xs text-muted leading-relaxed">{step.desc}</p>
@@ -108,6 +108,7 @@ export default function ProgrammaticToolCallingPage() {
         </div>
       </section>
 
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.ptcControl}</p>
       {/* Code Example */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.programmaticTools.codeExample}</h2>
@@ -115,19 +116,22 @@ export default function ProgrammaticToolCallingPage() {
           {t.programmaticTools.codeExampleDesc}
         </p>
         <pre className="p-4 bg-background rounded-xl border border-border text-sm text-muted font-mono overflow-x-auto leading-relaxed">
-{`regions = ["West", "East", "Central", "North", "South"]
+{`import json
+
+regions = ["West", "East", "Central"]
 results = {}
 
 for region in regions:
-    data = await query_database(
-        f"SELECT SUM(revenue) as total FROM sales WHERE region='{region}'"
-    )
-    results[region] = data[0]["total"]
+    raw = await query_database({
+        "sql": f"SELECT SUM(revenue) AS total FROM sales WHERE region='{region}'"
+    })
+    rows = json.loads(raw)
+    results[region] = rows[0]["total"] or 0
 
-# Aggregate in code — only the summary reaches the model
-top_region = max(results, key=results.get)
-print(f"Top region: {top_region} ({results[top_region]:,.0f})")
-print(f"All regions total: {sum(results.values()):,.0f}")`}
+print(json.dumps({
+    "top_region": max(results, key=results.get),
+    "total": sum(results.values())
+}))`}
         </pre>
       </section>
 
@@ -161,6 +165,8 @@ print(f"All regions total: {sum(results.values()):,.0f}")`}
         <p className="text-sm text-muted/80 italic mb-6">
           {t.programmaticTools.allowedCallersNote}
         </p>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.ptcBoundary}</p>
+        <pre className="whitespace-pre-wrap break-words text-xs bg-background rounded p-3 mb-4">{JSON.stringify({type:'code_execution_20260120',name:'code_execution'},null,2)}</pre>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 bg-background rounded-xl border border-border">
             <div className="flex items-center gap-2 mb-2">
@@ -180,7 +186,7 @@ print(f"All regions total: {sum(results.values()):,.0f}")`}
             <p className="text-xs text-muted mb-3">{t.programmaticTools.codeOnlyDesc}</p>
             <pre className="text-[11px] text-muted font-mono bg-surface rounded-lg p-2 overflow-x-auto">
 {`"allowed_callers":
-  ["code_execution"]`}
+  ["code_execution_20260120"]`}
             </pre>
           </div>
           <div className="p-4 bg-background rounded-xl border border-border">
@@ -191,7 +197,7 @@ print(f"All regions total: {sum(results.values()):,.0f}")`}
             <p className="text-xs text-muted mb-3">{t.programmaticTools.bothModesDesc}</p>
             <pre className="text-[11px] text-muted font-mono bg-surface rounded-lg p-2 overflow-x-auto">
 {`"allowed_callers":
-  ["direct", "code_execution"]`}
+  ["direct", "code_execution_20260120"]`}
             </pre>
           </div>
         </div>
@@ -219,6 +225,7 @@ print(f"All regions total: {sum(results.values()):,.0f}")`}
           </ul>
         </div>
       </section>
+<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling">Anthropic: Programmatic tool calling</a></li></ul></section>
     </TopicLayout>
   )
 }

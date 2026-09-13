@@ -23,10 +23,12 @@ const COPY = {
   en: {
     processing: 'Processing in worker...',
     workerUnavailable: 'Tokenizer worker unavailable.',
+    encoding: 'Exact o200k_base encoding; other tokenizers can split differently.',
   },
   de: {
     processing: 'Verarbeitung im Worker …',
     workerUnavailable: 'Tokenizer-Worker nicht verfügbar.',
+    encoding: 'Exaktes o200k_base-Encoding; andere Tokenizer können anders aufteilen.',
   },
 }
 
@@ -158,7 +160,7 @@ export function TokenizerDemo() {
             o200k_base
           </span>
           <span className="text-xs text-muted">
-            GPT-5 family · o200k_base approximation
+            {c.encoding}
           </span>
           {isTokenizing && (
             <span className="inline-flex items-center gap-1 text-xs text-amber-400">

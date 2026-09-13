@@ -3,10 +3,10 @@
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { MultimodalityVisualizer } from '@/components/interactive'
 import { useTranslation } from '@/lib/i18n/context'
-import { Image, Music, Video, Cpu, Zap, Brain, Layers } from 'lucide-react'
+import { Image as ImageIcon, Music, Video, Cpu, Zap, Brain, Layers } from 'lucide-react'
 
 export default function MultimodalityPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
 
   return (
     <TopicLayout topicId="multimodality"
@@ -20,6 +20,12 @@ export default function MultimodalityPage() {
       prevTopic={{ label: t.topicNames['agentic-vision'], href: '/ai/llm/agentic-vision' }}
       nextTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
     >
+      <section className="rounded-2xl border border-border p-5 space-y-4">
+        <h2 className="text-xl font-semibold">{locale === 'de' ? 'Eingabe und Ausgabe getrennt prüfen' : 'Check inputs and outputs separately'}</h2>
+        <p className="text-sm text-muted">{locale === 'de' ? 'Ein Modell, das Bilder versteht, muss keine Bilder erzeugen können. Unterstützte Kombinationen hängen vom Modell und Endpunkt ab. Der Wähler unten beschreibt mögliche Aufgaben.' : 'A model that understands images need not generate images. Supported combinations depend on the model and endpoint. The selector below describes possible tasks.'}</p>
+        <div className="overflow-x-auto"><table className="w-full text-sm text-left"><thead><tr><th>{locale === 'de' ? 'Eingabe' : 'Input'}</th><th>{locale === 'de' ? 'Verarbeitung' : 'Processing'}</th><th>{locale === 'de' ? 'Ausgabe' : 'Output'}</th></tr></thead><tbody>{(locale === 'de' ? [['Bild + Frage','Bildanalyse','Textantwort'],['Audio','Spracherkennung','Transkript'],['Text','Bildgenerierung','Bild'],['Video + Frage','Zeitliche Analyse','Textantwort']] : [['Image + question','Image analysis','Text answer'],['Audio','Speech recognition','Transcript'],['Text','Image generation','Image'],['Video + question','Temporal analysis','Text answer']]).map(row=><tr key={row[0]} className="border-t border-border">{row.map(cell=><td key={cell} className="py-3 pr-3">{cell}</td>)}</tr>)}</tbody></table></div>
+        <a className="text-primary-light text-sm underline" href="https://arxiv.org/abs/2204.14198" target="_blank" rel="noopener noreferrer">Flamingo: a published cross-attention architecture</a>
+      </section>
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.whatIs}</h2>
@@ -38,7 +44,7 @@ export default function MultimodalityPage() {
           <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-xl">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <Image className="w-5 h-5 text-blue-400" />
+                <ImageIcon className="w-5 h-5 text-blue-400" />
               </div>
               <h3 className="text-lg font-bold font-heading text-blue-400">{t.multimodality.images}</h3>
             </div>

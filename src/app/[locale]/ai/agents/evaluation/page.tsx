@@ -2,6 +2,7 @@
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
 import { useTranslation } from '@/lib/i18n/context'
+import { MiniEvaluationDemo } from '@/components/interactive/MiniEvaluationDemo'
 
 export default function EvaluationPage() {
   const { t } = useTranslation()
@@ -76,6 +77,8 @@ export default function EvaluationPage() {
           </div>
         </div>
       </section>
+
+      <MiniEvaluationDemo />
 
       {/* Benchmarks Section */}
       <section>
@@ -254,14 +257,7 @@ export default function EvaluationPage() {
             <h4 className="font-bold text-red-400 mb-2">S - {t.evaluation.classicSecurity}</h4>
             <p className="text-sm text-muted">{t.evaluation.classicSecurityDesc}</p>
           </div>
-          <div className="p-4 bg-gradient-to-br from-amber-500/10 to-yellow-500/10 border border-amber-500/20 rounded-xl">
-            <h4 className="font-bold text-amber-400 mb-2">I - {t.evaluation.classicInterpretability}</h4>
-            <p className="text-sm text-muted">{t.evaluation.classicInterpretabilityDesc}</p>
-          </div>
-          <div className="p-4 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 border border-indigo-500/20 rounded-xl md:col-span-2 lg:col-span-1">
-            <h4 className="font-bold text-indigo-400 mb-2">C - {t.evaluation.classicCompliance}</h4>
-            <p className="text-sm text-muted">{t.evaluation.classicComplianceDesc}</p>
-          </div>
+
         </div>
 
         <div className="rounded-xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20 p-5">
@@ -387,6 +383,7 @@ export default function EvaluationPage() {
           </ul>
         </div>
       </section>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.classicExtra}</p><section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://iclr.cc/virtual/2025/33362">CLASSIC, ICLR 2025</a></li><li><a className="text-primary-light underline" href="https://openreview.net/pdf?id=RQjUpeINII">CLASSIC paper</a></li></ul></section>
     </TopicLayout>
   )
 }

@@ -2,12 +2,11 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Image, Music, Video, MessageSquare, ArrowRight, Sparkles, Layers, Lightbulb } from 'lucide-react'
+import { Image, Music, Video, MessageSquare, ArrowRight, Sparkles, Layers, Lightbulb, type LucideIcon } from 'lucide-react'
 
 interface Modality {
   id: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  icon: any
+  icon: LucideIcon
   color: string
   bgColor: string
   borderColor: string

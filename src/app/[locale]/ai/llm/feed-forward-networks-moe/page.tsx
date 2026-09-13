@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
 import { FeedForwardMoeVisualizer } from '@/components/interactive/FeedForwardMoeVisualizer'
 import { TopicLayout } from '@/components/layout/TopicLayout'
@@ -7,8 +8,8 @@ import { useTranslation } from '@/lib/i18n/context'
 
 const copy = {
   en: {
-    title: 'Feed-Forward Networks & MoE',
-    description: 'The per-token MLP blocks where much of a transformer’s capacity lives, plus how MoE routes tokens through experts.',
+    title: 'Feed-Forward Networks',
+    description: 'How a token vector expands, passes through a nonlinearity and projects back to model width.',
     crumb: 'Feed-Forward Networks',
     prev: 'Transformer Architecture',
     next: 'Residual Stream & LayerNorm',
@@ -32,14 +33,7 @@ const copy = {
       'LLaMA-style models commonly use SwiGLU variants.'
     ],
       },
-      {
-        title: 'Mixture of Experts',
-        body: 'MoE replaces one dense MLP with many expert MLPs and a router that activates only a few for each token. This raises total parameters without using all of them every token.',
-        bullets: [
-      'MoE can be compute-efficient compared with a dense model of the same total parameter count.',
-      'Experts may specialize, but not always in neat human topic categories.'
-    ],
-      }
+
     ],
     takeawaysTitle: 'Key Takeaways',
     takeaways: [
@@ -49,8 +43,8 @@ const copy = {
     ],
   },
   de: {
-    title: 'Feed-Forward Networks & MoE',
-    description: 'Die tokenweisen MLP-Blöcke, in denen viel Transformer-Kapazität steckt, plus wie MoE Tokens zu Experts routet.',
+    title: 'Feed-Forward Networks',
+    description: 'Wie ein Token-Vektor expandiert, eine Nichtlinearität durchläuft und auf Modellbreite zurückprojiziert wird.',
     crumb: 'Feed-Forward Networks',
     prev: 'Transformer-Architektur',
     next: 'Residual Stream & LayerNorm',
@@ -74,14 +68,7 @@ const copy = {
       'LLaMA-artige Modelle nutzen häufig SwiGLU-Varianten.'
     ],
       },
-      {
-        title: 'Mixture of Experts',
-        body: 'MoE ersetzt ein dichtes MLP durch viele Expert-MLPs und einen Router, der pro Token nur wenige aktiviert. So steigt die Gesamtparameterzahl, ohne alle Parameter pro Token zu nutzen.',
-        bullets: [
-      'MoE kann effizienter sein als ein dichtes Modell gleicher Gesamtgröße.',
-      'Experts können sich spezialisieren, aber nicht sauber wie menschliche Themenordner.'
-    ],
-      }
+
     ],
     takeawaysTitle: 'Kernaussagen',
     takeaways: [
@@ -144,6 +131,8 @@ export default function FeedForwardNetworksMoePage() {
           </article>
         ))}
       </section>
+
+      <Link href={`/${locale}/ai/llm/moe`} className="block rounded-xl border border-cyan-500/30 p-5 text-cyan-300">{locale === 'de' ? 'Vertiefung: Wie MoE mehrere FFNs pro Layer auswählt →' : 'Continue: how MoE selects among multiple FFNs per layer →'}</Link>
 
       <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 md:p-8">
         <h2 className="mb-5 font-heading text-2xl font-bold text-emerald-200">{c.takeawaysTitle}</h2>

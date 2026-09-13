@@ -71,8 +71,8 @@ export default function NestedLearningPage() {
             { label: nl.speedMedium, desc: nl.speedMediumDesc, color: 'cyan' },
             { label: nl.speedFast, desc: nl.speedFastDesc, color: 'emerald' },
           ].map((s, i) => (
-            <div key={i} className={`p-4 rounded-xl bg-${s.color}-500/10 border border-${s.color}-500/20 text-center`}>
-              <p className={`font-bold text-${s.color}-400 mb-1`}>{s.label}</p>
+            <div key={i} className={`p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-center`}>
+              <p className={`font-bold text-cyan-400 mb-1`}>{s.label}</p>
               <p className="text-muted text-sm">{s.desc}</p>
             </div>
           ))}
@@ -148,11 +148,11 @@ export default function NestedLearningPage() {
             { title: nl.matter2Title, desc: nl.matter2Desc, icon: Zap, color: 'cyan' },
             { title: nl.matter3Title, desc: nl.matter3Desc, icon: Brain, color: 'emerald' },
           ].map((item, i) => (
-            <div key={i} className={`p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
-              <div className={`w-10 h-10 rounded-lg bg-${item.color}-500/20 flex items-center justify-center mb-3`}>
-                <item.icon size={20} className={`text-${item.color}-400`} />
+            <div key={i} className={`p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20`}>
+              <div className={`w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3`}>
+                <item.icon size={20} className={`text-cyan-400`} />
               </div>
-              <h3 className={`font-semibold text-${item.color}-400 mb-2`}>{item.title}</h3>
+              <h3 className={`font-semibold text-cyan-400 mb-2`}>{item.title}</h3>
               <p className="text-muted text-sm">{item.desc}</p>
             </div>
           ))}

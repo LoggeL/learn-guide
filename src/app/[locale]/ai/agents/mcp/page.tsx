@@ -38,7 +38,6 @@ export default function MCPPage() {
         { label: t.categories.agents, href: '/ai/agents' },
         { label: t.mcp.title },
       ]}
-      prevTopic={{ label: t.topicNames['agentic-patterns'], href: '/ai/agents/patterns' }}
     >
       {/* What is MCP */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -70,7 +69,7 @@ export default function MCPPage() {
                   {'  }'}{'\n'}
                   {'}'}{'\n\n'}
                   <span className="text-muted">{'// Direct function call'}</span>{'\n'}
-                  <span className="text-purple-400">result</span> = tools.<span className="text-yellow-400">get_weather</span>(<span className="text-green-400">"Tokyo"</span>)
+                  <span className="text-purple-400">result</span> = tools.<span className="text-yellow-400">get_weather</span>(<span className="text-green-400">&quot;Tokyo&quot;</span>)
                 </code>
               </pre>
             </div>
@@ -92,7 +91,7 @@ export default function MCPPage() {
                   <span className="text-purple-400">tools</span> = <span className="text-pink-400">await</span> client.<span className="text-cyan-400">listTools</span>(){'\n\n'}
                   <span className="text-muted">{'// Call over network'}</span>{'\n'}
                   <span className="text-purple-400">result</span> = <span className="text-pink-400">await</span> client.<span className="text-cyan-400">invoke</span>({'\n'}
-                  {'  '}<span className="text-green-400">"get_weather"</span>, {'{ '}<span className="text-purple-400">location</span>: <span className="text-green-400">"Tokyo"</span> {'}'}{'\n'}
+                  {'  '}<span className="text-green-400">&quot;get_weather&quot;</span>, {'{ '}<span className="text-purple-400">location</span>: <span className="text-green-400">&quot;Tokyo&quot;</span> {'}'}{'\n'}
                   )
                 </code>
               </pre>
@@ -304,26 +303,11 @@ export default function MCPPage() {
         </div>
 
         {/* Configuration Example */}
+        <p className="text-sm text-muted">{t.agentReview.mcpConfigNote}</p>
         <div className="rounded-xl bg-surface border border-border p-5">
           <h3 className="text-sm font-bold font-heading text-text mb-3">{t.mcp.serverConfigExample}</h3>
           <div className="rounded-lg bg-background border border-border p-4 font-mono text-sm overflow-x-auto">
-            <pre className="text-muted">
-              <code>
-                <span className="text-muted">{'{'}</span>{'\n'}
-                {'  '}<span className="text-green-400">"mcpServers"</span>: {'{'}{'\n'}
-                {'    '}<span className="text-green-400">"filesystem"</span>: {'{'}{'\n'}
-                {'      '}<span className="text-green-400">"command"</span>: <span className="text-yellow-400">"npx"</span>,{'\n'}
-                {'      '}<span className="text-green-400">"args"</span>: [<span className="text-yellow-400">"-y"</span>, <span className="text-yellow-400">"@modelcontextprotocol/server-filesystem"</span>, <span className="text-yellow-400">"/path/to/files"</span>]{'\n'}
-                {'    }{'},{'\n'}
-                {'    '}<span className="text-green-400">"github"</span>: {'{'}{'\n'}
-                {'      '}<span className="text-green-400">"command"</span>: <span className="text-yellow-400">"npx"</span>,{'\n'}
-                {'      '}<span className="text-green-400">"args"</span>: [<span className="text-yellow-400">"-y"</span>, <span className="text-yellow-400">"@modelcontextprotocol/server-github"</span>],{'\n'}
-                {'      '}<span className="text-green-400">"env"</span>: {'{ '}<span className="text-green-400">"GITHUB_TOKEN"</span>: <span className="text-yellow-400">"..."</span> {'}'}{'\n'}
-                {'    }'}{'\n'}
-                {'  }'}{'\n'}
-                {'}'}
-              </code>
-            </pre>
+            <pre className="text-muted">{JSON.stringify({mcpServers:{filesystem:{command:'npx',args:['-y','@modelcontextprotocol/server-filesystem','/path/to/approved-folder']}}},null,2)}</pre>
           </div>
         </div>
       </section>
@@ -377,11 +361,11 @@ export default function MCPPage() {
             <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs overflow-x-auto mb-4">
               <pre className="text-muted">
                 <code>
-                  <span className="text-muted">{'// MCP: JSON-RPC over stdio/SSE'}</span>{'\n'}
-                  <span className="text-pink-400">{'{'}</span> <span className="text-green-400">"method"</span>: <span className="text-yellow-400">"tools/call"</span>,{'\n'}
-                  {'  '}<span className="text-green-400">"params"</span>: <span className="text-pink-400">{'{'}</span>{'\n'}
-                  {'    '}<span className="text-green-400">"name"</span>: <span className="text-yellow-400">"list_issues"</span>,{'\n'}
-                  {'    '}<span className="text-green-400">"arguments"</span>: <span className="text-pink-400">{'{'}</span> <span className="text-green-400">"repo"</span>: <span className="text-yellow-400">"org/app"</span> <span className="text-pink-400">{'}'}</span>{'\n'}
+                  <span className="text-muted">{'// MCP: JSON-RPC: stdio / Streamable HTTP'}</span>{'\n'}
+                  <span className="text-pink-400">{'{'}</span> <span className="text-green-400">&quot;method&quot;</span>: <span className="text-yellow-400">&quot;tools/call&quot;</span>,{'\n'}
+                  {'  '}<span className="text-green-400">&quot;params&quot;</span>: <span className="text-pink-400">{'{'}</span>{'\n'}
+                  {'    '}<span className="text-green-400">&quot;name&quot;</span>: <span className="text-yellow-400">&quot;list_issues&quot;</span>,{'\n'}
+                  {'    '}<span className="text-green-400">&quot;arguments&quot;</span>: <span className="text-pink-400">{'{'}</span> <span className="text-green-400">&quot;repo&quot;</span>: <span className="text-yellow-400">&quot;org/app&quot;</span> <span className="text-pink-400">{'}'}</span>{'\n'}
                   {'  '}<span className="text-pink-400">{'}'}</span> <span className="text-pink-400">{'}'}</span>
                 </code>
               </pre>
@@ -409,7 +393,7 @@ export default function MCPPage() {
                   <span className="text-cyan-400">$</span> <span className="text-yellow-400">gh</span> issue list --repo org/app{'\n'}
                   <span className="text-cyan-400">$</span> <span className="text-yellow-400">git</span> log --oneline -10{'\n'}
                   <span className="text-cyan-400">$</span> <span className="text-yellow-400">curl</span> -s api.example.com/data{'\n'}
-                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">psql</span> -c "SELECT * FROM users"
+                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">psql</span> -c &quot;SELECT * FROM users&quot;
                 </code>
               </pre>
             </div>
@@ -477,6 +461,7 @@ export default function MCPPage() {
           </ul>
         </div>
       </section>
+<p className="text-sm text-muted leading-relaxed">{t.agentReview.mcpTransport}</p><section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://modelcontextprotocol.io/specification/2025-06-18/basic/transports">MCP transports</a></li><li><a className="text-primary-light underline" href="https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem">Filesystem server and allowed directories</a></li><li><a className="text-primary-light underline" href="https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices">MCP security best practices</a></li></ul></section>
     </TopicLayout>
   )
 }

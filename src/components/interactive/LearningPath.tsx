@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useTranslation } from '@/lib/i18n/context'
 import { CheckCircle2, Circle, ChevronDown, ChevronUp, Sparkles, BookOpen, Rocket, GraduationCap } from 'lucide-react'
-import { COMPLETED_LEARNING_PATH_STORAGE_KEY } from '@/lib/progress/schema'
+import { COMPLETED_LEARNING_PATH_STORAGE_KEY, normalizeTopicIds } from '@/lib/progress/schema'
 
 interface PathTopic {
   id: string
@@ -73,7 +73,6 @@ const stages: PathStage[] = [
     accentBorderHover: 'hover:border-red-500/30',
     accentBg: 'bg-red-500/10',
     topics: [
-      { id: 'agentic-patterns', href: '/ai/agents/patterns', nameKey: 'agentic-patterns', descKey: 'lpAgenticPatterns' },
       { id: 'orchestration', href: '/ai/agents/orchestration', nameKey: 'orchestration', descKey: 'lpOrchestration' },
       { id: 'moe', href: '/ai/llm/moe', nameKey: 'moe', descKey: 'lpMoe' },
       { id: 'quantization', href: '/ai/llm/quantization', nameKey: 'quantization', descKey: 'lpQuantization' },
@@ -93,7 +92,7 @@ export function LearningPath() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(COMPLETED_LEARNING_PATH_STORAGE_KEY)
-      if (stored) setCompleted(new Set(JSON.parse(stored)))
+      if (stored) setCompleted(new Set(normalizeTopicIds(JSON.parse(stored)).ids))
     } catch { /* ignore */ }
   }, [])
 

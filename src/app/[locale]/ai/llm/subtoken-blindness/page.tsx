@@ -21,11 +21,11 @@ const copy = {
     notJustTokenizerTitle: 'Not just tokenization',
     notJustTokenizer:
       'Tokenization is the entry point, but not the whole explanation. Research on letter counting finds that models can often recognize letters yet fail to count them consistently, especially when counts exceed two or when the task requires stable step-by-step state.',
-    currentTitle: 'Current examples',
+    currentTitle: 'Tasks worth testing',
     examples: [
       {
         title: 'Strawberry and cranberry',
-        body: 'Recent public tests show models may pass the meme case after tuning, then fail a nearby word such as cranberry. That suggests memorized or patched behavior is different from robust character handling.',
+        body: 'A correct answer for strawberry alone does not establish reliable letter counting. Test held-out words, counts, prompt variants and a named model version. Different results do not by themselves reveal whether a model memorized, counted or used another strategy.',
       },
       {
         title: 'Long digit addition',
@@ -68,11 +68,11 @@ const copy = {
     notJustTokenizerTitle: 'Nicht nur Tokenisierung',
     notJustTokenizer:
       'Tokenisierung ist der Einstieg, aber nicht die ganze Erklärung. Forschung zu Letter Counting zeigt: Modelle erkennen Buchstaben oft, zählen sie aber nicht stabil, besonders wenn ein Buchstabe mehr als zweimal vorkommt oder die Aufgabe zuverlässigen Schritt-für-Schritt-Zustand verlangt.',
-    currentTitle: 'Aktuelle Beispiele',
+    currentTitle: 'Aufgaben zum Prüfen',
     examples: [
       {
         title: 'Strawberry und Cranberry',
-        body: 'Öffentliche Tests zeigen: Modelle können den Meme-Fall nach Tuning bestehen und dann bei einem nahen Wort wie cranberry wieder scheitern. Das wirkt eher wie ein Patch als wie robustes Zeichenverständnis.',
+        body: 'Eine korrekte Antwort für strawberry allein belegt kein zuverlässiges Buchstabenzählen. Unbekannte Wörter, Häufigkeiten, Promptvarianten und eine benannte Modellversion prüfen. Unterschiedliche Ergebnisse allein verraten nicht, ob das Modell memoriert, gezählt oder eine andere Strategie genutzt hat.',
       },
       {
         title: 'Mehrstellige Addition',

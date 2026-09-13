@@ -51,10 +51,18 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const copy = {
   en: {
-    cosineHint: 'Cosine similarity to other words',
+    cosineHint: 'Cosine similarity of these constructed 3D vectors (−1 to 1)',
+    note: 'A geometry exercise with manually chosen 3D vectors, not embeddings from a trained model or a projection of high-dimensional data. The clusters are drawn by design. Cosine values below are calculated from exactly these coordinates.',
+    controls: 'Drag to rotate, scroll to zoom. Use the selection below to compare a word without the 3D controls.',
+    compare: 'Vector to compare', none: 'Choose a word',
+    categories: { animals: 'Animals', royalty: 'Royalty', technology: 'Technology', food: 'Food', emotions: 'Emotions', default: 'Other' } as Record<string, string>,
   },
   de: {
-    cosineHint: 'Kosinus-Ähnlichkeit zu anderen Wörtern',
+    cosineHint: 'Kosinus-Ähnlichkeit dieser konstruierten 3D-Vektoren (−1 bis 1)',
+    note: 'Eine Geometrieübung mit von Hand gewählten 3D-Vektoren, keine Embeddings eines trainierten Modells und keine Projektion hochdimensionaler Daten. Die Gruppen sind bewusst angeordnet. Die Kosinuswerte unten werden aus genau diesen Koordinaten berechnet.',
+    controls: 'Ziehen zum Drehen, scrollen zum Zoomen. Über die Auswahl unten lässt sich ein Wort auch ohne 3D-Bedienung vergleichen.',
+    compare: 'Vergleichsvektor', none: 'Wort wählen',
+    categories: { animals: 'Tiere', royalty: 'Adel', technology: 'Technik', food: 'Essen', emotions: 'Gefühle', default: 'Weitere' } as Record<string, string>,
   },
 } as const
 
@@ -153,6 +161,7 @@ export function EmbeddingVisualizer() {
 
   return (
     <div className="space-y-6">
+      <p className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-4 text-sm leading-relaxed text-muted">{c.note}</p>
       {/* Word Selection */}
       <div className="rounded-2xl bg-surface border border-border p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -170,7 +179,7 @@ export function EmbeddingVisualizer() {
             <div key={category}>
               <div className="flex items-center gap-2 mb-2">
                 <span className={`w-3 h-3 rounded-full ${CATEGORY_COLORS[category]}`} />
-                <span className="text-xs text-muted uppercase tracking-wider">{category}</span>
+                <span className="text-xs text-muted uppercase tracking-wider">{c.categories[category]}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {categoryWords.map((word) => {
@@ -217,10 +226,11 @@ export function EmbeddingVisualizer() {
           </div>
           <div>
             <h3 className="font-semibold text-text font-heading">{t.interactive.vectorSpace}</h3>
-            <p className="text-xs text-muted">3D interactive embedding space — drag to rotate, scroll to zoom</p>
+            <p className="text-xs text-muted">{c.controls}</p>
           </div>
         </div>
 
+        <label className="mb-4 block text-sm">{c.compare}<select className="mt-2 block w-full rounded-lg border border-border bg-background p-2" value={selectedWord ?? ''} onChange={e => setSelectedWord(e.target.value || null)}><option value="">{c.none}</option>{activeWords.map(word => <option key={word} value={word}>{word}</option>)}</select></label>
         <div className="relative w-full h-[500px] bg-[#0a0a14] rounded-xl border border-border overflow-hidden">
           <Scene3D
             wordData={wordData}
@@ -234,7 +244,7 @@ export function EmbeddingVisualizer() {
           {Object.entries(CATEGORY_COLORS).filter(([k]) => k !== 'default').map(([category, color]) => (
             <div key={category} className="flex items-center gap-2">
               <span className={`w-3 h-3 rounded-full ${color}`} />
-              <span className="text-muted capitalize">{category}</span>
+              <span className="text-muted capitalize">{c.categories[category]}</span>
             </div>
           ))}
         </div>

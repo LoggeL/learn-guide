@@ -1,387 +1,44 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, Zap, Clock, Target } from 'lucide-react'
-import { useTranslation } from '@/lib/i18n/context'
+import { useState } from 'react'
+import { useLocale } from '@/lib/i18n/context'
 
-interface Token {
-  id: number
-  text: string
-  status: 'pending' | 'drafting' | 'verifying' | 'accepted' | 'rejected' | 'corrected'
+const draft = ['sat', 'on', 'the', 'mat']
+const replacement = ['slept', 'beside', 'a', 'rug', '.']
+const copy = {
+  en: {
+    title: 'Account for one draft-and-verify round', note: 'A chosen outcome for four draft tokens, not a stochastic sampler. Set how many proposals the target accepts before the first rejection. All later proposals are discarded; the target supplies a correction, or one bonus token if all proposals pass.',
+    prefix: 'Shared prefix: The cat', accepted: 'Accepted prefix length', draftTime: 'Time per draft forward pass', targetTime: 'Time per ordinary target step', verifyTime: 'Time for one target block verification',
+    proposed: 'Four sequential draft passes', verified: 'One parallel target verification', emitted: 'Emitted tokens', standard: 'Target-only time', speculative: 'Draft + verification time', ratio: 'Speedup under these assumptions',
+    formula: 'Draft cost = 4 × draft-step time. Round cost = draft cost + target verification. Baseline cost = emitted tokens × target-step time.',
+    limit: 'All timings are editable assumptions, not measurements. Verification of a block need not cost the same as a single-token target step. Real latency also depends on batch size, KV cache, transfer, kernel overhead and rejected work. Exact speculative sampling preserves the target distribution through its acceptance and correction rules, not by merely replacing any rejected word.',
+    extra: 'Target correction / bonus', discarded: 'Discarded suffix',
+  },
+  de: {
+    title: 'Eine Draft-und-Verify-Runde abrechnen', note: 'Ein gewählter Verlauf für vier Draft-Tokens, kein stochastischer Sampler. Wähle, wie viele Vorschläge das Target vor der ersten Ablehnung akzeptiert. Alle späteren Vorschläge werden verworfen. Das Target liefert eine Korrektur oder ein zusätzliches Token, wenn alle Vorschläge bestehen.',
+    prefix: 'Gemeinsamer Präfix: The cat', accepted: 'Länge des akzeptierten Präfixes', draftTime: 'Zeit pro Draft-Forward-Pass', targetTime: 'Zeit pro normalem Target-Schritt', verifyTime: 'Zeit einer Target-Blockprüfung',
+    proposed: 'Vier sequenzielle Draft-Pässe', verified: 'Eine parallele Target-Prüfung', emitted: 'Ausgegebene Tokens', standard: 'Zeit nur mit Target', speculative: 'Zeit für Draft + Prüfung', ratio: 'Beschleunigung unter diesen Annahmen',
+    formula: 'Draft-Kosten = 4 × Draft-Schrittzeit. Rundenkosten = Draft-Kosten + Target-Prüfung. Vergleichskosten = ausgegebene Tokens × Target-Schrittzeit.',
+    limit: 'Alle Zeiten sind einstellbare Annahmen, keine Messwerte. Eine Blockprüfung muss nicht so lange dauern wie ein einzelner Target-Schritt. Reale Latenz hängt auch von Batchgröße, KV-Cache, Transfers, Kernel-Aufwand und verworfener Arbeit ab. Exaktes Speculative Sampling erhält die Target-Verteilung durch seine Annahme- und Korrekturregeln, nicht durch beliebiges Ersetzen abgelehnter Wörter.',
+    extra: 'Target-Korrektur / Zusatz', discarded: 'Verworfener Rest',
+  },
 }
-
-interface SimulationState {
-  phase: 'idle' | 'drafting' | 'verifying' | 'complete'
-  draftTokens: Token[]
-  finalTokens: Token[]
-  currentDraftIndex: number
-  currentVerifyIndex: number
-  standardPasses: number
-  speculativePasses: number
-  acceptedCount: number
-  rejectedCount: number
-}
-
-// Simulated tokens with predetermined acceptance (for demo purposes)
-// Every token has a correction that differs from the draft, so a rejected
-// token is always replaced by a visibly different one
-const DEMO_SEQUENCE = [
-  { text: 'jumps', accept: true, correction: 'leaps' },
-  { text: 'over', accept: true, correction: 'past' },
-  { text: 'the', accept: true, correction: 'a' },
-  { text: 'lazy', accept: false, correction: 'sleeping' },
-  { text: 'dog', accept: true, correction: 'cat' },
-  { text: '.', accept: true, correction: '!' },
-]
-
-const DRAFT_TOKENS_PER_BATCH = 4
-
 export function SpeculativeDecodingVisualizer() {
-  const { t } = useTranslation()
-  const [isRunning, setIsRunning] = useState(false)
-  const [acceptanceRate, setAcceptanceRate] = useState(75)
-  const [draftSpeed, setDraftSpeed] = useState(5) // tokens per second (draft model)
-
-  const [state, setState] = useState<SimulationState>({
-    phase: 'idle',
-    draftTokens: [],
-    finalTokens: [],
-    currentDraftIndex: 0,
-    currentVerifyIndex: 0,
-    standardPasses: 0,
-    speculativePasses: 0,
-    acceptedCount: 0,
-    rejectedCount: 0,
-  })
-
-  const reset = useCallback(() => {
-    setIsRunning(false)
-    setState({
-      phase: 'idle',
-      draftTokens: [],
-      finalTokens: [],
-      currentDraftIndex: 0,
-      currentVerifyIndex: 0,
-      standardPasses: 0,
-      speculativePasses: 0,
-      acceptedCount: 0,
-      rejectedCount: 0,
-    })
-  }, [])
-
-  // Simulation logic
-  useEffect(() => {
-    if (!isRunning) return
-
-    const interval = setInterval(() => {
-      // Roll randomness outside the updater so it stays pure
-      const rolls = DEMO_SEQUENCE.map(() => Math.random() * 100)
-      setState(prev => {
-        // Phase 1: Drafting
-        if (prev.phase === 'idle' || prev.phase === 'drafting') {
-          if (prev.draftTokens.length < DRAFT_TOKENS_PER_BATCH && prev.currentDraftIndex < DEMO_SEQUENCE.length) {
-            const nextToken = DEMO_SEQUENCE[prev.currentDraftIndex]
-            return {
-              ...prev,
-              phase: 'drafting',
-              draftTokens: [
-                ...prev.draftTokens,
-                { id: prev.currentDraftIndex, text: nextToken.text, status: 'drafting' }
-              ],
-              currentDraftIndex: prev.currentDraftIndex + 1,
-            }
-          } else if (prev.draftTokens.length > 0) {
-            // Start verification
-            return {
-              ...prev,
-              phase: 'verifying',
-              draftTokens: prev.draftTokens.map(t => ({ ...t, status: 'verifying' as const })),
-              speculativePasses: prev.speculativePasses + 1,
-            }
-          }
-        }
-
-        // Phase 2: Verification (happens in one pass)
-        if (prev.phase === 'verifying') {
-          const newFinalTokens: Token[] = [...prev.finalTokens]
-          let accepted = 0
-          let rejected = 0
-          let foundRejection = false
-
-          for (const token of prev.draftTokens) {
-            if (foundRejection) break
-
-            const originalData = DEMO_SEQUENCE[token.id]
-            // Use acceptance rate to determine if token is accepted (with some randomness based on slider)
-            const shouldAccept = originalData.accept && rolls[token.id] < acceptanceRate
-
-            if (shouldAccept) {
-              newFinalTokens.push({ ...token, status: 'accepted' })
-              accepted++
-            } else {
-              // Rejection - add correction (always differs from the rejected draft token)
-              const correction = originalData.correction
-              newFinalTokens.push({
-                id: token.id,
-                text: correction,
-                status: 'corrected'
-              })
-              rejected++
-              foundRejection = true
-            }
-          }
-
-          // Check if we're done
-          const lastToken = newFinalTokens[newFinalTokens.length - 1]
-          const isComplete = lastToken && (lastToken.id >= DEMO_SEQUENCE.length - 1 || newFinalTokens.length >= DEMO_SEQUENCE.length)
-
-          return {
-            ...prev,
-            phase: isComplete ? 'complete' : 'idle',
-            draftTokens: [],
-            finalTokens: newFinalTokens,
-            currentDraftIndex: foundRejection ? (lastToken?.id ?? 0) + 1 : prev.currentDraftIndex,
-            standardPasses: prev.standardPasses + accepted + (rejected > 0 ? 1 : 0),
-            acceptedCount: prev.acceptedCount + accepted,
-            rejectedCount: prev.rejectedCount + rejected,
-          }
-        }
-
-        return prev
-      })
-    }, 1000 / draftSpeed)
-
-    return () => clearInterval(interval)
-  }, [isRunning, acceptanceRate, draftSpeed])
-
-  // Stop the clock once the simulation completes (outside the state updater)
-  useEffect(() => {
-    if (state.phase === 'complete') setIsRunning(false)
-  }, [state.phase])
-
-  const speedup = state.standardPasses > 0
-    ? (state.standardPasses / Math.max(state.speculativePasses, 1)).toFixed(2)
-    : '0.00'
-
-  const actualAcceptanceRate = state.acceptedCount + state.rejectedCount > 0
-    ? Math.round((state.acceptedCount / (state.acceptedCount + state.rejectedCount)) * 100)
-    : 0
-
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 flex items-center justify-center">
-            <Zap size={18} className="text-cyan-400" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-text font-heading">{t.speculativeDecoding.vizTitle}</h3>
-            <p className="text-xs text-muted">{t.speculativeDecoding.vizSubtitle}</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setIsRunning(!isRunning)}
-            disabled={state.phase === 'complete'}
-            className="px-4 py-2 rounded-lg bg-primary/20 hover:bg-primary/30 text-primary-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-          >
-            {isRunning ? <Pause size={16} /> : <Play size={16} />}
-            {isRunning ? t.speculativeDecoding.vizPause : t.speculativeDecoding.vizStart}
-          </button>
-          <button
-            onClick={reset}
-            className="px-4 py-2 rounded-lg bg-surface hover:bg-surface-elevated border border-border transition-colors flex items-center gap-2"
-          >
-            <RotateCcw size={16} />
-            {t.speculativeDecoding.vizReset}
-          </button>
-        </div>
-      </div>
-
-      {/* Controls */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <div className="p-4 rounded-xl bg-surface border border-border">
-          <label className="text-sm text-muted mb-2 block">{t.speculativeDecoding.vizAcceptanceRate}: {acceptanceRate}%</label>
-          <input
-            type="range"
-            min={25}
-            max={95}
-            value={acceptanceRate}
-            onChange={(e) => setAcceptanceRate(Number(e.target.value))}
-            className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer accent-cyan-500"
-          />
-          <div className="flex justify-between text-xs text-muted mt-1">
-            <span>{t.speculativeDecoding.vizLowMatch}</span>
-            <span>{t.speculativeDecoding.vizHighMatch}</span>
-          </div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border">
-          <label className="text-sm text-muted mb-2 block">{t.speculativeDecoding.vizDraftSpeed}: {draftSpeed}x</label>
-          <input
-            type="range"
-            min={2}
-            max={10}
-            value={draftSpeed}
-            onChange={(e) => setDraftSpeed(Number(e.target.value))}
-            className="w-full h-2 bg-background rounded-lg appearance-none cursor-pointer accent-purple-500"
-          />
-          <div className="flex justify-between text-xs text-muted mt-1">
-            <span>{t.speculativeDecoding.vizSlower}</span>
-            <span>{t.speculativeDecoding.vizFaster}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Visualization Area */}
-      <div className="p-6 rounded-xl bg-surface border border-border">
-        {/* Prompt */}
-        <div className="mb-6">
-          <div className="text-xs text-muted mb-2">{t.speculativeDecoding.vizPrompt}</div>
-          <div className="font-mono text-text bg-background px-4 py-2 rounded-lg inline-block">
-            "The quick brown fox"
-          </div>
-        </div>
-
-        {/* Draft Model Section */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-3 h-3 rounded-full bg-purple-500" />
-            <span className="text-sm text-muted">{t.speculativeDecoding.vizDraftModel}</span>
-            {state.phase === 'drafting' && (
-              <motion.span
-                className="text-xs text-purple-400"
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ repeat: Infinity, duration: 0.5 }}
-              >
-                {t.speculativeDecoding.vizGenerating}
-              </motion.span>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-background/50 rounded-lg border border-purple-500/20">
-            <AnimatePresence mode="popLayout">
-              {state.draftTokens.map((token) => (
-                <motion.span
-                  key={`draft-${token.id}`}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  className={`px-3 py-1 rounded-lg font-mono text-sm ${
-                    token.status === 'verifying'
-                      ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
-                      : 'bg-purple-500/20 text-purple-300 border border-purple-500/40'
-                  }`}
-                >
-                  {token.text}
-                </motion.span>
-              ))}
-            </AnimatePresence>
-            {state.draftTokens.length === 0 && state.phase !== 'complete' && (
-              <span className="text-muted text-sm">{t.speculativeDecoding.vizWaiting}</span>
-            )}
-          </div>
-        </div>
-
-        {/* Target Model Section */}
-        <div className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="w-3 h-3 rounded-full bg-cyan-500" />
-            <span className="text-sm text-muted">{t.speculativeDecoding.vizTargetModel}</span>
-            {state.phase === 'verifying' && (
-              <motion.span
-                className="text-xs text-cyan-400"
-                animate={{ opacity: [1, 0.5, 1] }}
-                transition={{ repeat: Infinity, duration: 0.3 }}
-              >
-                {t.speculativeDecoding.vizVerifying}
-              </motion.span>
-            )}
-          </div>
-          <div className="flex flex-wrap gap-2 min-h-[40px] p-3 bg-background/50 rounded-lg border border-cyan-500/20">
-            <AnimatePresence mode="popLayout">
-              {state.finalTokens.map((token, i) => (
-                <motion.span
-                  key={`final-${i}`}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`px-3 py-1 rounded-lg font-mono text-sm ${
-                    token.status === 'accepted'
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                      : 'bg-orange-500/20 text-orange-300 border border-orange-500/40'
-                  }`}
-                >
-                  {token.status === 'corrected' && <span className="text-orange-400 mr-1">→</span>}
-                  {token.text}
-                </motion.span>
-              ))}
-            </AnimatePresence>
-            {state.finalTokens.length === 0 && (
-              <span className="text-muted text-sm">{t.speculativeDecoding.vizNoTokens}</span>
-            )}
-          </div>
-        </div>
-
-        {/* Phase Indicator */}
-        <div className="flex items-center gap-4 text-sm">
-          <span className={`px-3 py-1 rounded-full ${state.phase === 'idle' ? 'bg-gray-500/20 text-gray-400' : 'bg-gray-500/10 text-gray-600'}`}>
-            {t.speculativeDecoding.vizIdle}
-          </span>
-          <span className="text-muted">→</span>
-          <span className={`px-3 py-1 rounded-full ${state.phase === 'drafting' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/10 text-gray-600'}`}>
-            {t.speculativeDecoding.vizDrafting}
-          </span>
-          <span className="text-muted">→</span>
-          <span className={`px-3 py-1 rounded-full ${state.phase === 'verifying' ? 'bg-cyan-500/20 text-cyan-400' : 'bg-gray-500/10 text-gray-600'}`}>
-            {t.speculativeDecoding.vizVerifyPhase}
-          </span>
-          <span className="text-muted">→</span>
-          <span className={`px-3 py-1 rounded-full ${state.phase === 'complete' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-500/10 text-gray-600'}`}>
-            {t.speculativeDecoding.vizComplete}
-          </span>
-        </div>
-      </div>
-
-      {/* Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl bg-surface border border-border text-center">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted mb-1">
-            <Target size={14} />
-            {t.speculativeDecoding.vizAccepted}
-          </div>
-          <div className="text-2xl font-bold text-emerald-400">{state.acceptedCount}</div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border text-center">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted mb-1">
-            <Target size={14} />
-            {t.speculativeDecoding.vizRejected}
-          </div>
-          <div className="text-2xl font-bold text-orange-400">{state.rejectedCount}</div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border text-center">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted mb-1">
-            <Clock size={14} />
-            {t.speculativeDecoding.vizPasses}
-          </div>
-          <div className="text-2xl font-bold text-cyan-400">{state.speculativePasses}</div>
-          <div className="text-xs text-muted">{t.speculativeDecoding.vizVsStandard} {state.standardPasses}</div>
-        </div>
-        <div className="p-4 rounded-xl bg-surface border border-border text-center">
-          <div className="flex items-center justify-center gap-2 text-sm text-muted mb-1">
-            <Zap size={14} />
-            {t.speculativeDecoding.vizSpeedup}
-          </div>
-          <div className="text-2xl font-bold text-purple-400">{speedup}x</div>
-          <div className="text-xs text-muted">{t.speculativeDecoding.vizActualRate}: {actualAcceptanceRate}%</div>
-        </div>
-      </div>
-
-      {/* Explanation */}
-      <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/5 to-purple-500/5 border border-cyan-500/20">
-        <p className="text-sm text-muted">
-          {t.speculativeDecoding.vizExplanation}
-        </p>
-      </div>
-    </div>
-  )
+  const { locale } = useLocale()
+  const c = copy[locale === 'de' ? 'de' : 'en']
+  const [accepted, setAccepted] = useState(3)
+  const [draftMs, setDraftMs] = useState(5)
+  const [targetMs, setTargetMs] = useState(40)
+  const [verifyMs, setVerifyMs] = useState(45)
+  const output = [...draft.slice(0, accepted), replacement[accepted]]
+  const baseline = output.length * targetMs
+  const speculative = draft.length * draftMs + verifyMs
+  return <div className="space-y-5">
+    <h3 className="text-xl font-semibold">{c.title}</h3><p className="text-sm leading-relaxed text-muted">{c.note}</p>
+    <label className="block text-sm">{c.accepted}: {accepted}<input type="range" min={0} max={4} value={accepted} onChange={e => setAccepted(Number(e.target.value))} className="mt-2 w-full" /></label>
+    <div className="rounded-xl border border-border bg-background p-4"><p className="mb-3 text-sm text-muted">{c.prefix}</p><p className="mb-2 text-sm">{c.proposed}</p><div className="flex flex-wrap gap-2">{draft.map((word, i) => <span key={i} className={`rounded-lg border px-3 py-2 font-mono ${i < accepted ? 'border-emerald-400/40 text-emerald-300' : 'border-border text-muted line-through'}`}>{word}</span>)}</div><p className="mt-3 text-xs text-muted">{c.discarded}: {draft.slice(accepted).join(' ') || '∅'}</p><p className="mt-3 text-sm">{c.verified} → {c.extra}: <span className="font-mono text-cyan-300">{replacement[accepted]}</span></p><p className="mt-4 text-sm">{c.emitted}: <strong className="font-mono text-emerald-300">{output.join(' ')}</strong> ({output.length})</p></div>
+    <div className="grid gap-4 sm:grid-cols-3">{[[c.draftTime, draftMs, setDraftMs, 1, 50], [c.targetTime, targetMs, setTargetMs, 10, 150], [c.verifyTime, verifyMs, setVerifyMs, 10, 200]].map(([label, value, setter, min, max]) => <label key={String(label)} className="text-sm">{String(label)}: {Number(value)} ms<input type="range" className="mt-2 block w-full" min={Number(min)} max={Number(max)} value={Number(value)} onChange={e => (setter as (n: number) => void)(Number(e.target.value))} /></label>)}</div>
+    <div className="grid gap-3 sm:grid-cols-3">{[[c.standard, `${baseline} ms`], [c.speculative, `${speculative} ms`], [c.ratio, `${(baseline / speculative).toFixed(2)}×`]].map(([name, value]) => <div key={name} className="rounded-lg border border-border p-4"><p className="text-sm text-muted">{name}</p><p className="mt-2 font-mono text-xl text-cyan-300">{value}</p></div>)}</div>
+    <p className="text-sm text-muted">{c.formula}</p><p className="border-l-2 border-cyan-500 pl-4 text-sm leading-relaxed text-muted">{c.limit}</p>
+  </div>
 }

@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLocale } from '@/lib/i18n/context'
+import { normalizeVector, scaledAttention } from '@/lib/llmLearningMath'
+import Link from 'next/link'
 
 interface TransformerVisualizerProps {
   section: 'layers' | 'encoder-decoder' | 'dataflow'
@@ -125,65 +128,16 @@ function FlowParticles({ active, colorClass, count = 3 }: { active: boolean; col
 
 // Detail diagrams for each layer type
 function AttentionDiagram({ t }: { t: Record<string, string> }) {
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-center gap-1">
-        {['Q', 'K', 'V'].map((label, i) => (
-          <motion.div
-            key={label}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.15 }}
-            className="flex flex-col items-center gap-1"
-          >
-            <div className="w-10 h-8 rounded-md bg-cyan-500/20 border border-cyan-500/30 flex items-center justify-center text-xs font-bold text-cyan-400">
-              {label}
-            </div>
-          </motion.div>
-        ))}
-      </div>
-      <div className="flex justify-center">
-        <motion.div
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
-          className="flex items-center gap-1"
-        >
-          <svg width="80" height="20" viewBox="0 0 80 20" className="text-cyan-400">
-            <path d="M10 10 L35 2 L35 18 Z" fill="currentColor" opacity={0.2} stroke="currentColor" strokeWidth="0.5" />
-            <text x="50" y="14" fontSize="8" fill="currentColor" opacity={0.7}>softmax</text>
-          </svg>
-        </motion.div>
-      </div>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="mx-auto w-28 h-20 rounded-lg bg-cyan-500/10 border border-cyan-500/20 p-1 grid grid-cols-4 grid-rows-4 gap-px"
-      >
-        {Array.from({ length: 16 }).map((_, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: Math.random() * 0.8 + 0.2 }}
-            transition={{ delay: 0.8 + i * 0.03 }}
-            className="rounded-sm bg-cyan-400"
-          />
-        ))}
-      </motion.div>
-      <p className="text-center text-xs text-muted">{t.layer_detail_attention_matrix}</p>
-      <motion.div
-        initial={{ opacity: 0, y: 5 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2 }}
-        className="flex justify-center"
-      >
-        <div className="px-3 py-1.5 rounded-md bg-cyan-500/15 border border-cyan-500/25 text-xs text-cyan-300">
-          {t.layer_detail_concat_heads}
-        </div>
-      </motion.div>
-    </div>
-  )
+  const { locale } = useLocale()
+  const de = locale === 'de'
+  const result = scaledAttention([1, 0], [[1, 0], [0, 1]], [[1, 2], [-1, 0]], 1, true)
+  return <div className="space-y-3 text-sm">
+    <p className="text-muted">{de ? 'Berechnetes Beispiel mit zwei erlaubten Positionen und dₖ = 2. Die Vektoren sind frei gewählte Lehrdaten.' : 'Calculated example with two allowed positions and dₖ = 2. Vectors are constructed teaching data.'}</p>
+    <p className="font-mono">Q = [1, 0]<br />K = [[1, 0], [0, 1]]<br />V = [[1, 2], [−1, 0]]</p>
+    <p className="font-mono">softmax([1 / √2, 0]) = [{result.weights.map(v => v.toFixed(3)).join(', ')}]</p>
+    <p className="font-mono text-cyan-300">Σ aⱼVⱼ = [{result.output.map(v => v.toFixed(3)).join(', ')}]</p>
+    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/attention`}>{de ? 'Q/K/V interaktiv nachrechnen' : 'Explore the Q/K/V calculation'}</Link>
+  </div>
 }
 
 function FFNDiagram({ t }: { t: Record<string, string> }) {
@@ -239,49 +193,14 @@ function FFNDiagram({ t }: { t: Record<string, string> }) {
 }
 
 function LayerNormDiagram({ t }: { t: Record<string, string> }) {
-  const before = [2, 9, 1, 8, 3, 7, 2, 6]
-  const after = [4, 6, 4, 6, 4, 6, 4, 5]
-  return (
-    <div className="space-y-2">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <div className="flex items-end justify-center gap-0.5 h-12">
-            {before.map((h, i) => (
-              <motion.div
-                key={i}
-                initial={{ height: h * 4 }}
-                className="w-2 rounded-t-sm bg-emerald-500/50"
-              />
-            ))}
-          </div>
-          <p className="text-center text-xs text-muted mt-1">{t.layer_detail_norm_before}</p>
-        </div>
-        <div>
-          <div className="flex items-end justify-center gap-0.5 h-12">
-            {after.map((h, i) => (
-              <motion.div
-                key={i}
-                initial={{ height: 0 }}
-                animate={{ height: h * 4 }}
-                transition={{ delay: 0.5 + i * 0.05 }}
-                className="w-2 rounded-t-sm bg-emerald-400/70"
-              />
-            ))}
-          </div>
-          <p className="text-center text-xs text-muted mt-1">{t.layer_detail_norm_after}</p>
-        </div>
-      </div>
-      <div className="flex items-center justify-center gap-2 mt-2">
-        <svg width="120" height="24" viewBox="0 0 120 24" className="text-emerald-400">
-          <path d="M10 18 Q20 4, 30 18 Q40 4, 50 18" stroke="currentColor" strokeWidth="1.5" fill="none" opacity={0.4} />
-          <path d="M5 12 h5 m-2.5-2.5 v5" stroke="currentColor" strokeWidth="1.5" />
-          <path d="M60 12 h30" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2" />
-          <path d="M95 14 Q100 10, 105 14 Q110 18, 115 14" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        </svg>
-      </div>
-      <p className="text-center text-xs text-emerald-300">{t.layer_detail_norm_desc}</p>
-    </div>
-  )
+  const { locale } = useLocale()
+  const before = [1, -1, 2, 0]
+  const after = normalizeVector(before)
+  return <div className="space-y-3 text-sm">
+    <p className="text-muted">{locale === 'de' ? 'Echte LayerNorm für einen Beispielvektor, γ = 1, β = 0, ε = 0,00001. Mittelwert = 0,5; Varianz = 1,25.' : 'Actual LayerNorm for an example vector, γ = 1, β = 0, ε = 0.00001. Mean = 0.5; variance = 1.25.'}</p>
+    <p className="font-mono">x = [{before.join(', ')}]</p><p className="font-mono text-emerald-300">LN(x) = [{after.map(v => v.toFixed(3)).join(', ')}]</p>
+    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/residual-stream-layer-norm`}>{locale === 'de' ? 'Residualpfad und Normalisierung nachrechnen' : 'Explore residual paths and normalization'}</Link>
+  </div>
 }
 
 function ResidualDiagram({ t }: { t: Record<string, string> }) {

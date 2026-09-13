@@ -1,16 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
-
-const COPY = {
-  en: {
-    trainEpisode: 'Train one full episode',
-  },
-  de: {
-    trainEpisode: 'Eine komplette Episode trainieren',
-  },
-}
+import { useTranslation } from '@/lib/i18n/context'
 
 const size = 5
 const start = { x: 0, y: 0 }
@@ -74,7 +65,13 @@ function chooseAction(table: QTable, pos: Position, epsilon: number) {
   return bestAction(table, pos)
 }
 
-function updateQ(table: QTable, pos: Position, action: Action, next: Position, reward: number) {
+function updateQ(
+  table: QTable,
+  pos: Position,
+  action: Action,
+  next: Position,
+  reward: number,
+) {
   const alpha = 0.35
   const gamma = 0.85
   const nextValues = table[key(next.x, next.y)]
@@ -84,15 +81,15 @@ function updateQ(table: QTable, pos: Position, action: Action, next: Position, r
 }
 
 export function ReinforcementLearningPlayground() {
-  const { locale } = useLocale()
-  const c = COPY[locale === 'de' ? 'de' : 'en']
+  const { t } = useTranslation()
+  const c = t.vramCalc.audit
   const [agent, setAgent] = useState<Position>(start)
   const [epsilon, setEpsilon] = useState(30)
   const [qTable, setQTable] = useState<QTable>(() => makeEmptyQTable())
   const [totalReward, setTotalReward] = useState(0)
   const [episodes, setEpisodes] = useState(0)
   const [steps, setSteps] = useState(0)
-  const [log, setLog] = useState<string[]>(['Q-values start at zero. Train a few episodes and the arrows will change.'])
+  const [log, setLog] = useState<string[]>([c.rlLog])
 
   const bestPolicy = useMemo(() => {
     const policy = new Map<string, Action>()
@@ -121,10 +118,12 @@ export function ReinforcementLearningPlayground() {
     setTotalReward((r) => r + reward)
     setSteps((s) => s + 1)
     if (isTerminal(next)) setEpisodes((e) => e + 1)
-    setLog((old) => [
-      `${key(current.x, current.y)} ${action.label} → ${key(next.x, next.y)} reward ${reward > 0 ? '+' : ''}${reward}; Q=${updatedValue.toFixed(1)}${isTerminal(next) ? ' · episode ended' : ''}`,
-      ...old,
-    ].slice(0, 6))
+    setLog((old) =>
+      [
+        `${key(current.x, current.y)} ${action.label} → ${key(next.x, next.y)} ${c.rlReward} ${reward > 0 ? '+' : ''}${reward}; Q=${updatedValue.toFixed(1)}${isTerminal(next) ? ' · ' + c.rlEnded : ''}`,
+        ...old,
+      ].slice(0, 6),
+    )
   }
 
   function trainEpisode() {
@@ -138,10 +137,17 @@ export function ReinforcementLearningPlayground() {
       const action = chooseAction(table, pos, epsilon)
       const next = move(pos, action)
       const reward = rewardFor(next)
-      table[key(pos.x, pos.y)][action.id] = updateQ(table, pos, action, next, reward)
+      table[key(pos.x, pos.y)][action.id] = updateQ(
+        table,
+        pos,
+        action,
+        next,
+        reward,
+      )
       rewardSum += reward
       localSteps += 1
-      if (trace.length < 4) trace.push(`${action.label}${reward > 0 ? '+' : ''}${reward}`)
+      if (trace.length < 4)
+        trace.push(`${action.label}${reward > 0 ? '+' : ''}${reward}`)
       if (isTerminal(next)) break
       pos = next
     }
@@ -151,7 +157,12 @@ export function ReinforcementLearningPlayground() {
     setTotalReward((r) => r + rewardSum)
     setSteps((s) => s + localSteps)
     setEpisodes((e) => e + 1)
-    setLog((old) => [`Episode ${episodes + 1}: ${localSteps} steps, return ${rewardSum}. ${trace.join(' ')}`, ...old].slice(0, 6))
+    setLog((old) =>
+      [
+        `${c.rlEpisodes} ${episodes + 1}: ${localSteps} ${c.rlSteps}, ${c.rlReturn} ${rewardSum}. ${trace.join(' ')}`,
+        ...old,
+      ].slice(0, 6),
+    )
   }
 
   function resetLearning() {
@@ -160,19 +171,24 @@ export function ReinforcementLearningPlayground() {
     setTotalReward(0)
     setEpisodes(0)
     setSteps(0)
-    setLog(['Learning reset: all Q-values are back to zero.'])
+    setLog([c.rlLog])
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold font-heading text-gradient mb-2">Q-learning gridworld</h3>
-        <p className="text-muted text-sm">This is now actual learning, not a fixed heuristic. The agent updates Q-values after each reward, then the arrows show which action currently looks best in each state.</p>
+        <h3 className="text-xl font-bold font-heading text-gradient mb-2">
+          {c.rlTitle}
+        </h3>
+        <p className="text-muted text-sm">{c.rlIntro}</p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-6 items-start">
         <div className="rounded-2xl border border-border bg-surface/50 p-4">
-          <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}>
+          <div
+            className="grid gap-2"
+            style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+          >
             {Array.from({ length: size * size }, (_, i) => {
               const x = i % size
               const y = Math.floor(i / size)
@@ -182,47 +198,135 @@ export function ReinforcementLearningPlayground() {
               const isTrap = traps.has(k)
               const isWall = walls.has(k)
               const policy = bestPolicy.get(k)
-              const confidence = policy ? Math.min(100, Math.max(0, Math.abs(qTable[k]?.[policy.id] ?? 0) * 12)) : 0
+              const confidence = policy
+                ? Math.min(
+                    100,
+                    Math.max(0, Math.abs(qTable[k]?.[policy.id] ?? 0) * 12),
+                  )
+                : 0
               return (
-                <div key={k} className={`aspect-square min-h-14 rounded-xl border flex flex-col items-center justify-center text-lg font-bold relative overflow-hidden ${isWall ? 'bg-slate-800 border-slate-700' : isGoal ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : isTrap ? 'bg-red-500/20 border-red-500/40 text-red-300' : 'bg-background border-border text-muted'}`}>
-                  {!isWall && !isGoal && !isTrap && <div className="absolute inset-x-0 bottom-0 bg-primary/20" style={{ height: `${confidence}%` }} />}
-                  <span className="relative z-10">{isAgent ? '🤖' : isWall ? '■' : isGoal ? '🏁' : isTrap ? '⚠' : policy?.label}</span>
-                  {!isWall && !isGoal && !isTrap && <span className="relative z-10 text-[10px] font-mono text-muted/70">{Math.max(...Object.values(qTable[k])).toFixed(1)}</span>}
+                <div
+                  key={k}
+                  className={`aspect-square min-h-14 rounded-xl border flex flex-col items-center justify-center text-lg font-bold relative overflow-hidden ${isWall ? 'bg-slate-800 border-slate-700' : isGoal ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300' : isTrap ? 'bg-red-500/20 border-red-500/40 text-red-300' : 'bg-background border-border text-muted'}`}
+                >
+                  {!isWall && !isGoal && !isTrap && (
+                    <div
+                      className="absolute inset-x-0 bottom-0 bg-primary/20"
+                      style={{ height: `${confidence}%` }}
+                    />
+                  )}
+                  <span className="relative z-10">
+                    {isAgent
+                      ? '🤖'
+                      : isWall
+                        ? '■'
+                        : isGoal
+                          ? '🏁'
+                          : isTrap
+                            ? '⚠'
+                            : policy?.label}
+                  </span>
+                  {!isWall && !isGoal && !isTrap && (
+                    <span className="relative z-10 text-[10px] font-mono text-muted/70">
+                      {Math.max(...Object.values(qTable[k])).toFixed(1)}
+                    </span>
+                  )}
                 </div>
               )
             })}
           </div>
           <div className="mt-3 flex flex-wrap gap-3 text-xs text-muted">
-            <span>🤖 current state</span><span>🏁 +10 terminal</span><span>⚠ -8 terminal</span><span>■ wall</span><span>arrow = best learned action</span>
+            <span>{c.rlLegend}</span>
           </div>
         </div>
 
         <div className="space-y-4">
           <div className="rounded-xl border border-border bg-surface p-4">
-            <div className="flex justify-between text-sm mb-2"><span className="text-muted">Exploration ε</span><span className="font-mono text-text">{epsilon}%</span></div>
-            <input aria-label="Exploration rate" type="range" min="0" max="80" value={epsilon} onChange={(e) => setEpsilon(Number(e.target.value))} className="w-full" />
-            <p className="text-xs text-muted mt-2">High ε discovers the map; low ε exploits the learned Q-values.</p>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-muted">{c.rlExploration}</span>
+              <span className="font-mono text-text">{epsilon}%</span>
+            </div>
+            <input
+              aria-label={c.rlExploration}
+              type="range"
+              min="0"
+              max="80"
+              value={epsilon}
+              onChange={(e) => setEpsilon(Number(e.target.value))}
+              className="w-full"
+            />
+            <p className="text-xs text-muted mt-2">{c.rlExploreNote}</p>
           </div>
 
           <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-xl bg-primary/10 border border-primary/20 p-3"><div className="text-xs text-muted">Episodes</div><div className="text-xl font-mono text-text">{episodes}</div></div>
-            <div className="rounded-xl bg-secondary/10 border border-secondary/20 p-3"><div className="text-xs text-muted">Steps</div><div className="text-xl font-mono text-text">{steps}</div></div>
-            <div className="rounded-xl bg-accent/10 border border-accent/20 p-3"><div className="text-xs text-muted">Return</div><div className="text-xl font-mono text-text">{totalReward}</div></div>
+            <div className="rounded-xl bg-primary/10 border border-primary/20 p-3">
+              <div className="text-xs text-muted">{c.rlEpisodes}</div>
+              <div className="text-xl font-mono text-text">{episodes}</div>
+            </div>
+            <div className="rounded-xl bg-secondary/10 border border-secondary/20 p-3">
+              <div className="text-xs text-muted">{c.rlSteps}</div>
+              <div className="text-xl font-mono text-text">{steps}</div>
+            </div>
+            <div className="rounded-xl bg-accent/10 border border-accent/20 p-3">
+              <div className="text-xs text-muted">{c.rlReturn}</div>
+              <div className="text-xl font-mono text-text">{totalReward}</div>
+            </div>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <button onClick={() => learnOneStep(actions[0])} className="col-start-2 rounded-lg border border-border bg-background p-3 hover:border-primary">↑</button>
-            <button onClick={() => learnOneStep(actions[3])} className="rounded-lg border border-border bg-background p-3 hover:border-primary">←</button>
-            <button onClick={() => learnOneStep(actions[2])} className="rounded-lg border border-border bg-background p-3 hover:border-primary">↓</button>
-            <button onClick={() => learnOneStep(actions[1])} className="rounded-lg border border-border bg-background p-3 hover:border-primary">→</button>
+            <button
+              onClick={() => learnOneStep(actions[0])}
+              className="col-start-2 rounded-lg border border-border bg-background p-3 hover:border-primary"
+            >
+              ↑
+            </button>
+            <button
+              onClick={() => learnOneStep(actions[3])}
+              className="rounded-lg border border-border bg-background p-3 hover:border-primary"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => learnOneStep(actions[2])}
+              className="rounded-lg border border-border bg-background p-3 hover:border-primary"
+            >
+              ↓
+            </button>
+            <button
+              onClick={() => learnOneStep(actions[1])}
+              className="rounded-lg border border-border bg-background p-3 hover:border-primary"
+            >
+              →
+            </button>
           </div>
-          <button onClick={() => learnOneStep()} className="w-full rounded-xl bg-primary text-background font-semibold py-3 hover:opacity-90">Let ε-greedy policy step</button>
-          <button onClick={trainEpisode} className="w-full rounded-xl bg-secondary text-background font-semibold py-3 hover:opacity-90">{c.trainEpisode}</button>
-          <button onClick={resetLearning} className="w-full rounded-xl border border-border bg-surface py-3 text-text hover:border-primary/50">Reset learning</button>
+          <button
+            onClick={() => learnOneStep()}
+            className="w-full rounded-xl bg-primary text-background font-semibold py-3 hover:opacity-90"
+          >
+            {c.rlStep}
+          </button>
+          <button
+            onClick={trainEpisode}
+            className="w-full rounded-xl bg-secondary text-background font-semibold py-3 hover:opacity-90"
+          >
+            {c.rlEpisode}
+          </button>
+          <button
+            onClick={resetLearning}
+            className="w-full rounded-xl border border-border bg-surface py-3 text-text hover:border-primary/50"
+          >
+            {c.reset}
+          </button>
 
           <div className="rounded-xl border border-border bg-background p-4">
-            <div className="text-sm font-semibold text-text mb-2">Learning trace</div>
-            <div className="space-y-1 text-xs text-muted">{log.map((item, i) => <div key={i}>{item}</div>)}</div>
+            <div className="text-sm font-semibold text-text mb-2">
+              {c.rlTrace}
+            </div>
+            <div className="space-y-1 text-xs text-muted">
+              {log.map((item, i) => (
+                <div key={i}>{item}</div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

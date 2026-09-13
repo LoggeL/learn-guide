@@ -49,7 +49,7 @@ export default function NotFoundPage() {
             {t.notFound.goHome}
           </Link>
           <Link
-            href={`/${locale}/ai/industry/logges-favourite-model`}
+            href={`/${locale}/ai/industry/tier-list`}
             className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-sm font-medium text-text hover:bg-surface-elevated transition-colors"
           >
             <Compass size={16} />
