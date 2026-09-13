@@ -39,7 +39,7 @@ export interface ModelEntry {
   available?: boolean
 }
 
-/** Current models shown on the subjective tier-list page, in display order. */
+/** Archived personal ranking from 22 August 2026, in display order. */
 export const tierListModels: ModelEntry[] = [
   {
     id: 'fable-5',
