@@ -150,6 +150,7 @@ export const topics: Topic[] = [
         name: 'LLM Inference',
         children: [
           { id: 'kv-cache', name: 'KV Cache', path: '/ai/llm-inference/kv-cache', difficulty: 'expert', lastUpdated: '2026-09-13' },
+          { id: 'mega-kernels', name: 'Mega-Kernels', path: '/ai/llm-inference/mega-kernels', difficulty: 'expert', lastUpdated: '2026-09-24' },
           { id: 'prompt-caching', name: 'Prompt Caching', path: '/ai/llm-inference/prompt-caching', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
           { id: 'batching', name: 'Batching & Throughput', path: '/ai/llm-inference/batching', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
           { id: 'local-inference', name: 'Running Models Locally', path: '/ai/llm-inference/local-inference', difficulty: 'beginner', lastUpdated: '2026-09-13' },
