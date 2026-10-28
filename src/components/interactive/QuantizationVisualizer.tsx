@@ -1,45 +1,203 @@
 'use client'
 
-import { useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
-import { uniformQuantize } from '@/lib/llmLearningMath'
+import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useTranslation } from '@/lib/i18n/context'
+import { groupQuantize, type QuantScheme } from '@/lib/llmLearningMath'
 
-const weights = [-2.4, -1.8, -0.7, -0.25, 0, 0.3, 0.9, 1.6, 2.7]
-const copy = {
-  en: {
-    title: 'Round actual weights', note: 'A uniform toy quantizer with fixed example weights. Change the bit width and clipping range to inspect rounding and clipping error. This does not predict model accuracy or perplexity.',
-    bits: 'Bits per weight', range: 'Represented range', original: 'Original weight', code: 'Integer code', reconstructed: 'Reconstructed', error: 'Error', levels: 'Representable values', mse: 'Mean squared weight error',
-    params: 'Model parameters (billions)', memory: 'Raw weight storage', memoryNote: 'Decimal GB. This counts only packed weights: parameters × bits / 8. Scales, metadata, activations, runtime buffers and the KV cache need additional memory. CPU offloading can reduce GPU residency at a latency cost.',
-    formula: 'Δ = (max − min) / (2ᵇ − 1); q = clamp(round((w − min) / Δ), 0, 2ᵇ − 1); ŵ = min + qΔ.',
-    limit: 'The endpoints are included, giving exactly 2ᵇ available values. Zero need not be one of them in this simplified grid. Production formats use other grids, group scales and calibration methods. Weight error alone is not a measure of task quality.',
-  },
-  de: {
-    title: 'Echte Gewichtswerte runden', note: 'Ein gleichmäßiger Spielzeugquantisierer mit festen Beispielgewichten. Ändere Bitbreite und Wertebereich, um Rundungs- und Clippingfehler zu untersuchen. Daraus folgt keine Modellgenauigkeit oder Perplexität.',
-    bits: 'Bits pro Gewicht', range: 'Darstellbarer Bereich', original: 'Originalgewicht', code: 'Ganzzahlcode', reconstructed: 'Rekonstruiert', error: 'Fehler', levels: 'Darstellbare Werte', mse: 'Mittlerer quadratischer Gewichtsfehler',
-    params: 'Modellparameter (Milliarden)', memory: 'Roher Gewichtsspeicher', memoryNote: 'Dezimale GB. Gezählt werden nur gepackte Gewichte: Parameter × Bits / 8. Skalen, Metadaten, Aktivierungen, Laufzeitpuffer und KV-Cache benötigen zusätzlichen Speicher. CPU-Offloading kann GPU-Speicher sparen, kostet aber gegebenenfalls Latenz.',
-    formula: 'Δ = (max − min) / (2ᵇ − 1); q = clamp(round((w − min) / Δ), 0, 2ᵇ − 1); ŵ = min + qΔ.',
-    limit: 'Mit beiden Endpunkten gibt es genau 2ᵇ mögliche Werte. Null muss in diesem vereinfachten Raster nicht enthalten sein. Produktive Formate nutzen andere Raster, Gruppenskalen und Kalibrierung. Gewichtsfehler allein misst keine Aufgabenqualität.',
-  },
+/** One fixed example row of a weight matrix (roughly bell-shaped, no randomness). */
+const BASE_WEIGHTS = [0.12, -0.31, 0.05, 0.44, -0.18, 0.27, -0.52, 0.09, 0.36, -0.07, -0.41, 0.21, 0.58, -0.24, 0.03, -0.15]
+const OUTLIER_INDEX = 5
+const OUTLIER_VALUE = 3.2
+const GROUP_SIZES = [16, 8, 4]
+const BIT_OPTIONS = [2, 3, 4, 8]
+const GROUP_TINTS = ['rgba(34,211,238,0.07)', 'rgba(168,85,247,0.07)']
+
+const W = 640
+const H = 260
+const PAD_X = 8
+const PAD_Y = 14
+const COL = (W - 2 * PAD_X) / BASE_WEIGHTS.length
+
+function formatNumber(locale: string, value: number, digits: number) {
+  const clean = Math.abs(value) < 0.5 * 10 ** -digits ? 0 : value
+  return clean.toLocaleString(locale === 'de' ? 'de-DE' : 'en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })
 }
 
 export function QuantizationVisualizer() {
-  const { locale } = useLocale()
-  const c = copy[locale === 'de' ? 'de' : 'en']
+  const { t, locale } = useTranslation()
+  const c = t.quantization
+  const fmt = (value: number, digits = 3) => formatNumber(locale, value, digits)
   const [bits, setBits] = useState(4)
-  const [range, setRange] = useState(3)
-  const [billions, setBillions] = useState(70)
-  const q = uniformQuantize(weights, bits, -range, range)
-  return <div className="space-y-5">
-    <h3 className="text-xl font-semibold">{c.title}</h3>
-    <p className="text-sm leading-relaxed text-muted">{c.note}</p>
-    <div className="grid gap-4 sm:grid-cols-2">
-      <label className="text-sm">{c.bits}<select value={bits} onChange={e => setBits(Number(e.target.value))} className="mt-2 block w-full rounded-lg border border-border bg-background p-2">{[2, 3, 4, 8].map(b => <option key={b} value={b}>{b}</option>)}</select></label>
-      <label className="text-sm">{c.range}: [{(-range).toFixed(1)}, {range.toFixed(1)}]<input type="range" className="mt-4 block w-full" min={1} max={4} step={0.1} value={range} onChange={e => setRange(Number(e.target.value))} /></label>
+  const [scheme, setScheme] = useState<QuantScheme>('symmetric')
+  const [groupSize, setGroupSize] = useState(16)
+  const [outlier, setOutlier] = useState(true)
+  const [keep, setKeep] = useState(false)
+
+  const weights = useMemo(() => BASE_WEIGHTS.map((w, i) => (outlier && i === OUTLIER_INDEX ? OUTLIER_VALUE : w)), [outlier])
+  const keptIdx = outlier && keep ? [OUTLIER_INDEX] : []
+  const q = groupQuantize(weights, bits, groupSize, scheme, keptIdx)
+
+  const normalIdx = weights.map((_, i) => i).filter(i => !(outlier && i === OUTLIER_INDEX))
+  const mseNormal = normalIdx.reduce((sum, i) => sum + q.errors[i] ** 2, 0) / normalIdx.length
+  const zeroed = normalIdx.filter(i => weights[i] !== 0 && Math.abs(q.reconstructed[i]) < 1e-12).length
+
+  const yMax = outlier ? 3.5 : 0.65
+  const y = (v: number) => PAD_Y + ((yMax - v) / (2 * yMax)) * (H - 2 * PAD_Y)
+  const zeroY = y(0)
+
+  const select = 'mt-2 block w-full rounded-lg border border-border bg-background p-2 text-sm'
+  const toggle = (active: boolean) => `rounded-lg border px-3 py-2 text-sm transition-colors ${active ? 'border-cyan-400/60 bg-cyan-500/10 text-cyan-300' : 'border-border bg-background text-muted hover:text-text'}`
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h3 className="text-xl font-semibold">{c.vizTitle}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{c.vizIntro}</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <label className="text-sm">{c.vizBits}
+          <select value={bits} onChange={e => setBits(Number(e.target.value))} className={select}>
+            {BIT_OPTIONS.map(b => <option key={b} value={b}>{b}</option>)}
+          </select>
+        </label>
+        <label className="text-sm">{c.vizScheme}
+          <select value={scheme} onChange={e => setScheme(e.target.value as QuantScheme)} className={select}>
+            <option value="symmetric">{c.vizSymmetric}</option>
+            <option value="asymmetric">{c.vizAsymmetric}</option>
+          </select>
+        </label>
+        <label className="text-sm">{c.vizGroup}
+          <select value={groupSize} onChange={e => setGroupSize(Number(e.target.value))} className={select}>
+            {GROUP_SIZES.map(g => <option key={g} value={g}>{g === 16 ? c.vizGroupRow : c.vizGroupN.replace('{n}', String(g))}</option>)}
+          </select>
+        </label>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" aria-pressed={outlier} className={toggle(outlier)} onClick={() => setOutlier(v => !v)}>{c.vizOutlier} (w₆ = {fmt(OUTLIER_VALUE, 1)})</button>
+        <button type="button" aria-pressed={keep} disabled={!outlier} className={`${toggle(keep && outlier)} disabled:opacity-40`} onClick={() => setKeep(v => !v)}>{c.vizKeep}</button>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-border bg-background/60 p-2">
+        <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full min-w-[480px]" role="img" aria-label={c.vizTitle}>
+          {q.groups.map((g, gi) => {
+            const x0 = PAD_X + g.start * COL
+            const width = (g.end - g.start) * COL
+            const lines = g.grid.length <= 16 ? g.grid.filter(v => Math.abs(v) <= yMax) : []
+            return (
+              <g key={`${g.start}-${groupSize}`}>
+                <rect x={x0} y={PAD_Y} width={width} height={H - 2 * PAD_Y} fill={GROUP_TINTS[gi % 2]} />
+                {lines.map((level, li) => (
+                  <motion.line key={li} x1={x0 + 2} x2={x0 + width - 2} initial={false} animate={{ y1: y(level), y2: y(level) }} transition={{ duration: 0.35 }} stroke="currentColor" strokeOpacity={0.22} strokeWidth={1} className="text-cyan-300" />
+                ))}
+              </g>
+            )
+          })}
+          <line x1={PAD_X} x2={W - PAD_X} y1={zeroY} y2={zeroY} stroke="currentColor" strokeOpacity={0.45} className="text-muted" />
+          {weights.map((w, i) => {
+            const cx = PAD_X + i * COL
+            const r = q.reconstructed[i]
+            const kept = q.codes[i] === null
+            return (
+              <g key={i}>
+                <motion.rect x={cx + COL * 0.2} width={COL * 0.6} initial={false} animate={{ y: Math.min(y(w), zeroY), height: Math.max(1, Math.abs(y(w) - zeroY)) }} transition={{ duration: 0.35 }} fill="none" stroke="currentColor" strokeWidth={1.5} className="text-muted" />
+                <motion.rect x={cx + COL * 0.32} width={COL * 0.36} initial={false} animate={{ y: Math.min(y(r), zeroY), height: Math.max(1, Math.abs(y(r) - zeroY)) }} transition={{ duration: 0.35 }} className={kept ? 'fill-emerald-400' : 'fill-orange-400'} />
+              </g>
+            )
+          })}
+        </svg>
+        <div className="flex flex-wrap gap-4 px-2 pb-1 pt-2 text-xs text-muted">
+          <span className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 border-2 border-muted" />{c.vizOriginal}</span>
+          <span className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 bg-orange-400" />{c.vizReconstructed}</span>
+          {outlier && keep && <span className="flex items-center gap-1.5"><span className="inline-block h-3 w-3 bg-emerald-400" />{c.vizKept}</span>}
+          <span className="flex items-center gap-1.5"><span className="inline-block h-px w-4 bg-cyan-300" />{bits === 8 ? c.vizGridDense : c.vizGrid}</span>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-xl border border-border p-4"><p className="text-sm text-muted">{c.vizMse}</p><p className="font-mono text-2xl text-orange-300">{locale === 'de' ? mseNormal.toExponential(2).replace('.', ',') : mseNormal.toExponential(2)}</p></div>
+        <div className="rounded-xl border border-border p-4"><p className="text-sm text-muted">{c.vizZeroed}</p><p className="font-mono text-2xl text-orange-300">{zeroed} / {normalIdx.length}</p></div>
+        <div className="rounded-xl border border-border p-4"><p className="text-sm text-muted">{c.vizScales}</p><p className="font-mono text-2xl text-cyan-300">{q.groups.length}</p></div>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-right font-mono text-sm">
+          <thead><tr className="text-muted">{[c.vizGroupHeader, c.vizScaleHeader, c.vizZeroHeader].map(h => <th key={h} className="p-2 font-sans font-medium">{h}</th>)}</tr></thead>
+          <tbody>{q.groups.map((g, gi) => (
+            <tr key={g.start} className="border-t border-border">
+              <td className="p-2">{gi + 1} (w{g.start + 1}–w{g.end})</td>
+              <td className="p-2 text-cyan-300">{fmt(g.scale, 4)}</td>
+              <td className="p-2">{scheme === 'asymmetric' ? g.zeroPoint : '–'}</td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </div>
+
+      <details className="rounded-xl border border-border p-4">
+        <summary className="cursor-pointer text-sm font-medium">{c.vizWeight} · {c.vizCode} · {c.vizRecon} · {c.vizError}</summary>
+        <div className="mt-3 overflow-x-auto">
+          <table className="w-full text-right font-mono text-sm">
+            <thead><tr className="text-muted">{['#', c.vizWeight, c.vizCode, c.vizRecon, c.vizError].map(h => <th key={h} className="p-2 font-sans font-medium">{h}</th>)}</tr></thead>
+            <tbody>{weights.map((w, i) => (
+              <tr key={i} className="border-t border-border">
+                <td className="p-2 text-muted">w{i + 1}</td>
+                <td className="p-2">{fmt(w)}</td>
+                <td className="p-2 text-cyan-300">{q.codes[i] ?? c.vizKept}</td>
+                <td className="p-2">{fmt(q.reconstructed[i])}</td>
+                <td className="p-2 text-orange-300">{fmt(q.errors[i])}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </details>
+
+      <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-4">
+        <p className="mb-2 text-sm font-semibold text-cyan-300">{c.vizTry}</p>
+        <ul className="list-disc space-y-1 pl-5 text-sm text-muted">{[c.vizTry1, c.vizTry2, c.vizTry3].map(item => <li key={item}>{item}</li>)}</ul>
+      </div>
+      <p className="text-xs leading-relaxed text-muted">{c.vizNote}</p>
     </div>
-    <div className="grid gap-3 sm:grid-cols-2"><div className="rounded-xl border border-border p-4"><p className="text-sm text-muted">{c.levels}</p><p className="font-mono text-2xl text-cyan-300">{q.levels}</p></div><div className="rounded-xl border border-border p-4"><p className="text-sm text-muted">{c.mse}</p><p className="font-mono text-2xl text-orange-300">{q.mse.toFixed(5)}</p></div></div>
-    <div className="overflow-x-auto"><table className="w-full text-right font-mono text-sm"><thead><tr>{[c.original, c.code, c.reconstructed, c.error].map(label => <th className="p-2 font-sans" key={label}>{label}</th>)}</tr></thead><tbody>{weights.map((value, i) => <tr key={i} className="border-t border-border"><td className="p-2">{value.toFixed(3)}</td><td className="p-2 text-cyan-300">{q.codes[i]}</td><td className="p-2">{q.reconstructed[i].toFixed(3)}</td><td className="p-2 text-orange-300">{q.errors[i].toFixed(3)}</td></tr>)}</tbody></table></div>
-    <p className="overflow-x-auto rounded-lg bg-background p-4 font-mono text-sm">{c.formula}</p>
-    <p className="text-sm text-muted">{c.limit}</p>
-    <div className="space-y-3 rounded-xl border border-border p-4"><label className="block text-sm">{c.params}: {billions}<input className="mt-2 block w-full" type="range" min={1} max={120} value={billions} onChange={e => setBillions(Number(e.target.value))} /></label><p>{c.memory}: <strong className="font-mono text-cyan-300">{(billions * bits / 8).toFixed(2)} GB</strong></p><p className="text-sm text-muted">{c.memoryNote}</p></div>
-  </div>
+  )
+}
+
+const MEMORY_FORMATS = [
+  { key: 'memFp16', bpw: 16 },
+  { key: 'memInt8', bpw: 8 },
+  { key: 'memInt4', bpw: 4 + (16 + 4) / 128 },
+  { key: 'memQ4km', bpw: 4.89 },
+  { key: 'memMxfp4', bpw: 4.25 },
+  { key: 'memNvfp4', bpw: 4.5 },
+  { key: 'memTernary', bpw: Math.log2(3) },
+] as const
+
+export function QuantizationMemoryCalculator() {
+  const { t, locale } = useTranslation()
+  const c = t.quantization
+  const [billions, setBillions] = useState(70)
+  const maxGb = billions * 16 / 8
+  return (
+    <div className="space-y-4">
+      <label className="block text-sm">{c.memParams}: <span className="font-mono text-cyan-300">{billions}B</span>
+        <input className="mt-2 block w-full" type="range" min={1} max={400} value={billions} onChange={e => setBillions(Number(e.target.value))} />
+      </label>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead><tr className="text-left text-muted"><th className="p-2 font-medium">{c.memFormat}</th><th className="p-2 text-right font-medium">{c.memBpw}</th><th className="p-2 text-right font-medium">{c.memGb}</th><th className="w-1/3 p-2" /></tr></thead>
+          <tbody>{MEMORY_FORMATS.map(f => {
+            const gb = billions * f.bpw / 8
+            return (
+              <tr key={f.key} className="border-t border-border">
+                <td className="p-2">{c[f.key]}</td>
+                <td className="p-2 text-right font-mono">{formatNumber(locale, f.bpw, 2)}</td>
+                <td className="p-2 text-right font-mono text-cyan-300">{formatNumber(locale, gb, 1)}</td>
+                <td className="p-2"><div className="h-2 rounded bg-background"><motion.div className="h-2 rounded bg-gradient-to-r from-cyan-400 to-purple-400" initial={false} animate={{ width: `${(gb / maxGb) * 100}%` }} transition={{ duration: 0.3 }} /></div></td>
+              </tr>
+            )
+          })}</tbody>
+        </table>
+      </div>
+      <p className="text-xs leading-relaxed text-muted">{c.memNote}</p>
+    </div>
+  )
 }
