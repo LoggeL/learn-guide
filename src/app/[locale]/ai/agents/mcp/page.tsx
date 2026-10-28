@@ -2,135 +2,290 @@
 
 import React from 'react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { McpIntegrationMathDemo } from '@/components/interactive/McpIntegrationMathDemo'
+import { McpMessageFlowDemo } from '@/components/interactive/McpMessageFlowDemo'
 import { useTranslation } from '@/lib/i18n/context'
-import { AlertTriangle, Check, X, Server, Code, ArrowRight, Wrench, Database, FileText, PlayCircle, RefreshCw, Power, FolderOpen, Github, MessageSquare, HardDrive, Brain, GitBranch, Terminal, Zap, Shield, Gauge } from 'lucide-react'
+import { AlertTriangle, Check, X, Server, Wrench, Database, FileText, Terminal, Zap, Globe, KeyRound, Monitor, Plug, ShieldAlert } from 'lucide-react'
+
+const SPEC = 'https://modelcontextprotocol.io/specification/2026-07-28'
+
+const SOURCES = [
+  { key: 'spec', href: SPEC },
+  { key: 'changelog', href: `${SPEC}/changelog` },
+  { key: 'architecture', href: `${SPEC}/architecture` },
+  { key: 'server', href: `${SPEC}/server` },
+  { key: 'tools', href: `${SPEC}/server/tools` },
+  { key: 'mrtr', href: `${SPEC}/basic/patterns/mrtr` },
+  { key: 'elicitation', href: `${SPEC}/client/elicitation` },
+  { key: 'transports', href: `${SPEC}/basic/transports` },
+  { key: 'authorization', href: `${SPEC}/basic/authorization` },
+  { key: 'security', href: 'https://modelcontextprotocol.io/docs/2026-07-28/tutorials/security/security_best_practices' },
+  { key: 'invariant', href: 'https://invariantlabs.ai/blog/mcp-security-notification-tool-poisoning-attacks' },
+  { key: 'servers', href: 'https://github.com/modelcontextprotocol/servers' },
+  { key: 'announcement', href: 'https://www.anthropic.com/news/model-context-protocol' },
+  { key: 'foundation', href: 'https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation' },
+] as const
 
 export default function MCPPage() {
   const { t } = useTranslation()
+  const m = t.mcp
 
-  const useCases = [
-    { title: t.mcp.useCase1, desc: t.mcp.useCase1Desc, icon: '🌐', color: 'emerald' },
-    { title: t.mcp.useCase2, desc: t.mcp.useCase2Desc, icon: '🔗', color: 'cyan' },
-    { title: t.mcp.useCase3, desc: t.mcp.useCase3Desc, icon: '🏢', color: 'purple' },
-    { title: t.mcp.useCase4, desc: t.mcp.useCase4Desc, icon: '🛒', color: 'orange' },
+  const roles = [
+    { title: m.archHost, desc: m.archHostDesc, icon: Monitor, box: 'bg-purple-500/5 border-purple-500/20', text: 'text-purple-400' },
+    { title: m.archClient, desc: m.archClientDesc, icon: Plug, box: 'bg-pink-500/5 border-pink-500/20', text: 'text-pink-400' },
+    { title: m.archServer, desc: m.archServerDesc, icon: Server, box: 'bg-cyan-500/5 border-cyan-500/20', text: 'text-cyan-400' },
   ]
 
-  const overkillCases = [
-    { title: t.mcp.overkillCase1, desc: t.mcp.overkillCase1Desc },
-    { title: t.mcp.overkillCase2, desc: t.mcp.overkillCase2Desc },
-    { title: t.mcp.overkillCase3, desc: t.mcp.overkillCase3Desc },
-    { title: t.mcp.overkillCase4, desc: t.mcp.overkillCase4Desc },
+  const primitives = [
+    { title: m.primTools, control: m.primToolsControl, desc: m.primToolsDesc, example: m.primToolsExample, icon: Wrench, box: 'bg-purple-500/5 border-purple-500/20', text: 'text-purple-400' },
+    { title: m.primResources, control: m.primResourcesControl, desc: m.primResourcesDesc, example: m.primResourcesExample, icon: Database, box: 'bg-emerald-500/5 border-emerald-500/20', text: 'text-emerald-400' },
+    { title: m.primPrompts, control: m.primPromptsControl, desc: m.primPromptsDesc, example: m.primPromptsExample, icon: FileText, box: 'bg-cyan-500/5 border-cyan-500/20', text: 'text-cyan-400' },
   ]
 
-  const steps = [
-    { title: t.mcp.step1, desc: t.mcp.step1Desc, num: '01' },
-    { title: t.mcp.step2, desc: t.mcp.step2Desc, num: '02' },
-    { title: t.mcp.step3, desc: t.mcp.step3Desc, num: '03' },
-    { title: t.mcp.step4, desc: t.mcp.step4Desc, num: '04' },
+  const clientFeatures = [
+    { title: m.elicitationTitle, desc: m.elicitationDesc, deprecated: false },
+    { title: m.samplingTitle, desc: m.samplingDesc, deprecated: true },
+    { title: m.rootsTitle, desc: m.rootsDesc, deprecated: true },
   ]
+
+  const config = { mcpServers: { filesystem: { command: 'npx', args: ['-y', '@modelcontextprotocol/server-filesystem', '/path/to/approved-folder'] } } }
 
   return (
     <TopicLayout topicId="mcp"
-      title={t.mcp.title}
-      description={t.mcp.description}
+      title={m.title}
+      description={m.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.agents, href: '/ai/agents' },
-        { label: t.mcp.title },
+        { label: m.title },
       ]}
     >
       {/* What is MCP */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.mcp.whatIs}</h2>
-        <p className="text-muted leading-relaxed text-lg">
-          {t.mcp.whatIsDesc}
-        </p>
+        <span className="inline-block text-xs px-2 py-1 rounded bg-primary/15 text-primary-light mb-4">{m.specBadge}</span>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{m.whatIs}</h2>
+        <div className="space-y-4">
+          <p className="text-muted leading-relaxed text-lg">{m.whatIsP1}</p>
+          <p className="text-muted leading-relaxed">{m.whatIsP2}</p>
+          <p className="text-muted leading-relaxed">{m.whatIsP3}</p>
+        </div>
       </section>
 
-      {/* MCP vs Regular Tool Calls - Side by Side */}
+      {/* M×N problem */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.mcp.vsToolCalls}</h2>
-        <p className="text-muted mb-6">{t.mcp.vsToolCallsDesc}</p>
-        
-        <div className="grid md:grid-cols-2 gap-4">
-          {/* Regular Tools */}
-          <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Code className="w-6 h-6 text-emerald-400" />
-              <h3 className="text-lg font-bold font-heading text-emerald-400">{t.mcp.regularTools}</h3>
-            </div>
-            <p className="text-sm text-muted mb-4">{t.mcp.regularToolsDesc}</p>
-            <div className="rounded-lg bg-background border border-border p-4 font-mono text-sm overflow-x-auto">
-              <pre className="text-muted">
-                <code>
-                  <span className="text-pink-400">const</span> <span className="text-cyan-400">tools</span> = {'{'}{'\n'}
-                  {'  '}<span className="text-yellow-400">get_weather</span>: (<span className="text-purple-400">location</span>) {'=> {'}{'\n'}
-                  {'    '}<span className="text-pink-400">return</span> <span className="text-cyan-400">fetchWeather</span>(location){'\n'}
-                  {'  }'}{'\n'}
-                  {'}'}{'\n\n'}
-                  <span className="text-muted">{'// Direct function call'}</span>{'\n'}
-                  <span className="text-purple-400">result</span> = tools.<span className="text-yellow-400">get_weather</span>(<span className="text-green-400">&quot;Tokyo&quot;</span>)
-                </code>
-              </pre>
-            </div>
-          </div>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{m.problemTitle}</h2>
+        <div className="space-y-4 mb-6">
+          <p className="text-muted leading-relaxed">{m.problemP1}</p>
+          <p className="text-muted leading-relaxed">{m.problemP2}</p>
+        </div>
+        <McpIntegrationMathDemo />
+        <p className="text-sm text-muted mt-4">{m.problemCaveat}</p>
+      </section>
 
-          {/* MCP Tools */}
-          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Server className="w-6 h-6 text-purple-400" />
-              <h3 className="text-lg font-bold font-heading text-purple-400">{t.mcp.mcpTools}</h3>
+      {/* Architecture */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.archTitle}</h2>
+        <p className="text-muted mb-6">{m.archDesc}</p>
+        <div className="grid md:grid-cols-3 gap-4">
+          {roles.map(role => (
+            <div key={role.title} className={`p-5 rounded-xl border ${role.box}`}>
+              <div className="flex items-center gap-3 mb-3">
+                <role.icon className={`w-6 h-6 ${role.text}`} />
+                <h3 className={`text-lg font-bold font-heading ${role.text}`}>{role.title}</h3>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">{role.desc}</p>
             </div>
-            <p className="text-sm text-muted mb-4">{t.mcp.mcpToolsDesc}</p>
-            <div className="rounded-lg bg-background border border-border p-4 font-mono text-sm overflow-x-auto">
-              <pre className="text-muted">
-                <code>
-                  <span className="text-muted">{'// Separate server process'}</span>{'\n'}
-                  <span className="text-pink-400">const</span> <span className="text-cyan-400">client</span> = <span className="text-pink-400">new</span> <span className="text-yellow-400">MCPClient</span>(){'\n\n'}
-                  <span className="text-muted">{'// Discover tools via protocol'}</span>{'\n'}
-                  <span className="text-purple-400">tools</span> = <span className="text-pink-400">await</span> client.<span className="text-cyan-400">listTools</span>(){'\n\n'}
-                  <span className="text-muted">{'// Call over network'}</span>{'\n'}
-                  <span className="text-purple-400">result</span> = <span className="text-pink-400">await</span> client.<span className="text-cyan-400">invoke</span>({'\n'}
-                  {'  '}<span className="text-green-400">&quot;get_weather&quot;</span>, {'{ '}<span className="text-purple-400">location</span>: <span className="text-green-400">&quot;Tokyo&quot;</span> {'}'}{'\n'}
-                  )
-                </code>
-              </pre>
+          ))}
+        </div>
+        <p className="text-sm text-muted mt-4">{m.archNote}</p>
+      </section>
+
+      {/* Primitives */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.primitivesTitle}</h2>
+        <p className="text-muted mb-6">{m.primitivesDesc}</p>
+        <div className="grid md:grid-cols-3 gap-4">
+          {primitives.map(primitive => (
+            <div key={primitive.title} className={`p-5 rounded-xl border ${primitive.box}`}>
+              <div className="flex items-center gap-3 mb-2">
+                <primitive.icon className={`w-6 h-6 ${primitive.text}`} />
+                <h3 className={`text-lg font-bold font-heading ${primitive.text}`}>{primitive.title}</h3>
+              </div>
+              <p className="text-xs text-subtle mb-3">{m.controlLabel} <span className="text-text font-semibold">{primitive.control}</span></p>
+              <p className="text-sm text-muted mb-3 leading-relaxed">{primitive.desc}</p>
+              <div className="rounded-lg bg-background/50 border border-border p-3">
+                <div className="text-[10px] uppercase tracking-wider text-subtle mb-1">{m.exampleLabel}</div>
+                <code className="text-xs text-cyan-400 font-mono">{primitive.example}</code>
+              </div>
             </div>
+          ))}
+        </div>
+        <p className="text-sm text-muted mt-4">{m.primitivesNote}</p>
+      </section>
+
+      {/* Client features / MRTR */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.clientTitle}</h2>
+        <div className="space-y-4 mb-6">
+          <p className="text-muted leading-relaxed">{m.clientP1}</p>
+          <p className="text-muted leading-relaxed">{m.clientP2}</p>
+        </div>
+        <div className="space-y-3">
+          {clientFeatures.map(feature => (
+            <div key={feature.title} className={`p-4 rounded-xl border ${feature.deprecated ? 'bg-background/50 border-border' : 'bg-emerald-500/5 border-emerald-500/20'}`}>
+              <div className="flex items-center gap-3 mb-1">
+                <h3 className="text-text font-semibold">{feature.title}</h3>
+                <span className={`text-xs px-2 py-0.5 rounded ${feature.deprecated ? 'bg-orange-500/15 text-orange-300' : 'bg-emerald-500/15 text-emerald-300'}`}>
+                  {feature.deprecated ? m.deprecatedBadge : m.activeBadge}
+                </span>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-muted mt-3">{m.deprecationNote}</p>
+      </section>
+
+      {/* Wire demo */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.wireTitle}</h2>
+        <p className="text-muted mb-6">{m.wireDesc}</p>
+        <McpMessageFlowDemo />
+      </section>
+
+      {/* Transports */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{m.transportTitle}</h2>
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+            <div className="flex items-center gap-3 mb-3">
+              <Terminal className="w-6 h-6 text-emerald-400" />
+              <h3 className="text-lg font-bold font-heading text-emerald-400">{m.transportStdio}</h3>
+            </div>
+            <p className="text-sm text-muted leading-relaxed">{m.transportStdioDesc}</p>
+          </div>
+          <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
+            <div className="flex items-center gap-3 mb-3">
+              <Globe className="w-6 h-6 text-cyan-400" />
+              <h3 className="text-lg font-bold font-heading text-cyan-400">{m.transportHttp}</h3>
+            </div>
+            <p className="text-sm text-muted leading-relaxed">{m.transportHttpDesc}</p>
+          </div>
+        </div>
+        <div className="p-5 rounded-xl bg-surface border border-border">
+          <h3 className="text-lg font-semibold font-heading text-text mb-2">{m.statelessTitle}</h3>
+          <p className="text-sm text-muted leading-relaxed mb-4">{m.statelessDesc}</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {[
+              { label: m.statelessOld, steps: m.statelessOldSteps, style: 'border-border text-muted' },
+              { label: m.statelessNew, steps: m.statelessNewSteps, style: 'border-primary/30 text-text' },
+            ].map(column => (
+              <div key={column.label} className={`rounded-lg border bg-background p-4 ${column.style}`}>
+                <div className="text-xs uppercase tracking-wider text-subtle mb-2">{column.label}</div>
+                <ol className="space-y-1.5 font-mono text-xs">
+                  {column.steps.map((step, i) => <li key={i}>{i + 1}. {step}</li>)}
+                </ol>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* When MCP Makes Sense */}
+      {/* Authorization */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.whenToUse}</h2>
-        <p className="text-muted mb-6">{t.mcp.whenToUseDesc}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {useCases.map((useCase, i) => (
-            <div key={i} className={`p-5 rounded-xl bg-${useCase.color}-500/5 border border-${useCase.color}-500/20`}>
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">{useCase.icon}</span>
-                <h3 className={`text-lg font-bold font-heading text-${useCase.color}-400`}>{useCase.title}</h3>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.authTitle}</h2>
+        <p className="text-muted mb-6">{m.authDesc}</p>
+        <ol className="space-y-3">
+          {m.authSteps.map((step, i) => (
+            <li key={i} className="flex gap-4 p-4 bg-surface border border-border rounded-lg">
+              <span className="text-primary font-mono text-lg font-bold">{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3 className="text-text font-semibold mb-1">{step.title}</h3>
+                <p className="text-muted text-sm leading-relaxed">{step.desc}</p>
               </div>
-              <p className="text-sm text-muted">{useCase.desc}</p>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4 flex gap-3 items-start p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+          <KeyRound className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
+          <p className="text-sm text-muted">{m.authNoPassthrough}</p>
+        </div>
+      </section>
+
+      {/* Security */}
+      <section>
+        <div className="p-6 md:p-8 rounded-2xl bg-orange-500/5 border border-orange-500/30">
+          <div className="flex items-center gap-3 mb-4">
+            <ShieldAlert className="w-8 h-8 text-orange-400 shrink-0" />
+            <h2 className="text-2xl font-bold font-heading text-orange-400">{m.securityTitle}</h2>
+          </div>
+          <p className="text-muted mb-6">{m.securityDesc}</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            {m.threats.map(threat => (
+              <div key={threat.name} className="p-4 rounded-xl bg-background/50 border border-border">
+                <h3 className="text-text font-semibold mb-2">{threat.name}</h3>
+                <p className="text-sm text-muted mb-2"><span className="text-orange-300 font-medium">{m.attackLabel}: </span>{threat.how}</p>
+                <p className="text-sm text-muted"><span className="text-emerald-300 font-medium">{m.defenseLabel}: </span>{threat.defense}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted mt-4">{m.securityNote}</p>
+        </div>
+      </section>
+
+      {/* Servers */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.serversTitle}</h2>
+        <p className="text-muted mb-6">{m.serversDesc}</p>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+          {m.servers.map(server => (
+            <div key={server.name} className="p-4 rounded-xl bg-surface border border-border">
+              <h3 className="text-sm font-bold font-heading text-text mb-1">{server.name}</h3>
+              <p className="text-xs text-muted">{server.desc}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-muted mb-6">{m.serversArchived}</p>
+        <div className="rounded-xl bg-surface border border-border p-5">
+          <h3 className="text-sm font-bold font-heading text-text mb-3">{m.configTitle}</h3>
+          <div className="rounded-lg bg-background border border-border p-4 font-mono text-sm overflow-x-auto">
+            <pre className="text-muted">{JSON.stringify(config, null, 2)}</pre>
+          </div>
+          <p className="text-xs text-muted mt-3">{m.configNote}</p>
+        </div>
+      </section>
+
+      {/* When MCP pays off */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.whenTitle}</h2>
+        <p className="text-muted mb-6">{m.whenDesc}</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {m.whenCases.map(item => (
+            <div key={item.title} className="flex gap-3 items-start p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+              <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-text font-semibold">{item.title}</h3>
+                <p className="text-sm text-muted">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* When MCP is Overkill - Warning Box */}
+      {/* When MCP is overkill */}
       <section>
         <div className="p-6 md:p-8 rounded-2xl bg-orange-500/5 border border-orange-500/30">
-          <div className="flex items-center gap-3 mb-6">
-            <AlertTriangle className="w-8 h-8 text-orange-400" />
-            <h2 className="text-2xl font-bold font-heading text-orange-400">{t.mcp.overkill}</h2>
+          <div className="flex items-center gap-3 mb-4">
+            <AlertTriangle className="w-8 h-8 text-orange-400 shrink-0" />
+            <h2 className="text-2xl font-bold font-heading text-orange-400">{m.overkillTitle}</h2>
           </div>
-          <p className="text-muted mb-6">{t.mcp.overkillDesc}</p>
+          <p className="text-muted mb-6">{m.overkillDesc}</p>
           <div className="space-y-3">
-            {overkillCases.map((item, i) => (
-              <div key={i} className="flex gap-3 items-start p-4 rounded-xl bg-background/50 border border-border">
+            {m.overkillCases.map(item => (
+              <div key={item.title} className="flex gap-3 items-start p-4 rounded-xl bg-background/50 border border-border">
                 <X className="w-5 h-5 text-orange-400 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="text-text font-semibold">{item.title}</h4>
+                  <h3 className="text-text font-semibold">{item.title}</h3>
                   <p className="text-sm text-muted">{item.desc}</p>
                 </div>
               </div>
@@ -139,239 +294,22 @@ export default function MCPPage() {
         </div>
       </section>
 
-      {/* Three Core Primitives */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.corePrimitives}</h2>
-        <p className="text-muted mb-6">{t.mcp.corePrimitivesDesc}</p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {/* Tools */}
-          <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Wrench className="w-6 h-6 text-purple-400" />
-              <h3 className="text-lg font-bold font-heading text-purple-400">{t.mcp.primitiveTools}</h3>
-            </div>
-            <p className="text-sm text-muted mb-3">{t.mcp.primitiveToolsDesc}</p>
-            <div className="rounded-lg bg-background/50 border border-border p-3">
-              <code className="text-xs text-cyan-400 font-mono">{t.mcp.primitiveToolsExample}</code>
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Database className="w-6 h-6 text-emerald-400" />
-              <h3 className="text-lg font-bold font-heading text-emerald-400">{t.mcp.primitiveResources}</h3>
-            </div>
-            <p className="text-sm text-muted mb-3">{t.mcp.primitiveResourcesDesc}</p>
-            <div className="rounded-lg bg-background/50 border border-border p-3">
-              <code className="text-xs text-cyan-400 font-mono">{t.mcp.primitiveResourcesExample}</code>
-            </div>
-          </div>
-
-          {/* Prompts */}
-          <div className="p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
-            <div className="flex items-center gap-3 mb-4">
-              <FileText className="w-6 h-6 text-cyan-400" />
-              <h3 className="text-lg font-bold font-heading text-cyan-400">{t.mcp.primitivePrompts}</h3>
-            </div>
-            <p className="text-sm text-muted mb-3">{t.mcp.primitivePromptsDesc}</p>
-            <div className="rounded-lg bg-background/50 border border-border p-3">
-              <code className="text-xs text-cyan-400 font-mono">{t.mcp.primitivePromptsExample}</code>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Server Lifecycle */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.serverLifecycle}</h2>
-        <p className="text-muted mb-6">{t.mcp.serverLifecycleDesc}</p>
-        <div className="flex flex-col md:flex-row gap-2 md:gap-0">
-          {/* Phase 1: Initialize */}
-          <div className="flex-1 p-4 rounded-xl md:rounded-none md:rounded-l-xl bg-purple-500/5 border border-purple-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <PlayCircle className="w-5 h-5 text-purple-400" />
-              <h3 className="text-sm font-bold font-heading text-purple-400">{t.mcp.lifecyclePhase1}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.lifecyclePhase1Desc}</p>
-          </div>
-
-          <ArrowRight className="w-5 h-5 text-muted self-center hidden md:block" />
-
-          {/* Phase 2: Capabilities Exchange */}
-          <div className="flex-1 p-4 rounded-xl md:rounded-none bg-cyan-500/5 border border-cyan-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <RefreshCw className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-sm font-bold font-heading text-cyan-400">{t.mcp.lifecyclePhase2}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.lifecyclePhase2Desc}</p>
-          </div>
-
-          <ArrowRight className="w-5 h-5 text-muted self-center hidden md:block" />
-
-          {/* Phase 3: Initialized */}
-          <div className="flex-1 p-4 rounded-xl md:rounded-none bg-emerald-500/5 border border-emerald-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Check className="w-5 h-5 text-emerald-400" />
-              <h3 className="text-sm font-bold font-heading text-emerald-400">{t.mcp.lifecyclePhase3}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.lifecyclePhase3Desc}</p>
-          </div>
-
-          <ArrowRight className="w-5 h-5 text-muted self-center hidden md:block" />
-
-          {/* Phase 4: Operation */}
-          <div className="flex-1 p-4 rounded-xl md:rounded-none bg-blue-500/5 border border-blue-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Server className="w-5 h-5 text-blue-400" />
-              <h3 className="text-sm font-bold font-heading text-blue-400">{t.mcp.lifecyclePhase4}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.lifecyclePhase4Desc}</p>
-          </div>
-
-          <ArrowRight className="w-5 h-5 text-muted self-center hidden md:block" />
-
-          {/* Phase 5: Shutdown */}
-          <div className="flex-1 p-4 rounded-xl md:rounded-none md:rounded-r-xl bg-orange-500/5 border border-orange-500/20">
-            <div className="flex items-center gap-2 mb-2">
-              <Power className="w-5 h-5 text-orange-400" />
-              <h3 className="text-sm font-bold font-heading text-orange-400">{t.mcp.lifecyclePhase5}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.lifecyclePhase5Desc}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Real MCP Servers */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.realServers}</h2>
-        <p className="text-muted mb-6">{t.mcp.realServersDesc}</p>
-        <div className="grid md:grid-cols-3 gap-4 mb-6">
-          {/* Filesystem */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-emerald-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <FolderOpen className="w-5 h-5 text-emerald-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverFilesystem}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverFilesystemDesc}</p>
-          </div>
-
-          {/* GitHub */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-purple-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <Github className="w-5 h-5 text-purple-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverGithub}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverGithubDesc}</p>
-          </div>
-
-          {/* Slack */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-cyan-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <MessageSquare className="w-5 h-5 text-cyan-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverSlack}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverSlackDesc}</p>
-          </div>
-
-          {/* PostgreSQL */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-blue-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <HardDrive className="w-5 h-5 text-blue-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverPostgres}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverPostgresDesc}</p>
-          </div>
-
-          {/* Memory */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-pink-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <Brain className="w-5 h-5 text-pink-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverMemory}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverMemoryDesc}</p>
-          </div>
-
-          {/* Git */}
-          <div className="p-4 rounded-xl bg-surface border border-border hover:border-orange-500/30 transition-colors">
-            <div className="flex items-center gap-3 mb-2">
-              <GitBranch className="w-5 h-5 text-orange-400" />
-              <h3 className="text-sm font-bold font-heading text-text">{t.mcp.serverGit}</h3>
-            </div>
-            <p className="text-xs text-muted">{t.mcp.serverGitDesc}</p>
-          </div>
-        </div>
-
-        {/* Configuration Example */}
-        <p className="text-sm text-muted">{t.agentReview.mcpConfigNote}</p>
-        <div className="rounded-xl bg-surface border border-border p-5">
-          <h3 className="text-sm font-bold font-heading text-text mb-3">{t.mcp.serverConfigExample}</h3>
-          <div className="rounded-lg bg-background border border-border p-4 font-mono text-sm overflow-x-auto">
-            <pre className="text-muted">{JSON.stringify({mcpServers:{filesystem:{command:'npx',args:['-y','@modelcontextprotocol/server-filesystem','/path/to/approved-folder']}}},null,2)}</pre>
-          </div>
-        </div>
-      </section>
-
-      {/* How MCP Works */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.architecture}</h2>
-        <p className="text-muted mb-6">{t.mcp.architectureDesc}</p>
-        <div className="space-y-4">
-          {steps.map((step, i) => (
-            <div key={i} className="flex gap-4 p-4 bg-surface border border-border rounded-lg">
-              <span className="text-primary font-mono text-lg font-bold">{step.num}</span>
-              <div className="flex-1">
-                <h3 className="text-text font-semibold mb-1">{step.title}</h3>
-                <p className="text-muted text-sm">{step.desc}</p>
-              </div>
-              {i < steps.length - 1 && (
-                <ArrowRight className="w-5 h-5 text-muted self-center hidden md:block" />
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Practical Advice */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.practicalAdvice}</h2>
-        <p className="text-muted mb-6">{t.mcp.adviceDesc}</p>
-        <div className="space-y-3">
-          {[t.mcp.advice1, t.mcp.advice2, t.mcp.advice3, t.mcp.advice4].map((advice, i) => (
-            <div key={i} className="flex gap-3 items-start p-4 rounded-xl bg-surface border border-border">
-              <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-              <p className="text-text">{advice}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* MCP vs CLI Tools */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.mcp.vsCli}</h2>
-        <p className="text-muted mb-6">{t.mcp.vsCliDesc}</p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{m.vsCli}</h2>
+        <p className="text-muted mb-6">{m.vsCliDesc}</p>
 
         <div className="grid md:grid-cols-2 gap-4 mb-6">
-          {/* MCP Approach */}
           <div className="p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
             <div className="flex items-center gap-3 mb-4">
               <Server className="w-6 h-6 text-purple-400" />
-              <h3 className="text-lg font-bold font-heading text-purple-400">{t.mcp.vsCliMcp}</h3>
+              <h3 className="text-lg font-bold font-heading text-purple-400">{m.vsCliMcp}</h3>
             </div>
             <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs overflow-x-auto mb-4">
-              <pre className="text-muted">
-                <code>
-                  <span className="text-muted">{'// MCP: JSON-RPC: stdio / Streamable HTTP'}</span>{'\n'}
-                  <span className="text-pink-400">{'{'}</span> <span className="text-green-400">&quot;method&quot;</span>: <span className="text-yellow-400">&quot;tools/call&quot;</span>,{'\n'}
-                  {'  '}<span className="text-green-400">&quot;params&quot;</span>: <span className="text-pink-400">{'{'}</span>{'\n'}
-                  {'    '}<span className="text-green-400">&quot;name&quot;</span>: <span className="text-yellow-400">&quot;list_issues&quot;</span>,{'\n'}
-                  {'    '}<span className="text-green-400">&quot;arguments&quot;</span>: <span className="text-pink-400">{'{'}</span> <span className="text-green-400">&quot;repo&quot;</span>: <span className="text-yellow-400">&quot;org/app&quot;</span> <span className="text-pink-400">{'}'}</span>{'\n'}
-                  {'  '}<span className="text-pink-400">{'}'}</span> <span className="text-pink-400">{'}'}</span>
-                </code>
-              </pre>
+              <pre className="text-muted">{JSON.stringify({ jsonrpc: '2.0', id: 7, method: 'tools/call', params: { name: 'list_issues', arguments: { repo: 'org/app' } } }, null, 2)}</pre>
             </div>
             <ul className="space-y-2">
-              {[t.mcp.vsCliMcpPro1, t.mcp.vsCliMcpPro2, t.mcp.vsCliMcpPro3].map((pro, i) => (
+              {[m.vsCliMcpPro1, m.vsCliMcpPro2, m.vsCliMcpPro3].map((pro, i) => (
                 <li key={i} className="flex gap-2 items-start text-sm">
                   <Check className="w-4 h-4 text-purple-400 shrink-0 mt-0.5" />
                   <span className="text-muted">{pro}</span>
@@ -380,25 +318,16 @@ export default function MCPPage() {
             </ul>
           </div>
 
-          {/* CLI Approach */}
           <div className="p-5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
             <div className="flex items-center gap-3 mb-4">
               <Terminal className="w-6 h-6 text-emerald-400" />
-              <h3 className="text-lg font-bold font-heading text-emerald-400">{t.mcp.vsCliCli}</h3>
+              <h3 className="text-lg font-bold font-heading text-emerald-400">{m.vsCliCli}</h3>
             </div>
             <div className="rounded-lg bg-background border border-border p-4 font-mono text-xs overflow-x-auto mb-4">
-              <pre className="text-muted">
-                <code>
-                  <span className="text-muted">{'// CLI: shell exec'}</span>{'\n'}
-                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">gh</span> issue list --repo org/app{'\n'}
-                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">git</span> log --oneline -10{'\n'}
-                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">curl</span> -s api.example.com/data{'\n'}
-                  <span className="text-cyan-400">$</span> <span className="text-yellow-400">psql</span> -c &quot;SELECT * FROM users&quot;
-                </code>
-              </pre>
+              <pre className="text-muted">{['$ gh issue list --repo org/app', '$ git log --oneline -10', '$ curl -s api.example.com/data', '$ psql -c "SELECT count(*) FROM users"'].join('\n')}</pre>
             </div>
             <ul className="space-y-2">
-              {[t.mcp.vsCliCliPro1, t.mcp.vsCliCliPro2, t.mcp.vsCliCliPro3].map((pro, i) => (
+              {[m.vsCliCliPro1, m.vsCliCliPro2, m.vsCliCliPro3].map((pro, i) => (
                 <li key={i} className="flex gap-2 items-start text-sm">
                   <Check className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                   <span className="text-muted">{pro}</span>
@@ -408,18 +337,17 @@ export default function MCPPage() {
           </div>
         </div>
 
-        {/* Comparison Table */}
         <div className="rounded-xl bg-surface border border-border overflow-hidden">
           <div className="grid grid-cols-3 text-sm">
             <div className="p-3 bg-background border-b border-border font-bold text-text"></div>
             <div className="p-3 bg-purple-500/10 border-b border-border font-bold text-purple-400 text-center">MCP</div>
             <div className="p-3 bg-emerald-500/10 border-b border-border font-bold text-emerald-400 text-center">CLI</div>
             {[
-              { label: t.mcp.vsCliRowSetup, mcp: t.mcp.vsCliRowSetupMcp, cli: t.mcp.vsCliRowSetupCli },
-              { label: t.mcp.vsCliRowSpeed, mcp: t.mcp.vsCliRowSpeedMcp, cli: t.mcp.vsCliRowSpeedCli },
-              { label: t.mcp.vsCliRowSecurity, mcp: t.mcp.vsCliRowSecurityMcp, cli: t.mcp.vsCliRowSecurityCli },
-              { label: t.mcp.vsCliRowEcosystem, mcp: t.mcp.vsCliRowEcosystemMcp, cli: t.mcp.vsCliRowEcosystemCli },
-              { label: t.mcp.vsCliRowDebug, mcp: t.mcp.vsCliRowDebugMcp, cli: t.mcp.vsCliRowDebugCli },
+              { label: m.vsCliRowSetup, mcp: m.vsCliRowSetupMcp, cli: m.vsCliRowSetupCli },
+              { label: m.vsCliRowSpeed, mcp: m.vsCliRowSpeedMcp, cli: m.vsCliRowSpeedCli },
+              { label: m.vsCliRowSecurity, mcp: m.vsCliRowSecurityMcp, cli: m.vsCliRowSecurityCli },
+              { label: m.vsCliRowEcosystem, mcp: m.vsCliRowEcosystemMcp, cli: m.vsCliRowEcosystemCli },
+              { label: m.vsCliRowDebug, mcp: m.vsCliRowDebugMcp, cli: m.vsCliRowDebugCli },
             ].map((row, i) => (
               <React.Fragment key={i}>
                 <div className={`p-3 ${i % 2 === 0 ? 'bg-surface' : 'bg-background/50'} border-b border-border font-medium text-text text-sm`}>{row.label}</div>
@@ -430,27 +358,21 @@ export default function MCPPage() {
           </div>
         </div>
 
-        {/* Verdict */}
         <div className="mt-6 p-5 rounded-xl bg-cyan-500/5 border border-cyan-500/20">
           <div className="flex items-center gap-3 mb-3">
             <Zap className="w-6 h-6 text-cyan-400" />
-            <h3 className="text-lg font-bold font-heading text-cyan-400">{t.mcp.vsCliVerdict}</h3>
+            <h3 className="text-lg font-bold font-heading text-cyan-400">{m.vsCliVerdict}</h3>
           </div>
-          <p className="text-muted text-sm leading-relaxed">{t.mcp.vsCliVerdictDesc}</p>
+          <p className="text-muted text-sm leading-relaxed">{m.vsCliVerdictDesc}</p>
         </div>
       </section>
 
       {/* Key Takeaways */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.mcp.keyTakeaways}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{m.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[
-              t.mcp.takeaway1,
-              t.mcp.takeaway2,
-              t.mcp.takeaway3,
-              t.mcp.takeaway4,
-            ].map((item, i) => (
+            {[m.takeaway1, m.takeaway2, m.takeaway3, m.takeaway4].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-primary-light text-sm font-bold">{i + 1}</span>
@@ -461,7 +383,18 @@ export default function MCPPage() {
           </ul>
         </div>
       </section>
-<p className="text-sm text-muted leading-relaxed">{t.agentReview.mcpTransport}</p><section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://modelcontextprotocol.io/specification/2025-06-18/basic/transports">MCP transports</a></li><li><a className="text-primary-light underline" href="https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem">Filesystem server and allowed directories</a></li><li><a className="text-primary-light underline" href="https://modelcontextprotocol.io/docs/2025-11-25/tutorials/security/security_best_practices">MCP security best practices</a></li></ul></section>
+
+      {/* Sources */}
+      <section className="border-t border-border pt-5">
+        <h2 className="font-semibold mb-3">{m.sourcesTitle}</h2>
+        <ul className="space-y-2 text-sm">
+          {SOURCES.map(source => (
+            <li key={source.key}>
+              <a className="text-primary-light underline" href={source.href} target="_blank" rel="noopener noreferrer">{m.sources[source.key]}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </TopicLayout>
   )
 }

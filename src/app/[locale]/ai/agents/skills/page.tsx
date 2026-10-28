@@ -1,207 +1,197 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { SkillComposerDemo } from '@/components/interactive'
+import { SkillProgressiveLoadingDemo } from '@/components/interactive/SkillProgressiveLoadingDemo'
 import { useTranslation } from '@/lib/i18n/context'
+import { AlertTriangle, Check, X } from 'lucide-react'
+
+const SOURCES = [
+  { key: 'spec', href: 'https://agentskills.io/specification' },
+  { key: 'client', href: 'https://agentskills.io/client-implementation/adding-skills-support' },
+  { key: 'overview', href: 'https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview' },
+  { key: 'claudeCode', href: 'https://code.claude.com/docs/en/skills' },
+  { key: 'unit42', href: 'https://unit42.paloaltonetworks.com/openclaw-ai-supply-chain-risk/' },
+] as const
+
+const COLORS = {
+  purple: { box: 'bg-purple-500/5 border-purple-500/20', badge: 'bg-purple-500/20 text-purple-400', text: 'text-purple-400', card: 'from-purple-500/10 to-purple-500/5 border-purple-500/20' },
+  cyan: { box: 'bg-cyan-500/5 border-cyan-500/20', badge: 'bg-cyan-500/20 text-cyan-400', text: 'text-cyan-400', card: 'from-cyan-500/10 to-cyan-500/5 border-cyan-500/20' },
+  emerald: { box: 'bg-emerald-500/5 border-emerald-500/20', badge: 'bg-emerald-500/20 text-emerald-400', text: 'text-emerald-400', card: 'from-emerald-500/10 to-emerald-500/5 border-emerald-500/20' },
+  orange: { box: 'bg-orange-500/5 border-orange-500/20', badge: 'bg-orange-500/20 text-orange-400', text: 'text-orange-400', card: 'from-orange-500/10 to-orange-500/5 border-orange-500/20' },
+} as const
+
+const LEVEL_COLORS = ['purple', 'cyan', 'emerald'] as const
 
 export default function AgentSkillsPage() {
   const { t } = useTranslation()
+  const s = t.agentSkills
 
   const skillTypes = [
-    { num: 1, title: t.agentSkills.skillType1Title, desc: t.agentSkills.skillType1Desc, color: 'purple' },
-    { num: 2, title: t.agentSkills.skillType2Title, desc: t.agentSkills.skillType2Desc, color: 'cyan' },
-    { num: 3, title: t.agentSkills.skillType3Title, desc: t.agentSkills.skillType3Desc, color: 'emerald' },
-    { num: 4, title: t.agentSkills.skillType4Title, desc: t.agentSkills.skillType4Desc, color: 'orange' },
+    { num: 1, title: s.skillType1Title, desc: s.skillType1Desc, color: COLORS.purple },
+    { num: 2, title: s.skillType2Title, desc: s.skillType2Desc, color: COLORS.cyan },
+    { num: 3, title: s.skillType3Title, desc: s.skillType3Desc, color: COLORS.emerald },
+    { num: 4, title: s.skillType4Title, desc: s.skillType4Desc, color: COLORS.orange },
   ]
 
-  const benefits = [
-    { title: t.agentSkills.benefit1Title, desc: t.agentSkills.benefit1Desc },
-    { title: t.agentSkills.benefit2Title, desc: t.agentSkills.benefit2Desc },
-    { title: t.agentSkills.benefit3Title, desc: t.agentSkills.benefit3Desc },
-    { title: t.agentSkills.benefit4Title, desc: t.agentSkills.benefit4Desc },
-  ]
-
-  const bestPractices = [
-    { title: t.agentSkills.practice1Title, desc: t.agentSkills.practice1Desc },
-    { title: t.agentSkills.practice2Title, desc: t.agentSkills.practice2Desc },
-    { title: t.agentSkills.practice3Title, desc: t.agentSkills.practice3Desc },
+  const tree = [
+    { name: 'SKILL.md', desc: s.treeSkillMd, color: 'text-emerald-400' },
+    { name: 'scripts/', desc: s.treeScripts, color: 'text-purple-400' },
+    { name: 'references/', desc: s.treeReferences, color: 'text-purple-400' },
+    { name: 'assets/', desc: s.treeAssets, color: 'text-purple-400' },
   ]
 
   return (
     <TopicLayout topicId="skills"
-      title={t.agentSkills.title}
-      description={t.agentSkills.description}
+      title={s.title}
+      description={s.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.agents, href: '/ai/agents' },
-        { label: t.agentSkills.title },
+        { label: s.title },
       ]}
-      prevTopic={{ label: t.topicNames.evaluation, href: '/ai/agents/evaluation' }}
-      nextTopic={{ label: t.topicNames.tokenization, href: '/ai/llm/tokenization' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.whatIs}</h2>
-        <div className="prose prose-invert max-w-none">
-          <p className="text-muted leading-relaxed text-lg">
-            <span className="text-primary-light font-semibold">Agent Skills</span> {t.agentSkills.whatIsDesc}
-          </p>
-          <div className="mt-8 p-6 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
-            <p className="text-lg text-text italic font-heading">
-              {t.agentSkills.metaphor}
-            </p>
-            <p className="text-sm text-muted mt-2">
-              {t.agentSkills.metaphorDesc}
-            </p>
-          </div>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.whatIs}</h2>
+        <div className="space-y-4">
+          <p className="text-muted leading-relaxed text-lg">{s.whatIsP1}</p>
+          <p className="text-muted leading-relaxed">{s.whatIsP2}</p>
+        </div>
+        <div className="mt-6 p-5 rounded-xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+          <h3 className="text-text font-semibold font-heading mb-2">{s.coreIdea}</h3>
+          <p className="text-sm text-muted leading-relaxed">{s.coreIdeaDesc}</p>
         </div>
       </section>
 
-      {/* How Skills Work */}
+      {/* Progressive disclosure */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.howItWorks}</h2>
-        <div className="space-y-4">
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">1</span>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.howItWorks}</h2>
+        <div className="grid md:grid-cols-3 gap-4">
+          {s.levels.map((level, i) => {
+            const color = COLORS[LEVEL_COLORS[i]]
+            return (
+              <div key={i} className={`p-5 rounded-xl border ${color.box}`}>
+                <div className="flex items-center gap-3 mb-3">
+                  <span className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold ${color.badge}`}>{i + 1}</span>
+                  <h3 className={`text-lg font-bold font-heading ${color.text}`}>{level.title}</h3>
+                </div>
+                <dl className="text-xs space-y-1 mb-3">
+                  <div className="flex gap-2"><dt className="text-subtle">{s.levelWhen}:</dt><dd className="text-text">{level.when}</dd></div>
+                  <div className="flex gap-2"><dt className="text-subtle">{s.levelCost}:</dt><dd className="text-text">{level.cost}</dd></div>
+                </dl>
+                <p className="text-sm text-muted leading-relaxed">{level.desc}</p>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.agentSkills.step1Title}</h3>
-                <p className="text-muted">{t.agentSkills.step1Desc}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">2</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.agentSkills.step2Title}</h3>
-                <p className="text-muted">{t.agentSkills.step2Desc}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                <span className="text-xl">3</span>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-text mb-2">{t.agentSkills.step3Title}</h3>
-                <p className="text-muted">{t.agentSkills.step3Desc}</p>
-              </div>
-            </div>
-          </div>
+            )
+          })}
         </div>
+        <p className="text-xs text-muted mt-3">{s.levelsNote}</p>
       </section>
 
       {/* Interactive Demo */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.interactiveDemo}</h2>
-        <p className="text-muted mb-6">{t.agentSkills.interactiveDemoDesc}</p>
-        <SkillComposerDemo />
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{s.interactiveDemo}</h2>
+        <p className="text-muted mb-6">{s.interactiveDemoDesc}</p>
+        <SkillProgressiveLoadingDemo />
       </section>
 
       {/* Skill Structure */}
       <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <span className="text-lg">📁</span>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-1">{s.structureTitle}</h2>
+        <p className="text-sm text-muted mb-6">{s.structureSubtitle}</p>
+        <div className="p-6 rounded-xl bg-surface/50 border border-border font-mono text-sm space-y-1">
+          <div className="text-cyan-400">code-review/</div>
+          {tree.map(entry => (
+            <div key={entry.name} className="pl-4 flex flex-wrap gap-x-3">
+              <span className={entry.color}>{entry.name}</span>
+              <span className="text-subtle"># {entry.desc}</span>
             </div>
+          ))}
+        </div>
+        <p className="text-sm text-muted mt-4">{s.structureNote}</p>
+
+        <h3 className="text-lg font-semibold font-heading text-text mt-8 mb-3">{s.frontmatterTitle}</h3>
+        <div className="rounded-xl border border-border overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-background">
+              <tr>
+                <th className="text-left p-3 text-text">{s.fieldCol}</th>
+                <th className="text-left p-3 text-text">{s.requiredCol}</th>
+                <th className="text-left p-3 text-text">{s.ruleCol}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {s.fields.map((field, i) => (
+                <tr key={field.field} className={i % 2 === 0 ? 'bg-surface' : 'bg-background/50'}>
+                  <td className="p-3 font-mono text-emerald-400 whitespace-nowrap">{field.field}</td>
+                  <td className="p-3 text-muted">{field.required}</td>
+                  <td className="p-3 text-muted">{field.rule}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="text-sm text-muted mt-3">{s.fieldsNote}</p>
+      </section>
+
+      {/* Selection via description */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.selectionTitle}</h2>
+        <div className="space-y-4 mb-6">
+          <p className="text-muted leading-relaxed">{s.selectionP1}</p>
+          <p className="text-muted leading-relaxed">{s.selectionP2}</p>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+            <div className="flex items-center gap-2 mb-2 text-emerald-400 font-semibold text-sm"><Check className="w-4 h-4" />{s.goodLabel}</div>
+            <code className="text-xs text-muted font-mono leading-relaxed">description: {s.goodExample}</code>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.agentSkills.structureTitle}</h2>
-            <p className="text-sm text-muted">{t.agentSkills.structureSubtitle}</p>
+          <div className="p-4 rounded-xl bg-orange-500/5 border border-orange-500/20">
+            <div className="flex items-center gap-2 mb-2 text-orange-400 font-semibold text-sm"><X className="w-4 h-4" />{s.poorLabel}</div>
+            <code className="text-xs text-muted font-mono">description: {s.poorExample}</code>
           </div>
         </div>
-        <div className="p-6 rounded-xl bg-surface/50 border border-border font-mono text-sm">
-          <div className="text-cyan-400">my-skill/</div>
-          <div className="pl-4 text-muted">
-            <div><span className="text-emerald-400">SKILL.md</span> <span className="text-subtle"># {t.agentSkills.skillMdDesc}</span></div>
-            <div><span className="text-orange-400">instructions.md</span> <span className="text-subtle"># {t.agentSkills.instructionsDesc}</span></div>
-            <div><span className="text-purple-400">examples/</span> <span className="text-subtle"># {t.agentSkills.examplesDesc}</span></div>
-            <div><span className="text-purple-400">templates/</span> <span className="text-subtle"># {t.agentSkills.templatesDesc}</span></div>
-            <div><span className="text-purple-400">scripts/</span> <span className="text-subtle"># {t.agentSkills.scriptsDesc}</span></div>
-          </div>
+        <p className="text-sm text-muted mt-4">{s.selectionNote}</p>
+      </section>
+
+      {/* Comparison */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{s.compareTitle}</h2>
+        <p className="text-muted mb-6">{s.compareDesc}</p>
+        <div className="rounded-xl border border-border overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
+            <thead className="bg-background">
+              <tr>
+                <th className="text-left p-3 text-text">{s.colConcept}</th>
+                <th className="text-left p-3 text-text">{s.colWhat}</th>
+                <th className="text-left p-3 text-text">{s.colContext}</th>
+                <th className="text-left p-3 text-text">{s.colRuns}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {s.compareRows.map((row, i) => (
+                <tr key={row.concept} className={i === 0 ? 'bg-primary/10' : i % 2 === 0 ? 'bg-surface' : 'bg-background/50'}>
+                  <td className="p-3 font-semibold text-text whitespace-nowrap">{row.concept}</td>
+                  <td className="p-3 text-muted">{row.what}</td>
+                  <td className="p-3 text-muted">{row.context}</td>
+                  <td className="p-3 text-muted">{row.runs}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-        <div className="mt-4 p-4 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
-          <p className="text-sm text-muted">
-            <span className="text-emerald-400 font-semibold">SKILL.md</span> {t.agentSkills.skillMdNote}
-          </p>
+        <div className="mt-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
+          <p className="text-sm text-muted">{s.compareNote}</p>
         </div>
       </section>
 
       {/* Types of Skills */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.typesTitle}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.typesTitle}</h2>
         <div className="grid md:grid-cols-2 gap-4">
           {skillTypes.map((skill) => (
-            <div key={skill.num} className={`p-6 rounded-xl bg-gradient-to-br from-${skill.color}-500/10 to-${skill.color}-500/5 border border-${skill.color}-500/20`}>
-              <div className={`w-12 h-12 rounded-xl bg-${skill.color}-500/20 flex items-center justify-center mb-4`}>
-                <span className={`text-2xl font-bold text-${skill.color}-400`}>{skill.num}</span>
-              </div>
-              <h3 className={`text-lg font-bold font-heading text-${skill.color}-400 mb-2`}>{skill.title}</h3>
+            <div key={skill.num} className={`p-6 rounded-xl bg-gradient-to-br border ${skill.color.card}`}>
+              <h3 className={`text-lg font-bold font-heading mb-2 ${skill.color.text}`}>{skill.title}</h3>
               <p className="text-sm text-muted">{skill.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Skills vs Tools */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.vsToolsTitle}</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-xl bg-surface border border-border">
-            <h3 className="text-lg font-bold text-text mb-4">{t.agentSkills.tools}</h3>
-            <ul className="space-y-3 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.agentSkills.tool1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.agentSkills.tool2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-muted mt-1">•</span>
-                <span>{t.agentSkills.tool3}</span>
-              </li>
-            </ul>
-          </div>
-          <div className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20">
-            <h3 className="text-lg font-bold text-primary-light mb-4">{t.agentSkills.skills}</h3>
-            <ul className="space-y-3 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.agentSkills.skill1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.agentSkills.skill2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary-light mt-1">•</span>
-                <span>{t.agentSkills.skill3}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-4 p-4 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-          <p className="text-sm text-muted">{t.agentSkills.vsNote}</p>
-        </div>
-      </section>
-
-      {/* Benefits */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.benefitsTitle}</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          {benefits.map((benefit, i) => (
-            <div key={i} className="p-5 rounded-xl bg-surface border border-border">
-              <h3 className="text-text font-semibold font-heading mb-2">{benefit.title}</h3>
-              <p className="text-muted text-sm leading-relaxed">{benefit.desc}</p>
             </div>
           ))}
         </div>
@@ -209,35 +199,51 @@ export default function AgentSkillsPage() {
 
       {/* Example Skill */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.exampleTitle}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.exampleTitle}</h2>
         <div className="p-6 rounded-xl bg-surface/50 border border-border">
           <div className="mb-4 pb-4 border-b border-border">
-            <span className="text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono">SKILL.md</span>
+            <span className="text-xs px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 font-mono">code-review/SKILL.md</span>
           </div>
-          <pre className="text-sm text-muted overflow-x-auto whitespace-pre-wrap">
+          <pre className="text-sm text-muted overflow-x-auto whitespace-pre-wrap font-mono">
 {`---
-name: code-reviewer
-description: ${t.agentSkills.exampleDesc}
+name: code-review
+description: ${s.exampleDesc}
 ---
 
-# ${t.agentSkills.exampleTitle}
-
-${t.agentSkills.exampleInstructions}
-
-## ${t.agentReview.test}
-- [ ] ${t.agentSkills.exampleCheck1}
-- [ ] ${t.agentSkills.exampleCheck2}
-- [ ] ${t.agentSkills.exampleCheck3}
-- [ ] ${t.agentSkills.exampleCheck4}`}
+${s.exampleBody}`}
           </pre>
+        </div>
+        <p className="text-sm text-muted mt-3">{s.exampleTreeNote}</p>
+      </section>
+
+      {/* Security */}
+      <section>
+        <div className="p-6 md:p-8 rounded-2xl bg-orange-500/5 border border-orange-500/30">
+          <div className="flex items-center gap-3 mb-6">
+            <AlertTriangle className="w-8 h-8 text-orange-400 shrink-0" />
+            <h2 className="text-2xl font-bold font-heading text-orange-400">{s.securityTitle}</h2>
+          </div>
+          <div className="space-y-4 mb-6">
+            <p className="text-muted leading-relaxed">{s.securityP1}</p>
+            <p className="text-muted leading-relaxed">{s.securityP2}</p>
+          </div>
+          <h3 className="text-text font-semibold mb-3">{s.securityChecksTitle}</h3>
+          <ul className="space-y-2">
+            {s.securityChecks.map((check, i) => (
+              <li key={i} className="flex gap-3 items-start p-3 rounded-lg bg-background/50 border border-border text-sm text-muted">
+                <Check className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
+                <span>{check}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
       {/* Best Practices */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.practicesTitle}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.practicesTitle}</h2>
         <div className="space-y-4">
-          {bestPractices.map((practice, i) => (
+          {s.practices.map((practice, i) => (
             <div key={i} className="flex gap-5 p-5 rounded-xl bg-purple-500/5 border border-purple-500/20">
               <div className="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center shrink-0">
                 <span className="text-xl font-bold text-purple-400">{i + 1}</span>
@@ -253,15 +259,10 @@ ${t.agentSkills.exampleInstructions}
 
       {/* Key Takeaways */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.agentSkills.keyTakeaways}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{s.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[
-              t.agentSkills.takeaway1,
-              t.agentSkills.takeaway2,
-              t.agentSkills.takeaway3,
-              t.agentSkills.takeaway4,
-            ].map((item, i) => (
+            {[s.takeaway1, s.takeaway2, s.takeaway3, s.takeaway4].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-primary-light text-sm font-bold">{i + 1}</span>
@@ -272,7 +273,18 @@ ${t.agentSkills.exampleInstructions}
           </ul>
         </div>
       </section>
-<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://agentskills.io/specification">Agent Skills specification</a></li><li><a className="text-primary-light underline" href="https://agentskills.io/client-implementation/adding-skills-support">Skill selection and progressive loading</a></li></ul></section>
+
+      {/* Sources */}
+      <section className="border-t border-border pt-5">
+        <h2 className="font-semibold mb-3">{s.sourcesTitle}</h2>
+        <ul className="space-y-2 text-sm">
+          {SOURCES.map(source => (
+            <li key={source.key}>
+              <a className="text-primary-light underline" href={source.href} target="_blank" rel="noopener noreferrer">{s.sources[source.key]}</a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </TopicLayout>
   )
 }
