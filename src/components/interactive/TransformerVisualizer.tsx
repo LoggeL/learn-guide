@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocale } from '@/lib/i18n/context'
-import { normalizeVector, scaledAttention } from '@/lib/llmLearningMath'
+import { learningSoftmax, normalizeVector, scaledAttention } from '@/lib/llmLearningMath'
 import Link from 'next/link'
 
 interface TransformerVisualizerProps {
@@ -129,65 +129,51 @@ function FlowParticles({ active, colorClass, count = 3 }: { active: boolean; col
 // Detail diagrams for each layer type
 function AttentionDiagram({ t }: { t: Record<string, string> }) {
   const { locale } = useLocale()
-  const de = locale === 'de'
   const result = scaledAttention([1, 0], [[1, 0], [0, 1]], [[1, 2], [-1, 0]], 1, true)
   return <div className="space-y-3 text-sm">
-    <p className="text-muted">{de ? 'Berechnetes Beispiel mit zwei erlaubten Positionen und dₖ = 2. Die Vektoren sind frei gewählte Lehrdaten.' : 'Calculated example with two allowed positions and dₖ = 2. Vectors are constructed teaching data.'}</p>
-    <p className="font-mono">Q = [1, 0]<br />K = [[1, 0], [0, 1]]<br />V = [[1, 2], [−1, 0]]</p>
+    <p className="text-muted">{t.attnExampleNote}</p>
+    <p className="font-mono">q₂ = [1, 0]<br />K = [[1, 0], [0, 1]]<br />V = [[1, 2], [−1, 0]]</p>
     <p className="font-mono">softmax([1 / √2, 0]) = [{result.weights.map(v => v.toFixed(3)).join(', ')}]</p>
     <p className="font-mono text-cyan-300">Σ aⱼVⱼ = [{result.output.map(v => v.toFixed(3)).join(', ')}]</p>
-    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/attention`}>{de ? 'Q/K/V interaktiv nachrechnen' : 'Explore the Q/K/V calculation'}</Link>
+    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/attention`}>{t.attnExampleLink}</Link>
   </div>
 }
 
+// Schematic only: 8 bars stand for d_model, 32 bars for d_ff = 4 · d_model.
+const FFN_IN = [3, 5, 7, 8, 6, 4, 7, 5]
+const FFN_HIDDEN = Array.from({ length: 32 }, (_, i) => 2 + ((i * 7) % 9))
+const FFN_OUT = [4, 6, 5, 7, 5, 4, 6, 5]
+
 function FFNDiagram({ t }: { t: Record<string, string> }) {
-  const bars = [3, 5, 7, 8, 6, 4, 7, 5]
-  const expanded = [2, 6, 8, 3, 7, 1, 9, 4, 5, 8, 3, 6]
-  const contracted = [4, 6, 5, 7, 5, 4, 6, 5]
+  const arrow = (
+    <div className="flex justify-center">
+      <svg width="20" height="16" className="text-orange-400"><path d="M10 0 v12 m-4-4 l4 4 l4-4" stroke="currentColor" strokeWidth="1.5" fill="none" /></svg>
+    </div>
+  )
+  const barRow = (values: number[], delay: number, color: string, height: string) => (
+    <div className={`flex items-end justify-center gap-0.5 ${height}`}>
+      {values.map((h, i) => (
+        <motion.div
+          key={i}
+          initial={{ height: 0 }}
+          animate={{ height: h * 4 }}
+          transition={{ delay: delay + i * 0.015 }}
+          className={`w-1.5 rounded-t-sm ${color}`}
+        />
+      ))}
+    </div>
+  )
   return (
     <div className="space-y-2">
-      <div className="flex items-end justify-center gap-0.5 h-10">
-        {bars.map((h, i) => (
-          <motion.div
-            key={i}
-            initial={{ height: 0 }}
-            animate={{ height: h * 4 }}
-            transition={{ delay: i * 0.05 }}
-            className="w-2 rounded-t-sm bg-orange-400/60"
-          />
-        ))}
-      </div>
+      {barRow(FFN_IN, 0, 'bg-orange-400/60', 'h-10')}
       <div className="text-center text-xs text-muted">{t.layer_detail_ffn_input}</div>
-      <div className="flex justify-center">
-        <svg width="20" height="16" className="text-orange-400"><path d="M10 0 v12 m-4-4 l4 4 l4-4" stroke="currentColor" strokeWidth="1.5" fill="none" /></svg>
-      </div>
-      <div className="flex items-end justify-center gap-0.5 h-12">
-        {expanded.map((h, i) => (
-          <motion.div
-            key={i}
-            initial={{ height: 0 }}
-            animate={{ height: h * 4 }}
-            transition={{ delay: 0.4 + i * 0.03 }}
-            className="w-2 rounded-t-sm bg-orange-500/70"
-          />
-        ))}
-      </div>
+      {arrow}
+      {barRow(FFN_HIDDEN, 0.3, 'bg-orange-500/70', 'h-12')}
       <div className="text-center text-xs text-orange-300">{t.layer_detail_ffn_expand}</div>
-      <div className="flex justify-center">
-        <svg width="20" height="16" className="text-orange-400"><path d="M10 0 v12 m-4-4 l4 4 l4-4" stroke="currentColor" strokeWidth="1.5" fill="none" /></svg>
-      </div>
-      <div className="flex items-end justify-center gap-0.5 h-10">
-        {contracted.map((h, i) => (
-          <motion.div
-            key={i}
-            initial={{ height: 0 }}
-            animate={{ height: h * 4 }}
-            transition={{ delay: 0.8 + i * 0.05 }}
-            className="w-2 rounded-t-sm bg-orange-400/60"
-          />
-        ))}
-      </div>
+      {arrow}
+      {barRow(FFN_OUT, 0.9, 'bg-orange-400/60', 'h-10')}
       <div className="text-center text-xs text-muted">{t.layer_detail_ffn_contract}</div>
+      <p className="text-center text-[11px] text-muted/70">{t.layer_detail_ffn_schematic}</p>
     </div>
   )
 }
@@ -196,10 +182,10 @@ function LayerNormDiagram({ t }: { t: Record<string, string> }) {
   const { locale } = useLocale()
   const before = [1, -1, 2, 0]
   const after = normalizeVector(before)
-  return <div className="space-y-3 text-sm">
-    <p className="text-muted">{locale === 'de' ? 'Echte LayerNorm für einen Beispielvektor, γ = 1, β = 0, ε = 0,00001. Mittelwert = 0,5; Varianz = 1,25.' : 'Actual LayerNorm for an example vector, γ = 1, β = 0, ε = 0.00001. Mean = 0.5; variance = 1.25.'}</p>
+  return <div className="space-y-2 text-sm">
+    <p className="text-muted">{t.normExampleNote}</p>
     <p className="font-mono">x = [{before.join(', ')}]</p><p className="font-mono text-emerald-300">LN(x) = [{after.map(v => v.toFixed(3)).join(', ')}]</p>
-    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/residual-stream-layer-norm`}>{locale === 'de' ? 'Residualpfad und Normalisierung nachrechnen' : 'Explore residual paths and normalization'}</Link>
+    <Link className="text-cyan-300 underline" href={`/${locale}/ai/llm/residual-stream-layer-norm`}>{t.normExampleLink}</Link>
   </div>
 }
 
@@ -228,10 +214,10 @@ function ResidualDiagram({ t }: { t: Record<string, string> }) {
           <circle cx="96" cy="88" r="8" fill="none" stroke="currentColor" strokeWidth="1.5" />
           <path d="M92 88 h8 M96 84 v8" stroke="currentColor" strokeWidth="1.5" />
           {/* Sublayer box */}
-          <rect x="72" y="36" width="48" height="20" rx="4" fill="currentColor" fillOpacity={0.15} stroke="currentColor" strokeWidth="1" />
-          <text x="96" y="50" textAnchor="middle" fontSize="8" fill="currentColor">sublayer</text>
+          <rect x="60" y="36" width="72" height="20" rx="4" fill="currentColor" fillOpacity={0.15} stroke="currentColor" strokeWidth="1" />
+          <text x="96" y="50" textAnchor="middle" fontSize="8" fill="currentColor">{t.layer_detail_sublayer}</text>
           {/* Skip label */}
-          <text x="166" y="52" textAnchor="middle" fontSize="7" fill="currentColor" opacity={0.6}>skip</text>
+          <text x="174" y="52" textAnchor="middle" fontSize="7" fill="currentColor" opacity={0.6}>{t.layer_detail_skip}</text>
           {/* Animated pulse along skip */}
           <motion.circle
             r="3" fill="currentColor"
@@ -247,12 +233,29 @@ function ResidualDiagram({ t }: { t: Record<string, string> }) {
   )
 }
 
+function AddNormDiagram({ t }: { t: Record<string, string> }) {
+  return (
+    <div className="space-y-4">
+      <ResidualDiagram t={t} />
+      <div className="border-t border-border/50 pt-3">
+        <LayerNormDiagram t={t} />
+      </div>
+    </div>
+  )
+}
+
+const TOY_TOKENS = ['The', 'cat', 'sat']
+const TOY_EMBEDDINGS = [
+  [0.3, 0.7, 0.5, 0.9],
+  [0.8, 0.2, 0.6, 0.4],
+  [0.5, 0.9, 0.1, 0.6],
+]
+
 function EmbeddingDiagram({ t }: { t: Record<string, string> }) {
-  const tokens = ['The', 'cat', 'sat']
   return (
     <div className="space-y-3">
-      <div className="flex justify-center gap-2">
-        {tokens.map((tok, i) => (
+      <div className="flex justify-center gap-3">
+        {TOY_TOKENS.map((tok, i) => (
           <motion.div
             key={tok}
             initial={{ opacity: 0, y: -10 }}
@@ -263,7 +266,7 @@ function EmbeddingDiagram({ t }: { t: Record<string, string> }) {
             <div className="px-2 py-1 rounded bg-purple-500/20 border border-purple-500/30 text-xs text-purple-300 font-mono">{tok}</div>
             <svg width="8" height="16" className="text-purple-400"><path d="M4 0 v12 m-3-3 l3 3 l3-3" stroke="currentColor" strokeWidth="1" fill="none" /></svg>
             <div className="flex gap-px">
-              {[0.3, 0.7, 0.5, 0.9].map((v, j) => (
+              {TOY_EMBEDDINGS[i].map((v, j) => (
                 <motion.div
                   key={j}
                   initial={{ opacity: 0 }}
@@ -273,6 +276,7 @@ function EmbeddingDiagram({ t }: { t: Record<string, string> }) {
                 />
               ))}
             </div>
+            <span className="font-mono text-[10px] text-muted">[{TOY_EMBEDDINGS[i].join(', ')}]</span>
           </motion.div>
         ))}
       </div>
@@ -281,78 +285,91 @@ function EmbeddingDiagram({ t }: { t: Record<string, string> }) {
   )
 }
 
+/** Sinusoidal encoding from Vaswani et al. (2017), Section 3.5. */
+function sinusoidalEncoding(pos: number, d: number) {
+  return Array.from({ length: d }, (_, j) => {
+    const i = Math.floor(j / 2)
+    const angle = pos / Math.pow(10000, (2 * i) / d)
+    return j % 2 === 0 ? Math.sin(angle) : Math.cos(angle)
+  })
+}
+
+const WAVE_PATH = Array.from({ length: 61 }, (_, i) => `${i === 0 ? 'M' : 'L'}${i * 2} ${(12 - 10 * Math.sin(i / 6)).toFixed(2)}`).join(' ')
+
 function PositionalDiagram({ t }: { t: Record<string, string> }) {
+  // Token "sat" sits at position 2 (0-based) in "The cat sat".
+  const embedding = TOY_EMBEDDINGS[2]
+  const pe = sinusoidalEncoding(2, 4)
+  const sum = embedding.map((v, i) => v + pe[i])
+  const rows: [string, number[], string][] = [
+    [t.layer_detail_pos_row_embed, embedding, 'text-muted'],
+    [t.layer_detail_pos_row_pe, pe, 'text-pink-300'],
+    [t.layer_detail_pos_row_sum, sum, 'text-pink-200'],
+  ]
   return (
     <div className="space-y-3">
-      <div className="flex justify-center gap-6">
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex gap-px">
-            {[0.3, 0.7, 0.5, 0.9].map((v, j) => (
-              <div key={j} className="w-2 h-6 rounded-sm bg-pink-400" style={{ opacity: v }} />
+      <div className="overflow-x-auto">
+        <table className="mx-auto font-mono text-xs">
+          <tbody>
+            {rows.map(([label, values, color], r) => (
+              <motion.tr key={label} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: r * 0.25 }} className={color}>
+                <th className="pr-3 py-0.5 text-left font-sans font-normal">{label}</th>
+                {values.map((v, i) => <td key={i} className="px-1.5 text-right">{v.toFixed(3)}</td>)}
+              </motion.tr>
             ))}
-          </div>
-          <span className="text-xs text-muted">embed</span>
-        </div>
-        <div className="flex items-center text-pink-400 font-bold text-lg">+</div>
-        <div className="flex flex-col items-center gap-1">
-          <svg width="32" height="24" viewBox="0 0 32 24" className="text-pink-400">
-            <motion.path
-              d="M0 12 Q4 4, 8 12 Q12 20, 16 12 Q20 4, 24 12 Q28 20, 32 12"
-              stroke="currentColor" strokeWidth="1.5" fill="none"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ duration: 1 }}
-            />
-          </svg>
-          <span className="text-xs text-muted">sin/cos</span>
-        </div>
-        <div className="flex items-center text-pink-400 font-bold text-lg">=</div>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="flex flex-col items-center gap-1"
-        >
-          <div className="flex gap-px">
-            {[0.5, 0.8, 0.3, 0.7].map((v, j) => (
-              <div key={j} className="w-2 h-6 rounded-sm bg-pink-300" style={{ opacity: v }} />
-            ))}
-          </div>
-          <span className="text-xs text-pink-300">pos-aware</span>
-        </motion.div>
+          </tbody>
+        </table>
       </div>
+      <svg width="120" height="24" viewBox="0 0 120 24" className="mx-auto block text-pink-400" aria-hidden="true">
+        <motion.path
+          d={WAVE_PATH}
+          stroke="currentColor" strokeWidth="1.5" fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1 }}
+        />
+      </svg>
       <p className="text-center text-xs text-pink-300">{t.layer_detail_pos_desc}</p>
     </div>
   )
 }
 
+// Example logits for the next token after "The cat sat" — chosen for teaching, not taken from a model.
+const OUTPUT_EXAMPLE = [
+  { tok: 'on', logit: 3.0 },
+  { tok: 'down', logit: 1.6 },
+  { tok: 'in', logit: 1.1 },
+  { tok: 'still', logit: 0.2 },
+]
+
 function OutputDiagram({ t }: { t: Record<string, string> }) {
-  const probs = [
-    { tok: 'on', p: 0.72 },
-    { tok: 'in', p: 0.15 },
-    { tok: 'by', p: 0.08 },
-    { tok: '...', p: 0.05 },
-  ]
+  const probs = learningSoftmax(OUTPUT_EXAMPLE.map(o => o.logit))
   return (
     <div className="space-y-3">
       <div className="flex items-end justify-center gap-2 h-16">
-        {probs.map((p, i) => (
+        {OUTPUT_EXAMPLE.map((o, i) => (
           <motion.div
-            key={p.tok}
+            key={o.tok}
             initial={{ height: 0 }}
-            animate={{ height: p.p * 56 }}
+            animate={{ height: Math.max(probs[i] * 60, 12) }}
             transition={{ delay: 0.2 + i * 0.1, type: 'spring', stiffness: 100 }}
-            className="w-8 rounded-t-md bg-amber-400/70 flex items-end justify-center pb-0.5"
+            className="w-10 rounded-t-md bg-amber-400/70 flex items-end justify-center pb-0.5"
           >
-            <span className="text-[8px] text-amber-900 font-bold">{Math.round(p.p * 100)}%</span>
+            <span className="text-[9px] text-amber-950 font-bold">{Math.round(probs[i] * 100)}%</span>
           </motion.div>
         ))}
       </div>
       <div className="flex justify-center gap-2">
-        {probs.map((p) => (
-          <div key={p.tok} className="w-8 text-center text-xs text-amber-300 font-mono">{p.tok}</div>
+        {OUTPUT_EXAMPLE.map((o) => (
+          <div key={o.tok} className="w-10 text-center text-xs text-amber-300 font-mono">{o.tok}</div>
         ))}
       </div>
+      <div className="flex justify-center gap-2">
+        {OUTPUT_EXAMPLE.map((o) => (
+          <div key={o.tok} className="w-10 text-center text-[10px] text-muted font-mono" title={t.layer_detail_output_logits}>{o.logit.toFixed(1)}</div>
+        ))}
+      </div>
+      <p className="text-center text-[10px] text-muted">↑ {t.layer_detail_output_logits}</p>
       <p className="text-center text-xs text-amber-300">{t.layer_detail_output_desc}</p>
     </div>
   )
@@ -364,7 +381,7 @@ function DetailDiagram({ layerId, t }: { layerId: string; t: Record<string, stri
     case 'positional-encoding': return <PositionalDiagram t={t} />
     case 'multi-head-attention': return <AttentionDiagram t={t} />
     case 'add-norm-1':
-    case 'add-norm-2': return <ResidualDiagram t={t} />
+    case 'add-norm-2': return <AddNormDiagram t={t} />
     case 'feed-forward': return <FFNDiagram t={t} />
     case 'output': return <OutputDiagram t={t} />
     default: return null
@@ -575,7 +592,7 @@ type ArchType = 'encoder-decoder' | 'encoder-only' | 'decoder-only'
 const ARCH_MODELS: Record<ArchType, string[]> = {
   'encoder-decoder': ['T5', 'BART', 'mBART'],
   'encoder-only': ['BERT', 'RoBERTa', 'DeBERTa'],
-  'decoder-only': ['GPT', 'LLaMA', 'Claude'],
+  'decoder-only': ['GPT-3', 'Llama 3', 'Qwen3', 'DeepSeek-V3'],
 }
 
 function EncoderDecoderSection({ t }: { t: Record<string, string> }) {
@@ -621,7 +638,7 @@ function EncoderDecoderSection({ t }: { t: Record<string, string> }) {
             <span className="text-purple-400 font-bold font-heading text-sm">{t.encoder}</span>
           </div>
           <div className="space-y-2">
-            {['Self-Attention', 'Add & Norm', 'FFN', 'Add & Norm'].map((block, i) => (
+            {[t.blockSelfAttention, t.blockAddNorm, t.blockFfn, t.blockAddNorm].map((block, i) => (
               <div key={i} className={`text-xs text-center py-1.5 rounded-lg border transition-all ${
                 hasEncoder ? 'bg-purple-500/10 border-purple-500/20 text-purple-300' : 'bg-surface/20 border-border/20 text-muted/30'
               }`}>
@@ -658,7 +675,7 @@ function EncoderDecoderSection({ t }: { t: Record<string, string> }) {
             <span className="text-cyan-400 font-bold font-heading text-sm">{t.decoder}</span>
           </div>
           <div className="space-y-2">
-            {['Masked Self-Attn', hasCrossAttention ? 'Cross-Attention' : null, 'Add & Norm', 'FFN', 'Add & Norm'].filter(Boolean).map((block, i) => (
+            {[t.blockMaskedSelfAttention, t.blockAddNorm, ...(hasCrossAttention ? [t.crossAttention, t.blockAddNorm] : []), t.blockFfn, t.blockAddNorm].map((block, i) => (
               <div key={i} className={`text-xs text-center py-1.5 rounded-lg border transition-all ${
                 hasDecoder ? 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300' : 'bg-surface/20 border-border/20 text-muted/30'
               }`}>
@@ -683,6 +700,7 @@ function EncoderDecoderSection({ t }: { t: Record<string, string> }) {
           ))}
         </div>
         <p className="text-sm text-muted mt-4 max-w-lg mx-auto">{t[`arch_${arch.replace(/-/g, '_')}_desc`]}</p>
+        <p className="text-xs text-muted/70 mt-3">{t.archBlockNote}</p>
       </div>
     </div>
   )
@@ -690,15 +708,19 @@ function EncoderDecoderSection({ t }: { t: Record<string, string> }) {
 
 // ── 3. Dataflow Animation ─────────────────────────────────────────────
 
+// Modern Pre-Norm decoder (RoPE, GQA, SwiGLU) with Llama 3 8B dimensions:
+// d_model 4096, 32 layers, 32 query heads, 8 KV heads, d_head 128, d_ff 14336, vocab 128256.
+// `stream` marks the steps that set or update the residual stream x.
 const FLOW_STEPS = [
-  { id: 'tokenize', color: 'purple', shape: '[batch, seq_len]' },
-  { id: 'embed', color: 'pink', shape: '[batch, seq_len, d_model]' },
-  { id: 'pos_encode', color: 'pink', shape: '[batch, seq_len, d_model]' },
-  { id: 'attention', color: 'cyan', shape: '[batch, heads, seq_len, seq_len]' },
-  { id: 'attn_output', color: 'cyan', shape: '[batch, seq_len, d_model]' },
-  { id: 'ffn', color: 'orange', shape: '[batch, seq_len, d_ff]' },
-  { id: 'ffn_output', color: 'orange', shape: '[batch, seq_len, d_model]' },
-  { id: 'logits', color: 'amber', shape: '[batch, seq_len, vocab_size]' },
+  { id: 'tokenize', color: 'purple', shape: '[B, T]', concrete: '[1, 6]', stream: false },
+  { id: 'embed', color: 'pink', shape: '[B, T, d_model]', concrete: '[1, 6, 4096]', stream: true },
+  { id: 'qkv', color: 'cyan', shape: 'Q [B, H_q, T, d_head] · K/V [B, H_kv, T, d_head]', concrete: 'Q [1, 32, 6, 128] · K/V [1, 8, 6, 128]', stream: false },
+  { id: 'rope', color: 'cyan', shape: 'Q [B, H_q, T, d_head] · K [B, H_kv, T, d_head]', concrete: 'Q [1, 32, 6, 128] · K [1, 8, 6, 128]', stream: false },
+  { id: 'scores', color: 'cyan', shape: '[B, H_q, T, T]', concrete: '[1, 32, 6, 6]', stream: false },
+  { id: 'attn_out', color: 'emerald', shape: '[B, T, d_model]', concrete: '[1, 6, 4096]', stream: true },
+  { id: 'ffn', color: 'orange', shape: '[B, T, d_ff]', concrete: '[1, 6, 14336]', stream: false },
+  { id: 'ffn_out', color: 'emerald', shape: '[B, T, d_model]', concrete: '[1, 6, 4096]', stream: true },
+  { id: 'logits', color: 'amber', shape: '[B, T, vocab]', concrete: '[1, 6, 128256]', stream: false },
 ] as const
 
 function DataflowSection({ t }: { t: Record<string, string> }) {
@@ -740,7 +762,49 @@ function DataflowSection({ t }: { t: Record<string, string> }) {
     cyan: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-400',
     orange: 'bg-orange-500/20 border-orange-500/40 text-orange-400',
     amber: 'bg-amber-500/20 border-amber-500/40 text-amber-400',
+    emerald: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400',
   }
+
+  const renderStep = (s: (typeof FLOW_STEPS)[number], i: number) => (
+    <motion.div
+      key={s.id}
+      animate={{
+        opacity: i <= step ? 1 : 0.3,
+        x: i <= step ? 0 : 20,
+      }}
+      transition={{ duration: 0.3 }}
+      className={`flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 p-3 rounded-xl border-2 transition-colors ${
+        i === step ? colorClasses[s.color] : i < step ? 'bg-surface/30 border-border/30' : 'bg-surface/10 border-border/20'
+      }`}
+    >
+      <div className="flex items-start gap-3 flex-1 min-w-0">
+        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+          i <= step ? colorClasses[s.color] : 'bg-surface/30 text-muted/30'
+        }`}>
+          {i + 1}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium text-text">
+            {t[`flow_${s.id}`]}
+            {s.stream && <span className="ml-2 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-1.5 py-0.5 font-mono text-[10px] text-emerald-300">x</span>}
+          </div>
+          {i <= step && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="text-xs text-muted mt-1 leading-relaxed"
+            >
+              {t[`flow_${s.id}_desc`]}
+            </motion.div>
+          )}
+        </div>
+      </div>
+      <div className={`sm:w-64 shrink-0 font-mono text-[11px] leading-snug sm:text-right ${i <= step ? '' : 'opacity-30'}`}>
+        <div className="text-muted"><span className="sr-only">{t.dataflowSymbolic}: </span>{s.shape}</div>
+        <div className="text-text"><span className="sr-only">{t.dataflowConcrete}: </span>{s.concrete}</div>
+      </div>
+    </motion.div>
+  )
 
   return (
     <div className="space-y-6">
@@ -760,42 +824,20 @@ function DataflowSection({ t }: { t: Record<string, string> }) {
         </button>
       </div>
 
+      <p className="text-xs text-muted text-center max-w-2xl mx-auto">{t.dataflowDims}</p>
+      <div className="flex justify-center gap-4 font-mono text-[11px]">
+        <span className="text-muted">{t.dataflowSymbolic}</span>
+        <span className="text-text">{t.dataflowConcrete}</span>
+      </div>
+
       {/* Step indicators */}
       <div className="space-y-2">
-        {FLOW_STEPS.map((s, i) => (
-          <motion.div
-            key={s.id}
-            animate={{
-              opacity: i <= step ? 1 : 0.3,
-              x: i <= step ? 0 : 20,
-            }}
-            transition={{ duration: 0.3 }}
-            className={`flex items-center gap-4 p-3 rounded-xl border-2 transition-colors ${
-              i === step ? colorClasses[s.color] : i < step ? 'bg-surface/30 border-border/30' : 'bg-surface/10 border-border/20'
-            }`}
-          >
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
-              i <= step ? colorClasses[s.color] : 'bg-surface/30 text-muted/30'
-            }`}>
-              {i + 1}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium">{t[`flow_${s.id}`]}</div>
-              {i <= step && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="text-xs text-muted mt-1"
-                >
-                  {t[`flow_${s.id}_desc`]}
-                </motion.div>
-              )}
-            </div>
-            <div className={`text-xs font-mono shrink-0 ${i <= step ? '' : 'opacity-30'}`}>
-              {s.shape}
-            </div>
-          </motion.div>
-        ))}
+        {FLOW_STEPS.slice(0, 2).map((s, i) => renderStep(s, i))}
+        <div className="relative rounded-xl border border-dashed border-emerald-500/30 p-2 pt-6 space-y-2">
+          <span className="absolute left-3 top-1 text-[11px] font-mono text-emerald-300">× 32</span>
+          {FLOW_STEPS.slice(2, 8).map((s, i) => renderStep(s, i + 2))}
+        </div>
+        {FLOW_STEPS.slice(8).map((s, i) => renderStep(s, i + 8))}
       </div>
 
       {/* Step scrubber */}

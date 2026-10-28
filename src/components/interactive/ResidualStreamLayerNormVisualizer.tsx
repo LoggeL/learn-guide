@@ -1,37 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
+import { useTranslation } from '@/lib/i18n/context'
 import { normalizeVector, vectorMean } from '@/lib/llmLearningMath'
 
-const copy = {
-  en: {
-    title: 'Follow the residual branch',
-    note: 'A four-dimensional toy block with fixed weights. These are real vector calculations, not a simulation of training stability. Channels have no assigned linguistic meaning.',
-    input: 'Residual input x', mode: 'Normalization position', norm: 'Normalization', gain: 'Branch gain', reset: 'Reset',
-    pre: 'Pre-Norm', post: 'Post-Norm', before: 'Input to F', delta: 'Branch update F', sum: 'Residual sum', output: 'Block output',
-    formula: 'F(v)ᵢ = gain × tanh(0.6vᵢ + 0.3v₍ᵢ₊₁₎ mod 4). This fixed toy branch stands in for attention or an MLP.',
-    layer: 'LayerNorm subtracts the channel mean and divides by √(variance + ε). Here γ = 1, β = 0 and ε = 0.00001.',
-    rms: 'RMSNorm divides by √(mean square + ε), without subtracting a mean. Here its learned scale is set to 1.',
-    normalized: 'Vector entering normalization', mean: 'Mean', variance: 'Variance',
-    limit: 'Pre-Norm preserves a direct residual path around normalization. Post-Norm normalizes the residual sum. Their training behavior depends on initialization, depth and optimization; these numbers do not establish which model trains better.',
-  },
-  de: {
-    title: 'Den Residualpfad nachrechnen',
-    note: 'Ein Spielzeugblock mit vier Dimensionen und festen Gewichten. Die Vektoren werden tatsächlich berechnet; Trainingsstabilität wird hier nicht simuliert. Die Kanäle haben keine festgelegte sprachliche Bedeutung.',
-    input: 'Residual-Eingabe x', mode: 'Position der Normalisierung', norm: 'Normalisierung', gain: 'Stärke des Zweigs', reset: 'Zurücksetzen',
-    pre: 'Pre-Norm', post: 'Post-Norm', before: 'Eingabe von F', delta: 'Zweig-Update F', sum: 'Residualsumme', output: 'Blockausgabe',
-    formula: 'F(v)ᵢ = Stärke × tanh(0,6vᵢ + 0,3v₍ᵢ₊₁₎ mod 4). Dieser feste Beispielzweig steht für Attention oder ein MLP.',
-    layer: 'LayerNorm zieht den Kanalmittelwert ab und teilt durch √(Varianz + ε). Hier gilt γ = 1, β = 0 und ε = 0,00001.',
-    rms: 'RMSNorm teilt durch √(mittleres Quadrat + ε), ohne den Mittelwert abzuziehen. Der gelernte Skalierungsfaktor ist hier 1.',
-    normalized: 'Vektor vor der Normalisierung', mean: 'Mittelwert', variance: 'Varianz',
-    limit: 'Pre-Norm erhält einen direkten Residualpfad um die Normalisierung. Post-Norm normalisiert die Residualsumme. Das Trainingsverhalten hängt von Initialisierung, Tiefe und Optimierung ab; diese Zahlen belegen keine allgemeine Überlegenheit.',
-  },
-}
-
 export function ResidualStreamLayerNormVisualizer() {
-  const { locale } = useLocale()
-  const c = copy[locale === 'de' ? 'de' : 'en']
+  const { t } = useTranslation()
+  const c = t.residualStream.viz
   const [x, setX] = useState([1, -1, 2, 0])
   const [mode, setMode] = useState<'pre' | 'post'>('pre')
   const [norm, setNorm] = useState<'layer' | 'rms'>('layer')
