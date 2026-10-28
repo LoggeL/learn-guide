@@ -9,6 +9,7 @@
     "lint": "next lint",
     "check-translations": "tsx scripts/check-translations.ts",
     "check-hardcoded": "tsx scripts/check-hardcoded-strings.ts",
+    "check-hardcoded:strict": "tsx scripts/check-hardcoded-strings.ts --strict",
     "check-topic-metadata": "tsx scripts/check-topic-metadata.ts",
     "check-i18n": "npm run check-translations && npm run check-hardcoded",
     "check-progress-schema": "tsx scripts/check-progress-schema.ts",
