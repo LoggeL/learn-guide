@@ -4,8 +4,10 @@ import {
   memoryEstimate,
   batchRoofline,
   cacheCosts,
+  chipRoofline,
   type MemoryInput,
 } from '../src/lib/inference-math'
+import { chipSpecs, rooflineModels } from '../src/lib/chip-specs'
 import { models, tierListModels } from '../src/lib/models'
 import {
   gradient,
@@ -222,6 +224,51 @@ assert.deepEqual(
   ],
   'the owner’s subjective ranks and Google category must remain intact',
 )
+
+// Chip roofline (custom-chips page)
+const h100 = chipSpecs.find((chip) => chip.id === 'h100')!
+const llama70 = rooflineModels.find((model) => model.id === '70b')!
+const rooflineBase = {
+  ...llama70,
+  bytesPerValue: 1,
+  batch: 1,
+  context: 4096,
+  phase: 'decode' as const,
+  bandwidthTBs: h100.bandwidthTBs,
+  peakTFLOPS: h100.fp8DenseTF!,
+  capacityGB: h100.memoryGB,
+}
+const single = chipRoofline(rooflineBase)
+assert.equal(single.bound, 'memory', 'batch-1 decode is memory-bound')
+assert.equal(single.chips, 1)
+assert.ok(single.intensity > 1.9 && single.intensity < 2.5, 'FP8 decode ≈ 2 FLOP/byte')
+close(single.memoryMs, (single.bytes / 3.35e12) * 1000)
+close(single.ridge, 1979 / 3.35)
+close(single.weightOnlyCriticalBatch, single.ridge / 2)
+close(
+  chipRoofline({ ...rooflineBase, bandwidthTBs: 6.7 }).memoryMs,
+  single.memoryMs / 2,
+  1e-9,
+)
+const prefill = chipRoofline({ ...rooflineBase, phase: 'prefill' })
+assert.equal(prefill.bound, 'compute', 'a 4k-token prefill is compute-bound')
+assert.ok(prefill.intensity > single.ridge)
+const bigBatch = chipRoofline({ ...rooflineBase, batch: 512, context: 512 })
+assert.ok(bigBatch.chips > 1, 'KV cache of 512 sequences exceeds one H100')
+assert.ok(bigBatch.intensity > single.intensity * 50)
+const longContext = chipRoofline({ ...rooflineBase, batch: 64, context: 32768 })
+assert.ok(
+  longContext.intensity < bigBatch.intensity,
+  'long contexts add KV bytes that batching does not amortize',
+)
+const bf16 = chipRoofline({ ...rooflineBase, bytesPerValue: 2 })
+close(bf16.bytes, single.bytes * 2, 1e-3)
+assert.equal(bf16.chips, 2, '70B in BF16 (141 GB) needs two 80 GB chips')
+close(bf16.memoryMs, single.memoryMs, 1e-9)
+chipSpecs.forEach((chip) => {
+  assert.ok(chip.sources.length > 0, `${chip.id} needs a vendor source`)
+  if (chip.calculator) assert.ok(chip.fp8DenseTF && chip.bf16DenseTF)
+})
 
 console.log(
   'PASS: memory, preset history, GQA, MoE storage, batching, caching, rotation, quantization, gradient descent, fitted training, Gaussian noise, mask selection/PAD, world rollout and 15 subjective ranks.',
