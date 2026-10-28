@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { vectorMean, normalizeVector, uniformQuantize, learningSoftmax, distributionKL, distillationStep, exactIntegerSum, scaledAttention } from '../src/lib/llmLearningMath'
+import { vectorMean, normalizeVector, uniformQuantize, groupQuantize, learningSoftmax, distributionKL, distillationStep, exactIntegerSum, scaledAttention } from '../src/lib/llmLearningMath'
 
 function near(actual: number, expected: number, tolerance = 1e-9) {
   assert.ok(Math.abs(actual - expected) <= tolerance, `${actual} differs from ${expected}`)
@@ -31,6 +31,35 @@ for (const bits of [2, 3, 4, 8]) {
   assert.ok(quantized.codes.every(code => Number.isInteger(code) && code >= 0 && code < 2 ** bits))
   assert.ok(Math.max(...quantized.errors.map(Math.abs)) <= quantized.step / 2 + 1e-12)
 }
+
+// Group quantization: symmetric grids are centred on zero, asymmetric grids keep zero exact,
+// errors stay within half a step, and an outlier only degrades its own group.
+const row = [0.1, -0.2, 0.3, -0.4, 0.05, 4, -0.15, 0.25]
+for (const scheme of ['symmetric', 'asymmetric'] as const) {
+  for (const bits of [2, 3, 4, 8]) {
+    const g = groupQuantize(row, bits, 4, scheme)
+    assert.equal(g.groups.length, 2)
+    g.groups.forEach(group => {
+      assert.ok(group.grid.some(level => Math.abs(level) < 1e-12), 'zero must be representable')
+      for (let i = group.start; i < group.end; i++) assert.ok(Math.abs(g.errors[i]) <= group.scale / 2 + 1e-12)
+    })
+  }
+}
+const sym = groupQuantize([1, -1, 0.5], 2, 3, 'symmetric')
+assert.deepEqual(sym.groups[0].grid, [-1, 0, 1])
+assert.deepEqual(sym.codes, [1, -1, 1])
+const perRow = groupQuantize(row, 4, 8, 'symmetric')
+const grouped = groupQuantize(row, 4, 4, 'symmetric')
+const smallErr = (r: ReturnType<typeof groupQuantize>) => [0, 1, 2, 3].reduce((s, i) => s + r.errors[i] ** 2, 0)
+assert.ok(smallErr(grouped) < smallErr(perRow), 'a separate group must shield weights from the outlier')
+const kept = groupQuantize(row, 4, 8, 'symmetric', [5])
+near(kept.errors[5], 0)
+assert.equal(kept.codes[5], null)
+assert.ok(kept.groups[0].scale < perRow.groups[0].scale)
+const asym = groupQuantize([0.2, 0.5, 0.9], 4, 3, 'asymmetric')
+assert.equal(asym.groups[0].zeroPoint, 0)
+assert.ok(asym.codes.every(c => c !== null && c >= 0 && c <= 15))
+assert.throws(() => groupQuantize([1], 1, 1, 'symmetric'))
 
 // Softmax must stay normalized for large scores and invariant to a shared shift.
 const p = learningSoftmax([1001, 1000, 999], 2)
