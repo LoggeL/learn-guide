@@ -48,7 +48,7 @@ export function groupCounts(group: typeof biasGroups[number], threshold: number)
   }, { positives: 0, negatives: 0, selected: 0, tp: 0, fp: 0 })
 }
 
-export interface DemoParameter { id: number; name: string; type: 'string' | 'number' | 'boolean' | 'array'; description: string; required: boolean; itemType?: 'string' | 'number' | 'boolean' }
+export interface DemoParameter { id: number; name: string; type: 'string' | 'integer' | 'number' | 'boolean' | 'array'; description: string; required: boolean; itemType?: 'string' | 'integer' | 'number' | 'boolean' }
 export interface DemoTool { name: string; description: string; parameters: DemoParameter[] }
 export function validateTool(tool: DemoTool) {
   const errors: ('schemaNameError' | 'schemaParamError' | 'schemaDuplicate')[] = []
@@ -72,4 +72,30 @@ export function generateToolSchema(tool: DemoTool) {
       additionalProperties: false,
     },
   }
+}
+
+export type ToolProvider = 'anthropic' | 'openai'
+/**
+ * Formats a tool as a Claude Messages API definition (`input_schema`) or an
+ * OpenAI Responses API function (`parameters`). In OpenAI strict mode every
+ * property must be listed in `required`, so optional fields become nullable.
+ * Claude strict mode keeps genuinely optional fields.
+ */
+export function formatToolDefinition(tool: DemoTool, provider: ToolProvider, strict: boolean) {
+  if (!validateTool(tool).valid) return null
+  const allRequired = provider === 'openai' && strict
+  const schema = {
+    type: 'object',
+    properties: Object.fromEntries(tool.parameters.map(p => [p.name, {
+      type: allRequired && !p.required ? [p.type, 'null'] : p.type,
+      description: p.description,
+      ...(p.type === 'array' ? { items: { type: p.itemType ?? 'string' } } : {}),
+    }])),
+    required: tool.parameters.filter(p => allRequired || p.required).map(p => p.name),
+    additionalProperties: false,
+  }
+  if (provider === 'anthropic') {
+    return { name: tool.name, description: tool.description, ...(strict ? { strict: true } : {}), input_schema: schema }
+  }
+  return { type: 'function', name: tool.name, description: tool.description, strict, parameters: schema }
 }
