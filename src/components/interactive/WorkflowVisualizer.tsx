@@ -1,572 +1,271 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Play, Pause, RotateCcw, Bot, Wrench, ArrowRight, Check, ChevronRight } from 'lucide-react'
+import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { Bot, Network, Clock, Coins, EyeOff, AlertTriangle } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
+import {
+  compareOrchestration,
+  ORCH_ASSUMPTIONS,
+  windowTotal,
+  type WindowBreakdown,
+} from '@/lib/orchestration-model'
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
+/**
+ * Single agent vs. orchestrator + subagents. All numbers come from
+ * compareOrchestration() in src/lib/orchestration-model.ts — a deterministic
+ * teaching model, no random values.
+ */
 
-type NodeType = 'agent' | 'tool'
-type WorkflowPattern = 'sequential' | 'parallel' | 'hierarchical' | 'handoff'
-type NodeStatus = 'pending' | 'running' | 'completed'
+const SEGMENTS: { key: keyof WindowBreakdown; color: string }[] = [
+  { key: 'base', color: 'bg-purple-400/70' },
+  { key: 'overhead', color: 'bg-orange-400/70' },
+  { key: 'previous', color: 'bg-pink-400/70' },
+  { key: 'tool', color: 'bg-cyan-400/70' },
+  { key: 'summaries', color: 'bg-emerald-400/70' },
+  { key: 'output', color: 'bg-zinc-400/60' },
+]
 
-interface WorkflowNode {
-  id: string
-  type: NodeType
-  labelKey: string
-  status: NodeStatus
-  col: number   // grid column (0-based)
-  row: number   // grid row (0-based)
+const BAR_HEIGHT = 168
+
+function ContextBar({ window, label, scale }: { window: WindowBreakdown; label: string; scale: number }) {
+  const total = windowTotal(window)
+  const overflow = total > scale
+  return (
+    <div className="flex flex-col items-center gap-1.5 min-w-0 flex-1">
+      <div
+        className={`relative w-full max-w-[56px] rounded-md border bg-background overflow-hidden flex flex-col-reverse ${overflow ? 'border-red-400/70' : 'border-border'}`}
+        style={{ height: BAR_HEIGHT }}
+      >
+        {SEGMENTS.map(seg => {
+          const value = window[seg.key]
+          const pct = Math.min(value / scale, 1) * 100
+          return (
+            <motion.div
+              key={seg.key}
+              className={seg.color}
+              initial={false}
+              animate={{ height: `${pct}%` }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+            />
+          )
+        })}
+      </div>
+      <span className="text-[11px] text-muted truncate max-w-full">{label}</span>
+      <span className={`text-[11px] font-mono ${overflow ? 'text-red-400' : 'text-text'}`}>{(total / 1000).toFixed(1)}k</span>
+    </div>
+  )
 }
 
-interface Connection {
-  from: string
-  to: string
+function Slider({ label, value, min, max, step, onChange, format, hint }: {
+  label: string; value: number; min: number; max: number; step: number
+  onChange: (v: number) => void; format: (v: number) => string; hint?: string
+}) {
+  return (
+    <label className="block">
+      <div className="flex items-center justify-between text-sm mb-1.5">
+        <span className="text-text">{label}</span>
+        <span className="font-mono text-primary-light">{format(value)}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={e => onChange(Number(e.target.value))}
+        className="w-full accent-purple-400"
+      />
+      {hint && <p className="text-xs text-muted mt-1 leading-snug">{hint}</p>}
+    </label>
+  )
 }
-
-interface PatternDef {
-  nodes: WorkflowNode[]
-  connections: Connection[]
-  cols: number
-  rows: number
-}
-
-/* ------------------------------------------------------------------ */
-/*  Pattern definitions — grid-based layout                           */
-/* ------------------------------------------------------------------ */
-
-const PATTERNS: Record<WorkflowPattern, PatternDef> = {
-  sequential: {
-    cols: 4, rows: 1,
-    nodes: [
-      { id: '1', type: 'agent', labelKey: 'vizNodePlanner',   status: 'pending', col: 0, row: 0 },
-      { id: '2', type: 'tool',  labelKey: 'vizNodeSearch',    status: 'pending', col: 1, row: 0 },
-      { id: '3', type: 'agent', labelKey: 'vizNodeAnalyzer',  status: 'pending', col: 2, row: 0 },
-      { id: '4', type: 'tool',  labelKey: 'vizNodeSummarize', status: 'pending', col: 3, row: 0 },
-    ],
-    connections: [
-      { from: '1', to: '2' },
-      { from: '2', to: '3' },
-      { from: '3', to: '4' },
-    ],
-  },
-
-  parallel: {
-    cols: 3, rows: 3,
-    nodes: [
-      { id: '1', type: 'agent', labelKey: 'vizNodeCoordinator', status: 'pending', col: 1, row: 0 },
-      { id: '2', type: 'tool',  labelKey: 'vizNodeTaskA',       status: 'pending', col: 0, row: 1 },
-      { id: '3', type: 'tool',  labelKey: 'vizNodeTaskB',       status: 'pending', col: 1, row: 1 },
-      { id: '4', type: 'tool',  labelKey: 'vizNodeTaskC',       status: 'pending', col: 2, row: 1 },
-      { id: '5', type: 'agent', labelKey: 'vizNodeAggregator',  status: 'pending', col: 1, row: 2 },
-    ],
-    connections: [
-      { from: '1', to: '2' },
-      { from: '1', to: '3' },
-      { from: '1', to: '4' },
-      { from: '2', to: '5' },
-      { from: '3', to: '5' },
-      { from: '4', to: '5' },
-    ],
-  },
-
-  hierarchical: {
-    cols: 4, rows: 3,
-    nodes: [
-      { id: '1', type: 'agent', labelKey: 'vizNodeSupervisor', status: 'pending', col: 1.5, row: 0 },
-      { id: '2', type: 'agent', labelKey: 'vizNodeWorkerA',    status: 'pending', col: 0.5, row: 1 },
-      { id: '3', type: 'agent', labelKey: 'vizNodeWorkerB',    status: 'pending', col: 2.5, row: 1 },
-      { id: '4', type: 'tool',  labelKey: 'vizNodeTool1',      status: 'pending', col: 0, row: 2 },
-      { id: '5', type: 'tool',  labelKey: 'vizNodeTool2',      status: 'pending', col: 1, row: 2 },
-      { id: '6', type: 'tool',  labelKey: 'vizNodeTool3',      status: 'pending', col: 2, row: 2 },
-      { id: '7', type: 'tool',  labelKey: 'vizNodeTool4',      status: 'pending', col: 3, row: 2 },
-    ],
-    connections: [
-      { from: '1', to: '2' },
-      { from: '1', to: '3' },
-      { from: '2', to: '4' },
-      { from: '2', to: '5' },
-      { from: '3', to: '6' },
-      { from: '3', to: '7' },
-    ],
-  },
-
-  handoff: {
-    cols: 4, rows: 1,
-    nodes: [
-      { id: '1', type: 'agent', labelKey: 'vizNodeTriage',  status: 'pending', col: 0, row: 0 },
-      { id: '2', type: 'agent', labelKey: 'vizNodeBilling', status: 'pending', col: 1, row: 0 },
-      { id: '3', type: 'agent', labelKey: 'vizNodeSupport', status: 'pending', col: 2, row: 0 },
-      { id: '4', type: 'agent', labelKey: 'vizNodeResolve', status: 'pending', col: 3, row: 0 },
-    ],
-    connections: [
-      { from: '1', to: '2' },
-      { from: '2', to: '3' },
-      { from: '3', to: '4' },
-    ],
-  },
-}
-
-const EXECUTION_STEPS: Record<WorkflowPattern, string[][]> = {
-  sequential:    [['1'], ['2'], ['3'], ['4']],
-  parallel:      [['1'], ['2', '3', '4'], ['5']],
-  hierarchical:  [['1'], ['2', '3'], ['4', '5', '6', '7']],
-  handoff:       [['1'], ['2'], ['3'], ['4']],
-}
-
-/* ------------------------------------------------------------------ */
-/*  Styling maps                                                       */
-/* ------------------------------------------------------------------ */
-
-const TYPE_STYLES: Record<NodeType, {
-  gradient: string
-  border: string
-  iconBg: string
-  iconColor: string
-  glow: string
-}> = {
-  agent: {
-    gradient: 'from-purple-500/10 to-violet-500/10',
-    border: 'border-purple-500/30',
-    iconBg: 'bg-purple-500/20',
-    iconColor: 'text-purple-300',
-    glow: 'rgba(168,85,247,0.4)',
-  },
-  tool: {
-    gradient: 'from-cyan-500/10 to-blue-500/10',
-    border: 'border-cyan-500/30',
-    iconBg: 'bg-cyan-500/20',
-    iconColor: 'text-cyan-300',
-    glow: 'rgba(34,211,238,0.4)',
-  },
-}
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                            */
-/* ------------------------------------------------------------------ */
-
-/** Convert grid col/row to pixel centre within the canvas */
-function nodePos(
-  node: WorkflowNode,
-  def: PatternDef,
-  canvasW: number,
-  canvasH: number,
-) {
-  const padX = 70
-  const padY = 52
-  const usableW = canvasW - padX * 2
-  const usableH = canvasH - padY * 2
-  const stepX = def.cols > 1 ? usableW / (def.cols - 1) : 0
-  const stepY = def.rows > 1 ? usableH / (def.rows - 1) : 0
-  return {
-    x: padX + node.col * stepX,
-    y: padY + node.row * stepY,
-  }
-}
-
-/** Curved SVG path between two points */
-function connectionPath(
-  x1: number, y1: number,
-  x2: number, y2: number,
-) {
-  const dx = x2 - x1
-  const dy = y2 - y1
-  // For mostly-horizontal connections use gentle horizontal curves
-  if (Math.abs(dx) > Math.abs(dy) * 1.5) {
-    const cpOff = Math.abs(dx) * 0.35
-    return `M ${x1} ${y1} C ${x1 + cpOff} ${y1}, ${x2 - cpOff} ${y2}, ${x2} ${y2}`
-  }
-  // For mostly-vertical connections use vertical bezier
-  const cpOff = Math.abs(dy) * 0.45
-  return `M ${x1} ${y1} C ${x1} ${y1 + cpOff}, ${x2} ${y2 - cpOff}, ${x2} ${y2}`
-}
-
-/* ------------------------------------------------------------------ */
-/*  Component                                                          */
-/* ------------------------------------------------------------------ */
-
-// Canvas dimensions
-const CW = 680
-const CH = 380
 
 export function WorkflowVisualizer() {
-  const { t } = useTranslation()
-  const orch = t.orchestration as Record<string, string>
+  const { t, locale } = useTranslation()
+  const l = t.orchestration.lab
 
-  const [pattern, setPattern] = useState<WorkflowPattern>('sequential')
-  const [nodes, setNodes] = useState<WorkflowNode[]>(PATTERNS.sequential.nodes)
-  const [isRunning, setIsRunning] = useState(false)
-  const [stepIndex, setStepIndex] = useState(-1) // -1 = not started
+  const [subtasks, setSubtasks] = useState(4)
+  const [toolOutput, setToolOutput] = useState(12000)
+  const [summary, setSummary] = useState(800)
+  const [overhead, setOverhead] = useState(4000)
+  const [dependent, setDependent] = useState(false)
 
-  const patternDef = PATTERNS[pattern]
-  const steps = EXECUTION_STEPS[pattern]
+  const r = useMemo(
+    () => compareOrchestration({ subtasks, toolOutput, summary, overhead, dependent }),
+    [subtasks, toolOutput, summary, overhead, dependent],
+  )
 
-  // ------ pattern switch (synchronous reset to avoid stale renders) ------
-  useEffect(() => {
-    setNodes(PATTERNS[pattern].nodes.map(n => ({ ...n, status: 'pending' as const })))
-    setStepIndex(-1)
-    setIsRunning(false)
-  }, [pattern])
+  const nf = (v: number) => Math.round(v).toLocaleString(locale)
+  const tok = (v: number) => `${nf(v)} ${l.tokens}`
+  const scale = ORCH_ASSUMPTIONS.contextScale
+  const ratio = r.multi.cost / r.single.cost
+  const maxTime = Math.max(r.single.time, r.multi.time)
+  const a = ORCH_ASSUMPTIONS
 
-  // Build a lookup of current node statuses keyed by id
-  const nodeStatusMap = useMemo(() => {
-    const map: Record<string, NodeStatus> = {}
-    for (const n of nodes) map[n.id] = n.status
-    return map
-  }, [nodes])
+  const insight = dependent
+    ? l.insightDependent
+    : ratio < 1
+      ? l.insightCheaper
+      : l.insightParallel
+  const insightText = insight
+    .replace('{multi}', String(r.multi.time))
+    .replace('{single}', String(r.single.time))
+    .replace('{peak}', nf(r.multi.peak))
+    .replace('{singlePeak}', nf(r.single.peak))
 
-  // Render nodes always come from the pattern definition, enriched with current status
-  const renderNodes = useMemo(() =>
-    patternDef.nodes.map(n => ({
-      ...n,
-      status: nodeStatusMap[n.id] ?? ('pending' as NodeStatus),
-    })),
-  [patternDef, nodeStatusMap])
+  // Timeline rows: [start, duration, color]
+  const singleRow = [
+    ...Array.from({ length: subtasks }, (_, i) => ({ start: i * a.secondsPerSubtask, dur: a.secondsPerSubtask, color: 'bg-cyan-400/60' })),
+    { start: subtasks * a.secondsPerSubtask, dur: a.secondsPerModelCall, color: 'bg-purple-400/70' },
+  ]
+  const lanes = Array.from({ length: subtasks }, (_, i) => ({
+    start: a.secondsPerModelCall + (dependent ? i * a.secondsPerSubtask : 0),
+    dur: a.secondsPerSubtask,
+  }))
+  const synthStart = a.secondsPerModelCall + (dependent ? subtasks : 1) * a.secondsPerSubtask
 
-  // ------ animation tick ------
-  useEffect(() => {
-    if (!isRunning) return
+  const metrics = [
+    { icon: Bot, label: l.metricPeak, single: tok(r.single.peak), multi: tok(r.multi.peak) },
+    { icon: Clock, label: l.metricTime, single: `${r.single.time} ${l.seconds}`, multi: `${r.multi.time} ${l.seconds}` },
+    { icon: Coins, label: l.metricCost, single: nf(r.single.cost), multi: nf(r.multi.cost), extra: `${l.ratioLabel}: ${ratio.toFixed(2)}×` },
+    { icon: EyeOff, label: l.metricHidden, single: tok(r.single.hidden), multi: tok(r.multi.hidden) },
+  ]
 
-    const timer = setTimeout(() => {
-      const next = stepIndex + 1
-      if (next >= steps.length) {
-        // Final tick — mark last batch completed
-        setNodes(prev => prev.map(n => ({ ...n, status: 'completed' as const })))
-        setIsRunning(false)
-        return
-      }
-      const activeIds = new Set(steps[next])
-      const completedIds = new Set(steps.slice(0, next + 1).flat())
-      // nodes in the current batch are running, prior batches completed
-      setNodes(
-        PATTERNS[pattern].nodes.map(node => ({
-          ...node,
-          status: activeIds.has(node.id) ? 'running' as const
-            : completedIds.has(node.id) && !activeIds.has(node.id)
-              ? // check if it's from a prior batch
-                steps.slice(0, next).flat().includes(node.id) ? 'completed' as const : 'running' as const
-              : 'pending' as const,
-        })),
-      )
-      setStepIndex(next)
-    }, 1000)
-
-    return () => clearTimeout(timer)
-  }, [isRunning, stepIndex, pattern, steps])
-
-  // ------ derived state ------
-  const isComplete = renderNodes.every(n => n.status === 'completed')
-  const progressPct = isComplete ? 100 : stepIndex < 0 ? 0 : ((stepIndex + 1) / steps.length) * 100
-
-  const handlePlayPause = useCallback(() => {
-    if (isComplete) return
-    setIsRunning(r => !r)
-    if (stepIndex < 0) setStepIndex(-1) // will advance on next tick
-  }, [isComplete, stepIndex])
-
-  const handleReset = useCallback(() => {
-    setIsRunning(false)
-    setStepIndex(-1)
-    setNodes(PATTERNS[pattern].nodes.map(n => ({ ...n, status: 'pending' as const })))
-  }, [pattern])
-
-  // Pattern tab metadata
-  const tabs: { key: WorkflowPattern; label: string; summary: string; detail: string }[] = useMemo(() => [
-    { key: 'sequential',   label: orch.vizSequentialLabel,    summary: orch.vizSequentialSummary,    detail: orch.vizSequentialDetail },
-    { key: 'parallel',     label: orch.vizParallelLabel,      summary: orch.vizParallelSummary,      detail: orch.vizParallelDetail },
-    { key: 'hierarchical', label: orch.vizHierarchicalLabel,  summary: orch.vizHierarchicalSummary,  detail: orch.vizHierarchicalDetail },
-    { key: 'handoff',      label: orch.vizHandoffLabel,       summary: orch.vizHandoffSummary,       detail: orch.vizHandoffDetail },
-  ], [orch])
-
-  const activeTab = tabs.find(t => t.key === pattern)!
-
-  /* ---------------------------------------------------------------- */
-  /*  Render                                                          */
-  /* ---------------------------------------------------------------- */
+  const segLabels: Record<keyof WindowBreakdown, string> = {
+    base: l.segBase,
+    overhead: l.segOverhead,
+    previous: l.segPrevious,
+    tool: l.segTool,
+    summaries: l.segSummary,
+    output: l.segOutput,
+  }
 
   return (
     <div className="space-y-4">
-      {/* ---- Pattern tabs ---- */}
+      {/* Controls */}
+      <div className="rounded-2xl bg-surface border border-border p-5 grid md:grid-cols-2 gap-5">
+        <Slider label={l.ctrlSubtasks} value={subtasks} min={2} max={8} step={1} onChange={setSubtasks} format={v => String(v)} />
+        <Slider label={l.ctrlToolOutput} value={toolOutput} min={2000} max={24000} step={1000} onChange={setToolOutput} format={tok} />
+        <Slider label={l.ctrlSummary} value={summary} min={200} max={3000} step={100} onChange={setSummary} format={tok} />
+        <Slider label={l.ctrlOverhead} value={overhead} min={0} max={20000} step={1000} onChange={setOverhead} format={tok} hint={l.ctrlOverheadHint} />
+        <label className="md:col-span-2 flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={dependent} onChange={e => setDependent(e.target.checked)} className="mt-1 accent-purple-400" />
+          <span>
+            <span className="text-sm text-text">{l.ctrlDependent}</span>
+            <span className="block text-xs text-muted">{l.ctrlDependentHint}</span>
+          </span>
+        </label>
+      </div>
+
+      {/* Context windows */}
       <div className="rounded-2xl bg-surface border border-border p-5">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setPattern(tab.key)}
-              className={`relative rounded-xl border px-4 py-3 text-left transition-all duration-200 ${
-                pattern === tab.key
-                  ? 'bg-primary/10 border-primary/40 shadow-[0_0_20px_-6px] shadow-primary/20'
-                  : 'bg-surface-elevated border-border hover:border-primary/25 hover:bg-surface-elevated/80'
-              }`}
-            >
-              <p className={`text-sm font-semibold ${pattern === tab.key ? 'text-primary-light' : 'text-text'}`}>
-                {tab.label}
-              </p>
-              <p className="text-xs text-muted mt-0.5 leading-snug">{tab.summary}</p>
-            </button>
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
+          <h3 className="font-semibold text-text">{l.windowsTitle}</h3>
+          <span className="text-xs text-muted">{l.windowsScale}</span>
+        </div>
+        <div className="grid md:grid-cols-[1fr_3fr] gap-6">
+          <div>
+            <p className="text-sm font-medium text-text mb-3 flex items-center gap-2"><Bot size={15} className="text-purple-300" />{l.singleLabel}</p>
+            <div className="flex justify-center">
+              <ContextBar window={r.single.window} label={l.singleShort} scale={scale} />
+            </div>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-text mb-3 flex items-center gap-2"><Network size={15} className="text-cyan-300" />{l.multiLabel}</p>
+            <div className="flex gap-2 items-end">
+              <ContextBar window={r.multi.orchestrator} label={l.orchestratorShort} scale={scale} />
+              <div className="w-px self-stretch bg-border mx-1" />
+              {r.multi.subagents.map((w, i) => (
+                <ContextBar key={i} window={w} label={`${l.subagentShort}${i + 1}`} scale={scale} />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-4 text-xs text-muted">
+          {SEGMENTS.filter(s => s.key !== 'previous' || dependent).map(s => (
+            <span key={s.key} className="flex items-center gap-1.5">
+              <span className={`w-2.5 h-2.5 rounded-sm ${s.color}`} />
+              {segLabels[s.key]}
+            </span>
           ))}
         </div>
+        {r.single.peak > scale && (
+          <p className="mt-3 text-xs text-red-300 flex items-start gap-2">
+            <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+            {l.overflow}
+          </p>
+        )}
       </div>
 
-      {/* ---- Canvas card ---- */}
+      {/* Timeline */}
       <div className="rounded-2xl bg-surface border border-border p-5">
-        {/* Header + controls */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+        <h3 className="font-semibold text-text mb-4">{l.timelineTitle}</h3>
+        <div className="space-y-3">
           <div>
-            <h3 className="font-semibold text-text font-heading">{activeTab.label}</h3>
-            <p className="text-xs text-muted mt-0.5">{activeTab.summary}</p>
+            <p className="text-xs text-muted mb-1">{l.singleLabel} · {r.single.time} {l.seconds}</p>
+            <div className="relative h-5 rounded bg-background border border-border overflow-hidden">
+              {singleRow.map((seg, i) => (
+                <motion.div
+                  key={i}
+                  className={`absolute top-0.5 bottom-0.5 rounded-sm ${seg.color}`}
+                  initial={false}
+                  animate={{ left: `${(seg.start / maxTime) * 100}%`, width: `calc(${(seg.dur / maxTime) * 100}% - 2px)` }}
+                  transition={{ duration: 0.35 }}
+                />
+              ))}
+            </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <button
-              onClick={handlePlayPause}
-              disabled={isComplete}
-              className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-all border ${
-                isRunning
-                  ? 'bg-amber-500/15 text-amber-300 border-amber-500/30 hover:bg-amber-500/25'
-                  : isComplete
-                    ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 cursor-default'
-                    : 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/25'
-              } disabled:opacity-50 disabled:cursor-not-allowed`}
-            >
-              {isRunning ? <Pause size={14} /> : isComplete ? <Check size={14} /> : <Play size={14} />}
-              {isRunning ? orch.vizPause : isComplete ? orch.vizComplete : orch.vizRun}
-            </button>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-4 py-2 bg-surface-elevated border border-border rounded-lg text-sm text-muted hover:text-text transition-colors"
-            >
-              <RotateCcw size={14} />
-              {orch.vizReset}
-            </button>
+          <div>
+            <p className="text-xs text-muted mb-1">{l.multiLabel} · {r.multi.time} {l.seconds}</p>
+            <div className="relative rounded bg-background border border-border overflow-hidden" style={{ height: 8 + subtasks * 10 }}>
+              <motion.div
+                className="absolute top-1 bottom-1 rounded-sm bg-purple-400/70"
+                initial={false}
+                animate={{ left: '0%', width: `calc(${(a.secondsPerModelCall / maxTime) * 100}% - 2px)` }}
+              />
+              {lanes.map((lane, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute h-2 rounded-sm bg-cyan-400/60"
+                  style={{ top: 4 + i * 10 }}
+                  initial={false}
+                  animate={{ left: `${(lane.start / maxTime) * 100}%`, width: `calc(${(lane.dur / maxTime) * 100}% - 2px)` }}
+                  transition={{ duration: 0.35 }}
+                />
+              ))}
+              <motion.div
+                className="absolute top-1 bottom-1 rounded-sm bg-purple-400/70"
+                initial={false}
+                animate={{ left: `${(synthStart / maxTime) * 100}%`, width: `calc(${(a.secondsPerModelCall / maxTime) * 100}% - 2px)` }}
+                transition={{ duration: 0.35 }}
+              />
+            </div>
           </div>
         </div>
-
-        {/* Progress bar */}
-        <div className="mb-4">
-          <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="text-muted">{orch.vizProgress}</span>
-            <span className="text-muted tabular-nums">
-              {stepIndex < 0 ? 0 : Math.min(stepIndex + 1, steps.length)} {orch.vizStepOf} {steps.length}
-            </span>
-          </div>
-          <div className="h-1.5 rounded-full bg-surface-elevated border border-border overflow-hidden">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-purple-400 via-cyan-400 to-emerald-400"
-              animate={{ width: `${progressPct}%` }}
-              transition={{ duration: 0.4, ease: 'easeOut' }}
-            />
-          </div>
-        </div>
-
-        {/* SVG Canvas */}
-        <div className="relative w-full rounded-xl border border-border overflow-hidden bg-background">
-          {/* Grid background */}
-          <div
-            className="absolute inset-0 opacity-40"
-            style={{
-              backgroundImage:
-                'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.03] via-transparent to-cyan-500/[0.03]" />
-
-          <svg
-            viewBox={`0 0 ${CW} ${CH}`}
-            className="relative w-full"
-            style={{ aspectRatio: `${CW}/${CH}` }}
-            preserveAspectRatio="xMidYMid meet"
-          >
-            {/* Connections */}
-            {patternDef.connections.map((conn, i) => {
-              const fromNode = renderNodes.find(n => n.id === conn.from)!
-              const toNode = renderNodes.find(n => n.id === conn.to)!
-              const from = nodePos(fromNode, patternDef, CW, CH)
-              const to = nodePos(toNode, patternDef, CW, CH)
-              const isActive = fromNode.status === 'completed' || fromNode.status === 'running' || toNode.status === 'running'
-              const isCompleted = fromNode.status === 'completed' && (toNode.status === 'completed' || toNode.status === 'running')
-              const d = connectionPath(from.x, from.y, to.x, to.y)
-
-              return (
-                <g key={`${pattern}-conn-${i}`}>
-                  {/* Track */}
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke="rgba(63,63,70,0.5)"
-                    strokeWidth={2}
-                    strokeDasharray="6 4"
-                  />
-                  {/* Active overlay */}
-                  <motion.path
-                    d={d}
-                    fill="none"
-                    stroke={isCompleted ? '#34d399' : isActive ? '#60a5fa' : 'transparent'}
-                    strokeWidth={2.5}
-                    strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: isActive ? 1 : 0, opacity: isActive ? 1 : 0 }}
-                    transition={{ duration: 0.6, ease: 'easeInOut' }}
-                  />
-                  {/* Arrowhead */}
-                  {isCompleted && (
-                    <motion.circle
-                      cx={to.x}
-                      cy={to.y}
-                      r={4}
-                      fill="#34d399"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3, duration: 0.2 }}
-                    />
-                  )}
-                </g>
-              )
-            })}
-
-            {/* Nodes */}
-            {renderNodes.map(node => {
-              const pos = nodePos(node, patternDef, CW, CH)
-              const style = TYPE_STYLES[node.type]
-              const isActive = node.status === 'running'
-              const isDone = node.status === 'completed'
-              const Icon = node.type === 'agent' ? Bot : Wrench
-              const label = orch[node.labelKey] ?? node.labelKey
-
-              return (
-                <motion.g
-                  key={`${pattern}-${node.id}`}
-                  initial={{ opacity: 0, scale: 0.7 }}
-                  animate={{
-                    opacity: 1,
-                    scale: isActive ? 1.08 : 1,
-                    x: pos.x,
-                    y: pos.y,
-                  }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
-                >
-                  {/* Glow */}
-                  {(isActive || isDone) && (
-                    <motion.circle
-                      r={40}
-                      fill="none"
-                      stroke={isDone ? 'rgba(52,211,153,0.25)' : style.glow}
-                      strokeWidth={isDone ? 2 : 2.5}
-                      initial={{ scale: 0.5, opacity: 0 }}
-                      animate={isActive ? {
-                        scale: [0.8, 1.1, 0.8],
-                        opacity: [0.3, 0.6, 0.3],
-                      } : {
-                        scale: 1,
-                        opacity: 0.4,
-                      }}
-                      transition={isActive ? { duration: 1.5, repeat: Infinity, ease: 'easeInOut' } : { duration: 0.3 }}
-                    />
-                  )}
-
-                  {/* Card background */}
-                  <rect
-                    x={-54}
-                    y={-30}
-                    width={108}
-                    height={60}
-                    rx={12}
-                    fill={isDone ? 'rgba(16,185,129,0.08)' : isActive ? 'rgba(96,165,250,0.08)' : 'rgba(39,39,42,0.6)'}
-                    stroke={isDone ? 'rgba(52,211,153,0.4)' : isActive ? 'rgba(96,165,250,0.4)' : 'rgba(63,63,70,0.5)'}
-                    strokeWidth={isDone ? 1.5 : isActive ? 1.5 : 1}
-                  />
-
-                  {/* Icon circle */}
-                  <circle
-                    cx={0}
-                    cy={-6}
-                    r={13}
-                    fill={isDone ? 'rgba(52,211,153,0.15)' : isActive ? 'rgba(96,165,250,0.15)' : node.type === 'agent' ? 'rgba(168,85,247,0.15)' : 'rgba(34,211,238,0.15)'}
-                  />
-                  <foreignObject x={-10} y={-16} width={20} height={20}>
-                    <div className="flex items-center justify-center w-full h-full">
-                      {isDone
-                        ? <Check size={13} className="text-emerald-400" />
-                        : <Icon size={13} className={isActive ? 'text-blue-300' : node.type === 'agent' ? 'text-purple-300' : 'text-cyan-300'} />
-                      }
-                    </div>
-                  </foreignObject>
-
-                  {/* Label */}
-                  <text
-                    y={20}
-                    textAnchor="middle"
-                    className={`text-[11px] font-medium ${isDone ? 'fill-emerald-300' : isActive ? 'fill-blue-200' : 'fill-zinc-300'}`}
-                  >
-                    {label}
-                  </text>
-
-                  {/* Status pill */}
-                  {(isActive || isDone) && (
-                    <motion.g
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.15 }}
-                    >
-                      <rect
-                        x={-18}
-                        y={-44}
-                        width={36}
-                        height={16}
-                        rx={8}
-                        fill={isDone ? 'rgba(52,211,153,0.2)' : 'rgba(96,165,250,0.2)'}
-                      />
-                      <text
-                        y={-33}
-                        textAnchor="middle"
-                        className={`text-[8px] font-semibold ${isDone ? 'fill-emerald-300' : 'fill-blue-300'}`}
-                      >
-                        {isDone ? orch.vizCompleted : orch.vizRunning}
-                      </text>
-                    </motion.g>
-                  )}
-                </motion.g>
-              )
-            })}
-          </svg>
-        </div>
-
-        {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 mt-4 text-xs">
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-md bg-purple-500/15 flex items-center justify-center">
-              <Bot size={11} className="text-purple-300" />
-            </div>
-            <span className="text-muted">{orch.vizAgent}</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-md bg-cyan-500/15 flex items-center justify-center">
-              <Wrench size={11} className="text-cyan-300" />
-            </div>
-            <span className="text-muted">{orch.vizTool}</span>
-          </div>
-          <div className="ml-auto flex items-center gap-3">
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-blue-400 animate-pulse" />
-              <span className="text-muted">{orch.vizRunning}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
-              <span className="text-muted">{orch.vizCompleted}</span>
-            </div>
-          </div>
+        <div className="flex flex-wrap gap-4 mt-3 text-xs text-muted">
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-cyan-400/60" />{l.timeSubtask}</span>
+          <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm bg-purple-400/70" />{l.timeModelCall}</span>
         </div>
       </div>
 
-      {/* ---- Pattern description ---- */}
+      {/* Metrics */}
+      <div className="grid sm:grid-cols-2 gap-3">
+        {metrics.map(m => (
+          <div key={m.label} className="rounded-xl bg-surface border border-border p-4">
+            <p className="text-xs text-muted flex items-center gap-2 mb-2"><m.icon size={14} />{m.label}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm">
+              <div><span className="block text-[11px] text-muted">{l.singleLabel}</span><span className="font-mono text-text">{m.single}</span></div>
+              <div><span className="block text-[11px] text-muted">{l.multiLabel}</span><span className="font-mono text-text">{m.multi}</span></div>
+            </div>
+            {m.extra && <p className="text-xs text-primary-light mt-2 font-mono">{m.extra}</p>}
+          </div>
+        ))}
+      </div>
+
+      {/* Insight */}
       <div className="rounded-xl bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 px-5 py-4">
-        <div className="flex items-start gap-3">
-          <ChevronRight size={18} className="text-primary-light shrink-0 mt-0.5" />
-          <p className="text-sm text-muted leading-relaxed">{activeTab.detail}</p>
-        </div>
+        <p className="text-sm text-muted leading-relaxed">{insightText}</p>
       </div>
     </div>
   )
