@@ -8,19 +8,22 @@ import {
 } from '../src/lib/inference-math'
 import { models, tierListModels } from '../src/lib/models'
 import {
-  gradient,
-  descentStep,
-  stationaryPoint,
+  landscapes,
+  optimizerPath,
+  optimizerStep,
+  initialState,
+  VALLEY_CURVATURE,
   rotatePair,
   quantizeVector,
   normalNoise,
   noisySample,
   maskCandidates,
   unmaskStep,
-  trainingSet,
-  validationSet,
-  mseLine,
-  trainLine,
+  polyTrainSet,
+  polyValidationSet,
+  fitPolynomial,
+  msePoly,
+  predictPoly,
   worldRollout,
 } from '../src/lib/learning-math'
 
@@ -130,27 +133,68 @@ assert.equal(
 )
 assert.ok(quantizeVector(rotated, 4).mse > 0, 'quantization is not lossless')
 assert.ok(quantizeVector(rotated, 8).mse < quantizeVector(rotated, 2).mse)
-close(descentStep(1.8, 0.3), -3.1884)
-assert.ok(
-  descentStep(1.8, 0.3) < -2,
-  'descent must not silently clamp to the chart',
-)
-close(gradient(stationaryPoint(-1.1)), 0)
-close(gradient(stationaryPoint(0.9)), 0)
-
-const initial: [number, number] = [-0.5, -0.3]
-let fitted = initial,
-  penalized = initial
-for (let i = 0; i < 100; i++) {
-  fitted = trainLine(fitted, 0.1, 0)
-  penalized = trainLine(penalized, 0.1, 2)
+// Optimizer comparison: plain GD on L = ½(x² + 25y²) is stable only for η < 2/25.
+const valley = landscapes.valley
+const finalLoss = (id: 'gd' | 'momentum' | 'adam', eta: number, steps = 150) => {
+  const path = optimizerPath(id, valley, eta, steps)
+  return valley.loss(path[path.length - 1])
 }
-assert.ok(mseLine(trainingSet, fitted) < mseLine(trainingSet, initial) / 20)
-assert.ok(mseLine(validationSet, fitted) < mseLine(validationSet, initial) / 20)
+assert.ok(2 / VALLEY_CURVATURE === 0.08)
+assert.ok(finalLoss('gd', 0.07) < 1e-6, 'GD converges below 2/curvature')
 assert.ok(
-  Math.abs(penalized[0]) < Math.abs(fitted[0]),
-  'L2 changes the learned slope',
+  !Number.isFinite(finalLoss('gd', 0.09)) || finalLoss('gd', 0.09) > 1e6,
+  'GD diverges above 2/curvature',
 )
+assert.ok(finalLoss('momentum', 0.09) < 1e-3, 'momentum is stable up to 2(1+β)/curvature')
+// Rotation invariance: GD and momentum produce the same losses on the rotated valley.
+for (const id of ['gd', 'momentum'] as const) {
+  const a = optimizerPath(id, valley, 0.07, 40),
+    b = optimizerPath(id, landscapes.rotatedValley, 0.07, 40)
+  a.forEach((p, i) => close(valley.loss(p), landscapes.rotatedValley.loss(b[i]), 1e-9))
+}
+// Gradient check for every landscape (central differences).
+for (const land of Object.values(landscapes)) {
+  const p: [number, number] = [0.37, -0.81],
+    h = 1e-6
+  const g = land.grad(p)
+  close(g[0], (land.loss([p[0] + h, p[1]]) - land.loss([p[0] - h, p[1]])) / (2 * h), 1e-6)
+  close(g[1], (land.loss([p[0], p[1] + h]) - land.loss([p[0], p[1] - h])) / (2 * h), 1e-6)
+}
+// Adam's bias-corrected first step has size η per coordinate, independent of gradient scale.
+const adamFirst = optimizerStep('adam', valley, initialState(valley.start), 0.05)
+close(Math.abs(adamFirst.p[0] - valley.start[0]), 0.05, 1e-6)
+close(Math.abs(adamFirst.p[1] - valley.start[1]), 0.05, 1e-6)
+// Saddle: plain GD lingers near the saddle value 0 before reaching a minimum at −0.25.
+const saddlePath = optimizerPath('gd', landscapes.saddle, 0.02, 150)
+assert.ok(Math.abs(landscapes.saddle.loss(saddlePath[60])) < 0.5)
+assert.ok(landscapes.saddle.loss(saddlePath[60]) > -0.2, 'GD still near the saddle')
+const momentumSaddle = optimizerPath('momentum', landscapes.saddle, 0.02, 150)
+assert.ok(landscapes.saddle.loss(momentumSaddle[60]) < -0.24, 'momentum leaves the saddle faster')
+
+// Polynomial fit: capacity vs. generalization.
+close(predictPoly([1, 2, 3], 2), 17)
+const interpolating = fitPolynomial(polyTrainSet, 9, 0)
+assert.ok(msePoly(polyTrainSet, interpolating) < 1e-12, 'degree 9 interpolates 10 points')
+const valByDegree = Array.from({ length: 10 }, (_, d) =>
+  msePoly(polyValidationSet, fitPolynomial(polyTrainSet, d, 0)),
+)
+const bestDegree = valByDegree.indexOf(Math.min(...valByDegree))
+assert.ok(bestDegree >= 3 && bestDegree <= 6, `best degree ${bestDegree}`)
+assert.ok(valByDegree[9] > 10 * valByDegree[bestDegree], 'degree 9 overfits')
+assert.ok(valByDegree[1] > 2 * valByDegree[bestDegree], 'degree 1 underfits')
+const ridge = fitPolynomial(polyTrainSet, 9, 1e-3)
+assert.ok(msePoly(polyValidationSet, ridge) < valByDegree[9] / 10, 'L2 tames degree 9')
+assert.ok(msePoly(polyTrainSet, ridge) > msePoly(polyTrainSet, interpolating))
+const norm2 = (w: number[]) => w.slice(1).reduce((s, v) => s + v * v, 0)
+assert.ok(norm2(ridge) < norm2(interpolating) / 100, 'L2 shrinks the weights')
+// Ridge solution satisfies its normal equation: gradient of the penalised loss is zero.
+for (let k = 1; k <= 9; k++) {
+  const dk =
+    polyTrainSet.reduce((s, p) => s + 2 * (predictPoly(ridge, p.x) - p.y) * p.x ** k, 0) /
+      polyTrainSet.length +
+    2 * 1e-3 * ridge[k]
+  close(dk, 0, 1e-8)
+}
 
 assert.equal(noisySample(2, -0.7, 1), 2)
 assert.equal(noisySample(2, -0.7, 0), -0.7)
