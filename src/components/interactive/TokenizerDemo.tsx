@@ -19,19 +19,6 @@ const TOKEN_COLORS = [
 const LARGE_TEXT_THRESHOLD = 12000
 const TOKENIZE_DEBOUNCE_MS = 180
 
-const COPY = {
-  en: {
-    processing: 'Processing in worker...',
-    workerUnavailable: 'Tokenizer worker unavailable.',
-    encoding: 'Exact o200k_base encoding; other tokenizers can split differently.',
-  },
-  de: {
-    processing: 'Verarbeitung im Worker …',
-    workerUnavailable: 'Tokenizer-Worker nicht verfügbar.',
-    encoding: 'Exaktes o200k_base-Encoding; andere Tokenizer können anders aufteilen.',
-  },
-}
-
 type PreviewToken = { token: string; id: number }
 type WorkerResponse = { id: number; tokenCount: number; preview: PreviewToken[]; error?: string }
 
@@ -48,7 +35,7 @@ function formatToken(token: string): { display: string; isWhitespace: boolean; w
 
 export function TokenizerDemo() {
   const { t, locale } = useTranslation()
-  const c = COPY[locale === 'de' ? 'de' : 'en']
+  const c = t.tokenization.demo
   const [text, setText] = useState('The quick brown fox jumps over the lazy dog.')
   const [tokens, setTokens] = useState<PreviewToken[]>([])
   const [workerFailed, setWorkerFailed] = useState(false)
@@ -125,9 +112,9 @@ export function TokenizerDemo() {
     }
   }, [deferredText])
 
-  const charCount = text.length
+  const charCount = useMemo(() => Array.from(text).length, [text])
   const ratio = useMemo(() => {
-    return charCount > 0 ? (tokenCount / charCount).toFixed(2) : '0.00'
+    return tokenCount > 0 ? (charCount / tokenCount).toFixed(2) : '0.00'
   }, [charCount, tokenCount])
 
   const renderedTokenCount = tokens.length
@@ -143,8 +130,8 @@ export function TokenizerDemo() {
             <Type size={18} className="text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.enterText}</h3>
-            <p className="text-xs text-muted">{t.interactive.sampleText}</p>
+            <h3 className="font-semibold text-text font-heading">{c.enterText}</h3>
+            <p className="text-xs text-muted">{c.enterTextHint}</p>
           </div>
         </div>
 
@@ -152,8 +139,25 @@ export function TokenizerDemo() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="w-full h-32 bg-background border border-border rounded-xl p-4 text-text font-mono text-sm resize-none focus:outline-none focus:border-primary/50 transition-colors"
-          placeholder={t.interactive.enterText}
+          placeholder={c.enterText}
         />
+
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <span className="text-xs text-muted">{c.tryLabel}</span>
+          {c.samples.map((sample) => (
+            <button
+              key={sample.label}
+              onClick={() => setText(sample.text)}
+              className={`px-2.5 py-1 rounded-lg text-xs border transition-colors ${
+                text === sample.text
+                  ? 'bg-primary/20 text-primary-light border-primary/30'
+                  : 'bg-surface-elevated text-muted border-border hover:text-text'
+              }`}
+            >
+              {sample.label}
+            </button>
+          ))}
+        </div>
 
         <div className="mt-3 flex items-center gap-2 flex-wrap">
           <span className="px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono">
@@ -188,7 +192,7 @@ export function TokenizerDemo() {
               {tokenCount}
             </motion.div>
           )}
-          <p className="text-xs text-muted mt-1">{t.interactive.tokens}</p>
+          <p className="text-xs text-muted mt-1">{c.tokens}</p>
         </div>
         <div className="rounded-xl bg-surface border border-border p-4 text-center">
           <motion.div
@@ -199,7 +203,7 @@ export function TokenizerDemo() {
           >
             {charCount}
           </motion.div>
-          <p className="text-xs text-muted mt-1">{t.interactive.characters}</p>
+          <p className="text-xs text-muted mt-1">{c.characters}</p>
         </div>
         <div className="rounded-xl bg-surface border border-border p-4 text-center">
           {isBusy ? (
@@ -214,7 +218,7 @@ export function TokenizerDemo() {
               {ratio}
             </motion.div>
           )}
-          <p className="text-xs text-muted mt-1">{t.interactive.tokensPerChar}</p>
+          <p className="text-xs text-muted mt-1">{c.charsPerToken}</p>
         </div>
       </div>
 
@@ -225,8 +229,8 @@ export function TokenizerDemo() {
               <Hash size={18} className="text-cyan-400" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">{t.interactive.tokenBreakdown}</h3>
-              <p className="text-xs text-muted">{t.interactive.commonTokens}</p>
+              <h3 className="font-semibold text-text font-heading">{c.breakdown}</h3>
+              <p className="text-xs text-muted">{c.breakdownHint}</p>
             </div>
           </div>
           <button
@@ -237,7 +241,7 @@ export function TokenizerDemo() {
                 : 'bg-surface-elevated text-muted border border-border hover:text-text'
             }`}
           >
-            {showIdsOnly ? 'IDs Only' : 'Show Text'}
+            {showIdsOnly ? c.showText : c.idsOnly}
           </button>
         </div>
 
@@ -282,27 +286,29 @@ export function TokenizerDemo() {
 
         {(tokenCount > renderedTokenCount || isLargeText) && (
           <div className="mt-4 rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-muted">
-            Showing {renderedTokenCount.toLocaleString()} of {tokenCount.toLocaleString()} tokens to keep the page responsive.
-            {isLargeText && ' Large pasted texts are tokenized in a Web Worker and rendered as a capped preview.'}
+            {c.previewCapped
+              .replace('{shown}', renderedTokenCount.toLocaleString(locale))
+              .replace('{total}', tokenCount.toLocaleString(locale))}
+            {isLargeText && ` ${c.largeText}`}
           </div>
         )}
 
         <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-4 text-xs text-muted">
           <span className="flex items-center gap-1.5">
             <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">·</span>
-            <span>space</span>
+            <span>{c.legendSpace}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">↵</span>
-            <span>newline</span>
+            <span>{c.legendNewline}</span>
           </span>
           <span className="flex items-center gap-1.5">
             <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded">→</span>
-            <span>tab</span>
+            <span>{c.legendTab}</span>
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">·</span><span className="font-mono">word</span>
-            <span>leading space</span>
+            <span className="font-mono bg-white/10 px-1.5 py-0.5 rounded text-white/40">·</span><span className="font-mono">{c.legendWord}</span>
+            <span>{c.legendLeading}</span>
           </span>
         </div>
       </div>
@@ -311,8 +317,7 @@ export function TokenizerDemo() {
         <div className="flex items-start gap-3">
           <Zap size={18} className="text-primary-light shrink-0 mt-0.5" />
           <div className="text-sm text-muted">
-            <p className="mb-2">{t.interactive.commonTokens}</p>
-            <p>{t.interactive.rareTokens}</p>
+            <p>{c.tip}</p>
           </div>
         </div>
       </div>

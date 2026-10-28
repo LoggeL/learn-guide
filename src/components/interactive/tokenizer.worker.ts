@@ -19,7 +19,9 @@ self.onmessage = (event: MessageEvent<TokenizeRequest>) => {
   const { id, text } = event.data
 
   try {
-    const tokenIds = encoding.encode(text)
+    // Treat special-token strings like "<|endoftext|>" as ordinary text,
+    // the way a correctly configured chat API handles user input.
+    const tokenIds = encoding.encode(text, [], [])
     const preview = tokenIds.slice(0, MAX_PREVIEW_TOKENS).map((tokenId) => ({
       token: encoding.decode([tokenId]),
       id: tokenId,
