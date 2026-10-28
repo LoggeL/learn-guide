@@ -1,39 +1,87 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from '@/lib/i18n/context'
 
-const stages = {
-  en: [
-    ['Collect data', 'Record provenance, version, licences and intended use. Public accessibility alone is not permission for every use.', 'Output: an auditable source inventory.'],
-    ['Clean and split', 'Remove exact and near duplicates, assess quality, handle personal data and prevent evaluation contamination.', 'Output: documented training and evaluation splits.'],
-    ['Tokenize', 'Choose or train an encoding, tokenize text and pack sequences. BPE and Unigram are algorithms; SentencePiece is a toolkit that supports them.', 'Output: token sequences and a fixed tokenizer version.'],
-    ['Pretrain', 'Optimize next-token loss, or a specified variant, on the training mixture. Save checkpoints and evaluate held-out performance.', 'Cost drivers: model architecture, training tokens, sequence length, hardware and utilization.'],
-    ['Supervised fine-tuning', 'Train on curated instruction-response pairs. Human-written and synthetic examples both need quality checks.', 'Output: a model adapted to a defined interaction format and task distribution.'],
-    ['Preference or reward optimization', 'DPO uses preference pairs directly. PPO and GRPO optimize rewards; GRPO removes a separate value model, not the need for a reward signal.', 'Cost drivers: rollout length and count, reward generation, policy updates and any auxiliary models.'],
-    ['Evaluate and revise', 'Test capabilities, regressions and failure modes throughout the process. Keep evaluation data distinct from training.', 'Output: measured results with task definitions, baselines and uncertainty.'],
-    ['Prepare deployment', 'Choose serving precision, batching and caching. Measure latency, throughput and quality on the intended workload.', 'Output: a deployable configuration with an evaluation report.'],
-  ],
-  de: [
-    ['Daten sammeln', 'Herkunft, Version, Lizenzen und beabsichtigte Nutzung dokumentieren. Öffentliche Erreichbarkeit erlaubt nicht automatisch jede Nutzung.', 'Ergebnis: ein prüfbares Quelleninventar.'],
-    ['Bereinigen und aufteilen', 'Exakte und ähnliche Duplikate entfernen, Qualität prüfen, personenbezogene Daten behandeln und Evaluation von Training trennen.', 'Ergebnis: dokumentierte Trainings- und Evaluationsaufteilungen.'],
-    ['Tokenisieren', 'Ein Encoding wählen oder trainieren, Text tokenisieren und Sequenzen packen. BPE und Unigram sind Algorithmen; SentencePiece ist ein Toolkit, das sie unterstützt.', 'Ergebnis: Token-Sequenzen und eine feste Tokenizer-Version.'],
-    ['Vortrainieren', 'Next-Token-Loss oder eine benannte Variante auf der Datenmischung optimieren. Checkpoints speichern und auf zurückgehaltenen Daten evaluieren.', 'Kostentreiber: Architektur, Trainings-Tokens, Sequenzlänge, Hardware und Auslastung.'],
-    ['Supervised Fine-Tuning', 'Mit kuratierten Instruktions-Antwort-Paaren trainieren. Menschliche und synthetische Beispiele benötigen Qualitätskontrollen.', 'Ergebnis: Anpassung an ein definiertes Interaktionsformat und eine Aufgabenverteilung.'],
-    ['Präferenzen oder Rewards optimieren', 'DPO nutzt Präferenzpaare direkt. PPO und GRPO optimieren Rewards; GRPO spart ein separates Value-Modell, nicht das Reward-Signal.', 'Kostentreiber: Länge und Zahl der Rollouts, Reward-Erzeugung, Policy-Updates und zusätzliche Modelle.'],
-    ['Evaluieren und überarbeiten', 'Fähigkeiten, Regressionen und Fehlermuster während des gesamten Prozesses prüfen. Evaluationsdaten getrennt halten.', 'Ergebnis: Messwerte mit Aufgabendefinitionen, Vergleichsbasis und Unsicherheit.'],
-    ['Deployment vorbereiten', 'Präzision, Batching und Caching wählen. Latenz, Durchsatz und Qualität auf der vorgesehenen Arbeitslast messen.', 'Ergebnis: eine ausführbare Konfiguration mit Evaluationsbericht.'],
-  ],
+const STAGES = ['pretrain', 'mid', 'sft', 'pref', 'rlvr'] as const
+type StageId = (typeof STAGES)[number]
+
+const ACCENT: Record<StageId, { border: string; soft: string; text: string; bg: string }> = {
+  pretrain: { border: 'border-blue-400', soft: 'border-blue-400/40', text: 'text-blue-300', bg: 'bg-blue-500/10' },
+  mid: { border: 'border-cyan-400', soft: 'border-cyan-400/40', text: 'text-cyan-300', bg: 'bg-cyan-500/10' },
+  sft: { border: 'border-emerald-400', soft: 'border-emerald-400/40', text: 'text-emerald-300', bg: 'bg-emerald-500/10' },
+  pref: { border: 'border-purple-400', soft: 'border-purple-400/40', text: 'text-purple-300', bg: 'bg-purple-500/10' },
+  rlvr: { border: 'border-orange-400', soft: 'border-orange-400/40', text: 'text-orange-300', bg: 'bg-orange-500/10' },
 }
+
 export function TrainingPipelineVisualizer() {
-  const { locale } = useLocale()
-  const de = locale === 'de'
-  const items = stages[de ? 'de' : 'en']
-  const [selected, setSelected] = useState(0)
-  return <div className="space-y-5">
-    <h3 className="text-xl font-semibold">{de ? 'Eine mögliche Trainingspipeline' : 'One possible training pipeline'}</h3>
-    <p className="text-sm text-muted">{de ? 'Stufe auswählen. Nicht jede Entwicklung nutzt alle Schritte oder dieselbe Reihenfolge. Kosten und Dauer lassen sich ohne konkretes Modell, Datenbudget und Hardware nicht seriös als pauschale Zahl angeben.' : 'Select a stage. Projects do not all use every stage or the same order. Cost and duration require a concrete model, data budget and hardware configuration.'}</p>
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-4">{items.map(([name], i) => <button key={name} type="button" aria-pressed={selected === i} className={`rounded-xl border p-4 text-left text-sm ${selected === i ? 'border-cyan-400 bg-cyan-500/10 text-cyan-200' : 'border-border bg-surface'}`} onClick={() => setSelected(i)}><span className="mb-2 block font-mono text-muted">{i + 1}</span>{name}</button>)}</div>
-    <div className="space-y-3 rounded-xl border border-border bg-surface p-5"><h4 className="font-semibold">{items[selected][0]}</h4><p className="text-sm leading-relaxed text-muted">{items[selected][1]}</p><p className="text-sm text-cyan-300">{items[selected][2]}</p></div>
-  </div>
+  const { t } = useTranslation()
+  const tr = t.llmTraining
+  const [selected, setSelected] = useState<StageId>('pretrain')
+  const stage = tr.stages[selected]
+  const accent = ACCENT[selected]
+
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center gap-2">
+        {STAGES.map((id, i) => (
+          <div key={id} className="flex items-center gap-2">
+            {i > 0 && <span className="text-muted" aria-hidden="true">→</span>}
+            <button
+              type="button"
+              aria-pressed={selected === id}
+              onClick={() => setSelected(id)}
+              className={`rounded-xl border px-3 py-2 text-sm transition-colors ${
+                selected === id ? `${ACCENT[id].border} ${ACCENT[id].bg} ${ACCENT[id].text}` : 'border-border bg-surface text-muted hover:text-text'
+              }`}
+            >
+              <span className="mr-1.5 font-mono text-xs opacity-70">{i + 1}</span>
+              {tr.stages[id].name}
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selected}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+          className="grid gap-4 lg:grid-cols-2"
+        >
+          <dl className="space-y-3 rounded-xl border border-border bg-surface p-5 text-sm">
+            {[
+              [tr.pipelineObjective, stage.objective],
+              [tr.pipelineData, stage.data],
+              [tr.pipelineScale, stage.scale],
+            ].map(([label, value]) => (
+              <div key={label}>
+                <dt className={`text-xs font-bold uppercase tracking-wide ${accent.text}`}>{label}</dt>
+                <dd className="mt-1 leading-relaxed text-muted">{value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className={`space-y-3 rounded-xl border ${accent.soft} ${accent.bg} p-5`}>
+            <div className="text-xs font-bold uppercase tracking-wide text-muted">{tr.pipelinePrompt}</div>
+            <div className="rounded-lg bg-background/70 px-3 py-2 font-mono text-sm text-text">{tr.pipelinePromptText}</div>
+            <div className="text-xs font-bold uppercase tracking-wide text-muted">{tr.pipelineOutput}</div>
+            <motion.div
+              key={`${selected}-out`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className={`rounded-lg bg-background/70 px-3 py-2 font-mono text-sm ${accent.text}`}
+            >
+              {stage.output}
+            </motion.div>
+            <div className="text-xs font-bold uppercase tracking-wide text-muted">{tr.pipelineWhy}</div>
+            <p className="text-sm leading-relaxed text-muted">{stage.note}</p>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  )
 }
