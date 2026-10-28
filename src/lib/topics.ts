@@ -28,7 +28,7 @@ export const topics: Topic[] = [
             name: 'Getting Started',
             path: '/ai/getting-started',
             difficulty: 'beginner',
-            lastUpdated: '2026-09-13',
+            lastUpdated: '2026-10-29',
           },
         ],
       },
