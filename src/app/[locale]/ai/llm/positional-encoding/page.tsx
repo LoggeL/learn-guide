@@ -1,98 +1,53 @@
 'use client'
 
-import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
+import Link from 'next/link'
+import type { ReactNode } from 'react'
+import { ArrowRight, CheckCircle2, ExternalLink } from 'lucide-react'
 import { PositionalEncodingRopeVisualizer } from '@/components/interactive/PositionalEncodingRopeVisualizer'
+import { RopeScalingVisualizer } from '@/components/interactive/RopeScalingVisualizer'
 import { TopicLayout } from '@/components/layout/TopicLayout'
+import { LatexBlock } from '@/components/ui/Latex'
 import { useTranslation } from '@/lib/i18n/context'
 
-const copy = {
-  en: {
-    title: 'Positional Encoding & RoPE',
-    description: 'How transformer LLMs know token order, why RoPE is common, and why long context can still miss the middle.',
-    crumb: 'Positional Encoding',
-    prev: 'Embeddings',
-    next: 'Attention Mechanism',
-    sections: [
-      {
-        title: 'Why position has to be added',
-        body: 'Self-attention sees token vectors, but order is not built in. Without a position signal, the model has no direct way to distinguish “dog bites man” from “man bites dog”.',
-        bullets: [
-      'Early transformers added fixed sinusoidal patterns to token embeddings.',
-      'Learned absolute position embeddings assign a learned vector to each slot.',
-      'Both approaches give order information, but long-context generalization can be fragile.'
-    ],
-      },
-      {
-        title: 'RoPE in modern LLMs',
-        body: 'Rotary Position Embeddings rotate parts of the query and key vectors by an angle based on position. When attention compares two tokens, relative distance is encoded in the rotation difference.',
-        bullets: [
-      'RoPE is common in LLaMA-, Mistral-, Gemma-, and Qwen-style models.',
-      'It does not add a separate learned vector for every absolute position.',
-      'Long-context models often extend RoPE with scaling or interpolation tricks.'
-    ],
-      },
-      {
-        title: 'Lost in the middle',
-        body: 'More context length does not mean perfect recall. Models often use information near the beginning or end of a prompt more reliably than information buried in the middle.',
-        bullets: [
-      'Position encodings, attention patterns, training mix, and prompt structure all matter.',
-      'Important facts should be placed clearly and retrieved or verified when stakes are high.'
-    ],
-      }
-    ],
-    takeawaysTitle: 'Key Takeaways',
-    takeaways: [
-      'Transformers need explicit position information; self-attention alone is order-agnostic.',
-      'RoPE encodes relative distance through rotations in Q/K space.',
-      'Long context improves capacity, not guaranteed recall or reasoning.'
-    ],
-  },
-  de: {
-    title: 'Positionskodierung & RoPE',
-    description: 'Wie Transformer-LLMs Token-Reihenfolge erkennen, warum RoPE üblich ist und warum langer Kontext trotzdem die Mitte verlieren kann.',
-    crumb: 'Positionskodierung',
-    prev: 'Einbettungen',
-    next: 'Attention-Mechanismus',
-    sections: [
-      {
-        title: 'Warum Position extra rein muss',
-        body: 'Self-Attention sieht Token-Vektoren, aber Reihenfolge ist nicht eingebaut. Ohne Positionssignal kann das Modell nicht direkt unterscheiden, ob “Hund beißt Mann” oder “Mann beißt Hund” gemeint ist.',
-        bullets: [
-      'Frühe Transformer addierten feste Sinus-/Cosinus-Muster zu Embeddings.',
-      'Gelernte absolute Positionen geben jedem Slot einen eigenen Vektor.',
-      'Beides hilft, aber lange Kontexte generalisieren damit nicht automatisch sauber.'
-    ],
-      },
-      {
-        title: 'RoPE in modernen LLMs',
-        body: 'Rotary Position Embeddings drehen Teile der Query- und Key-Vektoren abhängig von der Position. Beim Attention-Vergleich steckt die relative Entfernung dann in der Rotationsdifferenz.',
-        bullets: [
-      'RoPE steckt in vielen LLaMA-, Mistral-, Gemma- und Qwen-artigen Modellen.',
-      'Es braucht keinen separaten gelernten Vektor für jede absolute Position.',
-      'Long-Context-Modelle nutzen oft RoPE-Scaling oder Interpolation.'
-    ],
-      },
-      {
-        title: 'Lost in the middle',
-        body: 'Mehr Kontext heißt nicht perfekte Erinnerung. Modelle nutzen Informationen am Anfang und Ende eines Prompts oft zuverlässiger als Informationen in der Mitte.',
-        bullets: [
-      'Positionskodierung, Attention-Muster, Trainingsmix und Prompt-Struktur spielen zusammen.',
-      'Wichtige Fakten sollten klar platziert und bei Bedarf retrieved oder validiert werden.'
-    ],
-      }
-    ],
-    takeawaysTitle: 'Kernaussagen',
-    takeaways: [
-      'Transformer brauchen explizite Positionsinformation; Self-Attention allein kennt keine Reihenfolge.',
-      'RoPE kodiert relative Distanz über Rotationen im Query/Key-Raum.',
-      'Langer Kontext erhöht Kapazität, garantiert aber kein zuverlässiges Erinnern oder Reasoning.'
-    ],
-  },
+const FORMULAS = {
+  permutation: '\\mathrm{Attn}(PX) = P\\,\\mathrm{Attn}(X)',
+  sinusoid: 'PE_{(pos,\\,2i)} = \\sin\\!\\left(\\frac{pos}{10000^{2i/d}}\\right), \\qquad PE_{(pos,\\,2i+1)} = \\cos\\!\\left(\\frac{pos}{10000^{2i/d}}\\right)',
+  rope: '\\begin{pmatrix} q\'_{2i} \\\\ q\'_{2i+1} \\end{pmatrix} = \\begin{pmatrix} \\cos m\\theta_i & -\\sin m\\theta_i \\\\ \\sin m\\theta_i & \\cos m\\theta_i \\end{pmatrix} \\begin{pmatrix} q_{2i} \\\\ q_{2i+1} \\end{pmatrix}, \\qquad \\theta_i = b^{-2i/d},\\; i = 0, \\dots, \\tfrac{d}{2} - 1',
+  relative: '(R_m\\, q)^{\\top} (R_n\\, k) = q^{\\top} R_m^{\\top} R_n\\, k = q^{\\top} R_{n-m}\\, k',
+  complex: '\\mathrm{score}(m, n) = \\mathrm{Re}\\Big[\\sum_{i=0}^{d/2-1} q_i\\, \\overline{k_i}\\; e^{\\,\\mathrm{i}\\,(m-n)\\,\\theta_i}\\Big]',
+  wavelength: '\\lambda_i = \\frac{2\\pi}{\\theta_i} = 2\\pi\\, b^{2i/d}',
+  alibi: '\\mathrm{score}_h(i, j) = \\frac{q_i^{\\top} k_j}{\\sqrt{d_h}} - m_h\\,(i - j), \\qquad m_h = 2^{-8h/H},\\; h = 1, \\dots, H',
+  pi: '\\theta_i\' = \\frac{\\theta_i}{s} \\quad\\Longleftrightarrow\\quad m \\mapsto \\frac{m}{s}',
+  ntk: "b' = b \\cdot s^{\\,d/(d-2)}",
+  yarn: "\\theta_i' = \\big(1 - \\gamma(r_i)\\big)\\,\\frac{\\theta_i}{s} + \\gamma(r_i)\\,\\theta_i, \\qquad r_i = \\frac{L}{\\lambda_i}, \\qquad \\sqrt{1/t} = 0.1 \\ln s + 1",
+}
+
+function Card({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="rounded-2xl border border-border bg-surface/55 p-6 md:p-8">
+      <h2 className="mb-4 font-heading text-2xl font-bold text-text">{title}</h2>
+      <div className="space-y-4 leading-relaxed text-muted">{children}</div>
+    </section>
+  )
+}
+
+function Formula({ children }: { children: string }) {
+  return <LatexBlock className="overflow-x-auto rounded-xl border border-border bg-background/60 px-4 py-1 text-text">{children}</LatexBlock>
+}
+
+function Method({ title, formula, children }: { title: string; formula?: string; children: ReactNode }) {
+  return (
+    <article className="rounded-xl border border-border bg-background/40 p-5">
+      <h3 className="mb-2 font-heading text-lg font-bold text-text">{title}</h3>
+      {formula && <Formula>{formula}</Formula>}
+      <div className="mt-3 space-y-3 text-sm leading-relaxed text-muted">{children}</div>
+    </article>
+  )
 }
 
 export default function PositionalEncodingPage() {
   const { t, locale } = useTranslation()
-  const c = locale === 'de' ? copy.de : copy.en
+  const c = t.positionalEncoding
 
   return (
     <TopicLayout
@@ -104,43 +59,80 @@ export default function PositionalEncodingPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: c.crumb },
       ]}
-      prevTopic={{ label: c.prev, href: '/ai/llm/embeddings' }}
-      nextTopic={{ label: c.next, href: '/ai/llm/attention' }}
     >
-      <section className="rounded-2xl border border-border bg-surface/50 p-6 md:p-8">
-        <div className="mb-5 flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-primary/30 bg-primary/15">
-            <Cpu size={21} className="text-primary-light" />
-          </div>
-          <h2 className="font-heading text-2xl font-bold text-gradient">{c.title}</h2>
-        </div>
-        <p className="text-lg leading-relaxed text-muted">{c.description}</p>
-      </section>
+      <Card title={c.orderTitle}>
+        <p>{c.orderBody}</p>
+        <Formula>{FORMULAS.permutation}</Formula>
+        <p>{c.orderCausal}</p>
+      </Card>
+
+      <Card title={c.absoluteTitle}>
+        <p>{c.absoluteBody}</p>
+        <Formula>{FORMULAS.sinusoid}</Formula>
+        <p>{c.absoluteLearned}</p>
+      </Card>
+
+      <Card title={c.ropeTitle}>
+        <p>{c.ropeBody}</p>
+        <Formula>{FORMULAS.rope}</Formula>
+        <p>{c.ropeFreq}</p>
+        <p className="text-sm text-subtle">{c.ropeImpl}</p>
+      </Card>
+
+      <Card title={c.relativeTitle}>
+        <p>{c.relativeBody}</p>
+        <Formula>{FORMULAS.relative}</Formula>
+        <p>{c.relativeComplex}</p>
+        <Formula>{FORMULAS.complex}</Formula>
+        <p>{c.relativeConsequence}</p>
+      </Card>
+
+      <Card title={c.frequenciesTitle}>
+        <p>{c.frequenciesBody}</p>
+        <Formula>{FORMULAS.wavelength}</Formula>
+        <p>{c.frequenciesNumbers}</p>
+        <p>{c.frequenciesResearch}</p>
+      </Card>
 
       <PositionalEncodingRopeVisualizer />
 
       <section className="grid gap-4 md:grid-cols-2">
-        {c.sections.map((section, index) => (
-          <article key={section.title} className="rounded-2xl border border-border bg-surface/55 p-6">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-cyan-500/25 bg-cyan-500/10">
-                {index % 3 === 0 ? <Layers size={18} className="text-cyan-300" /> : index % 3 === 1 ? <Zap size={18} className="text-amber-300" /> : <Cpu size={18} className="text-violet-300" />}
-              </div>
-              <h3 className="font-heading text-xl font-bold text-text">{section.title}</h3>
-            </div>
-            <p className="mb-4 leading-relaxed text-muted">{section.body}</p>
-            {section.bullets.length > 0 && (
-              <ul className="space-y-2">
-                {section.bullets.map((item) => (
-                  <li key={item} className="flex gap-2 text-sm text-muted">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-300" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </article>
-        ))}
+        <Method title={c.alibiTitle} formula={FORMULAS.alibi}>
+          <p>{c.alibiBody}</p>
+          <p>{c.alibiSlopes}</p>
+        </Method>
+        <Method title={c.nopeTitle}>
+          <p>{c.nopeBody}</p>
+          <p>{c.nopeMixed}</p>
+        </Method>
+      </section>
+
+      <Card title={c.extendTitle}>
+        <p>{c.extendBody}</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Method title={c.piTitle} formula={FORMULAS.pi}>
+            <p>{c.piBody}</p>
+          </Method>
+          <Method title={c.ntkTitle} formula={FORMULAS.ntk}>
+            <p>{c.ntkBody}</p>
+          </Method>
+          <Method title={c.yarnTitle} formula={FORMULAS.yarn}>
+            <p>{c.yarnBody}</p>
+            <p>{c.yarnUsage}</p>
+          </Method>
+          <Method title={c.baseTitle}>
+            <p>{c.baseBody}</p>
+          </Method>
+        </div>
+      </Card>
+
+      <RopeScalingVisualizer />
+
+      <section className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6">
+        <p className="leading-relaxed text-muted">{c.extendCaveat}</p>
+        <Link href={`/${locale}/ai/llm/context-rot`} className="mt-3 inline-flex items-center gap-2 font-semibold text-cyan-300 hover:text-cyan-200">
+          {c.contextRotLink} <ArrowRight size={16} />
+        </Link>
       </section>
 
       <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 md:p-8">
@@ -150,6 +142,20 @@ export default function PositionalEncodingPage() {
             <li key={item} className="flex gap-3 text-muted">
               <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-emerald-300" />
               <span className="leading-relaxed">{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="rounded-2xl border border-border bg-surface/55 p-6 md:p-8">
+        <h2 className="mb-4 font-heading text-xl font-bold text-text">{c.sourcesTitle}</h2>
+        <ul className="space-y-2 text-sm">
+          {c.sources.map((source) => (
+            <li key={source.url}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-start gap-2 text-cyan-300 hover:text-cyan-200">
+                <ExternalLink size={14} className="mt-0.5 shrink-0" />
+                <span>{source.label}</span>
+              </a>
             </li>
           ))}
         </ul>
