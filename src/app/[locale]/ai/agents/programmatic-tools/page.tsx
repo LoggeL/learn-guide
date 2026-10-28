@@ -15,8 +15,6 @@ export default function ProgrammaticToolCallingPage() {
         { label: t.categories.agents, href: '/ai/agents' },
         { label: t.programmaticTools.title },
       ]}
-      prevTopic={{ label: t.topicNames['tool-design'], href: '/ai/agents/tool-design' }}
-      nextTopic={{ label: t.topicNames.memory, href: '/ai/agents/memory' }}
     >
       {/* What is Programmatic Tool Calling */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -108,7 +106,8 @@ export default function ProgrammaticToolCallingPage() {
         </div>
       </section>
 
-<p className="text-sm text-muted leading-relaxed">{t.agentReview.ptcControl}</p>
+      <p className="text-sm text-muted leading-relaxed">{t.programmaticTools.controlNote}</p>
+
       {/* Code Example */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.programmaticTools.codeExample}</h2>
@@ -122,8 +121,10 @@ regions = ["West", "East", "Central"]
 results = {}
 
 for region in regions:
+    # Parameterized query: the value travels separately from the SQL text
     raw = await query_database({
-        "sql": f"SELECT SUM(revenue) AS total FROM sales WHERE region='{region}'"
+        "sql": "SELECT SUM(revenue) AS total FROM sales WHERE region = ?",
+        "params": [region],
     })
     rows = json.loads(raw)
     results[region] = rows[0]["total"] or 0
@@ -165,7 +166,7 @@ print(json.dumps({
         <p className="text-sm text-muted/80 italic mb-6">
           {t.programmaticTools.allowedCallersNote}
         </p>
-<p className="text-sm text-muted leading-relaxed">{t.agentReview.ptcBoundary}</p>
+        <p className="text-sm text-muted leading-relaxed mb-4">{t.programmaticTools.boundaryNote}</p>
         <pre className="whitespace-pre-wrap break-words text-xs bg-background rounded p-3 mb-4">{JSON.stringify({type:'code_execution_20260120',name:'code_execution'},null,2)}</pre>
         <div className="grid md:grid-cols-3 gap-4">
           <div className="p-4 bg-background rounded-xl border border-border">
@@ -203,6 +204,26 @@ print(json.dumps({
         </div>
       </section>
 
+      {/* Constraints */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{t.programmaticTools.limitsTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{t.programmaticTools.limitsDesc}</p>
+        <ul className="space-y-3">
+          {[
+            { label: t.programmaticTools.limitStrict, desc: t.programmaticTools.limitStrictDesc },
+            { label: t.programmaticTools.limitToolChoice, desc: t.programmaticTools.limitToolChoiceDesc },
+            { label: t.programmaticTools.limitParallel, desc: t.programmaticTools.limitParallelDesc },
+            { label: t.programmaticTools.limitMcp, desc: t.programmaticTools.limitMcpDesc },
+            { label: t.programmaticTools.limitResults, desc: t.programmaticTools.limitResultsDesc },
+          ].map((item) => (
+            <li key={item.label} className="p-4 bg-background rounded-xl border border-border">
+              <h3 className="text-sm font-bold text-text mb-1">{item.label}</h3>
+              <p className="text-sm text-muted leading-relaxed">{item.desc}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       {/* Key Takeaways */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.programmaticTools.keyTakeaways}</h2>
@@ -213,7 +234,6 @@ print(json.dumps({
               t.programmaticTools.takeaway2,
               t.programmaticTools.takeaway3,
               t.programmaticTools.takeaway4,
-              t.programmaticTools.takeaway5,
             ].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
@@ -225,7 +245,22 @@ print(json.dumps({
           </ul>
         </div>
       </section>
-<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling">Anthropic: Programmatic tool calling</a></li></ul></section>
+
+      <section className="border-t border-border pt-5">
+        <h2 className="font-semibold mb-3">{t.programmaticTools.sources}</h2>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a className="text-primary-light underline" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling">
+              {t.programmaticTools.sourceDocs}
+            </a>
+          </li>
+          <li>
+            <a className="text-primary-light underline" href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/programmatic-tool-calling#constraints-and-limitations">
+              {t.programmaticTools.sourceLimits}
+            </a>
+          </li>
+        </ul>
+      </section>
     </TopicLayout>
   )
 }
