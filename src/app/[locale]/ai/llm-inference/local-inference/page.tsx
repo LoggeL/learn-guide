@@ -1,16 +1,37 @@
 'use client'
 
-import { TopicLayout } from '@/components/layout/TopicLayout'
-import { LocalInferenceVisualizer } from '@/components/interactive'
-import { useTranslation } from '@/lib/i18n/context'
 import Link from 'next/link'
+import { TopicLayout } from '@/components/layout/TopicLayout'
+import { LocalInferenceVisualizer } from '@/components/interactive/LocalInferenceVisualizer'
+import { useTranslation } from '@/lib/i18n/context'
+
+const QUICKSTART = [
+  { cmd: 'ollama run gpt-oss:20b', key: 'qsCmdRun' },
+  { cmd: 'ollama run gpt-oss:20b --verbose', key: 'qsCmdVerbose' },
+  { cmd: 'ollama ps', key: 'qsCmdPs' },
+  {
+    cmd: `curl http://localhost:11434/v1/chat/completions \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "gpt-oss:20b", "messages": [{"role": "user", "content": "Hi"}]}'`,
+    key: 'qsCmdApi',
+  },
+] as const
 
 export default function LocalInferencePage() {
   const { t } = useTranslation()
   const li = t.localInference
 
+  const tools = [
+    { name: 'Ollama', desc: li.toolOllama, goodFor: li.toolOllamaFor, url: 'https://docs.ollama.com/', color: 'cyan' },
+    { name: 'LM Studio', desc: li.toolLmStudio, goodFor: li.toolLmStudioFor, url: 'https://lmstudio.ai/docs', color: 'purple' },
+    { name: 'llama.cpp', desc: li.toolLlamaCpp, goodFor: li.toolLlamaCppFor, url: 'https://github.com/ggml-org/llama.cpp', color: 'emerald' },
+    { name: 'MLX / mlx-lm', desc: li.toolMlx, goodFor: li.toolMlxFor, url: 'https://github.com/ml-explore/mlx-lm', color: 'orange' },
+    { name: 'vLLM', desc: li.toolVllm, goodFor: li.toolVllmFor, url: 'https://docs.vllm.ai/', color: 'pink' },
+  ]
+
   return (
-    <TopicLayout topicId="local-inference"
+    <TopicLayout
+      topicId="local-inference"
       title={li.title}
       description={li.description}
       breadcrumbs={[
@@ -18,10 +39,8 @@ export default function LocalInferencePage() {
         { label: t.categories.llmInference, href: '/ai/llm-inference' },
         { label: li.title },
       ]}
-      prevTopic={{ label: t.topicNames['batching'], href: '/ai/llm-inference/batching' }}
-      nextTopic={{ label: t.topicNames['vram-calc'], href: '/ai/llm-inference/vram-calc' }}
     >
-      {/* 1. Why Run Locally? */}
+      {/* 1. Why run locally, and the trade-off */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.whyTitle}</h2>
         <p className="text-muted leading-relaxed text-lg mb-6">{li.whyDesc}</p>
@@ -30,9 +49,8 @@ export default function LocalInferencePage() {
             { title: li.whyPrivacy, desc: li.whyPrivacyDesc, color: 'emerald' },
             { title: li.whyCost, desc: li.whyCostDesc, color: 'cyan' },
             { title: li.whyOffline, desc: li.whyOfflineDesc, color: 'purple' },
-            { title: li.whyCustom, desc: li.whyCustomDesc, color: 'orange' },
-            { title: li.whyLearning, desc: li.whyLearningDesc, color: 'pink' },
             { title: li.whyControl, desc: li.whyControlDesc, color: 'amber' },
+            { title: li.whyLimits, desc: li.whyLimitsDesc, color: 'orange' },
           ].map((item) => (
             <div key={item.title} className={`p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
               <h3 className={`text-${item.color}-400 font-semibold font-heading mb-2`}>{item.title}</h3>
@@ -42,24 +60,53 @@ export default function LocalInferencePage() {
         </div>
       </section>
 
-      {/* 2. Hardware Requirements — Interactive Visualizer */}
+      {/* 2. Capacity and bandwidth */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.hardwareTitle}</h2>
-        <p className="text-muted mb-6">{li.hardwareDesc}</p>
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <LocalInferenceVisualizer section="hardware" t={li as unknown as Record<string, string>} />
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.coreTitle}</h2>
+        <div className="space-y-4 text-muted leading-relaxed">
+          <p>{li.coreCapacity}</p>
+          <p>{li.coreBandwidth}</p>
+        </div>
+        <div className="my-6 rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-5 text-center font-mono text-cyan-300">
+          {li.coreFormula}
+        </div>
+        <p className="text-muted leading-relaxed">{li.coreExample}</p>
+        <h3 className="mt-8 mb-3 font-semibold font-heading text-text">{li.unifiedTitle}</h3>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-border bg-surface/50 p-5">
+            <p className="text-sm leading-relaxed text-muted">{li.unifiedGpu}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-surface/50 p-5">
+            <p className="text-sm leading-relaxed text-muted">{li.unifiedShared}</p>
+          </div>
         </div>
       </section>
 
-      {/* 2.5. MoE Advantage */}
+      {/* 3. Hardware × model demo, using the VRAM calculator's formulas */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.hwDemoTitle}</h2>
+        <p className="text-muted mb-6">{li.hwDemoDesc}</p>
+        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          <LocalInferenceVisualizer section="hardware" />
+        </div>
+        <Link
+          href="/ai/llm-inference/vram-calc"
+          className="mt-4 block p-5 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 hover:border-violet-500/40 transition-colors group"
+        >
+          <h3 className="text-violet-400 font-semibold font-heading group-hover:text-violet-300">{li.vramCalcLink} &rarr;</h3>
+          <p className="text-muted text-sm">{li.vramCalcLinkDesc}</p>
+        </Link>
+      </section>
+
+      {/* 4. MoE */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.moeTitle}</h2>
         <p className="text-muted mb-4 leading-relaxed text-lg">{li.moeDesc}</p>
         <div className="grid sm:grid-cols-3 gap-4 mb-6">
           {[
             { title: li.moeBenefit1, desc: li.moeBenefit1Desc, color: 'cyan' },
-            { title: li.moeBenefit2, desc: li.moeBenefit2Desc, color: 'emerald' },
-            { title: li.moeBenefit3, desc: li.moeBenefit3Desc, color: 'purple' },
+            { title: li.moeBenefit2, desc: li.moeBenefit2Desc, color: 'purple' },
+            { title: li.moeBenefit3, desc: li.moeBenefit3Desc, color: 'emerald' },
           ].map((item) => (
             <div key={item.title} className={`p-5 rounded-xl bg-${item.color}-500/5 border border-${item.color}-500/20`}>
               <h3 className={`text-${item.color}-400 font-semibold font-heading mb-2`}>{item.title}</h3>
@@ -68,7 +115,7 @@ export default function LocalInferencePage() {
           ))}
         </div>
         <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <LocalInferenceVisualizer section="moe" t={li as unknown as Record<string, string>} />
+          <LocalInferenceVisualizer section="moe" />
         </div>
         <div className="mt-4 p-5 rounded-xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20">
           <p className="text-text leading-relaxed mb-3">{li.moeLinkDesc}</p>
@@ -78,16 +125,7 @@ export default function LocalInferencePage() {
         </div>
       </section>
 
-      {/* 3. Popular Tools */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.toolsTitle}</h2>
-        <p className="text-muted mb-6">{li.toolsDesc}</p>
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <LocalInferenceVisualizer section="tools" t={li as unknown as Record<string, string>} />
-        </div>
-      </section>
-
-      {/* 4. Quantization Tradeoff */}
+      {/* 5. Quantization */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.quantTitle}</h2>
         <p className="text-muted leading-relaxed text-lg mb-4">{li.quantDesc}</p>
@@ -99,20 +137,30 @@ export default function LocalInferencePage() {
         </div>
       </section>
 
-      {/* 4.5 VRAM Calculator Link */}
+      {/* 6. Runtimes */}
       <section>
-        <Link href="/ai/llm-inference/vram-calc" className="block p-5 rounded-xl bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 border border-violet-500/20 hover:border-violet-500/40 transition-colors group">
-          <div className="flex items-center gap-3">
-            <span className="text-2xl">🧮</span>
-            <div>
-              <h3 className="text-violet-400 font-semibold font-heading group-hover:text-violet-300">{li.vramCalcLink} &rarr;</h3>
-              <p className="text-muted text-sm">{li.vramCalcLinkDesc}</p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.toolsTitle}</h2>
+        <p className="text-muted mb-6">{li.toolsDesc}</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          {tools.map((tool) => (
+            <div key={tool.name} className={`flex flex-col rounded-xl border border-${tool.color}-500/20 bg-${tool.color}-500/5 p-5`}>
+              <h3 className={`mb-2 font-semibold font-heading text-${tool.color}-400`}>{tool.name}</h3>
+              <p className="flex-1 text-sm leading-relaxed text-muted">{tool.desc}</p>
+              <p className="mt-3 text-sm text-text">
+                <span className="text-muted">{li.toolGoodFor}:</span> {tool.goodFor}
+              </p>
+              <a href={tool.url} target="_blank" rel="noreferrer" className="mt-2 text-sm text-primary-light hover:underline">
+                {li.toolDocs} &rarr;
+              </a>
             </div>
-          </div>
+          ))}
+        </div>
+        <Link href="/ai/llm-inference/batching" className="mt-4 inline-block text-sm text-primary-light hover:underline">
+          {li.toolBatchingLink} &rarr;
         </Link>
       </section>
 
-      {/* 5. Getting Started */}
+      {/* 7. Getting started */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.startTitle}</h2>
         <p className="text-muted mb-6">{li.startDesc}</p>
@@ -137,28 +185,34 @@ export default function LocalInferencePage() {
         </div>
       </section>
 
-      {/* 5.5 Quickstart Demo */}
+      {/* 8. Commands */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.quickstartTitle}</h2>
         <p className="text-muted mb-6">{li.quickstartDesc}</p>
-        <div className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-          <LocalInferenceVisualizer section="quickstart" t={li as unknown as Record<string, string>} />
+        <div className="space-y-3 rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          {QUICKSTART.map((item) => (
+            <div key={item.key}>
+              <p className="mb-1 font-mono text-xs text-muted"># {li[item.key]}</p>
+              <pre className="overflow-x-auto rounded-xl bg-background p-4 text-sm text-text">{item.cmd}</pre>
+            </div>
+          ))}
+          <a
+            href="https://docs.ollama.com/quickstart"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block text-sm text-primary-light hover:underline"
+          >
+            {li.qsDocs} &rarr;
+          </a>
         </div>
       </section>
 
-      {/* 6. Tips & Tricks */}
+      {/* 9. Practical rules */}
       <section>
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{li.tipsTitle}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[
-              li.tip1,
-              li.tip2,
-              li.tip3,
-              li.tip4,
-              li.tip5,
-              li.tip6,
-            ].map((item, i) => (
+            {[li.tip1, li.tip2, li.tip3, li.tip4, li.tip5].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-primary-light text-sm font-bold">{i + 1}</span>

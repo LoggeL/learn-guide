@@ -35,6 +35,18 @@ export interface ModelEntry {
   headDim?: number
   /** Only standard dense KV tensors are supported by the teaching calculator. */
   attentionLayout?: 'standard' | 'unsupported'
+  /** KV layout: separate K/V per KV head (MHA/GQA/MQA) or one compressed latent (MLA). */
+  kvFormat?: 'heads' | 'latent'
+  /** Layers whose KV cache grows with the full context (defaults to nLayers). */
+  kvLayers?: number
+  /** Cached values per token and layer for MLA (kv_lora_rank + qk_rope_head_dim). */
+  kvLatentDim?: number
+  /** Layers that only keep a sliding/chunked window of tokens. */
+  windowLayers?: number
+  /** Window or chunk size in tokens for windowLayers. */
+  attentionWindow?: number
+  /** Official source for the architecture numbers (config.json / model card). */
+  sourceUrl?: string
   /** Whether the model is currently available/accessible */
   available?: boolean
 }
@@ -67,59 +79,128 @@ export const tierListModels: TierListEntry[] = [
   { id: 'gemini-31-pro', name: 'Gemini 3.1 Pro', tier: 'Google' },
 ]
 
-/** Parameterized model presets used by the VRAM calculator. */
+/**
+ * Parameterized model presets used by the VRAM calculator and the local-inference
+ * hardware demo. Dimensions are copied from each model's official config.json
+ * (checked 2026-10-28); parameter counts come from the model cards.
+ * nameKey/descKey point into vramCalc.presetNames / vramCalc.presetNotes.
+ */
 export const models: ModelEntry[] = [
   {
-    id: 'minimax-m27',
-    nameKey: 'minimax27',
-    descKey: 'minimax27Desc',
+    // 24 layers alternate sliding (window 128) and full attention; 8 KV heads × 64.
+    id: 'gpt-oss-20b',
+    nameKey: 'gptOss20b',
+    descKey: 'gptOss20b',
     tier: 'A',
-    hosting: 'open-weight',
-    params: '250B MoE → 10B active',
-    totalParamsB: 250,
-    activeParamsB: 10,
+    hosting: 'local',
+    params: '21B MoE → 3.6B active',
+    totalParamsB: 21,
+    activeParamsB: 3.6,
     isMoE: true,
+    nLayers: 24,
+    dModel: 2880,
+    kvLayers: 12,
+    windowLayers: 12,
+    attentionWindow: 128,
+    nKVHeads: 8,
+    headDim: 64,
+    sourceUrl: 'https://huggingface.co/openai/gpt-oss-20b/blob/main/config.json',
   },
   {
+    // Hybrid: 48 Gated DeltaNet + 16 full-attention layers (every 4th); 4 KV heads × 256.
+    id: 'qwen36-27b',
+    nameKey: 'qwen36_27b',
+    descKey: 'qwen36_27b',
+    tier: 'A',
+    hosting: 'local',
+    params: '27B dense',
+    totalParamsB: 27,
+    activeParamsB: 27,
+    isMoE: false,
+    nLayers: 64,
+    dModel: 5120,
+    kvLayers: 16,
+    nKVHeads: 4,
+    headDim: 256,
+    sourceUrl: 'https://huggingface.co/Qwen/Qwen3.6-27B/blob/main/config.json',
+  },
+  {
+    // Hybrid MoE: 30 Gated DeltaNet + 10 full-attention layers; 2 KV heads × 256.
+    id: 'qwen36-35b-a3b',
+    nameKey: 'qwen36_35bA3b',
+    descKey: 'qwen36_35bA3b',
+    tier: 'A',
+    hosting: 'local',
+    params: '35B MoE → 3B active',
+    totalParamsB: 35,
+    activeParamsB: 3,
+    isMoE: true,
+    nLayers: 40,
+    dModel: 2048,
+    kvLayers: 10,
+    nKVHeads: 2,
+    headDim: 256,
+    sourceUrl:
+      'https://huggingface.co/Qwen/Qwen3.6-35B-A3B/blob/main/config.json',
+  },
+  {
+    // 62 layers, all full attention (attn_type_list = 1); 8 KV heads × 128.
+    id: 'minimax-m27',
+    nameKey: 'minimaxM27',
+    descKey: 'minimaxM27',
+    tier: 'A',
+    hosting: 'open-weight',
+    params: '229B MoE → 10B active',
+    totalParamsB: 229,
+    activeParamsB: 10,
+    isMoE: true,
+    nLayers: 62,
+    dModel: 3072,
+    nKVHeads: 8,
+    headDim: 128,
+    sourceUrl:
+      'https://huggingface.co/MiniMaxAI/MiniMax-M2.7/blob/main/config.json',
+  },
+  {
+    // MLA (kv_lora_rank 512 + qk_rope_head_dim 64) plus DSA indexer; 78 layers.
     id: 'glm-5-1',
     nameKey: 'glm51',
-    descKey: 'glm51Desc',
+    descKey: 'glm51',
     tier: 'A',
     hosting: 'open-weight',
     params: '744B MoE → 40B active',
     totalParamsB: 744,
     activeParamsB: 40,
     isMoE: true,
-    attentionLayout: 'unsupported',
+    nLayers: 78,
+    dModel: 6144,
+    kvFormat: 'latent',
+    kvLatentDim: 576,
+    sourceUrl: 'https://huggingface.co/zai-org/GLM-5.1/blob/main/config.json',
   },
   {
+    // MLA (kv_lora_rank 512 + qk_rope_head_dim 64), DeepSeek-V3 layout; 61 layers.
     id: 'kimi-k26',
     nameKey: 'kimiK26',
-    descKey: 'kimiK26Desc',
+    descKey: 'kimiK26',
     tier: 'A',
     hosting: 'open-weight',
     params: '1T MoE → 32B active',
     totalParamsB: 1000,
     activeParamsB: 32,
     isMoE: true,
-    attentionLayout: 'unsupported',
+    nLayers: 61,
+    dModel: 7168,
+    kvFormat: 'latent',
+    kvLatentDim: 576,
+    sourceUrl:
+      'https://huggingface.co/moonshotai/Kimi-K2.6/blob/main/config.json',
   },
   {
-    id: 'qwen36-27b-a3',
-    nameKey: 'qwen36_27bA3',
-    descKey: 'qwen36_27bA3Desc',
-    tier: 'A',
-    hosting: 'local',
-    params: '27B MoE → 3B active',
-    totalParamsB: 27,
-    activeParamsB: 3,
-    isMoE: true,
-    attentionLayout: 'unsupported',
-  },
-  {
+    // 36 chunked-attention layers (chunk 8192) + 12 global NoPE layers; 8 KV heads × 128.
     id: 'llama-maverick',
     nameKey: 'llamaMaverick',
-    descKey: 'llamaMaverickDesc',
+    descKey: 'llamaMaverick',
     tier: 'F',
     hosting: 'open-weight',
     params: '400B MoE → 17B active',
@@ -128,8 +209,13 @@ export const models: ModelEntry[] = [
     isMoE: true,
     nLayers: 48,
     dModel: 5120,
+    kvLayers: 12,
+    windowLayers: 36,
+    attentionWindow: 8192,
     nKVHeads: 8,
     headDim: 128,
+    sourceUrl:
+      'https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct',
   },
 ]
 
