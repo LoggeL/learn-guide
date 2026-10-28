@@ -7,8 +7,9 @@ import { ModelLandscape } from '@/components/visualizations/ModelLandscape'
 const order: TierLevel[] = ['S+', 'A', 'B', 'C', 'D', 'F', 'Google']
 export default function TierListPage() {
   const { t } = useTranslation(),
-    c = t.vramCalc.audit,
+    c = t.modelNotes,
     tl = t.tierList
+  const reasons: Record<string, string> = c.archiveReasons
   const labels = {
     'S+': tl.sPlusTierDesc,
     A: tl.aTierDesc,
@@ -21,20 +22,20 @@ export default function TierListPage() {
   return (
     <TopicLayout
       topicId="tier-list"
-      title={c.modelNotesTitle}
-      description={c.modelNotesDesc}
+      title={c.title}
+      description={c.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.industry, href: '/ai/industry' },
-        { label: c.modelNotesTitle },
+        { label: c.title },
       ]}
     >
       <ModelLandscape />
       <details className="rounded-2xl border border-border bg-surface/30 p-5 sm:p-8">
         <summary className="cursor-pointer text-lg font-semibold">
-          {t.modelNotes.archiveTitle}
+          {c.archiveTitle}
         </summary>
-        <p className="my-5 text-sm text-muted">{t.modelNotes.archiveNote}</p>
+        <p className="my-5 text-sm text-muted">{c.archiveNote}</p>
         <div className="space-y-5">
         {order.map((tier) => (
           <div
@@ -57,10 +58,10 @@ export default function TierListPage() {
                     key={model.id}
                     className="rounded-xl border border-border bg-background/50 p-4"
                   >
-                    <h4 className="font-semibold">
-                      {(tl as Record<string, string>)[model.nameKey] ||
-                        model.id}
-                    </h4>
+                    <h4 className="font-semibold">{model.name}</h4>
+                    {reasons[model.id] && (
+                      <p className="mt-2 text-sm text-muted">{reasons[model.id]}</p>
+                    )}
                   </article>
                 ))}
             </div>

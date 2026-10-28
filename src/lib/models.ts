@@ -39,113 +39,32 @@ export interface ModelEntry {
   available?: boolean
 }
 
+export interface TierListEntry {
+  /** Unique identifier; also the key for Logge's optional note in `tierList.reasons` */
+  id: string
+  /** Model name as written in the ranking (proper noun, identical in every locale) */
+  name: string
+  /** Tier ranking */
+  tier: TierLevel
+}
+
 /** Archived personal ranking from 22 August 2026, in display order. */
-export const tierListModels: ModelEntry[] = [
-  {
-    id: 'fable-5',
-    nameKey: 'fable5',
-    descKey: 'fable5Desc',
-    tier: 'S+',
-    hosting: 'api',
-  },
-  {
-    id: 'gpt-56-sol',
-    nameKey: 'gpt56Sol',
-    descKey: 'gpt56SolDesc',
-    tier: 'A',
-    hosting: 'api',
-  },
-  {
-    id: 'kimi-k3',
-    nameKey: 'kimiK3',
-    descKey: 'kimiK3Desc',
-    tier: 'B',
-    hosting: 'api',
-  },
-  {
-    id: 'gpt-56-luna',
-    nameKey: 'gpt56Luna',
-    descKey: 'gpt56LunaDesc',
-    tier: 'B',
-    hosting: 'api',
-  },
-  {
-    id: 'deepseek-v4-flash',
-    nameKey: 'deepseekV4Flash',
-    descKey: 'deepseekV4FlashDesc',
-    tier: 'B',
-    hosting: 'api',
-  },
-  {
-    id: 'grok-46',
-    nameKey: 'grok46',
-    descKey: 'grok46Desc',
-    tier: 'C',
-    hosting: 'api',
-  },
-  {
-    id: 'muse-spark-12',
-    nameKey: 'museSpark12',
-    descKey: 'museSpark12Desc',
-    tier: 'C',
-    hosting: 'api',
-  },
-  {
-    id: 'opus-5',
-    nameKey: 'opus5',
-    descKey: 'opus5Desc',
-    tier: 'D',
-    hosting: 'api',
-  },
-  {
-    id: 'composer-25',
-    nameKey: 'composer25',
-    descKey: 'composer25Desc',
-    tier: 'D',
-    hosting: 'api',
-  },
-  {
-    id: 'glm-53',
-    nameKey: 'glm53',
-    descKey: 'glm53Desc',
-    tier: 'D',
-    hosting: 'api',
-  },
-  {
-    id: 'gpt-56-terra',
-    nameKey: 'gpt56Terra',
-    descKey: 'gpt56TerraDesc',
-    tier: 'D',
-    hosting: 'api',
-  },
-  {
-    id: 'sonnet-5',
-    nameKey: 'sonnet5',
-    descKey: 'sonnet5Desc',
-    tier: 'D',
-    hosting: 'api',
-  },
-  {
-    id: 'deepseek-v4-pro',
-    nameKey: 'deepseekV4Pro',
-    descKey: 'deepseekV4ProDesc',
-    tier: 'F',
-    hosting: 'api',
-  },
-  {
-    id: 'gemini-37-flash',
-    nameKey: 'gemini37Flash',
-    descKey: 'gemini37FlashDesc',
-    tier: 'Google',
-    hosting: 'api',
-  },
-  {
-    id: 'gemini-31-pro',
-    nameKey: 'gemini31Pro',
-    descKey: 'gemini31ProDesc',
-    tier: 'Google',
-    hosting: 'api',
-  },
+export const tierListModels: TierListEntry[] = [
+  { id: 'fable-5', name: 'Fable 5', tier: 'S+' },
+  { id: 'gpt-56-sol', name: 'gpt-5.6-sol', tier: 'A' },
+  { id: 'kimi-k3', name: 'kimi k3', tier: 'B' },
+  { id: 'gpt-56-luna', name: 'gpt-5.6-luna', tier: 'B' },
+  { id: 'deepseek-v4-flash', name: 'deepseek v4 flash', tier: 'B' },
+  { id: 'grok-46', name: 'Grok 4.6', tier: 'C' },
+  { id: 'muse-spark-12', name: 'Muse Spark 1.2', tier: 'C' },
+  { id: 'opus-5', name: 'Opus 5', tier: 'D' },
+  { id: 'composer-25', name: 'Composer 2.5', tier: 'D' },
+  { id: 'glm-53', name: 'glm-5.3', tier: 'D' },
+  { id: 'gpt-56-terra', name: 'gpt-5.6-terra', tier: 'D' },
+  { id: 'sonnet-5', name: 'Sonnet 5', tier: 'D' },
+  { id: 'deepseek-v4-pro', name: 'deepseek v4 pro', tier: 'F' },
+  { id: 'gemini-37-flash', name: 'Gemini 3.7 Flash', tier: 'Google' },
+  { id: 'gemini-31-pro', name: 'Gemini 3.1 Pro', tier: 'Google' },
 ]
 
 /** Parameterized model presets used by the VRAM calculator. */
