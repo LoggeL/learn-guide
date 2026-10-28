@@ -1,320 +1,255 @@
 'use client'
 
+import Link from 'next/link'
+import { ArrowRight, AudioLines, ExternalLink, Eye, Film, Mic, Radio } from 'lucide-react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { MultimodalityVisualizer } from '@/components/interactive'
+import { MediaTokenBudget } from '@/components/interactive/MediaTokenBudget'
+import { FusionArchitectureExplorer } from '@/components/interactive/FusionArchitectureExplorer'
 import { useTranslation } from '@/lib/i18n/context'
-import { Image as ImageIcon, Music, Video, Cpu, Zap, Brain, Layers } from 'lucide-react'
+
+const SOURCES = [
+  { title: 'Radford et al. (2022): Robust Speech Recognition via Large-Scale Weak Supervision (Whisper)', url: 'https://arxiv.org/abs/2212.04356' },
+  { title: 'Défossez et al. (2022): High Fidelity Neural Audio Compression (EnCodec)', url: 'https://github.com/facebookresearch/encodec' },
+  { title: 'Défossez et al. (2024): Moshi – a speech-text foundation model for real-time dialogue (Mimi)', url: 'https://arxiv.org/abs/2410.00037' },
+  { title: 'OpenAI (2024): Hello GPT-4o', url: 'https://openai.com/index/hello-gpt-4o/' },
+  { title: 'Qwen Team (2025): Qwen2.5-Omni Technical Report', url: 'https://arxiv.org/abs/2503.20215' },
+  { title: 'Wang et al. (2024): Qwen2-VL', url: 'https://arxiv.org/abs/2409.12191' },
+  { title: 'Google: Gemini API – Video understanding (token calculation)', url: 'https://ai.google.dev/gemini-api/docs/video-understanding' },
+  { title: 'Alayrac et al. (2022): Flamingo – a Visual Language Model for Few-Shot Learning', url: 'https://arxiv.org/abs/2204.14198' },
+  { title: 'Chameleon Team (2024): Chameleon – Mixed-Modal Early-Fusion Foundation Models', url: 'https://arxiv.org/abs/2405.09818' },
+  { title: 'Meta (2025): The Llama 4 herd', url: 'https://ai.meta.com/blog/llama-4-multimodal-intelligence/' },
+  { title: 'Shukor et al. (2025): Scaling Laws for Native Multimodal Models', url: 'https://arxiv.org/abs/2504.07951' },
+  { title: 'Zhou et al. (2024): Transfusion – Predict the Next Token and Diffuse Images with One Multi-Modal Model', url: 'https://arxiv.org/abs/2408.11039' },
+  { title: 'OpenAI (2025): Addendum to GPT-4o System Card – 4o image generation', url: 'https://openai.com/index/gpt-4o-image-generation-system-card-addendum/' },
+]
+
+const RVQ_FRAMES = 5
+const RVQ_CODEBOOKS = 8
+
+function Chain({ steps, tone }: { steps: string[]; tone: string }) {
+  return (
+    <div className="flex flex-wrap items-stretch gap-2">
+      {steps.map((step, i) => (
+        <div key={step} className="flex items-center gap-2">
+          {i > 0 && <span className={`font-bold ${tone}`}>→</span>}
+          <span className="px-3 py-2 rounded-lg bg-background border border-border text-sm text-text">{step}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export default function MultimodalityPage() {
   const { t, locale } = useTranslation()
+  const c = t.multimodality
+
+  const videoSteps = [
+    { title: c.videoStep1Title, desc: c.videoStep1Desc },
+    { title: c.videoStep2Title, desc: c.videoStep2Desc },
+    { title: c.videoStep3Title, desc: c.videoStep3Desc },
+    { title: c.videoStep4Title, desc: c.videoStep4Desc },
+  ]
+
+  const outputRoutes = [
+    { route: c.outputRoute1, predicts: c.outputRoute1Predicts, decoder: c.outputRoute1Decoder, example: c.outputRoute1Example },
+    { route: c.outputRoute2, predicts: c.outputRoute2Predicts, decoder: c.outputRoute2Decoder, example: c.outputRoute2Example },
+    { route: c.outputRoute3, predicts: c.outputRoute3Predicts, decoder: c.outputRoute3Decoder, example: c.outputRoute3Example },
+    { route: c.outputRoute4, predicts: c.outputRoute4Predicts, decoder: c.outputRoute4Decoder, example: c.outputRoute4Example },
+  ]
+
+  const related = [
+    { id: 'vision', path: '/ai/llm/vision' },
+    { id: 'tokenization', path: '/ai/llm/tokenization' },
+    { id: 'positional-encoding', path: '/ai/llm/positional-encoding' },
+    { id: 'image-diffusion', path: '/ai/diffusion/image' },
+  ] as const
 
   return (
     <TopicLayout topicId="multimodality"
-      title={t.multimodality.title}
-      description={t.multimodality.description}
+      title={c.title}
+      description={c.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.llm, href: '/ai/llm' },
-        { label: t.multimodality.title },
+        { label: c.title },
       ]}
-      prevTopic={{ label: t.topicNames['agentic-vision'], href: '/ai/llm/agentic-vision' }}
-      nextTopic={{ label: t.topicNames['llm-training'], href: '/ai/llm/training' }}
     >
-      <section className="rounded-2xl border border-border p-5 space-y-4">
-        <h2 className="text-xl font-semibold">{locale === 'de' ? 'Eingabe und Ausgabe getrennt prüfen' : 'Check inputs and outputs separately'}</h2>
-        <p className="text-sm text-muted">{locale === 'de' ? 'Ein Modell, das Bilder versteht, muss keine Bilder erzeugen können. Unterstützte Kombinationen hängen vom Modell und Endpunkt ab. Der Wähler unten beschreibt mögliche Aufgaben.' : 'A model that understands images need not generate images. Supported combinations depend on the model and endpoint. The selector below describes possible tasks.'}</p>
-        <div className="overflow-x-auto"><table className="w-full text-sm text-left"><thead><tr><th>{locale === 'de' ? 'Eingabe' : 'Input'}</th><th>{locale === 'de' ? 'Verarbeitung' : 'Processing'}</th><th>{locale === 'de' ? 'Ausgabe' : 'Output'}</th></tr></thead><tbody>{(locale === 'de' ? [['Bild + Frage','Bildanalyse','Textantwort'],['Audio','Spracherkennung','Transkript'],['Text','Bildgenerierung','Bild'],['Video + Frage','Zeitliche Analyse','Textantwort']] : [['Image + question','Image analysis','Text answer'],['Audio','Speech recognition','Transcript'],['Text','Image generation','Image'],['Video + question','Temporal analysis','Text answer']]).map(row=><tr key={row[0]} className="border-t border-border">{row.map(cell=><td key={cell} className="py-3 pr-3">{cell}</td>)}</tr>)}</tbody></table></div>
-        <a className="text-primary-light text-sm underline" href="https://arxiv.org/abs/2204.14198" target="_blank" rel="noopener noreferrer">Flamingo: a published cross-attention architecture</a>
-      </section>
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.whatIs}</h2>
-        <div className="prose prose-invert max-w-none">
-          <p className="text-muted leading-relaxed text-lg">
-            {t.multimodality.whatIsDesc}
-          </p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.introTitle}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.introP1}</p>
+        <ol className="mt-6 space-y-3">
+          {[c.introQ1, c.introQ2, c.introQ3].map((q, i) => (
+            <li key={q} className="flex gap-3 items-start">
+              <span className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-xs font-bold text-primary-light">{i + 1}</span>
+              </span>
+              <span className="text-text leading-relaxed">{q}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-6 p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20 flex flex-col sm:flex-row sm:items-center gap-4">
+          <Eye className="w-6 h-6 text-cyan-400 shrink-0" aria-hidden="true" />
+          <div className="flex-1">
+            <div className="font-bold text-cyan-400 mb-1">{c.visionNoteTitle}</div>
+            <p className="text-sm text-muted">{c.visionNote}</p>
+          </div>
+          <Link href={`/${locale}/ai/llm/vision`} className="inline-flex items-center gap-2 text-sm font-semibold text-primary-light hover:underline shrink-0">
+            {c.visionLink}<ArrowRight size={16} aria-hidden="true" />
+          </Link>
         </div>
       </section>
 
-      {/* Modality Types */}
+      {/* Token budget */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.modalityTypes}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.modalityTypesDesc}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-xl">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <ImageIcon className="w-5 h-5 text-blue-400" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-blue-400">{t.multimodality.images}</h3>
-            </div>
-            <p className="text-sm text-muted">{t.multimodality.imagesDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-                <Music className="w-5 h-5 text-purple-400" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-purple-400">{t.multimodality.audio}</h3>
-            </div>
-            <p className="text-sm text-muted">{t.multimodality.audioDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                <Video className="w-5 h-5 text-emerald-400" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-emerald-400">{t.multimodality.video}</h3>
-            </div>
-            <p className="text-sm text-muted">{t.multimodality.videoDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-xl">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
-                <Layers className="w-5 h-5 text-orange-400" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-orange-400">{t.multimodality.other}</h3>
-            </div>
-            <p className="text-sm text-muted">{t.multimodality.otherDesc}</p>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-3">{c.budgetTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{c.budgetDesc}</p>
+        <MediaTokenBudget />
       </section>
 
-      {/* Interactive Demo */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary-light" />
-            </div>
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.multimodality.interactiveDemo}</h2>
-            <p className="text-sm text-muted">{t.multimodality.interactiveDemoDesc}</p>
-          </div>
-        </div>
-        <MultimodalityVisualizer
-          labels={{
-            selectModalities: t.multimodality.selectModalities,
-            image: t.multimodality.images,
-            audio: t.multimodality.audio,
-            video: t.multimodality.video,
-            text: t.multimodality.text,
-            fusionResult: t.multimodality.fusionResult,
-            selectToSee: t.multimodality.selectToSee,
-            understanding: t.multimodality.understanding,
-            imageDesc: t.multimodality.imageShort,
-            audioDesc: t.multimodality.audioShort,
-            videoDesc: t.multimodality.videoShort,
-            textDesc: t.multimodality.textShort,
-            combinedUnderstanding: t.multimodality.combinedUnderstanding,
-            useCases: t.multimodality.useCases,
-            examplePrompt: t.multimodality.examplePrompt,
-            // Single modality use cases
-            useCaseImageOnly: t.multimodality.useCaseImageOnly,
-            useCaseImageOnlyDesc: t.multimodality.useCaseImageOnlyDesc,
-            useCaseImageOnlyExample: t.multimodality.useCaseImageOnlyExample,
-            useCaseAudioOnly: t.multimodality.useCaseAudioOnly,
-            useCaseAudioOnlyDesc: t.multimodality.useCaseAudioOnlyDesc,
-            useCaseAudioOnlyExample: t.multimodality.useCaseAudioOnlyExample,
-            useCaseVideoOnly: t.multimodality.useCaseVideoOnly,
-            useCaseVideoOnlyDesc: t.multimodality.useCaseVideoOnlyDesc,
-            useCaseVideoOnlyExample: t.multimodality.useCaseVideoOnlyExample,
-            useCaseTextOnly: t.multimodality.useCaseTextOnly,
-            useCaseTextOnlyDesc: t.multimodality.useCaseTextOnlyDesc,
-            useCaseTextOnlyExample: t.multimodality.useCaseTextOnlyExample,
-            // Two modality combinations
-            useCaseImageText: t.multimodality.useCaseImageText,
-            useCaseImageTextDesc: t.multimodality.useCaseImageTextDesc,
-            useCaseImageTextExample: t.multimodality.useCaseImageTextExample,
-            useCaseAudioText: t.multimodality.useCaseAudioText,
-            useCaseAudioTextDesc: t.multimodality.useCaseAudioTextDesc,
-            useCaseAudioTextExample: t.multimodality.useCaseAudioTextExample,
-            useCaseVideoText: t.multimodality.useCaseVideoText,
-            useCaseVideoTextDesc: t.multimodality.useCaseVideoTextDesc,
-            useCaseVideoTextExample: t.multimodality.useCaseVideoTextExample,
-            useCaseImageAudio: t.multimodality.useCaseImageAudio,
-            useCaseImageAudioDesc: t.multimodality.useCaseImageAudioDesc,
-            useCaseImageAudioExample: t.multimodality.useCaseImageAudioExample,
-            useCaseVideoAudio: t.multimodality.useCaseVideoAudio,
-            useCaseVideoAudioDesc: t.multimodality.useCaseVideoAudioDesc,
-            useCaseVideoAudioExample: t.multimodality.useCaseVideoAudioExample,
-            useCaseImageVideo: t.multimodality.useCaseImageVideo,
-            useCaseImageVideoDesc: t.multimodality.useCaseImageVideoDesc,
-            useCaseImageVideoExample: t.multimodality.useCaseImageVideoExample,
-            // Three modality combinations
-            useCaseImageAudioText: t.multimodality.useCaseImageAudioText,
-            useCaseImageAudioTextDesc: t.multimodality.useCaseImageAudioTextDesc,
-            useCaseImageAudioTextExample: t.multimodality.useCaseImageAudioTextExample,
-            useCaseVideoAudioText: t.multimodality.useCaseVideoAudioText,
-            useCaseVideoAudioTextDesc: t.multimodality.useCaseVideoAudioTextDesc,
-            useCaseVideoAudioTextExample: t.multimodality.useCaseVideoAudioTextExample,
-            useCaseImageVideoText: t.multimodality.useCaseImageVideoText,
-            useCaseImageVideoTextDesc: t.multimodality.useCaseImageVideoTextDesc,
-            useCaseImageVideoTextExample: t.multimodality.useCaseImageVideoTextExample,
-            useCaseImageAudioVideo: t.multimodality.useCaseImageAudioVideo,
-            useCaseImageAudioVideoDesc: t.multimodality.useCaseImageAudioVideoDesc,
-            useCaseImageAudioVideoExample: t.multimodality.useCaseImageAudioVideoExample,
-            // All modalities
-            useCaseAll: t.multimodality.useCaseAll,
-            useCaseAllDesc: t.multimodality.useCaseAllDesc,
-            useCaseAllExample: t.multimodality.useCaseAllExample,
-          }}
-        />
-      </section>
-
-      {/* How Multimodal Models Work */}
+      {/* Audio */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.howWorks}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.howWorksDesc}</p>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-5 bg-background rounded-xl border border-border">
-            <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center mb-3">
-              <span className="text-cyan-400 font-bold">1</span>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.audioTitle}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.audioIntro}</p>
+
+        <div className="mt-8 p-5 rounded-xl bg-gradient-to-br from-purple-500/5 to-pink-500/5 border border-purple-500/20 space-y-4">
+          <h3 className="flex items-center gap-2 text-lg font-bold font-heading text-purple-400">
+            <AudioLines className="w-5 h-5" aria-hidden="true" />{c.melTitle}
+          </h3>
+          <Chain steps={[c.melStep1, c.melStep2, c.melStep3, c.melStep4]} tone="text-purple-400" />
+          <p className="text-sm text-muted leading-relaxed">{c.melDesc}</p>
+          <div className="p-4 rounded-lg bg-background border border-border">
+            <div className="font-semibold text-text mb-1">{c.whisperTitle}</div>
+            <p className="text-sm text-muted leading-relaxed">{c.whisperDesc}</p>
+          </div>
+        </div>
+
+        <div className="mt-6 p-5 rounded-xl bg-gradient-to-br from-fuchsia-500/5 to-violet-500/5 border border-fuchsia-500/20 space-y-4">
+          <h3 className="flex items-center gap-2 text-lg font-bold font-heading text-fuchsia-400">
+            <Radio className="w-5 h-5" aria-hidden="true" />{c.codecTitle}
+          </h3>
+          <Chain steps={[c.codecStep1, c.codecStep2, c.codecStep3, c.codecStep4]} tone="text-fuchsia-400" />
+          <p className="text-sm text-muted leading-relaxed">{c.codecDesc}</p>
+          <div className="p-4 rounded-lg bg-background border border-border">
+            <div className="font-semibold text-text mb-3">{c.rvqTitle}</div>
+            <div className="overflow-x-auto">
+              <div className="inline-grid gap-1" style={{ gridTemplateColumns: `repeat(${RVQ_FRAMES}, 2.5rem)` }} aria-hidden="true">
+                {Array.from({ length: RVQ_FRAMES }, (_, f) => (
+                  <div key={`h-${f}`} className="text-[10px] text-muted text-center font-mono">{c.rvqFrame} {f + 1}</div>
+                ))}
+                {Array.from({ length: RVQ_CODEBOOKS * RVQ_FRAMES }, (_, i) => {
+                  const level = Math.floor(i / RVQ_FRAMES)
+                  return (
+                    <div
+                      key={i}
+                      className={`h-5 rounded-sm ${level === 0 ? 'bg-fuchsia-400' : 'bg-violet-400'}`}
+                      style={{ opacity: level === 0 ? 0.95 : 0.75 - level * 0.07 }}
+                    />
+                  )
+                })}
+              </div>
             </div>
-            <h3 className="text-lg font-bold font-heading text-text mb-2">{t.multimodality.step1}</h3>
-            <p className="text-sm text-muted">{t.multimodality.step1Desc}</p>
+            <div className="mt-3 space-y-1 text-xs">
+              <div className="flex items-center gap-2 text-text"><span className="w-3 h-3 rounded-sm bg-fuchsia-400 shrink-0" aria-hidden="true" />{c.rvqSemantic}</div>
+              <div className="flex items-center gap-2 text-text"><span className="w-3 h-3 rounded-sm bg-violet-400/60 shrink-0" aria-hidden="true" />{c.rvqAcoustic}</div>
+            </div>
+            <p className="mt-3 text-xs text-muted">{c.rvqCaption}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Speech-to-speech */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.speechTitle}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.speechIntro}</p>
+        <div className="mt-8 grid md:grid-cols-2 gap-4">
+          <div className="p-5 rounded-xl bg-gradient-to-br from-orange-500/5 to-red-500/5 border border-orange-500/20 space-y-3">
+            <div className="text-sm font-bold text-orange-400">{c.cascadeLabel}</div>
+            <Chain steps={[c.cascadeStep1, c.cascadeStep2, c.cascadeStep3]} tone="text-orange-400" />
+            <p className="text-sm text-muted leading-relaxed">{c.cascadeDesc}</p>
+          </div>
+          <div className="p-5 rounded-xl bg-gradient-to-br from-emerald-500/5 to-teal-500/5 border border-emerald-500/20 space-y-3">
+            <div className="text-sm font-bold text-emerald-400">{c.nativeLabel}</div>
+            <Chain steps={[c.nativeStep1, c.nativeStep2, c.nativeStep3]} tone="text-emerald-400" />
+            <p className="text-sm text-muted leading-relaxed">{c.nativeDesc}</p>
+          </div>
+        </div>
+        <div className="mt-4 grid md:grid-cols-2 gap-4">
+          <div className="p-5 bg-background rounded-xl border border-border">
+            <h3 className="flex items-center gap-2 text-lg font-bold font-heading text-text mb-2">
+              <Mic className="w-5 h-5 text-cyan-400" aria-hidden="true" />{c.moshiTitle}
+            </h3>
+            <p className="text-sm text-muted leading-relaxed">{c.moshiDesc}</p>
           </div>
           <div className="p-5 bg-background rounded-xl border border-border">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center mb-3">
-              <span className="text-purple-400 font-bold">2</span>
-            </div>
-            <h3 className="text-lg font-bold font-heading text-text mb-2">{t.multimodality.step2}</h3>
-            <p className="text-sm text-muted">{t.multimodality.step2Desc}</p>
-          </div>
-          <div className="p-5 bg-background rounded-xl border border-border">
-            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center mb-3">
-              <span className="text-emerald-400 font-bold">3</span>
-            </div>
-            <h3 className="text-lg font-bold font-heading text-text mb-2">{t.multimodality.step3}</h3>
-            <p className="text-sm text-muted">{t.multimodality.step3Desc}</p>
+            <h3 className="flex items-center gap-2 text-lg font-bold font-heading text-text mb-2">
+              <Mic className="w-5 h-5 text-purple-400" aria-hidden="true" />{c.omniTitle}
+            </h3>
+            <p className="text-sm text-muted leading-relaxed">{c.omniDesc}</p>
           </div>
         </div>
       </section>
 
-      {/* Audio Processing */}
-      <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.audioProcessing}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.audioProcessingDesc}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-5 bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-purple-400 mb-2">{t.multimodality.speechRecognition}</h3>
-            <p className="text-sm text-muted">{t.multimodality.speechRecognitionDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-pink-400 mb-2">{t.multimodality.textToSpeech}</h3>
-            <p className="text-sm text-muted">{t.multimodality.textToSpeechDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-violet-500/10 to-purple-500/10 border border-violet-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-violet-400 mb-2">{t.multimodality.musicUnderstanding}</h3>
-            <p className="text-sm text-muted">{t.multimodality.musicUnderstandingDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-fuchsia-500/10 to-pink-500/10 border border-fuchsia-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-fuchsia-400 mb-2">{t.multimodality.audioGeneration}</h3>
-            <p className="text-sm text-muted">{t.multimodality.audioGenerationDesc}</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Video Understanding */}
+      {/* Video */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.videoUnderstanding}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.videoUnderstandingDesc}</p>
-        <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 bg-background rounded-xl border border-border">
-            <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
-              <Brain className="w-5 h-5 text-emerald-400" />
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.videoTitle}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.videoIntro}</p>
+        <div className="mt-8 grid md:grid-cols-2 gap-4">
+          {videoSteps.map((step, i) => (
+            <div key={step.title} className="p-5 bg-background rounded-xl border border-border">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0">
+                  <span className="text-emerald-400 font-bold">{i + 1}</span>
+                </span>
+                <h3 className="text-lg font-bold font-heading text-text">{step.title}</h3>
+              </div>
+              <p className="text-sm text-muted leading-relaxed">{step.desc}</p>
             </div>
-            <div>
-              <h3 className="font-bold text-text mb-1">{t.multimodality.temporalReasoning}</h3>
-              <p className="text-sm text-muted">{t.multimodality.temporalReasoningDesc}</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-4 p-4 bg-background rounded-xl border border-border">
-            <div className="w-10 h-10 rounded-lg bg-teal-500/20 flex items-center justify-center shrink-0">
-              <Cpu className="w-5 h-5 text-teal-400" />
-            </div>
-            <div>
-              <h3 className="font-bold text-text mb-1">{t.multimodality.frameSampling}</h3>
-              <p className="text-sm text-muted">{t.multimodality.frameSamplingDesc}</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-4 p-4 bg-background rounded-xl border border-border">
-            <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0">
-              <Music className="w-5 h-5 text-cyan-400" />
-            </div>
-            <div>
-              <h3 className="font-bold text-text mb-1">{t.multimodality.audioVideoSync}</h3>
-              <p className="text-sm text-muted">{t.multimodality.audioVideoSyncDesc}</p>
-            </div>
-          </div>
+          ))}
+        </div>
+        <div className="mt-6 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20 flex gap-3 items-start">
+          <Film className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" aria-hidden="true" />
+          <p className="text-sm text-text leading-relaxed">{c.videoConsequence}</p>
         </div>
       </section>
 
-      {/* Cross-Modal Fusion */}
+      {/* Fusion */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.crossModal}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.crossModalDesc}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-cyan-400 mb-2">{t.multimodality.earlyFusion}</h3>
-            <p className="text-sm text-muted">{t.multimodality.earlyFusionDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-blue-400 mb-2">{t.multimodality.lateFusion}</h3>
-            <p className="text-sm text-muted">{t.multimodality.lateFusionDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 border border-indigo-500/20 rounded-xl md:col-span-2">
-            <h3 className="text-lg font-bold font-heading text-indigo-400 mb-2">{t.multimodality.crossAttention}</h3>
-            <p className="text-sm text-muted">{t.multimodality.crossAttentionDesc}</p>
-          </div>
-        </div>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-3">{c.fusionTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{c.fusionIntro}</p>
+        <FusionArchitectureExplorer />
+        <p className="mt-4 text-sm text-muted leading-relaxed p-4 rounded-xl bg-background border border-border">{c.fusionTerminology}</p>
       </section>
 
-      {/* Real-World Applications */}
+      {/* Output */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.applications}</h2>
-        <p className="text-muted leading-relaxed mb-6">{t.multimodality.applicationsDesc}</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app1}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app1Desc}</p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.outputTitle}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.outputIntro}</p>
+        <div className="mt-8 overflow-hidden rounded-xl border border-border">
+          <div className="hidden md:grid md:grid-cols-4 bg-background/60 text-sm font-bold">
+            <div className="p-3 border-r border-border text-muted">{c.outputColRoute}</div>
+            <div className="p-3 border-r border-border text-cyan-400">{c.outputColPredicts}</div>
+            <div className="p-3 border-r border-border text-purple-400">{c.outputColDecoder}</div>
+            <div className="p-3 text-emerald-400">{c.outputColExample}</div>
           </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app2}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app2Desc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app3}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app3Desc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app4}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app4Desc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app5}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app5Desc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h3 className="font-bold text-text mb-2">{t.multimodality.app6}</h3>
-            <p className="text-sm text-muted">{t.multimodality.app6Desc}</p>
-          </div>
+          {outputRoutes.map((row, i) => (
+            <div key={row.route} className={`grid grid-cols-1 md:grid-cols-4 text-sm border-t border-border first:border-t-0 md:first:border-t ${i % 2 ? 'bg-background/30' : ''}`}>
+              <div className="p-3 font-semibold text-text">{i + 1}. {row.route}</div>
+              <div className="px-3 pb-2 md:p-3 text-muted"><span className="md:hidden text-xs text-cyan-400 block">{c.outputColPredicts}</span>{row.predicts}</div>
+              <div className="px-3 pb-2 md:p-3 text-muted"><span className="md:hidden text-xs text-purple-400 block">{c.outputColDecoder}</span>{row.decoder}</div>
+              <div className="px-3 pb-3 md:p-3 text-muted"><span className="md:hidden text-xs text-emerald-400 block">{c.outputColExample}</span>{row.example}</div>
+            </div>
+          ))}
         </div>
+        <p className="mt-6 text-sm text-muted leading-relaxed">{c.outputNote}</p>
       </section>
 
       {/* Key Takeaways */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.multimodality.keyTakeaways}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[
-              t.multimodality.takeaway1,
-              t.multimodality.takeaway2,
-              t.multimodality.takeaway3,
-              t.multimodality.takeaway4,
-              t.multimodality.takeaway5,
-            ].map((item, i) => (
+            {[c.takeaway1, c.takeaway2, c.takeaway3, c.takeaway4, c.takeaway5].map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-xs font-bold text-primary-light">{i + 1}</span>
@@ -323,6 +258,33 @@ export default function MultimodalityPage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      {/* Sources */}
+      <section>
+        <h2 className="font-heading text-xl font-bold text-text">{c.sourcesTitle}</h2>
+        <ul className="mt-4 space-y-3">
+          {SOURCES.map((source) => (
+            <li key={source.url}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary-light hover:underline">
+                {source.title}<ExternalLink size={14} className="shrink-0" aria-hidden="true" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* Related */}
+      <section>
+        <h2 className="font-heading text-2xl font-bold text-gradient">{c.relatedTitle}</h2>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {related.map((item) => (
+            <Link key={item.id} href={`/${locale}${item.path}`} className="group flex items-center justify-between gap-4 rounded-xl border border-border bg-surface/55 p-4 hover:border-primary/45">
+              <span className="font-heading font-bold text-text group-hover:text-primary-light">{t.topicNames[item.id]}</span>
+              <ArrowRight size={18} className="shrink-0 text-primary-light" aria-hidden="true" />
+            </Link>
+          ))}
         </div>
       </section>
     </TopicLayout>
