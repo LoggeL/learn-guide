@@ -3,11 +3,11 @@ import { getTopicMetadata, getTopicJsonLd } from '@/lib/seo'
 import type { Locale } from '@/lib/i18n'
 
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
-  return getTopicMetadata('visual-challenges', params.locale as Locale)
+  return getTopicMetadata('vision', params.locale as Locale)
 }
 
 export default function Layout({ children, params }: { children: React.ReactNode; params: { locale: string } }) {
-  const jsonLd = getTopicJsonLd('visual-challenges', params.locale as Locale)
+  const jsonLd = getTopicJsonLd('vision', params.locale as Locale)
   return (
     <>
       {jsonLd && (

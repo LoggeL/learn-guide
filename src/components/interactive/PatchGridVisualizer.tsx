@@ -1,24 +1,140 @@
 'use client'
 
 import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from '@/lib/i18n/context'
-import { InspectionImage } from './InspectionImage'
+import { IMAGE_H, IMAGE_W, LABEL_CAP_HEIGHT, LABEL_REGION, ResampledView, fitInto, type Rect } from './InspectionImage'
+
+type ModeId = 'fixed' | 'tiles' | 'native'
+
+interface EncoderMode {
+  id: ModeId
+  canvas: readonly [number, number]
+  target: Rect
+  /** Grid spacing drawn on the canvas (ViT patch or merged token cell). */
+  grid: number
+  major?: number
+  tokens: number
+}
+
+const PATCH = 14
+
+function letterboxed(canvasW: number, canvasH: number): Rect {
+  const f = fitInto(IMAGE_W, IMAGE_H, canvasW, canvasH)
+  return [f.x, f.y, f.w, f.h]
+}
+
+// Qwen2-VL rounds each side to a multiple of 28 px (14 px patches, 2 × 2 merge).
+const NATIVE_W = Math.round(IMAGE_W / 28) * 28
+const NATIVE_H = Math.round(IMAGE_H / 28) * 28
+
+const MODES: EncoderMode[] = [
+  // LLaVA-1.5: 336 px square, 24 × 24 patches = 576 tokens
+  { id: 'fixed', canvas: [336, 336], target: letterboxed(336, 336), grid: PATCH, tokens: (336 / PATCH) ** 2 },
+  // LLaVA-NeXT AnyRes: 2 × 2 tiles of 336 px plus one 336 px overview image
+  { id: 'tiles', canvas: [672, 672], target: letterboxed(672, 672), grid: PATCH, major: 336, tokens: 4 * (336 / PATCH) ** 2 + (336 / PATCH) ** 2 },
+  // Qwen2-VL native resolution: one token per 28 × 28 px
+  { id: 'native', canvas: [NATIVE_W, NATIVE_H], target: [0, 0, NATIVE_W, NATIVE_H], grid: 28, tokens: (NATIVE_W / 28) * (NATIVE_H / 28) },
+]
 
 export function PatchGridVisualizer() {
-  const { locale }=useTranslation(); const de=locale==='de'
-  const [patch,setPatch]=useState(256)
-  const [index,setIndex]=useState(15)
-  const cols=Math.ceil(1536/patch),rows=Math.ceil(1024/patch)
-  const selected=Math.min(index,cols*rows-1)
-  const x=(selected%cols)*patch,y=Math.floor(selected/cols)*patch
-  return <section className="rounded-2xl border border-border p-4 sm:p-6 space-y-4">
-    <h2 className="text-xl font-semibold">{de?'Ein Bild, viele Patches':'One image, many patches'}</h2>
-    <p className="text-sm text-muted">{de?'Dasselbe generierte Referenzbild, hier in große Patches zerlegt. 64, 128 und 256 Pixel machen das Raster gut sichtbar. Das sind Anschauungsgrößen, keine Architektur eines bestimmten Modells und keine API-Abrechnung.':'The same generated reference image, divided into large patches. Sizes of 64, 128 and 256 pixels keep the grid readable. These are teaching settings, not a specific model architecture or API billing rules.'}</p>
-    <label className="block text-sm">{de?'Patch-Kantenlänge':'Patch side length'}<select value={patch} onChange={e=>{setPatch(+e.target.value);setIndex(0)}} className="ml-3 bg-background rounded border border-border px-3 py-2">{[64,128,256].map(n=><option key={n} value={n}>{n} px</option>)}</select></label>
-    <InspectionImage alt={de?'Referenzbild mit auswählbarem Patch-Raster':'Reference image with selectable patch grid'}>
-      {Array.from({length:cols*rows},(_,i)=><rect key={i} x={(i%cols)*patch} y={Math.floor(i/cols)*patch} width={patch} height={patch} fill={i===selected?'rgba(168,85,247,.35)':'transparent'} stroke={i===selected?'#fbbf24':'rgba(255,255,255,.7)'} strokeWidth={i===selected?6:2} onClick={()=>setIndex(i)} className="cursor-pointer" />)}
-    </InspectionImage>
-    <label className="block text-sm">{de?'Patch auswählen (auch mit Pfeiltasten)':'Select patch (arrow keys supported)'}: {selected+1} / {cols*rows}<input className="w-full mt-2" type="range" min="0" max={cols*rows-1} value={selected} onChange={e=>setIndex(+e.target.value)}/></label>
-    <div className="grid sm:grid-cols-2 gap-4 items-start"><InspectionImage crop={[x,y,Math.min(patch,1536-x),Math.min(patch,1024-y)]} alt={de?'Ausgewählter Bildausschnitt':'Selected image patch'}/><div className="space-y-3 text-sm text-muted"><p>{cols} × {rows} = {cols*rows} {de?'Patches':'patches'}</p><p>{de?'Ein RGB-Patch mit P × P Pixeln enthält 3P² Zahlen. ViT flacht sie ab und projiziert sie mit einer gelernten Matrix in einen Embedding-Vektor. Dabei wird der Patch nicht einfach auf seine Durchschnittsfarbe reduziert.':'An RGB patch with P × P pixels contains 3P² values. ViT flattens them and applies a learned linear projection into an embedding vector. This does not simply average the patch into one color.'}</p><p>{de?'Das Raster zeigt nur die Zerlegung. Es berechnet keine gelernten Bild-Embeddings. Die Fähigkeit, kleine Schrift zu lesen, hängt auch von Auflösung, Projektion, Training und Aufgabe ab.':'This grid shows only the partition. It does not calculate learned image embeddings. Reading small text also depends on resolution, projection, training and task.'}</p></div></div>
-  </section>
+  const { t, locale } = useTranslation()
+  const v = t.vision
+  const [modeId, setModeId] = useState<ModeId>('fixed')
+  const [showGrid, setShowGrid] = useState(true)
+  const mode = MODES.find(m => m.id === modeId) ?? MODES[0]
+  const fmt = (n: number, digits = 0) => n.toLocaleString(locale === 'de' ? 'de-DE' : 'en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+
+  const sx = mode.target[2] / IMAGE_W
+  const sy = mode.target[3] / IMAGE_H
+  const capPx = LABEL_CAP_HEIGHT * sy
+  const zoom: Rect = [
+    mode.target[0] + LABEL_REGION[0] * sx,
+    mode.target[1] + LABEL_REGION[1] * sy,
+    LABEL_REGION[2] * sx,
+    LABEL_REGION[3] * sy,
+  ]
+
+  const labels: Record<ModeId, string> = { fixed: v.budgetModeFixed, tiles: v.budgetModeTiles, native: v.budgetModeNative }
+  const notes: Record<ModeId, string> = { fixed: v.budgetModeFixedNote, tiles: v.budgetModeTilesNote, native: v.budgetModeNativeNote }
+
+  const stats = [
+    { label: v.budgetInput, value: `${mode.canvas[0]} × ${mode.canvas[1]} px` },
+    { label: v.budgetScale, value: `${fmt(sy, 2)}×` },
+    { label: v.budgetTokens, value: fmt(mode.tokens) },
+    { label: v.budgetCapHeight, value: v.budgetCapHeightValue.replace('{px}', fmt(capPx, 1)).replace('{patches}', fmt(capPx / PATCH, 2)) },
+  ]
+
+  return (
+    <section className="rounded-2xl bg-surface border border-border p-4 sm:p-6 space-y-5">
+      <div>
+        <h3 className="text-xl font-bold font-heading text-text">{v.budgetDemoTitle}</h3>
+        <p className="text-sm text-muted mt-1">{v.budgetDemoDesc}</p>
+      </div>
+
+      <div className="flex flex-wrap gap-2" role="group" aria-label={v.budgetInput}>
+        {MODES.map(m => (
+          <button
+            key={m.id}
+            aria-pressed={modeId === m.id}
+            onClick={() => setModeId(m.id)}
+            className={`min-h-11 px-4 rounded-lg border text-sm transition-colors ${modeId === m.id ? 'border-primary bg-primary/15 text-text' : 'border-border text-muted hover:text-text'}`}
+          >
+            {labels[m.id]}
+          </button>
+        ))}
+        <label className="ml-auto flex items-center gap-2 text-sm text-muted">
+          <input type="checkbox" checked={showGrid} onChange={e => setShowGrid(e.target.checked)} />
+          {v.budgetShowGrid}
+        </label>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-[3fr_2fr] items-start">
+        <ResampledView
+          source={[0, 0, IMAGE_W, IMAGE_H]}
+          canvas={mode.canvas}
+          target={mode.target}
+          grid={showGrid ? mode.grid : undefined}
+          majorGrid={showGrid ? mode.major : undefined}
+          alt={v.budgetImageAlt}
+        >
+          <rect x={zoom[0]} y={zoom[1]} width={zoom[2]} height={zoom[3]} fill="none" stroke="#e11d48" strokeWidth={mode.canvas[0] / 160} />
+        </ResampledView>
+        <div className="space-y-2">
+          <div className="text-xs font-semibold uppercase tracking-wide text-muted">{v.budgetZoomLabel}</div>
+          <ResampledView
+            source={[0, 0, IMAGE_W, IMAGE_H]}
+            canvas={mode.canvas}
+            target={mode.target}
+            view={zoom}
+            grid={showGrid ? PATCH : undefined}
+            alt={v.budgetZoomAlt}
+          />
+        </div>
+      </div>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode.id}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+          className="space-y-3"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {stats.map(s => (
+              <div key={s.label} className="rounded-xl bg-background border border-border p-3">
+                <div className="text-xs text-muted">{s.label}</div>
+                <div className="font-mono text-sm text-text mt-1">{s.value}</div>
+              </div>
+            ))}
+          </div>
+          <p className="text-sm text-muted">{notes[mode.id]}</p>
+        </motion.div>
+      </AnimatePresence>
+
+      <p className="text-sm text-text/90 rounded-lg border border-primary/20 bg-primary/5 p-3">{v.budgetTakeaway}</p>
+    </section>
+  )
 }
