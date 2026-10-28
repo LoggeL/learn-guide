@@ -7103,11 +7103,12 @@ export const de: Dictionary = {
   learningPath: {
     'lecture-foundations': 'Grundlagen',
     'lecture-llm-core': 'LLM-Kern',
+    'lecture-safety': 'Sicherheit & Alignment',
     'lecture-modalities': 'Modalitäten',
     'lecture-architecture': 'Architektur & Training',
     'lecture-inference': 'Inferenz & Performance',
     'lecture-agents': 'Agents',
-    'lecture-frontier': 'Frontier, Sicherheit & Industrie',
+    'lecture-frontier': 'Frontier & Industrie',
     'lecture-notes': "Pers\u00f6nliche Notizen (optional)",
     title: 'Dein Lernpfad',
     subtitle: 'Ein kuratierter Fahrplan von Null bis Experte. Folge diesen Themen der Reihe nach für das beste Lernerlebnis.',

@@ -7128,11 +7128,12 @@ export const en = {
   learningPath: {
     'lecture-foundations': 'Foundations',
     'lecture-llm-core': 'LLM Core',
+    'lecture-safety': 'Safety & Alignment',
     'lecture-modalities': 'Modalities',
     'lecture-architecture': 'Architecture & Training',
     'lecture-inference': 'Inference & Performance',
     'lecture-agents': 'Agents',
-    'lecture-frontier': 'Frontier, Safety & Industry',
+    'lecture-frontier': 'Frontier & Industry',
     'lecture-notes': "Personal notes (optional)",
     title: 'Your Learning Path',
     subtitle: 'A curated roadmap from zero to advanced. Follow these topics in order for the best learning experience.',
