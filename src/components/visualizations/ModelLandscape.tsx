@@ -6,7 +6,8 @@ import { modelComparisons, modelLandscape, dominates, paretoFront } from '@/lib/
 
 const front = paretoFront(modelComparisons)
 const frontIds = new Set(front.map((model) => model.id))
-const shortlist = ['gpt-5-6-luna', 'glm-5-3-flash', 'claude-fable-5-1']
+const findModel = (id: string) => modelComparisons.find((model) => model.id === id)!
+const mainDriverModel = findModel(modelLandscape.mainDriverId)
 const y = (score: number) => 290 - ((score - 34) / 22) * 260
 const pointLabels: Record<string, { text: string; dx: number; dy: number }> = {
   'gpt-5-6-luna': { text: 'Luna max', dx: 12, dy: 18 },
@@ -18,7 +19,7 @@ const pointLabels: Record<string, { text: string; dx: number; dy: number }> = {
 export function ModelLandscape() {
   const { t, locale } = useTranslation()
   const c = t.modelNotes
-  const [selectedId, setSelectedId] = useState('gpt-6-astra')
+  const [selectedId, setSelectedId] = useState<string>(modelLandscape.mainDriverId)
   const chartRef = useRef<SVGSVGElement>(null)
   const [chartWidth, setChartWidth] = useState(660)
   useEffect(() => {
@@ -33,7 +34,7 @@ export function ModelLandscape() {
   // Match SVG units to CSS pixels so labels stay readable on narrow screens.
   const x = (cost: number) => 36 + ((Math.log10(cost) + 1) / 2) * (chartWidth - 60)
   const costTicks = chartWidth < 440 ? [0.1, 0.25, 1, 5, 10] : [0.1, 0.25, 0.5, 1, 2, 5, 10]
-  const selected = modelComparisons.find((model) => model.id === selectedId)!
+  const selected = findModel(selectedId)
   const dominators = modelComparisons.filter((model) => dominates(model, selected))
   const number = (value: number, digits = 2) => value.toLocaleString(locale, {
     minimumFractionDigits: digits, maximumFractionDigits: digits,
@@ -53,7 +54,8 @@ export function ModelLandscape() {
           <time dateTime={modelLandscape.snapshotDate} className="text-muted">{date}</time>
         </div>
         <p className="mt-5 text-3xl font-bold tracking-tight sm:text-5xl">{modelLandscape.mainDriver}</p>
-        <p className="mt-4 max-w-2xl text-lg">{c.mainDriverText}</p>
+        <p className="mt-4 max-w-2xl text-lg">{c.mainDriverText.replace('{model}', modelLandscape.mainDriver)}</p>
+        {c.mainDriverReason && <p className="mt-3 max-w-2xl">{c.mainDriverReason}</p>}
         <p className="mt-3 max-w-2xl text-sm text-muted">{c.mainDriverNote}</p>
       </section>
 
@@ -63,10 +65,14 @@ export function ModelLandscape() {
           <p className="mt-2 text-muted">{c.shortlistIntro}</p>
         </div>
         <div className="grid gap-4 lg:grid-cols-3">
-          {shortlist.map((id, index) => {
-            const model = modelComparisons.find((entry) => entry.id === id)!
+          {modelLandscape.shortlist.map((id, index) => {
+            const model = findModel(id)
             const labels = [c.budgetLabel, c.valueLabel, c.qualityLabel]
-            const notes = [c.budgetNote, c.valueNote, c.qualityNote]
+            const notes = [
+              c.budgetNote,
+              c.valueNote.replace('{cost}', dollars(model.costUsd)),
+              c.qualityNote.replace('{ratio}', number(model.costUsd / mainDriverModel.costUsd, 1)),
+            ]
             return (
               <article key={id} className="flex flex-col rounded-xl border border-border bg-surface/40 p-5">
                 <p className="text-sm text-primary-light">{labels[index]}</p>

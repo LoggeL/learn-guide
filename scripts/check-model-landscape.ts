@@ -59,6 +59,28 @@ for (const id of ['deepseek-v4-1-flash', 'muse-spark-1-3', 'gpt-5-6-sol']) {
 }
 assert.equal(front.length, 10)
 
+// The main driver and the shortlist cards must point at real configurations,
+// and the claims in modelNotes.budgetNote/valueNote/qualityNote must hold.
+assert.equal(model(modelLandscape.mainDriverId).family, 'astra')
+assert.ok(model(modelLandscape.mainDriverId).name.startsWith(modelLandscape.mainDriver))
+const [budget, value, quality] = modelLandscape.shortlist.map(model)
+assert.ok(
+  [budget, value, quality].every((row) => front.includes(row)),
+  'Shortlist heading claims all three are on the cost frontier',
+)
+assert.ok(
+  modelComparisons.every((row) => row.costUsd >= budget.costUsd),
+  'Budget card claims the cheapest entry',
+)
+assert.ok(value.intelligence > budget.intelligence, 'Value card claims a higher score than Luna')
+assert.ok(
+  modelComparisons.every((row) => row.intelligence <= quality.intelligence),
+  'Quality card claims the highest score',
+)
+const mainDriverRow = model(modelLandscape.mainDriverId)
+assert.ok(quality.intelligence > mainDriverRow.intelligence)
+assert.ok(quality.costUsd / mainDriverRow.costUsd > 2, 'Quality note interpolates the cost ratio')
+
 const point = { intelligence: 40, costUsd: 1 }
 assert.ok(!dominates(point, point), 'Equal points do not strictly dominate')
 assert.ok(!dominates({ ...point }, point))

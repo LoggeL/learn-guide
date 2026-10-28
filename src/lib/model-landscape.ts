@@ -17,7 +17,12 @@ export interface ModelComparison {
 
 export const modelLandscape = {
   snapshotDate: '2026-09-13',
+  /** Single source for the main driver's display name; page texts interpolate it. */
   mainDriver: 'GPT-6 Astra',
+  /** AA configuration that stands for the main driver in the comparison. */
+  mainDriverId: 'gpt-6-astra',
+  /** Shortlist cards in display order: budget, value, quality. */
+  shortlist: ['gpt-5-6-luna', 'glm-5-3-flash', 'claude-fable-5-1'],
   sources: {
     leaderboard: 'https://artificialanalysis.ai/leaderboards/models',
     astraArticle:
