@@ -1,98 +1,24 @@
 'use client'
 
-import { CheckCircle2, Cpu, Layers, Zap } from 'lucide-react'
+import { CheckCircle2, Cpu, Layers, Sigma, Zap } from 'lucide-react'
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { NextTokenPredictionVisualizer } from '@/components/interactive/NextTokenPredictionVisualizer'
+import { NextTokenPredictionVisualizer, nextTokenLogitsByStep } from '@/components/interactive/NextTokenPredictionVisualizer'
 import { useTranslation } from '@/lib/i18n/context'
+import { softmax } from '@/lib/learning/decoding'
 
-const copy = {
-  en: {
-    title: 'Next-Token Prediction',
-    description: 'What an LLM actually outputs: logits over the vocabulary, decoded one token at a time into text.',
-    crumb: 'Next-Token Prediction',
-    prev: 'Residual Stream & LayerNorm',
-    next: 'LLM Training',
-    sections: [
-      {
-        title: 'Logits over the vocabulary',
-        body: 'At the end of the network, the final hidden vector is projected to one score for every token in the vocabulary. These raw scores are called logits.',
-        bullets: [
-      'A logit is not a word; it is a score for a token ID.',
-      'Softmax turns logits into a probability distribution over possible next tokens.'
-    ],
-      },
-      {
-        title: 'Decoding choices',
-        body: 'Generation depends on how the model chooses from those probabilities. Greedy decoding picks the top token, while sampling methods introduce controlled randomness.',
-        bullets: [
-      'Temperature reshapes the probability distribution.',
-      'Top-k keeps only the k most likely tokens.',
-      'Top-p keeps the smallest set whose probability mass reaches p.'
-    ],
-      },
-      {
-        title: 'The generation loop',
-        body: 'The chosen token is appended to the context. The model runs again, predicts the next token, appends it, and repeats until it stops.',
-        bullets: [
-      'Training can predict many sequence positions in parallel with causal masking.',
-      'Inference generation is sequential because each new token depends on the previous one.',
-      'High probability means likely continuation, not guaranteed truth.'
-    ],
-      }
-    ],
-    takeawaysTitle: 'Key Takeaways',
-    takeaways: [
-      'LLMs output next-token probabilities, not direct truth claims.',
-      'Decoding strategy changes style, determinism, and error profile.',
-      'Text is produced by repeating predict → choose → append.'
-    ],
-  },
-  de: {
-    title: 'Next-Token Prediction',
-    description: 'Was ein LLM tatsächlich ausgibt: Logits über das Vokabular, die Token für Token zu Text decodiert werden.',
-    crumb: 'Next-Token Prediction',
-    prev: 'Residual Stream & LayerNorm',
-    next: 'LLM Training',
-    sections: [
-      {
-        title: 'Logits über das Vokabular',
-        body: 'Am Ende des Netzwerks wird der finale Hidden-Vektor auf einen Score pro Token im Vokabular projiziert. Diese rohen Scores heißen Logits.',
-        bullets: [
-      'Ein Logit ist kein Wort, sondern ein Score für eine Token-ID.',
-      'Softmax verwandelt Logits in eine Wahrscheinlichkeitsverteilung über nächste Tokens.'
-    ],
-      },
-      {
-        title: 'Decoding-Entscheidungen',
-        body: 'Generierung hängt davon ab, wie das Modell aus diesen Wahrscheinlichkeiten auswählt. Greedy Decoding nimmt das Top-Token, Sampling bringt kontrollierte Zufälligkeit hinein.',
-        bullets: [
-      'Temperature formt die Verteilung um.',
-      'Top-k behält nur die k wahrscheinlichsten Tokens.',
-      'Top-p behält die kleinste Menge der wahrscheinlichsten Token mit insgesamt mindestens p Wahrscheinlichkeitsmasse.'
-    ],
-      },
-      {
-        title: 'Die Generierungsschleife',
-        body: 'Das gewählte Token wird an den Kontext gehängt. Das Modell läuft erneut, sagt das nächste Token voraus, hängt es an und wiederholt das.',
-        bullets: [
-      'Training kann viele Positionen parallel mit Causal Masking vorhersagen.',
-      'Inference ist sequenziell, weil jedes neue Token vom vorherigen abhängt.',
-      'Hohe Wahrscheinlichkeit heißt plausible Fortsetzung, nicht Wahrheit.'
-    ],
-      }
-    ],
-    takeawaysTitle: 'Kernaussagen',
-    takeaways: [
-      'LLMs geben Next-Token-Wahrscheinlichkeiten aus, keine direkten Wahrheitsbehauptungen.',
-      'Die Decoding-Strategie verändert Stil, Determinismus und Fehlerprofil.',
-      'Text entsteht durch wiederholtes predict → choose → append.'
-    ],
-  },
-}
+const SOURCES = [
+  ['Hugging Face Transformers: Perplexity of fixed-length models', 'https://huggingface.co/docs/transformers/perplexity'],
+  ['Jurafsky & Martin, Speech and Language Processing (3rd ed. draft), ch. 3: N-gram Language Models', 'https://web.stanford.edu/~jurafsky/slp3/3.pdf'],
+] as const
+
+// Step-1 distribution of the demo at T = 1, as the training loss sees it.
+const STEP_ONE_PROBABILITIES = softmax(nextTokenLogitsByStep[0], 1)
 
 export default function NextTokenPredictionPage() {
   const { t, locale } = useTranslation()
-  const c = locale === 'de' ? copy.de : copy.en
+  const c = t.nextTokenPrediction
+  const tr = c.training
+  const num = (value: number, digits: number) => value.toLocaleString(locale, { minimumFractionDigits: digits, maximumFractionDigits: digits })
 
   return (
     <TopicLayout
@@ -102,10 +28,8 @@ export default function NextTokenPredictionPage() {
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.llm, href: '/ai/llm' },
-        { label: c.crumb },
+        { label: c.title },
       ]}
-      prevTopic={{ label: c.prev, href: '/ai/llm/residual-stream-layer-norm' }}
-      nextTopic={{ label: c.next, href: '/ai/llm/training' }}
     >
       <NextTokenPredictionVisualizer />
 
@@ -131,6 +55,69 @@ export default function NextTokenPredictionPage() {
             )}
           </article>
         ))}
+      </section>
+
+      <section className="rounded-2xl border border-border bg-surface/50 p-6 md:p-8 space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-violet-500/25 bg-violet-500/10">
+            <Sigma size={18} className="text-violet-300" />
+          </div>
+          <h2 className="font-heading text-2xl font-bold text-gradient">{tr.title}</h2>
+        </div>
+        <p className="leading-relaxed text-muted">{tr.body}</p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/5 p-5">
+            <h3 className="mb-2 font-heading text-lg font-bold text-cyan-300">{tr.lossTitle}</h3>
+            <p className="mb-3 font-mono text-sm text-cyan-200">L = −(1/N) Σₜ ln p(xₜ | x₁ … xₜ₋₁)</p>
+            <p className="text-sm leading-relaxed text-muted">{tr.lossBody}</p>
+          </div>
+          <div className="rounded-xl border border-violet-500/20 bg-violet-500/5 p-5">
+            <h3 className="mb-2 font-heading text-lg font-bold text-violet-300">{tr.perplexityTitle}</h3>
+            <p className="mb-3 font-mono text-sm text-violet-200">PPL = exp(L)</p>
+            <p className="text-sm leading-relaxed text-muted">{tr.perplexityBody}</p>
+          </div>
+        </div>
+        <div>
+          <h3 className="mb-2 font-heading text-lg font-bold text-text">{tr.exampleTitle}</h3>
+          <p className="mb-3 text-sm leading-relaxed text-muted">{tr.exampleBody}</p>
+          <div className="overflow-x-auto">
+            <table className="w-full text-right text-sm tabular-nums">
+              <thead className="text-muted">
+                <tr>
+                  <th className="p-2 text-left">{tr.columnToken}</th>
+                  <th className="p-2">{tr.columnProbability}</th>
+                  <th className="p-2">{tr.columnLoss}</th>
+                  <th className="p-2">{tr.columnPerplexity}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {c.viz.tokens.map((token, i) => {
+                  const p = STEP_ONE_PROBABILITIES[i]
+                  const loss = -Math.log(p)
+                  return (
+                    <tr key={token} className="border-t border-border">
+                      <th className="p-2 text-left font-medium">{token}</th>
+                      <td className="p-2 font-mono">{num(p, 3)}</td>
+                      <td className="p-2 font-mono">{num(loss, 3)}</td>
+                      <td className="p-2 font-mono">{num(Math.exp(loss), 2)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <p className="text-sm leading-relaxed text-muted">{tr.note}</p>
+        <div>
+          <h3 className="mb-2 text-sm font-semibold text-text">{tr.sourcesTitle}</h3>
+          <ul className="space-y-1 text-sm">
+            {SOURCES.map(([label, href]) => (
+              <li key={href}>
+                <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary-light underline-offset-4 hover:underline">{label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6 md:p-8">

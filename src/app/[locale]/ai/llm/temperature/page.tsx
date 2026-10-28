@@ -1,12 +1,19 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { TemperatureDemo } from '@/components/interactive'
-import { Latex, LatexBlock } from '@/components/ui/Latex'
+import { TemperatureDemo } from '@/components/interactive/TemperatureDemo'
+import { LatexBlock } from '@/components/ui/Latex'
 import { useTranslation } from '@/lib/i18n/context'
 
+const SOURCES = [
+  ['Qwen3-32B: Best practices', 'https://huggingface.co/Qwen/Qwen3-32B#best-practices'],
+  ['Holtzman et al. (2019): The Curious Case of Neural Text Degeneration', 'https://arxiv.org/abs/1904.09751'],
+  ['Nguyen et al. (2024): Turning Up the Heat: Min-p Sampling for Creative and Coherent LLM Outputs', 'https://arxiv.org/abs/2407.01082'],
+  ['llama.cpp: sampler order (--samplers)', 'https://github.com/ggml-org/llama.cpp/blob/master/tools/cli/README.md'],
+] as const
+
 export default function TemperaturePage() {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
 
   return (
     <TopicLayout topicId="temperature"
@@ -17,19 +24,13 @@ export default function TemperaturePage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.temperature.title },
       ]}
-      prevTopic={{ label: t.topicNames['context-rot'], href: '/ai/llm/context-rot' }}
-      nextTopic={{ label: t.topicNames.attention, href: '/ai/llm/attention' }}
     >
       {/* What is Temperature */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
         <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.temperature.whatIs}</h2>
         <div className="prose prose-invert max-w-none">
           <p className="text-muted leading-relaxed text-lg">
-            {t.temperature.whatIsDesc.split('Temperature').map((part, i, arr) => 
-              i === arr.length - 1 ? part : (
-                <span key={i}>{part}<span className="text-primary-light font-semibold">Temperature</span></span>
-              )
-            )}
+            <span className="text-primary-light font-semibold">{t.temperature.whatIsTerm}</span> {t.temperature.whatIsDesc}
           </p>
           <div className="mt-8 grid md:grid-cols-2 gap-4">
             <div className="p-5 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-xl">
@@ -108,11 +109,36 @@ export default function TemperaturePage() {
         </div>
       </section>
 
+      {/* Temperature with truncation samplers */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8 space-y-4">
+        <h2 className="text-2xl font-bold font-heading text-gradient">{t.temperature.truncationTitle}</h2>
+        <p className="text-muted leading-relaxed">{t.temperature.truncationBody}</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="p-5 rounded-xl border border-cyan-500/20 bg-cyan-500/5">
+            <p className="text-sm text-muted leading-relaxed">{t.temperature.truncationTopP}</p>
+          </div>
+          <div className="p-5 rounded-xl border border-emerald-500/20 bg-emerald-500/5">
+            <p className="text-sm text-muted leading-relaxed">{t.temperature.truncationMinP}</p>
+          </div>
+        </div>
+        <p className="text-muted leading-relaxed">{t.temperature.truncationOrder}</p>
+      </section>
+
       <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-4">
         <h2 className="text-2xl font-semibold">{t.temperature.practicalGuidelines}</h2>
-        <p className="text-muted">{locale === 'de' ? 'Beginne mit der Empfehlung für dein konkretes Modell und deinen Modus. Vergleiche danach Einstellungen anhand derselben Aufgaben, Referenzantworten und mehrerer Läufe. Fakten brauchen Quellen, Code braucht Tests; Temperature ersetzt diese Prüfung nicht.' : 'Start with guidance for the specific model and mode. Then compare settings on the same tasks and reference answers over multiple runs. Facts need sources and code needs tests; temperature does not replace these checks.'}</p>
-        <p className="text-muted">{locale === 'de' ? 'Beispiel: Qwen3 empfiehlt für Thinking T = 0,6 und warnt vor Greedy Decoding. Ein allgemeines Rezept wie "Mathe immer mit T = 0" wäre damit unpassend.' : 'For example, Qwen3 recommends T = 0.6 for thinking and warns against greedy decoding. A universal recipe such as "always use T = 0 for math" would not fit this model.'}</p>
-        <a href="https://huggingface.co/Qwen/Qwen3-32B#best-practices" target="_blank" rel="noopener noreferrer" className="text-primary-light underline">Qwen3-32B: Best practices</a>
+        <p className="text-muted">{t.temperature.guidelinesBody}</p>
+        <p className="text-muted">{t.temperature.guidelinesExample}</p>
+      </section>
+
+      <section className="rounded-2xl border border-border p-5 sm:p-7 space-y-3">
+        <h2 className="text-xl font-semibold">{t.temperature.sourcesTitle}</h2>
+        <ul className="space-y-2">
+          {SOURCES.map(([label, href]) => (
+            <li key={href}>
+              <a href={href} target="_blank" rel="noopener noreferrer" className="text-primary-light underline">{label}</a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       {/* Key takeaways */}

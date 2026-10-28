@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
+import { useTranslation } from '@/lib/i18n/context'
 import { scaledAttention } from '@/lib/llmLearningMath'
 
 // Row-vector convention: q = x Wq. Deliberately tiny, fixed toy projections.
@@ -11,30 +11,9 @@ const WV = [[1, -1], [0.5, 1]]
 const initial = [[1, 0], [0, 1], [1, 1]]
 const project = (x: number[], w: number[][]) => [0, 1].map(j => x.reduce((sum, value, i) => sum + value * w[i][j], 0))
 const fmt = (v: number[]) => `[${v.map(n => n.toFixed(2)).join(', ')}]`
-const copy = {
-  en: {
-    title: 'Calculate one attention head', words: ['The', 'cat', 'sleeps'],
-    note: 'This example contains three words. Each word is treated as one token here. Input vectors and projection weights are chosen for easy arithmetic, not learned from language. Attention weights and the output below are computed from them.',
-    choose: '1. Choose the querying token', input: '2. Edit its input vector x', projections: 'Fixed projections (row vectors: Q = XWQ, K = XWK, V = XWV)',
-    mask: 'Causal mask: this token can only use itself and earlier tokens', vectors: '3. Inspect all token vectors', token: 'Token', scores: '4. Dot product → scale → mask → softmax', dot: 'Q · K', scaled: '÷ √2', weight: 'Attention weight', weighted: 'Weight × V', result: '5. Sum the weighted values', reset: 'Reset vectors',
-    explain: 'The selected query scores every key. Divide by √dₖ, set forbidden positions to −∞, then apply softmax across the row. The weights sum to 1; masked positions contribute zero.',
-    limit: 'This output is a contextual vector for the selected position, not a next-token probability. Later projections and layers process it. Large attention weight alone does not establish grammar, importance or a causal explanation of the model’s answer.',
-    bidirectional: 'Without the mask, the selected token can also use later positions, as in bidirectional encoder attention.',
-  },
-  de: {
-    title: 'Einen Attention-Head ausrechnen', words: ['Die', 'Katze', 'schläft'],
-    note: 'Das Beispiel enthält drei Wörter. Jedes Wort wird hier als ein Token behandelt. Eingangsvektoren und Projektionsgewichte sind für einfache Rechnungen gewählt und nicht aus Sprache gelernt. Die Attention-Gewichte und die Ausgabe werden daraus berechnet.',
-    choose: '1. Das abfragende Token wählen', input: '2. Seinen Eingangsvektor x ändern', projections: 'Feste Projektionen (Zeilenvektoren: Q = XWQ, K = XWK, V = XWV)',
-    mask: 'Kausale Maske: nur dieses und vorherige Tokens sind erlaubt', vectors: '3. Alle Token-Vektoren ansehen', token: 'Token', scores: '4. Skalarprodukt → Skalierung → Maske → Softmax', dot: 'Q · K', scaled: '÷ √2', weight: 'Attention-Gewicht', weighted: 'Gewicht × V', result: '5. Gewichtete Values summieren', reset: 'Vektoren zurücksetzen',
-    explain: 'Die ausgewählte Query bewertet jeden Key. Danach wird durch √dₖ geteilt, verbotene Positionen werden auf −∞ gesetzt und Softmax wird auf die Zeile angewendet. Die Gewichte summieren sich zu 1; maskierte Positionen tragen null bei.',
-    limit: 'Die Ausgabe ist ein kontextueller Vektor dieser Position, keine Next-Token-Wahrscheinlichkeit. Weitere Projektionen und Layer verarbeiten ihn. Ein großes Attention-Gewicht allein belegt weder Grammatik noch Wichtigkeit oder eine kausale Erklärung der Modellantwort.',
-    bidirectional: 'Ohne Maske kann das ausgewählte Token auch spätere Positionen nutzen, wie bei bidirektionaler Encoder-Attention.',
-  },
-}
-
 export function AttentionVisualizer() {
-  const { locale } = useLocale()
-  const c = copy[locale === 'de' ? 'de' : 'en']
+  const { t } = useTranslation()
+  const c = t.attention.viz
   const [input, setInput] = useState(initial)
   const [selected, setSelected] = useState(1)
   const [causal, setCausal] = useState(true)
