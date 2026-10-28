@@ -4,7 +4,7 @@ import { type ChangeEvent, useState, useEffect, useMemo, useRef, useCallback } f
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronRight, Menu, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, ImageIcon, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap, Download, Upload } from 'lucide-react'
+import { ChevronRight, Menu, Search, Sparkles, X, Command, Heart, Github, ListOrdered, LayoutList, CheckCircle2, Circle, Bot, Brain, Cpu, Shield, Building2, Network, Database, Eye, Layers, Zap, Wrench, BookOpen, Gauge, MessageSquare, Lock, Globe2, Code2, GitBranch, Route, GraduationCap, Download, Upload } from 'lucide-react'
 import clsx from 'clsx'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
@@ -34,6 +34,7 @@ const TOPIC_ICONS: Record<string, typeof Brain> = {
   'llm-behavior': Zap,
   'llm-capabilities': Sparkles,
   'llm-architecture': Cpu,
+  'llm-adaptation': GraduationCap,
   'agent-loop': Route,
   'agent-context': Layers,
   'chat-compaction': Database,
@@ -58,8 +59,6 @@ const TOPIC_ICONS: Record<string, typeof Brain> = {
   'positional-encoding': Layers,
   'multi-head-attention-gqa': Eye,
   vision: Eye,
-  'visual-challenges': ImageIcon,
-  'agentic-vision': Eye,
   multimodality: Layers,
   'transformer-architecture': Cpu,
   'feed-forward-networks-moe': Network,
@@ -67,7 +66,6 @@ const TOPIC_ICONS: Record<string, typeof Brain> = {
   'next-token-prediction': Zap,
   'llm-training': GraduationCap,
   'training-data': Database,
-  moe: Network,
   quantization: Cpu,
   'nested-learning': Layers,
   distillation: Zap,

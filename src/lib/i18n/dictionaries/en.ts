@@ -519,6 +519,7 @@ export const en = {
     'llm-behavior': 'Behavior',
     'llm-capabilities': 'Capabilities',
     'llm-architecture': 'Architecture',
+    'llm-adaptation': 'Training & Adaptation',
     // LLM topics
     'tier-list': "Logge’s Model Notes",
     'tokenization': 'Tokenization',

@@ -67,7 +67,7 @@ async function main() {
     await page.setViewport({ width: 1280, height: 900 });
 
     // Navigate to the agentic vision page
-    const demoUrl = `${baseUrl}/en/ai/llm/agentic-vision`;
+    const demoUrl = `${baseUrl}/en/ai/llm/vision`;
     console.log(`Navigating to: ${demoUrl}`);
 
     await page.goto(demoUrl, {

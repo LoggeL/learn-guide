@@ -124,7 +124,7 @@ export const topics: Topic[] = [
             ],
           },
           {
-            id: 'llm-training',
+            id: 'llm-adaptation',
             name: 'Training & Adaptation',
             children: [
               { id: 'llm-training', name: 'LLM Training', path: '/ai/llm/training', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
@@ -163,7 +163,7 @@ export const topics: Topic[] = [
         id: 'ml-fundamentals',
         name: 'ML Fundamentals',
         children: [
-          { id: 'neural-networks', name: 'Neural Networks', path: '/ai/ml-fundamentals/neural-networks', difficulty: 'beginner', lastUpdated: '2026-02-09' },
+          { id: 'neural-networks', name: 'Neural Networks', path: '/ai/ml-fundamentals/neural-networks', difficulty: 'beginner', lastUpdated: '2026-10-29' },
           { id: 'gradient-descent', name: 'Gradient Descent', path: '/ai/ml-fundamentals/gradient-descent', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
           { id: 'training', name: 'Loss & Generalization', path: '/ai/ml-fundamentals/training', difficulty: 'beginner', lastUpdated: '2026-10-29' },
           { id: 'reinforcement-learning', name: 'Reinforcement Learning', path: '/ai/ml-fundamentals/reinforcement-learning', difficulty: 'intermediate', lastUpdated: '2026-09-13' },

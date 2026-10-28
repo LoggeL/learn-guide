@@ -521,6 +521,7 @@ export const de: Dictionary = {
     'llm-behavior': 'Verhalten',
     'llm-capabilities': 'Fähigkeiten',
     'llm-architecture': 'Architektur',
+    'llm-adaptation': 'Training & Anpassung',
     // LLM topics
     'tier-list': "Logges Modellnotizen",
     'tokenization': 'Tokenisierung',

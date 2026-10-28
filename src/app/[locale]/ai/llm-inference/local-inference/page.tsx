@@ -119,7 +119,7 @@ export default function LocalInferencePage() {
         </div>
         <div className="mt-4 p-5 rounded-xl bg-gradient-to-br from-cyan-500/10 to-purple-500/10 border border-cyan-500/20">
           <p className="text-text leading-relaxed mb-3">{li.moeLinkDesc}</p>
-          <Link href="/ai/llm/moe" className="text-primary-light hover:underline font-medium">
+          <Link href="/ai/llm/feed-forward-networks-moe" className="text-primary-light hover:underline font-medium">
             {li.moeLinkText} &rarr;
           </Link>
         </div>
