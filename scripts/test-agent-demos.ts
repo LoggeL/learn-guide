@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { matchSkill, retrieveNotes, validateTool, generateToolSchema, rewardCases, checkReward, biasGroups, groupCounts, type DemoTool } from '../src/lib/agent-demo-models'
+import { trialScripts, runTrial, combinedVerdict, summarize as summarizeEval, binomial, passAtK, passHatK, type GraderId } from '../src/lib/agent-eval-math'
 import { en } from '../src/lib/i18n/dictionaries/en'
 import { de } from '../src/lib/i18n/dictionaries/de'
 const Ajv = require('ajv')
@@ -46,4 +47,26 @@ assert.deepEqual(retrieveNotes(notes,'').map(n=>n.id),[3,2,1])
 for(const group of biasGroups){assert.equal(groupCounts(group,0).selected,6);assert.equal(groupCounts(group,100).selected,0)}
 assert.equal(groupCounts(biasGroups[0],60).tp,2)
 assert.equal(groupCounts(biasGroups[1],60).tp,1)
-console.log('Agent demo regressions passed: 8 localized presets, whole-word routing, JSON Schema contracts, real reward checks, lexical retrieval and group error rates.')
+
+// Agent evaluation demo: graders read real simulated end states and transcripts
+const evalRuns = trialScripts.map(runTrial)
+const passing = (graders: GraderId[]) => evalRuns.filter(run => combinedVerdict(run, graders)).map(run => run.id)
+assert.deepEqual(passing(['claim']), ['clean', 'skippedCheck', 'falseClaim', 'detour', 'wrongAmount'])
+assert.deepEqual(passing(['outcome']), ['clean', 'skippedCheck', 'detour'])
+assert.deepEqual(passing(['policy']), ['clean', 'falseClaim', 'detour', 'wrongAmount'])
+assert.deepEqual(passing(['exactPath']), ['clean', 'falseClaim', 'wrongAmount'])
+assert.deepEqual(passing(['outcome', 'policy']), evalRuns.filter(run => run.reviewerPass).map(run => run.id))
+const bestCombo = summarizeEval(evalRuns, ['outcome', 'policy'])
+assert.equal(bestCombo.falsePasses + bestCombo.falseFails, 0)
+assert.equal(evalRuns[2].transcript[2].ok, false)
+assert.equal(evalRuns[2].finalState.refunds.length, 0)
+for (const run of evalRuns) assert.equal(run.transcript.length, run.calls.length)
+assert.equal(binomial(5, 2), 10)
+assert.equal(passAtK(5, 2, 1), 0.4)
+assert.equal(passHatK(5, 2, 1), 0.4)
+assert.ok(Math.abs(passAtK(5, 2, 2) - 0.7) < 1e-12)
+assert.ok(Math.abs(passHatK(5, 2, 2) - 0.1) < 1e-12)
+assert.equal(passAtK(5, 4, 2), 1)
+assert.equal(passHatK(5, 2, 3), 0)
+assert.equal(passHatK(5, 5, 5), 1)
+console.log('Agent demo regressions passed: 8 localized presets, whole-word routing, JSON Schema contracts, real reward checks, lexical retrieval, group error rates, trajectory graders and pass@k/pass^k estimators.')
