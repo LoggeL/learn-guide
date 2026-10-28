@@ -2,12 +2,12 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Sparkles, Brain, Zap, BookOpen, ArrowRight, Cpu, MessageSquare, Layers, Github, Newspaper, Clock, Database, Gauge } from 'lucide-react'
+import { Sparkles, Brain, BookOpen, ArrowRight, Cpu, MessageSquare, Github, Newspaper, Clock, Route, Type, Thermometer } from 'lucide-react'
 import { useBrainPacman } from '@/components/interactive/BrainPacman'
 import { DIFFICULTY_STYLES, TOPIC_DIFFICULTY } from '@/lib/difficulty'
 import { TOPIC_DATES, formatTopicDate } from '@/lib/dates'
 import { useTranslation, useLocale } from '@/lib/i18n/context'
-import { flattenTopics, getTopicCategories, type Topic } from '@/lib/topics'
+import { flattenTopics, getTopicCategories, learningPathGroups, type Topic } from '@/lib/topics'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -58,26 +58,13 @@ export default function Home() {
   const { locale } = useLocale()
   const { overlay: brainPacmanOverlay, handleTriggerClick: handleBrainClick } = useBrainPacman()
 
-  const features = [
-    {
-      icon: Brain,
-      titleKey: 'interactiveDemos' as const,
-      descKey: 'interactiveDemosDesc' as const,
-      gradient: 'from-purple-500 to-pink-500',
-    },
-    {
-      icon: Layers,
-      titleKey: 'visualLearning' as const,
-      descKey: 'visualLearningDesc' as const,
-      gradient: 'from-cyan-500 to-blue-500',
-    },
-    {
-      icon: Zap,
-      titleKey: 'buildIntuition' as const,
-      descKey: 'buildIntuitionDesc' as const,
-      gradient: 'from-orange-500 to-red-500',
-    },
+  // Teasers for three topics whose demos work without any setup
+  const demoTeasers = [
+    { id: 'tokenization', href: '/ai/llm/tokenization', icon: Type, desc: t.home.teaserTokenization, gradient: 'from-purple-500 to-pink-500' },
+    { id: 'temperature', href: '/ai/llm/temperature', icon: Thermometer, desc: t.home.teaserTemperature, gradient: 'from-orange-500 to-red-500' },
+    { id: 'attention', href: '/ai/llm/attention', icon: Brain, desc: t.home.teaserAttention, gradient: 'from-cyan-500 to-blue-500' },
   ]
+  const lectureCount = learningPathGroups.filter((group) => !group.optional).length
 
   const allTopicCount = flattenTopics().filter((topic) => topic.path).length
   const latestTopics = Object.entries(TOPIC_DATES)
@@ -134,7 +121,7 @@ export default function Home() {
                 {[
                   { icon: BookOpen, label: t.common.topics, value: String(allTopicCount), sub: t.common.guidesDescription },
                   { icon: Clock, label: t.common.recentlyUpdated, value: latestTopics[0]?.[0] ? (t.topicNames[latestTopics[0][0] as keyof typeof t.topicNames] || latestTopics[0][0]) : '—', sub: latestTopics[0]?.[1] ? formatTopicDate(latestTopics[0][1], locale) : '—' },
-                  { icon: Database, label: 'LLM', value: t.home.statArchitecture, sub: t.home.statArchitectureSub },
+                  { icon: Route, label: t.home.statPathLabel, value: t.home.statPathValue.replace('{count}', String(lectureCount)), sub: t.home.statPathSub },
                 ].map((item, i) => (
                   <div key={i} className="rounded-xl border border-border bg-surface/55 p-4">
                     <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-subtle">
@@ -151,7 +138,7 @@ export default function Home() {
         </motion.header>
 
         {/* Lab Dashboard Strip */}
-        <motion.section variants={itemVariants} className="mb-12 grid gap-4 lg:grid-cols-[1.2fr_.8fr]">
+        <motion.section variants={itemVariants} className="mb-12 grid gap-4">
           <a
             href="https://blog.logge.top"
             target="_blank"
@@ -164,28 +151,38 @@ export default function Home() {
               </div>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-text group-hover:text-primary-light transition-colors font-heading">LMF Blog</h3>
+              <h3 className="text-base font-bold text-text group-hover:text-primary-light transition-colors font-heading">{t.home.blogName}</h3>
               <p className="text-sm text-muted">{t.home.blogDescription}</p>
             </div>
             <ArrowRight size={18} className="text-muted group-hover:text-primary-light transition-colors shrink-0 transform group-hover:translate-x-1" />
           </a>
 
-          <div className="grid grid-cols-3 gap-3">
-            {features.map((feature) => (
-              <motion.div
-                key={feature.titleKey}
-                whileHover={{ scale: 1.02, y: -3 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className="group relative rounded-2xl border border-border bg-surface/60 p-4 transition-all duration-300 hover:border-primary/35"
-              >
-                <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} p-0.5`}>
-                  <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
-                    <feature.icon size={18} className="text-text" />
-                  </div>
-                </div>
-                <h3 className="text-sm font-semibold text-text font-heading">{t.features[feature.titleKey]}</h3>
-              </motion.div>
-            ))}
+          <div>
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-subtle">{t.home.demoTeasersTitle}</h2>
+            <div className="grid gap-3 sm:grid-cols-3">
+              {demoTeasers.map((demo) => (
+                <motion.div
+                  key={demo.id}
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                >
+                  <Link
+                    href={`/${locale}${demo.href}`}
+                    className="group flex h-full flex-col rounded-2xl border border-border bg-surface/60 p-4 transition-all duration-300 hover:border-primary/35"
+                  >
+                    <div className={`mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${demo.gradient} p-0.5`}>
+                      <div className="flex h-full w-full items-center justify-center rounded-xl bg-background">
+                        <demo.icon size={18} className="text-text" />
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-semibold text-text font-heading group-hover:text-primary-light transition-colors">
+                      {t.topicNames[demo.id as keyof typeof t.topicNames]}
+                    </h3>
+                    <p className="mt-1 text-xs leading-5 text-muted">{demo.desc}</p>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
           </div>
         </motion.section>
 
@@ -488,7 +485,7 @@ export default function Home() {
                 className="flex items-center gap-2 text-subtle hover:text-text transition-colors"
               >
                 <Github size={14} />
-                <span className="text-xs">GitHub</span>
+                <span className="text-xs">{t.home.githubLabel}</span>
               </a>
               <a
                 href="https://t.me/LMFUpdates"
@@ -497,7 +494,7 @@ export default function Home() {
                 className="flex items-center gap-2 text-subtle hover:text-[#26A5E4] transition-colors"
               >
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-                <span className="text-xs">Updates</span>
+                <span className="text-xs">{t.home.updatesLabel}</span>
               </a>
             </div>
           </div>
