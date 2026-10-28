@@ -1,92 +1,63 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
-import { useTranslation } from '@/lib/i18n/context'
-import { CheckCircle2, Circle, ChevronDown, ChevronUp, Sparkles, BookOpen, Rocket, GraduationCap } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { CheckCircle2, Circle, ChevronDown, ChevronUp, Rocket } from 'lucide-react'
+import { useTranslation, useLocale } from '@/lib/i18n/context'
+import { flattenTopics, learningPathGroups, type Topic } from '@/lib/topics'
+import { DIFFICULTY_STYLES, type Difficulty } from '@/lib/difficulty'
 import { COMPLETED_LEARNING_PATH_STORAGE_KEY, normalizeTopicIds } from '@/lib/progress/schema'
 
-interface PathTopic {
-  id: string
-  href: string
-  nameKey: string
-  descKey: string
-}
-
-interface PathStage {
-  level: 'beginner' | 'intermediate' | 'advanced'
-  icon: React.ReactNode
-  colorFrom: string
-  colorTo: string
+interface StageStyle {
+  gradient: string
   accent: string
-  accentBorder: string
-  accentBorderHover: string
-  accentBg: string
-  topics: PathTopic[]
+  activeBox: string
+  hoverBorder: string
 }
 
-const stages: PathStage[] = [
-  {
-    level: 'beginner',
-    icon: <Sparkles className="w-5 h-5" />,
-    colorFrom: 'from-emerald-500',
-    colorTo: 'to-green-500',
-    accent: 'text-emerald-400',
-    accentBorder: 'border-emerald-500/30',
-    accentBorderHover: 'hover:border-emerald-500/30',
-    accentBg: 'bg-emerald-500/10',
-    topics: [
-      { id: 'prompt-basics', href: '/ai/prompting/basics', nameKey: 'prompt-basics', descKey: 'lpPromptBasics' },
-      { id: 'temperature', href: '/ai/llm/temperature', nameKey: 'temperature', descKey: 'lpTemperature' },
-      { id: 'tokenization', href: '/ai/llm/tokenization', nameKey: 'tokenization', descKey: 'lpTokenization' },
-      { id: 'neural-networks', href: '/ai/ml-fundamentals/neural-networks', nameKey: 'neural-networks', descKey: 'lpNeuralNetworks' },
-      { id: 'vision', href: '/ai/llm/vision', nameKey: 'vision', descKey: 'lpVision' },
-      { id: 'local-inference', href: '/ai/llm-inference/local-inference', nameKey: 'local-inference', descKey: 'lpLocalInference' },
-    ],
-  },
-  {
-    level: 'intermediate',
-    icon: <BookOpen className="w-5 h-5" />,
-    colorFrom: 'from-amber-500',
-    colorTo: 'to-orange-500',
-    accent: 'text-amber-400',
-    accentBorder: 'border-amber-500/30',
-    accentBorderHover: 'hover:border-amber-500/30',
-    accentBg: 'bg-amber-500/10',
-    topics: [
-      { id: 'system-prompts', href: '/ai/prompting/system-prompts', nameKey: 'system-prompts', descKey: 'lpSystemPrompts' },
-      { id: 'embeddings', href: '/ai/llm/embeddings', nameKey: 'embeddings', descKey: 'lpEmbeddings' },
-      { id: 'attention', href: '/ai/llm/attention', nameKey: 'attention', descKey: 'lpAttention' },
-      { id: 'agent-loop', href: '/ai/agents/loop', nameKey: 'agent-loop', descKey: 'lpAgentLoop' },
-      { id: 'tool-design', href: '/ai/agents/tool-design', nameKey: 'tool-design', descKey: 'lpToolDesign' },
-      { id: 'rag', href: '/ai/llm/rag', nameKey: 'rag', descKey: 'lpRag' },
-      { id: 'memory', href: '/ai/agents/memory', nameKey: 'memory', descKey: 'lpMemory' },
-    ],
-  },
-  {
-    level: 'advanced',
-    icon: <GraduationCap className="w-5 h-5" />,
-    colorFrom: 'from-red-500',
-    colorTo: 'to-rose-500',
-    accent: 'text-red-400',
-    accentBorder: 'border-red-500/30',
-    accentBorderHover: 'hover:border-red-500/30',
-    accentBg: 'bg-red-500/10',
-    topics: [
-      { id: 'orchestration', href: '/ai/agents/orchestration', nameKey: 'orchestration', descKey: 'lpOrchestration' },
-      { id: 'moe', href: '/ai/llm/moe', nameKey: 'moe', descKey: 'lpMoe' },
-      { id: 'quantization', href: '/ai/llm/quantization', nameKey: 'quantization', descKey: 'lpQuantization' },
-      { id: 'agent-security', href: '/ai/agents/security', nameKey: 'agent-security', descKey: 'lpAgentSecurity' },
-    ],
-  },
+// Literal class strings so Tailwind keeps them. Cycled if the number of lectures grows.
+const STAGE_STYLES: StageStyle[] = [
+  { gradient: 'from-emerald-500 to-green-500', accent: 'text-emerald-400', activeBox: 'bg-emerald-500/10 border-emerald-500/30', hoverBorder: 'hover:border-emerald-500/30' },
+  { gradient: 'from-cyan-500 to-sky-500', accent: 'text-cyan-400', activeBox: 'bg-cyan-500/10 border-cyan-500/30', hoverBorder: 'hover:border-cyan-500/30' },
+  { gradient: 'from-violet-500 to-purple-500', accent: 'text-violet-400', activeBox: 'bg-violet-500/10 border-violet-500/30', hoverBorder: 'hover:border-violet-500/30' },
+  { gradient: 'from-amber-500 to-yellow-500', accent: 'text-amber-400', activeBox: 'bg-amber-500/10 border-amber-500/30', hoverBorder: 'hover:border-amber-500/30' },
+  { gradient: 'from-orange-500 to-red-500', accent: 'text-orange-400', activeBox: 'bg-orange-500/10 border-orange-500/30', hoverBorder: 'hover:border-orange-500/30' },
+  { gradient: 'from-fuchsia-500 to-pink-500', accent: 'text-fuchsia-400', activeBox: 'bg-fuchsia-500/10 border-fuchsia-500/30', hoverBorder: 'hover:border-fuchsia-500/30' },
+  { gradient: 'from-rose-500 to-red-500', accent: 'text-rose-400', activeBox: 'bg-rose-500/10 border-rose-500/30', hoverBorder: 'hover:border-rose-500/30' },
 ]
+
+interface Stage {
+  id: string
+  style: StageStyle
+  topics: Topic[]
+}
+
+/** The lecture blocks of the sequential course, read from topics.ts (optional groups excluded). */
+function buildStages(): Stage[] {
+  const byId = new Map(flattenTopics().map(topic => [topic.id, topic]))
+  return learningPathGroups
+    .filter(group => !group.optional)
+    .map((group, idx) => ({
+      id: group.id,
+      style: STAGE_STYLES[idx % STAGE_STYLES.length],
+      topics: group.topicIds
+        .map(id => byId.get(id))
+        .filter((topic): topic is Topic => !!topic?.path),
+    }))
+    .filter(stage => stage.topics.length > 0)
+}
 
 export function LearningPath() {
   const { t } = useTranslation()
+  const { locale } = useLocale()
   const lp = t.learningPath
+  const lpText = lp as Record<string, string>
+  const stages = useMemo(buildStages, [])
+  const totalCount = stages.reduce((sum, stage) => sum + stage.topics.length, 0)
   const [expandedStage, setExpandedStage] = useState<number>(0)
 
-  // Completed topics — loaded from localStorage after mount to avoid hydration mismatch
+  // Completed topics, loaded after mount to avoid a hydration mismatch
   const [completed, setCompleted] = useState<Set<string>>(new Set())
 
   useEffect(() => {
@@ -96,25 +67,23 @@ export function LearningPath() {
     } catch { /* ignore */ }
   }, [])
 
-  const persistCompleted = (next: Set<string>) => {
-    try { localStorage.setItem(COMPLETED_LEARNING_PATH_STORAGE_KEY, JSON.stringify(Array.from(next))) } catch {}
-  }
-
-  const toggleCompleted = (id: string, e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const toggleCompleted = (id: string) => {
     const next = new Set(completed)
     if (next.has(id)) next.delete(id)
     else next.add(id)
-    persistCompleted(next)
+    // Stored ids outside the current path (e.g. renamed topics) are kept untouched.
+    try { localStorage.setItem(COMPLETED_LEARNING_PATH_STORAGE_KEY, JSON.stringify(Array.from(next))) } catch { /* ignore */ }
     setCompleted(next)
   }
 
-  const levelLabels: Record<string, string> = {
-    beginner: lp.beginner,
-    intermediate: lp.intermediate,
-    advanced: lp.advanced,
+  const difficultyLabel: Record<Difficulty, string> = {
+    beginner: t.common.difficultyBeginner,
+    intermediate: t.common.difficultyIntermediate,
+    expert: t.common.difficultyExpert,
   }
+
+  const doneCount = stages.reduce((sum, stage) => sum + stage.topics.filter(topic => completed.has(topic.id)).length, 0)
+  let runningIndex = 0
 
   return (
     <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -124,94 +93,107 @@ export function LearningPath() {
         </div>
         <h2 className="text-2xl font-bold font-heading text-gradient">{lp.title}</h2>
       </div>
-      <p className="text-muted mb-6 ml-[52px]">{lp.subtitle}</p>
+      <p className="text-muted mb-6 md:ml-[52px]">{lp.subtitle}</p>
 
-      <div className="relative space-y-4">
+      <div className="relative space-y-3">
         {/* Vertical connector line */}
-        <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-emerald-500/40 via-amber-500/40 to-red-500/40 hidden md:block" />
+        <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-gradient-to-b from-emerald-500/40 via-violet-500/40 to-rose-500/40 hidden md:block" />
 
         {stages.map((stage, idx) => {
           const isExpanded = expandedStage === idx
-          const completedCount = stage.topics.filter(t => completed.has(t.id)).length
-          const totalCount = stage.topics.length
-          const allDone = completedCount === totalCount
+          const stageDone = stage.topics.filter(topic => completed.has(topic.id)).length
+          const allDone = stageDone === stage.topics.length
+          const firstIndex = runningIndex
+          runningIndex += stage.topics.length
+          const hint = lpText[`hint-${stage.id}`]
 
           return (
-            <div key={stage.level} className="relative">
-              {/* Stage header */}
+            <div key={stage.id} className="relative">
               <button
+                type="button"
                 onClick={() => setExpandedStage(isExpanded ? -1 : idx)}
+                aria-expanded={isExpanded}
                 className={`w-full flex items-center gap-4 p-4 rounded-xl border transition-all text-left ${
-                  isExpanded
-                    ? `${stage.accentBg} ${stage.accentBorder}`
-                    : 'bg-surface/30 border-border hover:border-border/80'
+                  isExpanded ? stage.style.activeBox : 'bg-surface/30 border-border hover:border-border/80'
                 }`}
               >
-                <div className={`relative z-10 w-10 h-10 rounded-xl bg-gradient-to-br ${stage.colorFrom} ${stage.colorTo} flex items-center justify-center shrink-0`}>
-                  {allDone ? <CheckCircle2 className="w-5 h-5 text-white" /> : stage.icon}
+                <div className={`relative z-10 w-10 h-10 rounded-xl bg-gradient-to-br ${stage.style.gradient} flex items-center justify-center shrink-0`}>
+                  {allDone
+                    ? <CheckCircle2 className="w-5 h-5 text-white" />
+                    : <span className="text-sm font-bold font-mono text-white">{idx + 1}</span>}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className={`text-lg font-bold font-heading ${stage.accent}`}>
-                      {levelLabels[stage.level]}
+                  <div className="flex flex-wrap items-center gap-x-2">
+                    <span className={`text-lg font-bold font-heading ${stage.style.accent}`}>
+                      {lpText[stage.id] ?? stage.id}
                     </span>
-                    <span className="text-xs text-muted">
-                      {completedCount}/{totalCount}
+                    <span className="text-xs text-muted font-mono">
+                      {stageDone}/{stage.topics.length}
                     </span>
                   </div>
-                  <p className="text-sm text-muted truncate">{(lp as Record<string, string>)[`${stage.level}Hint`]}</p>
+                  {hint && <p className="text-sm text-muted line-clamp-2 md:truncate">{hint}</p>}
                 </div>
-                {isExpanded ? (
-                  <ChevronUp className="w-5 h-5 text-muted shrink-0" />
-                ) : (
-                  <ChevronDown className="w-5 h-5 text-muted shrink-0" />
-                )}
+                {isExpanded ? <ChevronUp className="w-5 h-5 text-muted shrink-0" /> : <ChevronDown className="w-5 h-5 text-muted shrink-0" />}
               </button>
 
-              {/* Expanded topic list */}
-              {isExpanded && (
-                <div className="mt-2 ml-0 md:ml-14 grid gap-2">
-                  {stage.topics.map((topic, tIdx) => {
-                    const isDone = completed.has(topic.id)
-                    return (
-                      <Link
-                        key={topic.id}
-                        href={topic.href}
-                        onClick={() => {
-                          if (!isDone) {
-                            const next = new Set(completed)
-                            next.add(topic.id)
-                            persistCompleted(next)
-                            setCompleted(next)
-                          }
-                        }}
-                        className={`group flex items-start gap-3 p-3 rounded-lg border transition-all hover:bg-surface/50 ${
-                          isDone ? 'border-border/50 opacity-75' : `border-border ${stage.accentBorderHover}`
-                        }`}
-                      >
-                        <button
-                          onClick={(e) => toggleCompleted(topic.id, e)}
-                          className={`mt-0.5 shrink-0 transition-colors ${isDone ? stage.accent : 'text-muted hover:text-text'}`}
-                          aria-label={isDone ? 'Mark incomplete' : 'Mark complete'}
-                        >
-                          {isDone ? <CheckCircle2 className="w-4.5 h-4.5" /> : <Circle className="w-4.5 h-4.5" />}
-                        </button>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs text-muted font-mono">{String(tIdx + 1).padStart(2, '0')}</span>
-                            <span className={`text-sm font-semibold ${isDone ? 'line-through text-muted' : 'text-text group-hover:text-primary-light'} transition-colors`}>
-                              {(t.topicNames as Record<string, string>)[topic.nameKey] ?? topic.nameKey}
-                            </span>
+              <AnimatePresence initial={false}>
+                {isExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-2 md:ml-14 grid gap-2">
+                      {stage.topics.map((topic, tIdx) => {
+                        const isDone = completed.has(topic.id)
+                        const difficulty = topic.difficulty
+                        return (
+                          <div
+                            key={topic.id}
+                            className={`group flex items-start gap-3 p-3 rounded-lg border transition-all hover:bg-surface/50 ${
+                              isDone ? 'border-border/50 opacity-75' : `border-border ${stage.style.hoverBorder}`
+                            }`}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => toggleCompleted(topic.id)}
+                              aria-pressed={isDone}
+                              aria-label={`${isDone ? lp.markIncomplete : lp.markComplete}: ${t.topicNames[topic.id as keyof typeof t.topicNames] ?? topic.name}`}
+                              title={isDone ? lp.markIncomplete : lp.markComplete}
+                              className={`mt-0.5 shrink-0 transition-colors ${isDone ? stage.style.accent : 'text-muted hover:text-text'}`}
+                            >
+                              {isDone ? <CheckCircle2 className="w-[18px] h-[18px]" /> : <Circle className="w-[18px] h-[18px]" />}
+                            </button>
+                            <Link href={`/${locale}${topic.path}`} className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted font-mono">{String(firstIndex + tIdx + 1).padStart(2, '0')}</span>
+                                <span className={`text-sm font-semibold ${isDone ? 'line-through text-muted' : 'text-text group-hover:text-primary-light'} transition-colors`}>
+                                  {t.topicNames[topic.id as keyof typeof t.topicNames] ?? topic.name}
+                                </span>
+                                {difficulty && (
+                                  <span
+                                    title={difficultyLabel[difficulty]}
+                                    className={`ml-auto text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none shrink-0 ${DIFFICULTY_STYLES[difficulty].color} ${DIFFICULTY_STYLES[difficulty].bg} ${DIFFICULTY_STYLES[difficulty].border}`}
+                                  >
+                                    {difficultyLabel[difficulty]}
+                                  </span>
+                                )}
+                              </div>
+                              {t.topicDescriptions?.[topic.id as keyof typeof t.topicDescriptions] && (
+                                <p className="text-xs text-muted mt-0.5 line-clamp-1">
+                                  {t.topicDescriptions[topic.id as keyof typeof t.topicDescriptions]}
+                                </p>
+                              )}
+                            </Link>
                           </div>
-                          <p className="text-xs text-muted mt-0.5 line-clamp-1">
-                            {(lp as Record<string, string>)[topic.descKey] ?? ''}
-                          </p>
-                        </div>
-                      </Link>
-                    )
-                  })}
-                </div>
-              )}
+                        )
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           )
         })}
@@ -221,12 +203,14 @@ export function LearningPath() {
       <div className="mt-6 pt-4 border-t border-border">
         <div className="flex items-center justify-between text-xs text-muted mb-2">
           <span>{lp.progress}</span>
-          <span>{completed.size}/{stages.reduce((a, s) => a + s.topics.length, 0)}</span>
+          <span className="font-mono">{doneCount}/{totalCount}</span>
         </div>
         <div className="h-2 rounded-full bg-surface/50 border border-border overflow-hidden">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-amber-500 to-red-500 transition-all duration-500"
-            style={{ width: `${(completed.size / stages.reduce((a, s) => a + s.topics.length, 0)) * 100}%` }}
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-emerald-500 via-violet-500 to-rose-500"
+            initial={false}
+            animate={{ width: `${totalCount > 0 ? (doneCount / totalCount) * 100 : 0}%` }}
+            transition={{ duration: 0.5 }}
           />
         </div>
       </div>
