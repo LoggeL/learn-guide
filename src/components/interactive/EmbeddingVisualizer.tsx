@@ -49,23 +49,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   default: 'bg-gray-500',
 }
 
-const copy = {
-  en: {
-    cosineHint: 'Cosine similarity of these constructed 3D vectors (−1 to 1)',
-    note: 'A geometry exercise with manually chosen 3D vectors, not embeddings from a trained model or a projection of high-dimensional data. The clusters are drawn by design. Cosine values below are calculated from exactly these coordinates.',
-    controls: 'Drag to rotate, scroll to zoom. Use the selection below to compare a word without the 3D controls.',
-    compare: 'Vector to compare', none: 'Choose a word',
-    categories: { animals: 'Animals', royalty: 'Royalty', technology: 'Technology', food: 'Food', emotions: 'Emotions', default: 'Other' } as Record<string, string>,
-  },
-  de: {
-    cosineHint: 'Kosinus-Ähnlichkeit dieser konstruierten 3D-Vektoren (−1 bis 1)',
-    note: 'Eine Geometrieübung mit von Hand gewählten 3D-Vektoren, keine Embeddings eines trainierten Modells und keine Projektion hochdimensionaler Daten. Die Gruppen sind bewusst angeordnet. Die Kosinuswerte unten werden aus genau diesen Koordinaten berechnet.',
-    controls: 'Ziehen zum Drehen, scrollen zum Zoomen. Über die Auswahl unten lässt sich ein Wort auch ohne 3D-Bedienung vergleichen.',
-    compare: 'Vergleichsvektor', none: 'Wort wählen',
-    categories: { animals: 'Tiere', royalty: 'Adel', technology: 'Technik', food: 'Essen', emotions: 'Gefühle', default: 'Weitere' } as Record<string, string>,
-  },
-} as const
-
 const CATEGORY_HEX: Record<string, string> = {
   animals: '#10b981',
   royalty: '#a855f7',
@@ -123,8 +106,9 @@ export type WordData = {
 export { getCategory, getEmbedding, cosineSimilarity3D, CATEGORY_HEX, AVAILABLE_WORDS, CATEGORY_COLORS }
 
 export function EmbeddingVisualizer() {
-  const { t, locale } = useTranslation()
-  const c = copy[locale]
+  const { t } = useTranslation()
+  const c = t.embeddings.viz
+  const categoryLabels: Record<string, string> = c.categories
   const [activeWords, setActiveWords] = useState<string[]>(['king', 'queen', 'cat', 'dog', 'computer'])
   const [selectedWord, setSelectedWord] = useState<string | null>(null)
 
@@ -169,8 +153,8 @@ export function EmbeddingVisualizer() {
             <Plus size={18} className="text-purple-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.selectWords}</h3>
-            <p className="text-xs text-muted">{t.interactive.clickToToggle}</p>
+            <h3 className="font-semibold text-text font-heading">{c.selectWords}</h3>
+            <p className="text-xs text-muted">{c.clickToToggle}</p>
           </div>
         </div>
 
@@ -179,7 +163,7 @@ export function EmbeddingVisualizer() {
             <div key={category}>
               <div className="flex items-center gap-2 mb-2">
                 <span className={`w-3 h-3 rounded-full ${CATEGORY_COLORS[category]}`} />
-                <span className="text-xs text-muted uppercase tracking-wider">{c.categories[category]}</span>
+                <span className="text-xs text-muted uppercase tracking-wider">{categoryLabels[category]}</span>
               </div>
               <div className="flex flex-wrap gap-2">
                 {categoryWords.map((word) => {
@@ -209,10 +193,10 @@ export function EmbeddingVisualizer() {
         </div>
 
         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-sm">
-          <span className="text-muted">{activeWords.length} {t.interactive.wordsActive}</span>
+          <span className="text-muted">{activeWords.length} {c.wordsActive}</span>
           {selectedWord && (
             <span className="text-primary-light">
-              {t.interactive.comparing}: <strong>{selectedWord}</strong>
+              {c.comparing}: <strong>{selectedWord}</strong>
             </span>
           )}
         </div>
@@ -225,7 +209,7 @@ export function EmbeddingVisualizer() {
             <Layers size={18} className="text-cyan-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.vectorSpace}</h3>
+            <h3 className="font-semibold text-text font-heading">{c.vectorSpace}</h3>
             <p className="text-xs text-muted">{c.controls}</p>
           </div>
         </div>
@@ -244,7 +228,7 @@ export function EmbeddingVisualizer() {
           {Object.entries(CATEGORY_COLORS).filter(([k]) => k !== 'default').map(([category, color]) => (
             <div key={category} className="flex items-center gap-2">
               <span className={`w-3 h-3 rounded-full ${color}`} />
-              <span className="text-muted capitalize">{c.categories[category]}</span>
+              <span className="text-muted capitalize">{categoryLabels[category]}</span>
             </div>
           ))}
         </div>
@@ -263,7 +247,7 @@ export function EmbeddingVisualizer() {
             </div>
             <div>
               <h3 className="font-semibold text-text font-heading">
-                {t.interactive.similarityScore}: {selectedWord}
+                {c.similarityScore}: {selectedWord}
               </h3>
               <p className="text-xs text-muted">{c.cosineHint}</p>
             </div>
