@@ -4,6 +4,7 @@ import {
   memoryEstimate,
   batchRoofline,
   cacheCosts,
+  decodeCeiling,
   type MemoryInput,
 } from '../src/lib/inference-math'
 import { models, tierListModels } from '../src/lib/models'
@@ -61,12 +62,50 @@ assert.deepEqual(
   freshMiniMax,
   'preset selection must not leak previous architecture fields',
 )
-assert.equal(memoryEstimate(freshMiniMax).kv, null)
-assert.equal(memoryEstimate(freshMiniMax).total, null)
+// MiniMax M2.7: 62 full-attention layers × 2 × 8 KV heads × 128 × 2 bytes per token.
+assert.equal(memoryEstimate(freshMiniMax).kvPerToken, 253_952)
+assert.equal(memoryEstimate(freshMiniMax).kv, 253_952 * 8192)
+// MLA caches one latent (512 + 64 values) per token and layer, without the K/V factor 2.
+const freshKimi = { ...input, ...memoryPreset(kimi) }
+assert.equal(freshKimi.kvHeads, null, 'MLA presets must not keep head dimensions')
+assert.equal(memoryEstimate(freshKimi).kv, 61 * 576 * 2 * 8192)
+assert.deepEqual(
+  { ...input, ...memoryPreset(maverick), ...memoryPreset(kimi) },
+  freshKimi,
+  'window fields of a previous preset must not leak into an MLA preset',
+)
+// Llama 4 Maverick: 12 global layers keep all tokens, 36 chunked layers at most 8192.
+const mav = (tokens: number) =>
+  memoryEstimate({ ...input, ...memoryPreset(maverick), tokens }).kv!
+assert.equal(mav(4096), 48 * 4096 * 2 * 8 * 128 * 2)
+assert.equal(mav(65536), (12 * 65536 + 36 * 8192) * 2 * 8 * 128 * 2)
+// Qwen3.6-27B worked example: 16 full layers, 4 KV heads × 256, BF16, 32K → 2 GiB.
+const qwen27 = models.find((model) => model.id === 'qwen36-27b')!
 assert.equal(
-  memoryPreset(kimi).layers,
-  null,
-  'unsupported attention must not use the dense KV formula',
+  memoryEstimate({ ...input, ...memoryPreset(qwen27), tokens: 32768 }).kv,
+  2 ** 31,
+)
+for (const model of models)
+  assert.notEqual(
+    memoryEstimate({ ...input, ...memoryPreset(model) }).total,
+    null,
+    `${model.id} needs verified KV dimensions`,
+  )
+// Offloading: the RAM part and the GPU part of a decode step add up.
+const offload = decodeCeiling({
+  gpuBytes: 18e9,
+  cpuBytes: 2e9,
+  gpuGBs: 1800,
+  cpuGBs: 100,
+})
+close(offload.gpuMs, 10)
+close(offload.cpuMs, 20)
+close(offload.tokensPerSecond, 1000 / 30)
+assert.equal(
+  memoryEstimate({ ...input, activeParamsB: 1, quantOverhead: 1 })
+    .activeWeights,
+  500_000_000,
+  'MoE speed reads only active weights',
 )
 assert.equal(
   memoryEstimate({ ...input, ...memoryPreset(maverick), quantOverhead: 1 })
