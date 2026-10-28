@@ -90,3 +90,78 @@ export function cacheCosts(input: {
     1e6
   return { writes, reads, baseline, cached, savings: baseline - cached }
 }
+
+export interface ChipRooflineInput {
+  /** Total parameters in billions (dense model: every weight is read each step). */
+  paramsB: number
+  layers: number
+  heads: number
+  kvHeads: number
+  headDim: number
+  /** Bytes per weight and per KV-cache element (1 = FP8, 2 = BF16). */
+  bytesPerValue: number
+  batch: number
+  /** Tokens already in context (decode) or prompt length (prefill). */
+  context: number
+  phase: 'decode' | 'prefill'
+  bandwidthTBs: number
+  peakTFLOPS: number
+  capacityGB: number
+}
+
+/**
+ * Roofline lower bound for one forward step of a dense decoder on one chip type.
+ * Bytes: all weights once + KV cache read (decode) or written (prefill).
+ * FLOPs: 2·N per token for the matmuls + 4·L·H·d per (query, key) pair for attention.
+ * If weights + KV exceed one chip, the step is split ideally over the minimum
+ * number of chips (no interconnect cost): times shrink, intensity does not change.
+ * Activations, framework reserve and kernel efficiency are ignored.
+ */
+export function chipRoofline(input: ChipRooflineInput) {
+  const weightBytes = input.paramsB * 1e9 * input.bytesPerValue
+  const kvBytesPerToken =
+    2 * input.layers * input.kvHeads * input.headDim * input.bytesPerValue
+  const kvBytes = kvBytesPerToken * input.context * input.batch
+  const bytes = weightBytes + kvBytes
+  const tokens =
+    input.phase === 'decode' ? input.batch : input.batch * input.context
+  // (query, key) pairs: decode = 1 query × context keys; causal prefill ≈ context² / 2
+  const pairs =
+    input.phase === 'decode'
+      ? input.batch * input.context
+      : (input.batch * input.context * (input.context + 1)) / 2
+  const matmulFlops = 2 * input.paramsB * 1e9 * tokens
+  const attentionFlops = 4 * input.layers * input.heads * input.headDim * pairs
+  const flops = matmulFlops + attentionFlops
+  const intensity = flops / bytes
+  const ridge = input.peakTFLOPS / input.bandwidthTBs
+  const chips = Math.max(1, Math.ceil(bytes / (input.capacityGB * 1e9)))
+  const memoryMs = (bytes / (chips * input.bandwidthTBs * 1e12)) * 1000
+  const computeMs = (flops / (chips * input.peakTFLOPS * 1e12)) * 1000
+  const stepMs = Math.max(memoryMs, computeMs)
+  const attainableTFLOPS = Math.min(
+    input.peakTFLOPS,
+    input.bandwidthTBs * intensity,
+  )
+  return {
+    weightBytes,
+    kvBytes,
+    bytes,
+    flops,
+    intensity,
+    ridge,
+    chips,
+    memoryMs,
+    computeMs,
+    stepMs,
+    bound: memoryMs >= computeMs ? ('memory' as const) : ('compute' as const),
+    attainableTFLOPS,
+    utilization: attainableTFLOPS / input.peakTFLOPS,
+    /** Decode: tokens/s per sequence. Prefill: 1000 / time-to-first-token. */
+    perSequence: 1000 / stepMs,
+    /** Decode: generated tokens per second over the whole batch. */
+    total: (input.batch * 1000) / stepMs,
+    /** Batch at which the weight matmuls alone reach the ridge (KV ignored). */
+    weightOnlyCriticalBatch: (ridge * input.bytesPerValue) / 2,
+  }
+}
