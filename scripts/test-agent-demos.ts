@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { matchSkill, retrieveNotes, validateTool, generateToolSchema, rewardCases, checkReward, biasGroups, groupCounts, type DemoTool } from '../src/lib/agent-demo-models'
+import { matchSkill, retrieveNotes, validateTool, generateToolSchema, formatToolDefinition, rewardCases, checkReward, biasGroups, groupCounts, type DemoTool } from '../src/lib/agent-demo-models'
 import { trialScripts, runTrial, combinedVerdict, summarize as summarizeEval, binomial, passAtK, passHatK, type GraderId } from '../src/lib/agent-eval-math'
 import { en } from '../src/lib/i18n/dictionaries/en'
 import { de } from '../src/lib/i18n/dictionaries/de'
@@ -34,6 +34,21 @@ assert.equal(validate({values:['wrong']}),false)
 assert.equal(validate({}),false)
 assert.equal(validate({values:[],surprise:true}),false)
 assert.equal(validateTool({...empty,name:'bad name'}).valid,false)
+const optionalTool:DemoTool={name:'search_web',description:'Search.',parameters:[{id:3,name:'query',type:'string',description:'Terms',required:true},{id:4,name:'max_results',type:'integer',description:'Count',required:false}]}
+const ajvUnion = new Ajv({ allErrors: true, allowUnionTypes: true })
+const openaiStrict=formatToolDefinition(optionalTool,'openai',true)! as {strict:boolean,parameters:object&{required:string[]}}
+assert.equal(openaiStrict.strict,true)
+assert.deepEqual(openaiStrict.parameters.required,['query','max_results'])
+const validateOpenai=ajvUnion.compile(openaiStrict.parameters)
+assert.equal(validateOpenai({query:'x',max_results:null}),true)
+assert.equal(validateOpenai({query:'x'}),false)
+assert.equal(validateOpenai({query:'x',max_results:2.5}),false)
+const claudeStrict=formatToolDefinition(optionalTool,'anthropic',true)! as {strict:boolean,input_schema:object&{required:string[]}}
+assert.equal(claudeStrict.strict,true)
+assert.deepEqual(claudeStrict.input_schema.required,['query'])
+assert.equal(ajv.compile(claudeStrict.input_schema)({query:'x'}),true)
+assert.equal('strict' in formatToolDefinition(optionalTool,'anthropic',false)!,false)
+assert.equal(formatToolDefinition(duplicate,'openai',true),null)
 
 assert.equal(checkReward('constant',rewardCases[0],true).passed,true)
 assert.equal(rewardCases.filter(values=>checkReward('constant',values,true).passed).length,2)
