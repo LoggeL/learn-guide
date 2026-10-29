@@ -41,9 +41,6 @@ export { AgenticVisionDemo } from './AgenticVisionDemo'
 // Quantization components
 export { QuantizationVisualizer } from './QuantizationVisualizer'
 
-// KV Cache components
-export { KVCacheVisualizer } from './KVCacheVisualizer'
-
 // Distillation components
 export { DistillationVisualizer } from './DistillationVisualizer'
 
@@ -77,10 +74,7 @@ export { DiffusionNoiseVisualizer } from './DiffusionNoiseVisualizer'
 export { TextDiffusionDemo } from './TextDiffusionDemo'
 
 // Prompt Caching components
-export { CacheHitMissAnimation } from './CacheHitMissAnimation'
-export { PrefixMatchingDemo } from './PrefixMatchingDemo'
 export { CostSavingsCalculator } from './CostSavingsCalculator'
-export { CacheTTLVisualization } from './CacheTTLVisualization'
 
 // Reinforcement Learning components
 export { ReinforcementLearningPlayground } from './ReinforcementLearningPlayground'
@@ -143,3 +137,8 @@ export { OpenLicenseChecker } from './OpenLicenseChecker'
 export { SelfHostDecision } from './SelfHostDecision'
 export { MegaKernelTimelineDemo } from './MegaKernelTimelineDemo'
 export { BatchingChunkedPrefillDemo } from './BatchingChunkedPrefillDemo'
+export { KvCacheDecodeDemo } from './KvCacheDecodeDemo'
+export { KvCacheMemoryCalculator } from './KvCacheMemoryCalculator'
+export { KvCacheQuantDemo } from './KvCacheQuantDemo'
+export { PromptCachePrefixDemo } from './PromptCachePrefixDemo'
+export { PromptCacheTimelineDemo } from './PromptCacheTimelineDemo'
