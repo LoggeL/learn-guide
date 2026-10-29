@@ -9,7 +9,7 @@ export function CostSavingsCalculator({
   t: Record<string, string>
 }) {
   const { t } = useTranslation(),
-    c = t.vramCalc.audit
+    c = t.cacheCostCalculator
   const [tokens, setTokens] = useState(10000),
     [percent, setPercent] = useState(80),
     [requests, setRequests] = useState(100)

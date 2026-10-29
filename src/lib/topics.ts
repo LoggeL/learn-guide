@@ -140,9 +140,9 @@ export const topics: Topic[] = [
         id: 'diffusion',
         name: 'Diffusion Models',
         children: [
-          { id: 'diffusion-fundamentals', name: 'How Diffusion Works', path: '/ai/diffusion/fundamentals', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
-          { id: 'text-diffusion', name: 'Text Diffusion', path: '/ai/diffusion/text', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
-          { id: 'image-diffusion', name: 'Image Diffusion', path: '/ai/diffusion/image', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
+          { id: 'diffusion-fundamentals', name: 'How Diffusion Works', path: '/ai/diffusion/fundamentals', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
+          { id: 'text-diffusion', name: 'Text Diffusion', path: '/ai/diffusion/text', difficulty: 'expert', lastUpdated: '2026-10-29' },
+          { id: 'image-diffusion', name: 'Image Diffusion', path: '/ai/diffusion/image', difficulty: 'expert', lastUpdated: '2026-10-29' },
         ],
       },
       {

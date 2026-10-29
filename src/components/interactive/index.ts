@@ -144,3 +144,8 @@ export { PromptBeforeAfterDemo } from './PromptBeforeAfterDemo'
 export { PromptChainDemo } from './PromptChainDemo'
 export { SystemPromptCacheDemo } from './SystemPromptCacheDemo'
 export { PromptApiRolesExample } from './PromptApiRolesExample'
+
+// Content overhaul (2026-10)
+export { DiffusionSamplerPlayground } from './DiffusionSamplerPlayground'
+export { DiffusionGuidanceVisualizer } from './DiffusionGuidanceVisualizer'
+export { DiffusionJointAttentionDiagram } from './DiffusionJointAttentionDiagram'
