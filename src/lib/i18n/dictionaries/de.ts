@@ -8024,7 +8024,7 @@ export const de: Dictionary = {
     'hint-lecture-architecture': 'Modelle anpassen und erweitern: Distillation, LoRA, Multi-Token-Prediction und Forschungsarchitekturen',
     'hint-lecture-inference': 'Modelle schnell und günstig ausführen: KV-Cache, Caching, Batching, Quantisierung, VRAM und Speculative Decoding',
     'hint-lecture-agents': 'LLMs, die in einer Schleife Tools nutzen, und wie man sie zuverlässig, sicher und messbar macht',
-    'hint-lecture-frontier': 'World Models, europäische und Open-Source-KI und die Chips dahinter',
+    'hint-lecture-frontier': 'World Models, offene Modelle und digitale Souveränität und die Chips dahinter',
     progress: 'Gesamtfortschritt',
     markComplete: 'Als erledigt markieren',
     markIncomplete: 'Als nicht erledigt markieren',

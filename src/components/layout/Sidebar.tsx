@@ -87,7 +87,6 @@ const TOPIC_ICONS: Record<string, typeof Brain> = {
   'system-prompts': Lock,
   bias: Shield,
   'responsible-ai': Shield,
-  'european-ai': Globe2,
   'open-source': Github,
   'custom-chips': Cpu,
   'logges-favourite-model': Heart,

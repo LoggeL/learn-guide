@@ -192,8 +192,7 @@ export const topics: Topic[] = [
         id: 'industry',
         name: 'AI Industry',
         children: [
-          { id: 'european-ai', name: 'AI Made in Europe', path: '/ai/industry/european-ai', difficulty: 'beginner', lastUpdated: '2026-09-13' },
-          { id: 'open-source', name: 'Open Source Advantages', path: '/ai/industry/open-source', difficulty: 'beginner', lastUpdated: '2026-09-13' },
+          { id: 'open-source', name: 'Open Models & Digital Sovereignty', path: '/ai/industry/open-source', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
           { id: 'custom-chips', name: 'Custom Chips for AI', path: '/ai/industry/custom-chips', difficulty: 'beginner', lastUpdated: '2026-10-29' },
           { id: 'tier-list', name: "Logge's Model Notes", path: '/ai/industry/tier-list', difficulty: 'beginner', lastUpdated: '2026-10-29' },
         ],
@@ -356,7 +355,6 @@ export const learningPathGroups: LearningPathGroup[] = [
     id: 'lecture-frontier',
     topicIds: [
       'world-models',
-      'european-ai',
       'open-source',
       'custom-chips',
     ],

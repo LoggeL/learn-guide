@@ -8028,7 +8028,7 @@ export const en = {
     'hint-lecture-architecture': 'Adapting and extending models: distillation, LoRA, multi-token prediction and research architectures',
     'hint-lecture-inference': 'Running models fast and cheaply: KV cache, caching, batching, quantization, VRAM and speculative decoding',
     'hint-lecture-agents': 'LLMs that use tools in a loop, and how to make them reliable, safe and measurable',
-    'hint-lecture-frontier': 'World models, European and open-source AI, and the chips behind it all',
+    'hint-lecture-frontier': 'World models, open models and digital sovereignty, and the chips behind it all',
     progress: 'Overall progress',
     markComplete: 'Mark as done',
     markIncomplete: 'Mark as not done',
