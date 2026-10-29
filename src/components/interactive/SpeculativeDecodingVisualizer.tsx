@@ -1,44 +1,133 @@
 'use client'
 
-import { useState } from 'react'
-import { useLocale } from '@/lib/i18n/context'
+import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useTranslation } from '@/lib/i18n/context'
+import { LatexBlock } from '@/components/ui/Latex'
 
-const draft = ['sat', 'on', 'the', 'mat']
-const replacement = ['slept', 'beside', 'a', 'rug', '.']
-const copy = {
-  en: {
-    title: 'Account for one draft-and-verify round', note: 'A chosen outcome for four draft tokens, not a stochastic sampler. Set how many proposals the target accepts before the first rejection. All later proposals are discarded; the target supplies a correction, or one bonus token if all proposals pass.',
-    prefix: 'Shared prefix: The cat', accepted: 'Accepted prefix length', draftTime: 'Time per draft forward pass', targetTime: 'Time per ordinary target step', verifyTime: 'Time for one target block verification',
-    proposed: 'Four sequential draft passes', verified: 'One parallel target verification', emitted: 'Emitted tokens', standard: 'Target-only time', speculative: 'Draft + verification time', ratio: 'Speedup under these assumptions',
-    formula: 'Draft cost = 4 × draft-step time. Round cost = draft cost + target verification. Baseline cost = emitted tokens × target-step time.',
-    limit: 'All timings are editable assumptions, not measurements. Verification of a block need not cost the same as a single-token target step. Real latency also depends on batch size, KV cache, transfer, kernel overhead and rejected work. Exact speculative sampling preserves the target distribution through its acceptance and correction rules, not by merely replacing any rejected word.',
-    extra: 'Target correction / bonus', discarded: 'Discarded suffix',
-  },
-  de: {
-    title: 'Eine Draft-und-Verify-Runde abrechnen', note: 'Ein gewählter Verlauf für vier Draft-Tokens, kein stochastischer Sampler. Wähle, wie viele Vorschläge das Target vor der ersten Ablehnung akzeptiert. Alle späteren Vorschläge werden verworfen. Das Target liefert eine Korrektur oder ein zusätzliches Token, wenn alle Vorschläge bestehen.',
-    prefix: 'Gemeinsamer Präfix: The cat', accepted: 'Länge des akzeptierten Präfixes', draftTime: 'Zeit pro Draft-Forward-Pass', targetTime: 'Zeit pro normalem Target-Schritt', verifyTime: 'Zeit einer Target-Blockprüfung',
-    proposed: 'Vier sequenzielle Draft-Pässe', verified: 'Eine parallele Target-Prüfung', emitted: 'Ausgegebene Tokens', standard: 'Zeit nur mit Target', speculative: 'Zeit für Draft + Prüfung', ratio: 'Beschleunigung unter diesen Annahmen',
-    formula: 'Draft-Kosten = 4 × Draft-Schrittzeit. Rundenkosten = Draft-Kosten + Target-Prüfung. Vergleichskosten = ausgegebene Tokens × Target-Schrittzeit.',
-    limit: 'Alle Zeiten sind einstellbare Annahmen, keine Messwerte. Eine Blockprüfung muss nicht so lange dauern wie ein einzelner Target-Schritt. Reale Latenz hängt auch von Batchgröße, KV-Cache, Transfers, Kernel-Aufwand und verworfener Arbeit ab. Exaktes Speculative Sampling erhält die Target-Verteilung durch seine Annahme- und Korrekturregeln, nicht durch beliebiges Ersetzen abgelehnter Wörter.',
-    extra: 'Target-Korrektur / Zusatz', discarded: 'Verworfener Rest',
-  },
+const MAX_K = 12
+
+function expectedTokens(alpha: number, k: number) {
+  if (alpha >= 1) return k + 1
+  return (1 - Math.pow(alpha, k + 1)) / (1 - alpha)
 }
+
+function speedup(alpha: number, k: number, cost: number) {
+  return expectedTokens(alpha, k) / (k * cost + 1)
+}
+
+/**
+ * Expected-value calculator for speculative decoding (Leviathan et al. 2023, Eq. 1 and Thm. 3.8):
+ * tokens per round, the distribution of the accepted length and the speedup as a function of K.
+ */
 export function SpeculativeDecodingVisualizer() {
-  const { locale } = useLocale()
-  const c = copy[locale === 'de' ? 'de' : 'en']
-  const [accepted, setAccepted] = useState(3)
-  const [draftMs, setDraftMs] = useState(5)
-  const [targetMs, setTargetMs] = useState(40)
-  const [verifyMs, setVerifyMs] = useState(45)
-  const output = [...draft.slice(0, accepted), replacement[accepted]]
-  const baseline = output.length * targetMs
-  const speculative = draft.length * draftMs + verifyMs
-  return <div className="space-y-5">
-    <h3 className="text-xl font-semibold">{c.title}</h3><p className="text-sm leading-relaxed text-muted">{c.note}</p>
-    <label className="block text-sm">{c.accepted}: {accepted}<input type="range" min={0} max={4} value={accepted} onChange={e => setAccepted(Number(e.target.value))} className="mt-2 w-full" /></label>
-    <div className="rounded-xl border border-border bg-background p-4"><p className="mb-3 text-sm text-muted">{c.prefix}</p><p className="mb-2 text-sm">{c.proposed}</p><div className="flex flex-wrap gap-2">{draft.map((word, i) => <span key={i} className={`rounded-lg border px-3 py-2 font-mono ${i < accepted ? 'border-emerald-400/40 text-emerald-300' : 'border-border text-muted line-through'}`}>{word}</span>)}</div><p className="mt-3 text-xs text-muted">{c.discarded}: {draft.slice(accepted).join(' ') || '∅'}</p><p className="mt-3 text-sm">{c.verified} → {c.extra}: <span className="font-mono text-cyan-300">{replacement[accepted]}</span></p><p className="mt-4 text-sm">{c.emitted}: <strong className="font-mono text-emerald-300">{output.join(' ')}</strong> ({output.length})</p></div>
-    <div className="grid gap-4 sm:grid-cols-3">{[[c.draftTime, draftMs, setDraftMs, 1, 50], [c.targetTime, targetMs, setTargetMs, 10, 150], [c.verifyTime, verifyMs, setVerifyMs, 10, 200]].map(([label, value, setter, min, max]) => <label key={String(label)} className="text-sm">{String(label)}: {Number(value)} ms<input type="range" className="mt-2 block w-full" min={Number(min)} max={Number(max)} value={Number(value)} onChange={e => (setter as (n: number) => void)(Number(e.target.value))} /></label>)}</div>
-    <div className="grid gap-3 sm:grid-cols-3">{[[c.standard, `${baseline} ms`], [c.speculative, `${speculative} ms`], [c.ratio, `${(baseline / speculative).toFixed(2)}×`]].map(([name, value]) => <div key={name} className="rounded-lg border border-border p-4"><p className="text-sm text-muted">{name}</p><p className="mt-2 font-mono text-xl text-cyan-300">{value}</p></div>)}</div>
-    <p className="text-sm text-muted">{c.formula}</p><p className="border-l-2 border-cyan-500 pl-4 text-sm leading-relaxed text-muted">{c.limit}</p>
-  </div>
+  const { t, locale } = useTranslation()
+  const c = t.speculativeDecoding
+  const nf = (value: number, digits = 2) =>
+    value.toLocaleString(locale === 'de' ? 'de-DE' : 'en-US', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+
+  const [alpha, setAlpha] = useState(0.8)
+  const [k, setK] = useState(4)
+  const [cost, setCost] = useState(0.05)
+
+  const result = useMemo(() => {
+    const tokens = expectedTokens(alpha, k)
+    const roundCost = k * cost + 1
+    const byK = Array.from({ length: MAX_K }, (_, i) => speedup(alpha, i + 1, cost))
+    const bestK = byK.indexOf(Math.max(...byK)) + 1
+    const dist = Array.from({ length: k + 1 }, (_, i) => (i < k ? Math.pow(alpha, i) * (1 - alpha) : Math.pow(alpha, k)))
+    return { tokens, roundCost, speed: tokens / roundCost, byK, bestK, dist }
+  }, [alpha, k, cost])
+
+  const maxDist = Math.max(...result.dist)
+  const maxSpeed = Math.max(1.5, ...result.byK)
+
+  return (
+    <div className="space-y-6 rounded-2xl border border-border bg-surface p-6">
+      <div>
+        <h3 className="font-heading text-xl font-semibold text-text">{c.calcTitle}</h3>
+        <p className="mt-2 text-sm leading-relaxed text-muted">{c.calcDesc}</p>
+        <LatexBlock className="my-3 overflow-x-auto text-text">{'\\mathbb{E}[N] = \\sum_{i=0}^{K} \\alpha^{i} = \\frac{1-\\alpha^{K+1}}{1-\\alpha}'}</LatexBlock>
+        <p className="text-sm leading-relaxed text-muted">{c.calcSpeedupDesc}</p>
+        <LatexBlock className="my-3 overflow-x-auto text-text">{'S(\\alpha, K, c) = \\frac{1-\\alpha^{K+1}}{(1-\\alpha)\\,(K c + 1)}'}</LatexBlock>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <label className="text-sm text-text">
+          {c.calcAlpha}: <span className="font-mono text-cyan-300">{nf(alpha)}</span>
+          <input type="range" min={0.3} max={0.98} step={0.01} value={alpha} onChange={(e) => setAlpha(Number(e.target.value))} className="mt-2 block w-full" />
+        </label>
+        <label className="text-sm text-text">
+          {c.calcK}: <span className="font-mono text-cyan-300">{k}</span>
+          <input type="range" min={1} max={MAX_K} step={1} value={k} onChange={(e) => setK(Number(e.target.value))} className="mt-2 block w-full" />
+        </label>
+        <label className="text-sm text-text">
+          {c.calcC}: <span className="font-mono text-cyan-300">{nf(cost)}</span>
+          <input type="range" min={0} max={0.5} step={0.01} value={cost} onChange={(e) => setCost(Number(e.target.value))} className="mt-2 block w-full" />
+        </label>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-3" aria-live="polite">
+        {[
+          [c.calcExpected, nf(result.tokens)],
+          [c.calcCost, nf(result.roundCost)],
+          [c.calcSpeedup, `${nf(result.speed)}×`],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-xl border border-border bg-background p-4">
+            <p className="text-sm text-muted">{label}</p>
+            <p className={`mt-2 font-mono text-2xl ${label === c.calcSpeedup && result.speed < 1 ? 'text-orange-300' : 'text-cyan-300'}`}>{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="rounded-xl border border-border bg-background p-4">
+          <h4 className="font-semibold text-text">{c.calcDistTitle}</h4>
+          <p className="mt-1 text-xs leading-relaxed text-muted">{c.calcDistDesc}</p>
+          <div className="mt-4 flex items-end gap-1" style={{ height: 140 }}>
+            {result.dist.map((prob, i) => (
+              <div key={i} className="flex h-full flex-1 flex-col items-center justify-end gap-1">
+                <motion.div
+                  className={`w-full rounded-t ${i === k ? 'bg-emerald-400' : 'bg-purple-400/70'}`}
+                  initial={false}
+                  animate={{ height: `${(prob / maxDist) * 100}%` }}
+                  transition={{ duration: 0.35 }}
+                  title={nf(prob, 3)}
+                />
+                <span className="font-mono text-[10px] text-muted">{i + 1}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-border bg-background p-4">
+          <h4 className="font-semibold text-text">{c.calcByKTitle}</h4>
+          <p className="mt-1 text-xs leading-relaxed text-muted">{c.calcByKDesc}</p>
+          <div className="relative mt-4 flex items-end gap-1" style={{ height: 140 }}>
+            <div className="pointer-events-none absolute inset-x-0 border-t border-dashed border-orange-400/60" style={{ bottom: `${(1 / maxSpeed) * 100}%` }} />
+            {result.byK.map((s, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setK(i + 1)}
+                className="flex h-full flex-1 flex-col items-center justify-end gap-1"
+                aria-label={`K = ${i + 1}: ${nf(s)}×`}
+              >
+                <motion.div
+                  className={`w-full rounded-t ${i + 1 === k ? 'bg-cyan-400' : i + 1 === result.bestK ? 'bg-emerald-400/70' : 'bg-cyan-400/30'}`}
+                  initial={false}
+                  animate={{ height: `${(s / maxSpeed) * 100}%` }}
+                  transition={{ duration: 0.35 }}
+                />
+                <span className="font-mono text-[10px] text-muted">{i + 1}</span>
+              </button>
+            ))}
+          </div>
+          <p className="mt-3 font-mono text-sm text-emerald-300">{c.calcBestK.replace('{k}', String(result.bestK))}</p>
+        </div>
+      </div>
+
+      <p className="border-l-2 border-cyan-500 pl-4 text-sm leading-relaxed text-muted">{c.calcAssumption}</p>
+    </div>
+  )
 }
