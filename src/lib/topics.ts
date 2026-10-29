@@ -174,9 +174,9 @@ export const topics: Topic[] = [
         id: 'prompting',
         name: 'Prompting',
         children: [
-          { id: 'prompt-basics', name: 'Prompt Basics', path: '/ai/prompting/basics', difficulty: 'beginner', lastUpdated: '2026-09-13' },
-          { id: 'advanced-prompting', name: 'Advanced Techniques', path: '/ai/prompting/advanced', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
-          { id: 'system-prompts', name: 'System Prompts', path: '/ai/prompting/system-prompts', difficulty: 'intermediate', lastUpdated: '2026-09-13' },
+          { id: 'prompt-basics', name: 'Prompt Basics', path: '/ai/prompting/basics', difficulty: 'beginner', lastUpdated: '2026-10-29' },
+          { id: 'advanced-prompting', name: 'Advanced Prompting', path: '/ai/prompting/advanced', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
+          { id: 'system-prompts', name: 'System Prompts', path: '/ai/prompting/system-prompts', difficulty: 'intermediate', lastUpdated: '2026-10-29' },
         ],
       },
       {

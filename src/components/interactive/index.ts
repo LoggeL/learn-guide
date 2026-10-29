@@ -24,8 +24,6 @@ export { GradientDescentVisualizer } from './GradientDescentVisualizer'
 export { TrainingProgressVisualizer } from './TrainingProgressVisualizer'
 
 // Phase 3: Prompting components
-export { PromptComparisonDemo } from './PromptComparisonDemo'
-export { ChainOfThoughtDemo } from './ChainOfThoughtDemo'
 export { SystemPromptBuilder } from './SystemPromptBuilder'
 
 // Phase 3: AI Safety components
@@ -142,3 +140,7 @@ export { KvCacheMemoryCalculator } from './KvCacheMemoryCalculator'
 export { KvCacheQuantDemo } from './KvCacheQuantDemo'
 export { PromptCachePrefixDemo } from './PromptCachePrefixDemo'
 export { PromptCacheTimelineDemo } from './PromptCacheTimelineDemo'
+export { PromptBeforeAfterDemo } from './PromptBeforeAfterDemo'
+export { PromptChainDemo } from './PromptChainDemo'
+export { SystemPromptCacheDemo } from './SystemPromptCacheDemo'
+export { PromptApiRolesExample } from './PromptApiRolesExample'
