@@ -2,14 +2,7 @@
 
 import { CategoryPage } from '@/components/layout/CategoryPage'
 
-// Future topics for this category:
-// - Batching & Throughput
-// - Paged Attention / vLLM
-// - Continuous Batching
-// - Model Serving (TensorRT-LLM, vLLM, etc.)
-// - Prefill vs Decode phases
-// - Speculative Decoding (already exists under /ai/llm, could be linked/moved)
-// - Quantization for Inference (already exists under /ai/llm, could be linked/moved)
+// Topics of this category are listed from src/lib/topics.ts (getTopicCategories).
 
 export default function LLMInferencePage() {
   return <CategoryPage categoryId="llm-inference" />

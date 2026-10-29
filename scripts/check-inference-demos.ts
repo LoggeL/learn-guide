@@ -6,6 +6,14 @@ import {
   cacheCosts,
   type MemoryInput,
 } from '../src/lib/inference-math'
+import {
+  batchingQueue,
+  batchingStatic,
+  batchingContinuous,
+  batchingOccupancy,
+  chunkedPrefillTimeline,
+} from '../src/lib/batching-math'
+import { MEGA_KERNEL_LAYER, simulateMegaKernel } from '../src/lib/mega-kernel-math'
 import { models, tierListModels } from '../src/lib/models'
 import {
   gradient,
@@ -91,6 +99,47 @@ assert.ok(
 )
 assert.ok(batchRoofline(1, 8192, 80).total < batchRoofline(1, 512, 80).total)
 close(batch256.total, batch256.perUser * 256)
+
+// Batching scheduler demos (batching-math.ts)
+assert.deepEqual(batchingQueue(7, 12), batchingQueue(7, 12), 'request queue is seedable')
+const queue = batchingQueue(1, 64)
+const staticRuns = batchingStatic(queue, 4, 24)
+const firstBatchEnd = Math.max(...staticRuns.slice(0, 4).map((r) => r.start + r.length))
+assert.ok(
+  staticRuns.some((r) => r.start === firstBatchEnd && r.id === 4),
+  'static batching starts the next batch right after the longest request',
+)
+const staticOcc = batchingOccupancy(staticRuns, 4, 24)
+const contOcc = batchingOccupancy(batchingContinuous(queue, 4, 24), 4, 24)
+assert.equal(contOcc.share, 1, 'continuous batching keeps a saturated queue fully occupied')
+assert.ok(staticOcc.share < 1 && contOcc.completed >= staticOcc.completed)
+const prefillBase = { promptTokens: 2048, runningDecodes: 8, weightReadMs: 14, msPerToken: 0.14, tailSteps: 3 }
+const unchunked = chunkedPrefillTimeline({ ...prefillBase, chunkBudget: null })
+const chunked = chunkedPrefillTimeline({ ...prefillBase, chunkBudget: 256 })
+close(unchunked.ttft, 2048 * 0.14, 1e-9)
+assert.ok(chunked.worstGap < unchunked.worstGap / 5, 'chunking bounds the decode stall')
+assert.ok(chunked.ttft > unchunked.ttft, 'chunking delays the first token of the new prompt')
+assert.equal(
+  chunked.steps.reduce((sum, s) => sum + s.prefillTokens, 0),
+  2048,
+  'every prompt token is prefilled exactly once',
+)
+
+// Megakernel timeline demo (mega-kernel-math.ts)
+const mkKernels = simulateMegaKernel(MEGA_KERNEL_LAYER, 'kernels')
+const mkGraph = simulateMegaKernel(MEGA_KERNEL_LAYER, 'graph')
+const mkMega = simulateMegaKernel(MEGA_KERNEL_LAYER, 'megakernel')
+assert.ok(mkMega.makespan < mkGraph.makespan && mkGraph.makespan < mkKernels.makespan)
+assert.ok(mkMega.loadBusy > mkKernels.loadBusy && mkMega.loadBusy <= 1)
+for (const tl of [mkKernels, mkGraph, mkMega]) {
+  for (let op = 1; op < MEGA_KERNEL_LAYER.length; op++) {
+    const prevDone = Math.max(...tl.segments.filter((s) => s.op === op - 1 && s.kind === 'compute').map((s) => s.end))
+    assert.ok(
+      tl.segments.filter((s) => s.op === op && s.kind === 'compute').every((s) => s.start >= prevDone),
+      'math of an op never starts before the previous op has finished',
+    )
+  }
+}
 
 const tariff = {
   tokens: 10000,
