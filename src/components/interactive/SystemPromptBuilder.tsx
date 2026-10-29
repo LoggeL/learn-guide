@@ -2,66 +2,44 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Copy, Check, Lightbulb, Sparkles, User, Shield, BookOpen, FileText } from 'lucide-react'
+import { Copy, Check, Lightbulb, Target, Compass, ListChecks, LayoutList, FileText } from 'lucide-react'
 import { useTranslation } from '@/lib/i18n/context'
 
+type SectionId = 'role' | 'context' | 'rules' | 'output'
+
+const SECTION_IDS: SectionId[] = ['role', 'context', 'rules', 'output']
+
 interface PromptSection {
-  id: 'identity' | 'capabilities' | 'limitations' | 'guidelines'
+  id: SectionId
   content: string
   enabled: boolean
-}
-
-interface PromptPreset {
-  id: string
-  name: string
-  sections: {
-    identity: string
-    capabilities: string
-    limitations: string
-    guidelines: string
-  }
 }
 
 function countCharacters(text: string): number { return Array.from(text).length }
 
 const SECTION_ICONS = {
-  identity: User,
-  capabilities: Sparkles,
-  limitations: Shield,
-  guidelines: BookOpen,
+  role: Target,
+  context: Compass,
+  rules: ListChecks,
+  output: LayoutList,
 }
 
 const SECTION_COLORS = {
-  identity: { bg: 'from-purple-500/20 to-pink-500/20', border: 'border-purple-500/20', text: 'text-purple-400' },
-  capabilities: { bg: 'from-cyan-500/20 to-blue-500/20', border: 'border-cyan-500/20', text: 'text-cyan-400' },
-  limitations: { bg: 'from-red-500/20 to-rose-500/20', border: 'border-red-500/20', text: 'text-red-400' },
-  guidelines: { bg: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/20', text: 'text-emerald-400' },
+  role: { bg: 'from-purple-500/20 to-pink-500/20', border: 'border-purple-500/20', text: 'text-purple-400' },
+  context: { bg: 'from-cyan-500/20 to-blue-500/20', border: 'border-cyan-500/20', text: 'text-cyan-400' },
+  rules: { bg: 'from-orange-500/20 to-amber-500/20', border: 'border-orange-500/20', text: 'text-orange-400' },
+  output: { bg: 'from-emerald-500/20 to-teal-500/20', border: 'border-emerald-500/20', text: 'text-emerald-400' },
 }
+
+const emptySections = (): PromptSection[] => SECTION_IDS.map(id => ({ id, content: '', enabled: true }))
 
 export function SystemPromptBuilder() {
   const { t } = useTranslation()
+  const b = t.systemPrompts.builder
 
-  const PRESETS: PromptPreset[] = t.agentReview.systemPresets.map((preset, index) => ({
-    id: String(index), name: preset.name,
-    sections: {identity:preset.identity, capabilities:preset.capabilities, limitations:preset.limitations, guidelines:preset.guidelines}
-  }))
-
-  const TIPS: Record<string, string> = {
-    identity: t.interactive.tipIdentity,
-    capabilities: t.interactive.tipCapabilities,
-    limitations: t.interactive.tipLimitations,
-    guidelines: t.interactive.tipGuidelines,
-  }
-
-  const [sections, setSections] = useState<PromptSection[]>([
-    { id: 'identity', content: '', enabled: true },
-    { id: 'capabilities', content: '', enabled: true },
-    { id: 'limitations', content: '', enabled: true },
-    { id: 'guidelines', content: '', enabled: true },
-  ])
-
+  const [sections, setSections] = useState<PromptSection[]>(emptySections)
   const [copied, setCopied] = useState(false)
-  const [activePreset, setActivePreset] = useState<string | null>(null)
+  const [activePreset, setActivePreset] = useState<number | null>(null)
   const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Clear pending copy-feedback timeout on unmount
@@ -71,74 +49,59 @@ export function SystemPromptBuilder() {
     }
   }, [])
 
-  const assembledPrompt = useMemo(() => {
-    const parts: string[] = []
+  const assembledPrompt = useMemo(() => sections
+    .filter(section => section.enabled && section.content.trim())
+    .map(section => `# ${b.sections[section.id].name}\n${section.content}`)
+    .join('\n\n'), [sections, b.sections])
 
-    sections.forEach((section) => {
-      if (section.enabled && section.content.trim()) {
-        const sectionTitle = t.systemPrompts[section.id] as string
-        parts.push(`## ${sectionTitle}\n${section.content}`)
-      }
-    })
-
-    return parts.join('\n\n')
-  }, [sections, t.systemPrompts])
-
-  const tokenCount = useMemo(() => countCharacters(assembledPrompt), [assembledPrompt])
-
-  const updateSection = (id: string, updates: Partial<PromptSection>) => {
+  const updateSection = (id: SectionId, updates: Partial<PromptSection>) => {
     setSections(prev => prev.map(s => s.id === id ? { ...s, ...updates } : s))
     setActivePreset(null)
   }
 
-  const applyPreset = (preset: PromptPreset) => {
-    setSections([
-      { id: 'identity', content: preset.sections.identity, enabled: true },
-      { id: 'capabilities', content: preset.sections.capabilities, enabled: true },
-      { id: 'limitations', content: preset.sections.limitations, enabled: true },
-      { id: 'guidelines', content: preset.sections.guidelines, enabled: true },
-    ])
-    setActivePreset(preset.id)
+  const applyPreset = (index: number) => {
+    const preset = b.presets[index]
+    setSections(SECTION_IDS.map(id => ({ id, content: preset[id], enabled: true })))
+    setActivePreset(index)
   }
 
   const copyToClipboard = async () => {
-    await navigator.clipboard.writeText(assembledPrompt)
+    try {
+      await navigator.clipboard.writeText(assembledPrompt)
+    } catch {
+      return
+    }
     setCopied(true)
     if (copyTimeoutRef.current) clearTimeout(copyTimeoutRef.current)
     copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
   }
 
   const clearAll = () => {
-    setSections([
-      { id: 'identity', content: '', enabled: true },
-      { id: 'capabilities', content: '', enabled: true },
-      { id: 'limitations', content: '', enabled: true },
-      { id: 'guidelines', content: '', enabled: true },
-    ])
+    setSections(emptySections())
     setActivePreset(null)
   }
 
   return (
     <div className="space-y-6">
-      {/* Preset Templates */}
+      {/* Presets */}
       <div className="rounded-2xl bg-surface border border-border p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center">
             <FileText size={18} className="text-orange-400" />
           </div>
           <div>
-            <h3 className="font-semibold text-text font-heading">{t.interactive.templatePresets}</h3>
-            <p className="text-xs text-muted">{t.interactive.chooseTemplate}</p>
+            <h3 className="font-semibold text-text font-heading">{b.presetsTitle}</h3>
+            <p className="text-xs text-muted">{b.presetsDesc}</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {PRESETS.map((preset) => (
+          {b.presets.map((preset, index) => (
             <button
-              key={preset.id}
-              onClick={() => applyPreset(preset)}
+              key={preset.name}
+              onClick={() => applyPreset(index)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-                activePreset === preset.id
+                activePreset === index
                   ? 'bg-primary/30 text-primary-light border border-primary/40'
                   : 'bg-background hover:bg-surface-elevated border border-border text-text'
               }`}
@@ -150,17 +113,17 @@ export function SystemPromptBuilder() {
             onClick={clearAll}
             className="px-4 py-2 rounded-xl text-sm font-medium bg-background hover:bg-red-500/10 border border-border text-muted hover:text-red-400 transition-all"
           >
-            {t.interactive.clearAll}
+            {b.clearAll}
           </button>
         </div>
       </div>
 
-      {/* Section Editors */}
+      {/* Section editors */}
       <div className="space-y-4">
         {sections.map((section) => {
           const Icon = SECTION_ICONS[section.id]
           const colors = SECTION_COLORS[section.id]
-          const sectionName = t.systemPrompts[section.id] as string
+          const meta = b.sections[section.id]
 
           return (
             <motion.div
@@ -174,14 +137,14 @@ export function SystemPromptBuilder() {
                     <Icon size={18} className={colors.text} />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-text font-heading">{sectionName}</h3>
+                    <h3 className="font-semibold text-text font-heading">{meta.name}</h3>
                     <p className="text-xs text-muted">
-                      {section.content ? `${countCharacters(section.content)} ${t.agentReview.characters}` : t.interactive.notConfigured}
+                      {section.content ? `${countCharacters(section.content)} ${b.characters}` : b.notConfigured}
                     </p>
                   </div>
                 </div>
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <span className="text-sm text-muted">{t.interactive.enabled}</span>
+                  <span className="text-sm text-muted">{b.enabled}</span>
                   <input
                     type="checkbox"
                     checked={section.enabled}
@@ -201,14 +164,13 @@ export function SystemPromptBuilder() {
                     <textarea
                       value={section.content}
                       onChange={(e) => updateSection(section.id, { content: e.target.value })}
-                      placeholder={t.interactive[`placeholder${section.id.charAt(0).toUpperCase() + section.id.slice(1)}` as keyof typeof t.interactive] as string}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text focus:outline-none focus:border-primary/50 transition-colors resize-none h-32 mb-3"
+                      placeholder={meta.placeholder}
+                      aria-label={meta.name}
+                      className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text focus:outline-none focus:border-primary/50 transition-colors resize-none h-28 mb-3"
                     />
-
-                    {/* Tip */}
                     <div className="flex items-start gap-2 p-3 bg-background/50 rounded-lg border border-border">
                       <Lightbulb size={14} className="text-amber-400 shrink-0 mt-0.5" />
-                      <p className="text-xs text-muted">{TIPS[section.id]}</p>
+                      <p className="text-xs text-muted">{meta.tip}</p>
                     </div>
                   </motion.div>
                 )}
@@ -218,7 +180,7 @@ export function SystemPromptBuilder() {
         })}
       </div>
 
-      {/* Live Preview */}
+      {/* Live preview */}
       <div className="rounded-2xl bg-surface border border-border p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -226,9 +188,9 @@ export function SystemPromptBuilder() {
               <FileText size={18} className="text-primary-light" />
             </div>
             <div>
-              <h3 className="font-semibold text-text font-heading">{t.interactive.livePreview}</h3>
+              <h3 className="font-semibold text-text font-heading">{b.livePreview}</h3>
               <p className="text-xs text-muted">
-                {tokenCount} {t.agentReview.characters}
+                {countCharacters(assembledPrompt)} {b.characters}
               </p>
             </div>
           </div>
@@ -243,7 +205,7 @@ export function SystemPromptBuilder() {
             }`}
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
-            {copied ? t.interactive.copied : t.interactive.copyPrompt}
+            {copied ? b.copied : b.copyPrompt}
           </button>
         </div>
 
@@ -255,15 +217,12 @@ export function SystemPromptBuilder() {
           </pre>
         ) : (
           <div className="p-8 bg-background rounded-xl border border-border text-center">
-            <p className="text-muted">{t.interactive.startBuilding}</p>
+            <p className="text-muted">{b.startBuilding}</p>
           </div>
         )}
 
-        {/* Token estimation info */}
         {assembledPrompt && (
-          <p className="mt-3 text-xs text-muted text-center">
-            {t.agentReview.systemCountNote}
-          </p>
+          <p className="mt-3 text-xs text-muted text-center">{b.countNote}</p>
         )}
       </div>
     </div>

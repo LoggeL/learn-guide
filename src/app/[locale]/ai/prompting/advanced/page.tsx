@@ -1,232 +1,198 @@
 'use client'
 
+import Link from 'next/link'
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { ChainOfThoughtDemo } from '@/components/interactive'
+import { PromptChainDemo } from '@/components/interactive/PromptChainDemo'
 import { useTranslation } from '@/lib/i18n/context'
 
+const TICKET_SCHEMA = {
+  type: 'object',
+  properties: {
+    category: { type: 'string', enum: ['bug', 'billing', 'feature_request', 'other'] },
+    urgency: { type: 'string', enum: ['low', 'normal', 'high'] },
+    summary: { type: 'string' },
+  },
+  required: ['category', 'urgency', 'summary'],
+  additionalProperties: false,
+}
+
+function Bullets({ items, marker, color }: { items: string[]; marker: string; color: string }) {
+  return (
+    <ul className="space-y-2">
+      {items.map(item => (
+        <li key={item} className="flex items-start gap-2 text-sm text-muted leading-relaxed">
+          <span className={`${color} mt-0.5 shrink-0`}>{marker}</span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export default function AdvancedPromptingPage() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
+  const c = t.advancedPrompting
 
   return (
     <TopicLayout topicId="advanced-prompting"
-      title={t.advancedPrompting.title}
-      description={t.advancedPrompting.description}
+      title={c.title}
+      description={c.description}
       breadcrumbs={[
         { label: t.categories.ai, href: '/' },
         { label: t.categories.prompting, href: '/ai/prompting' },
-        { label: t.advancedPrompting.title },
+        { label: c.title },
       ]}
-      prevTopic={{ label: t.topicNames['prompt-basics'], href: '/ai/prompting/basics' }}
-      nextTopic={{ label: t.topicNames['system-prompts'], href: '/ai/prompting/system-prompts' }}
     >
       {/* Overview */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.overview}</h2>
-        <p className="text-muted leading-relaxed text-lg">
-          {t.advancedPrompting.overviewDesc}
-        </p>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.overview}</h2>
+        <p className="text-muted leading-relaxed text-lg">{c.overviewDesc}</p>
       </section>
 
-      {/* Chain of Thought */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.cot}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.cotDesc}
-        </p>
-        <div className="p-4 bg-background rounded-xl border border-border mb-4">
-          <p className="text-sm text-cyan-400 font-mono">{t.advancedPrompting.cotExample}</p>
-        </div>
-
-        {/* CoT Limitations Caveat */}
-        <div className="p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl">
-          <h3 className="text-sm font-bold text-orange-400 mb-2">{t.advancedPrompting.cotLimitations}</h3>
-          <p className="text-sm text-muted">{t.advancedPrompting.cotLimitationsDesc}</p>
-          <ul className="mt-3 space-y-1 text-sm text-muted">
-            <li className="flex items-start gap-2">
-              <span className="text-orange-400 mt-1">-</span>
-              <span>{t.advancedPrompting.cotLimitationItem1}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-400 mt-1">-</span>
-              <span>{t.advancedPrompting.cotLimitationItem2}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-400 mt-1">-</span>
-              <span>{t.advancedPrompting.cotLimitationItem3}</span>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* Few-Shot Learning */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.fewShot}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.fewShotDesc}
-        </p>
-        <div className="p-4 bg-background rounded-xl border border-border">
-          <p className="text-sm text-purple-400 font-mono">{t.advancedPrompting.fewShotExample}</p>
-        </div>
-      </section>
-
-      {/* Self-Consistency */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.selfConsistency}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.selfConsistencyDesc}
-        </p>
-        <div className="p-4 bg-background rounded-xl border border-border">
-          <p className="text-sm text-emerald-400 font-mono">{t.advancedPrompting.selfConsistencyExample}</p>
-        </div>
-      </section>
-
-      {/* Task Decomposition */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.decomposition}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.decompositionDesc}
-        </p>
-        <div className="p-4 bg-background rounded-xl border border-border">
-          <p className="text-sm text-orange-400 font-mono">{t.advancedPrompting.decompositionExample}</p>
-        </div>
-      </section>
-
-      {/* Tree of Thoughts */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.treeOfThoughts}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.totDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h4 className="text-sm font-bold text-purple-400 mb-2">{t.advancedPrompting.totHowItWorks}</h4>
-            <p className="text-sm text-muted">{t.advancedPrompting.totHowItWorksDesc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h4 className="text-sm font-bold text-purple-400 mb-2">{t.advancedPrompting.totBestFor}</h4>
-            <p className="text-sm text-muted">{t.advancedPrompting.totBestForDesc}</p>
-          </div>
-        </div>
-        <div className="p-4 bg-purple-500/10 border border-purple-500/30 rounded-xl">
-          <p className="text-sm text-purple-300 font-mono">{t.advancedPrompting.totExample}</p>
-        </div>
-      </section>
-
-      {/* Graph of Thoughts */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.graphOfThoughts}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.gotDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4 mb-4">
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h4 className="text-sm font-bold text-teal-400 mb-2">{t.advancedPrompting.gotKeyFeature}</h4>
-            <p className="text-sm text-muted">{t.advancedPrompting.gotKeyFeatureDesc}</p>
-          </div>
-          <div className="p-4 bg-background rounded-xl border border-border">
-            <h4 className="text-sm font-bold text-teal-400 mb-2">{t.advancedPrompting.gotBestFor}</h4>
-            <p className="text-sm text-muted">{t.advancedPrompting.gotBestForDesc}</p>
-          </div>
-        </div>
-        <div className="p-4 bg-teal-500/10 border border-teal-500/30 rounded-xl">
-          <p className="text-sm text-teal-300 font-mono">{t.advancedPrompting.gotExample}</p>
-        </div>
-      </section>
-
-      {/* Cost-Benefit Analysis */}
-      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.costBenefit}</h2>
-        <p className="text-muted leading-relaxed mb-4">
-          {t.advancedPrompting.costBenefitDesc}
-        </p>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
-            <h4 className="text-sm font-bold text-emerald-400 mb-2">{t.advancedPrompting.worthIt}</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 mt-1">+</span>
-                <span>{t.advancedPrompting.worthItItem1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 mt-1">+</span>
-                <span>{t.advancedPrompting.worthItItem2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-emerald-400 mt-1">+</span>
-                <span>{t.advancedPrompting.worthItItem3}</span>
-              </li>
-            </ul>
-          </div>
-          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-            <h4 className="text-sm font-bold text-red-400 mb-2">{t.advancedPrompting.notWorthIt}</h4>
-            <ul className="space-y-2 text-sm text-muted">
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">-</span>
-                <span>{t.advancedPrompting.notWorthItItem1}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">-</span>
-                <span>{t.advancedPrompting.notWorthItItem2}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-red-400 mt-1">-</span>
-                <span>{t.advancedPrompting.notWorthItItem3}</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="mt-4 p-4 bg-background rounded-xl border border-border">
-          <p className="text-sm text-muted">{t.advancedPrompting.costBenefitTip}</p>
-        </div>
-      </section>
-
-      {/* Additional Techniques */}
+      {/* Technique chooser */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.techniques}</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          <div className="p-5 bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-blue-400 mb-2">{t.advancedPrompting.rolePlay}</h3>
-            <p className="text-sm text-muted">{t.advancedPrompting.rolePlayDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-red-400 mb-2">{t.advancedPrompting.constraints}</h3>
-            <p className="text-sm text-muted">{t.advancedPrompting.constraintsDesc}</p>
-          </div>
-          <div className="p-5 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-500/20 rounded-xl">
-            <h3 className="text-lg font-bold font-heading text-emerald-400 mb-2">{t.advancedPrompting.verification}</h3>
-            <p className="text-sm text-muted">{t.advancedPrompting.verificationDesc}</p>
-          </div>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.chooserTitle}</h2>
+        <div className="overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-sm">
+            <thead className="bg-surface text-left text-muted">
+              <tr>
+                <th className="p-3 font-semibold">{c.chooserProblem}</th>
+                <th className="p-3 font-semibold">{c.chooserTechnique}</th>
+                <th className="p-3 font-semibold">{c.chooserCost}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.chooser.map(row => (
+                <tr key={row.problem} className="border-t border-border">
+                  <td className="p-3 text-muted">{row.problem}</td>
+                  <td className="p-3 font-medium text-text">{row.technique}</td>
+                  <td className="p-3 text-muted">{row.cost}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      {/* Interactive Demo */}
-      <section>
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent p-0.5">
-            <div className="w-full h-full rounded-xl bg-background flex items-center justify-center">
-              <span className="text-lg">🧠</span>
-            </div>
+      {/* Reasoning models and effort */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.reasoningTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{c.reasoningDesc}</p>
+        <div className="overflow-x-auto rounded-xl border border-border mb-6">
+          <table className="w-full text-sm">
+            <thead className="bg-background text-left text-muted">
+              <tr>
+                <th className="p-3 font-semibold">{c.effortProvider}</th>
+                <th className="p-3 font-semibold">{c.effortParam}</th>
+                <th className="p-3 font-semibold">{c.effortNote}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.effortParams.map(row => (
+                <tr key={row.provider} className="border-t border-border">
+                  <td className="p-3 text-text">{row.provider}</td>
+                  <td className="p-3 font-mono text-cyan-300 whitespace-nowrap">{row.param}</td>
+                  <td className="p-3 text-muted">{row.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Bullets items={c.reasoningTips} marker="→" color="text-cyan-400" />
+        <p className="mt-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl text-sm text-muted">{c.reasoningCaveat}</p>
+      </section>
+
+      {/* Structured outputs */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.structuredTitle}</h2>
+        <p className="text-muted leading-relaxed mb-4">{c.structuredDesc}</p>
+        <div className="mb-6">
+          <Bullets items={c.structuredProviders} marker="•" color="text-purple-400" />
+        </div>
+        <div className="grid gap-4 lg:grid-cols-2">
+          <div>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">{c.structuredSchemaLabel}</h3>
+            <pre className="p-4 bg-background rounded-xl border border-border overflow-x-auto text-sm text-purple-300 font-mono">{JSON.stringify(TICKET_SCHEMA, null, 2)}</pre>
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-heading text-text">{t.advancedPrompting.interactiveDemo}</h2>
-            <p className="text-sm text-muted">{t.advancedPrompting.demoDesc}</p>
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted mb-2">{c.structuredOutputLabel}</h3>
+            <pre className="p-4 bg-background rounded-xl border border-dashed border-border overflow-x-auto text-sm text-emerald-300 font-mono">{JSON.stringify({ category: 'billing', urgency: 'high', summary: c.structuredExampleSummary }, null, 2)}</pre>
           </div>
         </div>
-        <ChainOfThoughtDemo />
+        <p className="mt-4 text-sm text-muted leading-relaxed">{c.structuredLimits}</p>
       </section>
 
-      {/* Key Takeaways */}
+      {/* Prompt chaining */}
       <section>
-        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.advancedPrompting.keyTakeaways}</h2>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-4">{c.chainingTitle}</h2>
+        <p className="text-muted leading-relaxed mb-3">{c.chainingDesc}</p>
+        <p className="text-sm text-muted leading-relaxed mb-6">{c.chainingWhen}</p>
+        <PromptChainDemo />
+      </section>
+
+      {/* Long context */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.longContextTitle}</h2>
+        <p className="text-muted leading-relaxed mb-4">{c.longContextDesc}</p>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Bullets items={c.longContextTips} marker="→" color="text-emerald-400" />
+          <pre className="p-4 bg-background rounded-xl border border-border overflow-x-auto text-xs text-cyan-300 font-mono">{c.longContextCode}</pre>
+        </div>
+        <Link href={`/${locale}/ai/llm/context-rot`} className="mt-4 inline-block text-sm text-primary-light underline">{c.longContextLink}</Link>
+      </section>
+
+      {/* Few-shot */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.fewShotTitle}</h2>
+        <p className="text-muted leading-relaxed mb-4">{c.fewShotDesc}</p>
+        <Bullets items={c.fewShotTips} marker="•" color="text-purple-400" />
+      </section>
+
+      {/* Verification + ToT/GoT */}
+      <section className="grid gap-4 md:grid-cols-2">
+        <div className="p-6 rounded-2xl bg-surface/50 border border-border">
+          <h2 className="text-xl font-bold font-heading text-gradient mb-4">{c.verifyTitle}</h2>
+          <p className="text-sm text-muted leading-relaxed">{c.verifyDesc}</p>
+        </div>
+        <div className="p-6 rounded-2xl bg-surface/50 border border-border">
+          <h2 className="text-xl font-bold font-heading text-gradient mb-4">{c.searchTitle}</h2>
+          <p className="text-sm text-muted leading-relaxed">{c.searchDesc}</p>
+        </div>
+      </section>
+
+      {/* Eval-driven iteration */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.evalTitle}</h2>
+        <p className="text-muted leading-relaxed mb-6">{c.evalDesc}</p>
+        <ol className="space-y-3">
+          {c.evalSteps.map((step, i) => (
+            <li key={step} className="flex gap-3 items-start">
+              <span className="w-6 h-6 rounded-lg bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 text-emerald-400 text-sm font-bold">{i + 1}</span>
+              <span className="text-sm text-muted leading-relaxed">{step}</span>
+            </li>
+          ))}
+        </ol>
+        <Link href={`/${locale}/ai/agents/evaluation`} className="mt-4 inline-block text-sm text-primary-light underline">{c.evalLink}</Link>
+      </section>
+
+      {/* DSPy */}
+      <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.dspyTitle}</h2>
+        <p className="text-muted leading-relaxed">{c.dspyDesc}</p>
+      </section>
+
+      {/* Cost */}
+      <section className="p-6 rounded-2xl bg-orange-500/5 border border-orange-500/20">
+        <h2 className="text-xl font-bold font-heading text-orange-400 mb-3">{c.costTitle}</h2>
+        <p className="text-sm text-muted leading-relaxed">{c.costDesc}</p>
+      </section>
+
+      {/* Key takeaways */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{c.keyTakeaways}</h2>
         <div className="p-6 md:p-8 rounded-2xl bg-gradient-to-br from-primary/5 to-secondary/5 border border-primary/20">
           <ul className="space-y-4 text-text">
-            {[
-              t.advancedPrompting.takeaway1,
-              t.advancedPrompting.takeaway2,
-              t.advancedPrompting.takeaway3,
-              t.advancedPrompting.takeaway4,
-              t.advancedPrompting.takeaway5,
-            ].map((item, i) => (
+            {c.takeaways.map((item, i) => (
               <li key={i} className="flex gap-3 items-start">
                 <span className="w-6 h-6 rounded-lg bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                   <span className="text-primary-light text-sm font-bold">{i + 1}</span>
@@ -237,7 +203,16 @@ export default function AdvancedPromptingPage() {
           </ul>
         </div>
       </section>
-<section className="border-t border-border pt-5"><h2 className="font-semibold mb-3">{t.agentReview.sources}</h2><ul className="space-y-2 text-sm"><li><a className="text-primary-light underline" href="https://developers.openai.com/api/docs/guides/reasoning-best-practices">OpenAI reasoning guidance</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2305.10601">Tree of Thoughts (2023)</a></li><li><a className="text-primary-light underline" href="https://arxiv.org/abs/2308.09687">Graph of Thoughts (2023)</a></li><li><a className="text-primary-light underline" href="https://www.anthropic.com/research/reasoning-models-dont-say-think">Anthropic: reasoning trace faithfulness</a></li></ul></section>
+
+      {/* Sources */}
+      <section className="border-t border-border pt-5">
+        <h2 className="font-semibold mb-3">{c.sourcesTitle}</h2>
+        <ul className="space-y-2 text-sm">
+          {c.sources.map(source => (
+            <li key={source.url}><a className="text-primary-light underline" href={source.url}>{source.label}</a></li>
+          ))}
+        </ul>
+      </section>
     </TopicLayout>
   )
 }
