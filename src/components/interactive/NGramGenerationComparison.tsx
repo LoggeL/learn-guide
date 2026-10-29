@@ -25,6 +25,7 @@ export type NGramGenerationCopy = {
     key: string
     lookupResult: string
     vector: string
+    gate: string
     baseLogits: Array<{ token: string; score: string }>
     withoutLogits: Array<{ token: string; score: string }>
     withLogits: Array<{ token: string; score: string }>
@@ -54,7 +55,7 @@ export function NGramGenerationComparison({ copy }: { copy: NGramGenerationCopy 
       <div className="flex flex-wrap items-center justify-between gap-2"><span className="text-xs font-semibold uppercase tracking-wider text-muted">{copy.sharedInput}</span><span className={`rounded-full px-3 py-1 text-xs font-semibold ${useful ? 'bg-emerald-500/10 text-emerald-300' : 'bg-orange-500/10 text-orange-300'}`}>{scenario.badge}</span></div>
       <code className="mt-3 block overflow-x-auto whitespace-pre rounded-lg bg-surface p-3 text-sm text-cyan-200">{scenario.context}<span className="animate-pulse text-primary-light">▌</span></code>
       <div className="mt-3 grid gap-3 md:grid-cols-2">
-        <SharedValue label={copy.baseRepresentation} value="xₜ = token_embed(t)" />
+        <SharedValue label={copy.baseRepresentation} value="hₜ = layers₁…₂(token_embed(xₜ))" />
         <Logits label={copy.baseLogits} values={scenario.baseLogits} muted />
       </div>
     </div>
@@ -63,14 +64,14 @@ export function NGramGenerationComparison({ copy }: { copy: NGramGenerationCopy 
 
     <div className="grid gap-4 lg:grid-cols-2">
       <Branch title={copy.withoutTitle} accent="neutral">
-        <Step label={copy.backboneOnly} value="xₜ → backbone → hₜ → LM head" />
+        <Step label={copy.backboneOnly} value="hₜ → layers₃…L → LM head" />
         <p className="text-sm leading-relaxed text-muted">{scenario.withoutNote}</p>
         <Logits label={copy.downstream} values={scenario.withoutLogits} />
       </Branch>
       <Branch title={copy.withTitle} accent={useful ? 'good' : 'warn'}>
         <Step icon={<Database size={15} />} label={copy.lookup} value={`${scenario.key} → ${scenario.lookupResult}`} />
-        <Step label={copy.addVector} value={`x′ₜ = xₜ + ${scenario.vector}`} />
-        <Step label={copy.backboneOnly} value="x′ₜ → backbone → h′ₜ → LM head" />
+        <Step label={copy.addVector} value={`${scenario.gate} · h′ₜ = hₜ + α · W_V ${scenario.vector}`} />
+        <Step label={copy.backboneOnly} value="h′ₜ → layers₃…L → LM head" />
         <p className="text-sm leading-relaxed text-muted">{scenario.withNote}</p>
         <Logits label={copy.downstream} values={scenario.withLogits} />
       </Branch>

@@ -309,9 +309,95 @@ export const de: Dictionary = {
         }
     ],
     "hiddenTitle": "Was passiert mit dem Hidden State?",
-    "hiddenBody": "Ein trainierter rekurrenter Kern transformiert seinen aktuellen Hidden State und führt das Ergebnis durch dieselben Gewichte zurück. In diesem Beispiel läuft er zweimal vor der Ausgabe. Ein Standard-Transformer durchläuft dagegen seine unterschiedlichen Schichten einmal pro neuem Token.",
-    "formula": "hᵣ₊₁ = Fθ(hᵣ, Eingabe)",
+    "hiddenBody": "Ein trainierter rekurrenter Kern transformiert seinen aktuellen Hidden State und führt das Ergebnis durch dieselben Gewichte zurück. In diesem Beispiel läuft er zweimal vor der Ausgabe. Ein Standard-Transformer durchläuft dagegen seine unterschiedlichen Schichten einmal pro neuem Token. Bei Huginn betten zunächst einige gewöhnliche Schichten (der Prelude P) die Eingabe als e ein; dann läuft der Kern R r-mal, und eine Coda C macht aus dem letzten Zustand die Logits. Das Embedding e wird in jedem Durchlauf erneut eingespeist, damit die Schleife nicht von der Eingabe wegdriftet.",
+    "formula": "e = P(x) · s₀ ~ 𝒩(0, σ²) · sᵣ = R(e, sᵣ₋₁) · Logits = C(s_r)",
     "hiddenLimit": "Der Zustand ist ein Tensor an Tokenpositionen, kein einzelner gespeicherter Satz. Mehr Schleifen vergrößern weder automatisch seine Kapazität noch verbessern sie zwingend die Antwort. Eingabeanbindung, Caches und Abbruchregeln hängen von der Architektur ab.",
+    "historyTitle": "Woher die Idee kommt",
+    "historyIntro": "Dieselben Gewichte über die Tiefe wiederzuverwenden ist älter als die aktuelle Welle von Arbeiten zum latenten Reasoning. Jede Station unten hat einen Baustein beigetragen, den heutige Looped-Sprachmodelle kombinieren.",
+    "history": [
+        {
+            "year": "2016",
+            "name": "Adaptive Computation Time (ACT)",
+            "body": "Graves ergänzt ein RNN um eine Halte-Einheit: Bei jedem inneren Schritt gibt sie eine Haltewahrscheinlichkeit aus, und die Berechnung endet, sobald die aufsummierte Wahrscheinlichkeit 1 − ε erreicht. Ein „Ponder Cost“ im Loss bestraft zusätzliche Schritte, sodass das Netz nur dort mehr rechnet, wo es hilft.",
+            "label": "Graves 2016",
+            "url": "https://arxiv.org/abs/1603.08983"
+        },
+        {
+            "year": "2018",
+            "name": "Universal Transformer",
+            "body": "Dehghani et al. wenden einen einzigen Transformer-Block wiederholt über die Tiefe an, statt unterschiedliche Blöcke zu stapeln, und kombinieren das mit ACT, sodass jede Position nach unterschiedlich vielen Schritten anhalten kann. Das ist der direkte Vorfahr des Looped Transformers.",
+            "label": "Dehghani et al. 2018",
+            "url": "https://arxiv.org/abs/1807.03819"
+        },
+        {
+            "year": "2019",
+            "name": "ALBERT: Gewichte teilen ohne Mehrfachschleife",
+            "body": "ALBERT teilt alle Parameter über seine Schichten. Die Parameterzahl sinkt stark, aber jedes Token durchläuft weiterhin die volle Tiefe. Das zeigt am deutlichsten die Unterscheidung, um die es auf dieser Seite immer wieder geht: Weniger gespeicherte Gewichte bedeuten nicht weniger Rechenoperationen.",
+            "label": "Lan et al. 2019",
+            "url": "https://arxiv.org/abs/1909.11942"
+        },
+        {
+            "year": "2025",
+            "name": "Huginn: Test-Time-Scaling über rekurrente Tiefe",
+            "body": "Geiping et al. trainieren ein Modell mit 3,5 Mrd. Parametern (Prelude 2, rekurrenter Kern 4, Coda 2 Schichten) auf rund 800 Mrd. Tokens. 32-mal ausgerollt erreicht es eine effektive Tiefe von 132 Schichten. Mehr Iterationen zur Laufzeit erhöhen die Genauigkeit, etwa bei ARC-Easy von 49,1 % bei r = 4 auf 69,9 % bei r = 32.",
+            "label": "Geiping et al. 2025",
+            "url": "https://arxiv.org/abs/2502.05171"
+        },
+        {
+            "year": "2025",
+            "name": "Mixture-of-Recursions (MoR)",
+            "body": "Bae et al. ergänzen einen leichtgewichtigen Router, der pro Token entscheidet, wie viele Rekursionen des geteilten Stapels es bekommt. Einfache Tokens steigen früh aus, schwierige laufen länger. Weil die Tiefe nun pro Token variiert, speichert die Arbeit Keys und Values zusätzlich pro Rekursionstiefe im Cache.",
+            "label": "Bae et al. 2025",
+            "url": "https://arxiv.org/abs/2507.10524"
+        },
+        {
+            "year": "2025",
+            "name": "Ouro / LoopLM",
+            "body": "Zhu et al. pretrainieren Looped-Sprachmodelle auf 7,7 Billionen Tokens und lernen die Ausstiegstiefe mit einem entropie-regularisierten Ziel. Laut den Autoren ist Ouro 1.4B mit vier rekurrenten Schritten mit 4B-Modellen konkurrenzfähig; die Schleife erhöht nicht die reine Wissensspeicherung (etwa 2 Bit pro Parameter), verbessert aber, wie gespeichertes Wissen verarbeitet wird.",
+            "label": "Zhu et al. 2025",
+            "url": "https://arxiv.org/abs/2510.25741"
+        }
+    ],
+    "trainingTitle": "Wie ein Modell das Schleifen lernt",
+    "trainingIntro": "Eine Schleife hilft nur, wenn der Kern darauf trainiert wurde, unterschiedlich oft angewendet zu werden. Das Huginn-Rezept zeigt die vier Zutaten, die das möglich machen:",
+    "trainingSteps": [
+        {
+            "title": "Zufällige Iterationszahl pro Sequenz",
+            "body": "Jede Trainingssequenz bekommt ihr eigenes r, gezogen aus einer Log-Normal-Poisson-Verteilung mit langem Ausläufer und Mittelwert 32. Der Kern muss deshalb nach wenigen wie nach vielen Durchläufen brauchbare Zustände liefern – genau das erlaubt später mehr Iterationen zur Laufzeit."
+        },
+        {
+            "title": "Abgeschnittene Backpropagation",
+            "body": "Gradienten fließen nur durch die letzten k = 8 Iterationen. Der Aktivierungsspeicher bleibt dadurch konstant, egal wie groß r ist, während der Forward-Pass trotzdem alle Iterationen ausführt."
+        },
+        {
+            "title": "Erneutes Einspeisen der Eingabe",
+            "body": "Die eingebettete Eingabe e wird in jedem Durchlauf mit dem Zustand verkettet. Ohne diese Anbindung kann eine tief ausgerollte Schleife vergessen, worüber sie eigentlich rechnet."
+        },
+        {
+            "title": "Zufälliger Startzustand",
+            "body": "Der Zustand beginnt mit Rauschen. Das Modell lernt, von vielen Startpunkten aus zu einem brauchbaren Zustand zu konvergieren, statt sich auf eine feste Initialisierung zu verlassen."
+        }
+    ],
+    "haltingTitle": "Wann hört die Schleife auf?",
+    "haltingBody": "Ein festes r verschwendet Rechenzeit bei einfachen Tokens und lässt schwierige zu kurz kommen. Die Architekturen oben nutzen unterschiedliche Abbruchregeln:",
+    "halting": [
+        {
+            "name": "Gelernte Haltewahrscheinlichkeit",
+            "body": "ACT und der Universal Transformer summieren pro Schritt eine Haltewahrscheinlichkeit auf und zahlen für jeden zusätzlichen Schritt einen Ponder Cost."
+        },
+        {
+            "name": "Konvergenztest",
+            "body": "Huginn steigt pro Token ohne zusätzliches Training aus, sobald die KL-Divergenz zwischen den Ausgabeverteilungen zweier aufeinanderfolgender Iterationen unter 5 × 10⁻⁴ fällt."
+        },
+        {
+            "name": "Router",
+            "body": "Mixture-of-Recursions trainiert durchgängig einen Router, der jedem Token vor dem Durchlauf seine Rekursionstiefe zuweist."
+        },
+        {
+            "name": "Ausstiegs-Gate mit Entropie-Regularisierung",
+            "body": "Ouro lernt eine Ausstiegsverteilung über die Tiefen; der Entropie-Term verhindert, dass das Modell einfach immer die maximale Tiefe wählt."
+        }
+    ],
     "motivationTitle": "Speicher und Compute setzen verschiedene Grenzen",
     "motivationBody": "Rekurrenz erlaubt mehr Rechenarbeit bei der Inferenz, ohne für jeden Tiefenschritt weitere Gewichte zu speichern. Wenn ausgeschriebene Zwischenschritte entfallen, wächst auch die Sequenz weniger. Parameterspeicher und ausgeführte Tiefe lassen sich so getrennt skalieren; die zusätzliche Arbeit kostet weiterhin Ressourcen.",
     "bottlenecks": [
@@ -329,9 +415,11 @@ export const de: Dictionary = {
         }
     ],
     "visibilityTitle": "Schwerer zu überwachen heißt nicht uninterpretierbar",
-    "visibilityBody": "Bei Zugriff auf das Modellinnere lassen sich latente Zustände weiterhin mit Aktivierungsproben und kausalen Eingriffen untersuchen. Huginn-Studien zeigen vom Ausleseverfahren abhängige Ergebnisse; LOTUS zeigt, dass gezieltes Training latente Schritte lesbarer machen kann. Wiederholte Transformation macht die Analyse anspruchsvoller, nicht grundsätzlich unmöglich.",
-    "astraTitle": "Durch Astra im Rampenlicht",
-    "astraBody": "Die Astra System Card berichtet geringere CoT-Monitorbarkeit, dokumentiert aber keine Loop-Transformer-Architektur und belegt Rekurrenz nicht als Ursache. Diese Grafik erklärt das allgemeine Forschungsprinzip.",
+    "visibilityBody": "Bei Zugriff auf das Modellinnere lassen sich latente Zustände weiterhin mit Aktivierungsproben und kausalen Eingriffen untersuchen. Lu et al. lesen Huginns Iterationen mit Logit-Lens- und Coda-Lens-Proben aus und finden nur begrenzte, vom Ausleseverfahren abhängige Hinweise auf lesbare Zwischenschritte. LOTUS (Fan, Svete, Lee 2026) trainiert mehrere latente Positionen direkt auf die Referenz-Lösungsschritte; projiziert man seine Latents durch den Sprachmodell-Kopf, kommen diese Schritte wieder zum Vorschein. Wiederholte Transformation macht die Analyse anspruchsvoller, nicht grundsätzlich unmöglich.",
+    "astraTitle": "Astra: Was belegt ist und was nur berichtet wird",
+    "astraStatus": "Architektur unbestätigt",
+    "astraReported": "The Information (Efrati, Palazzolo, Drew) berichtete, dass OpenAIs GPT-6 Astra rekurrente Tiefe nutzt. OpenAI hat das nicht bestätigt.",
+    "astraBody": "Die GPT-6 Astra System Card (3. September 2026) berichtet sehr wohl eine geringere Chain-of-Thought-Monitorbarkeit als bei GPT-5.6 Sol. Sie führt das auf kürzere Gedankenketten zurück, in denen Belege fehlen, auf einen geringeren Bedarf, Überlegungen auszuschreiben, und auf wachsende Fähigkeiten ohne CoT – und hält fest, dass Änderungen der CoT-Steuerbarkeit nicht speziell auf Architekturänderungen zurückgehen. Rekurrente Tiefe erwähnt sie nicht. Ob Astra eine Schleifenarchitektur nutzt, ist also offen; der Mechanismus auf dieser Seite ist die allgemeine Forschungsidee.",
     "sourcesTitle": "Quellen und weiterführende Literatur",
     "relatedTitle": "Weiterlernen",
     "smallCaption": "2 Durchläufe · dieselben Gewichte θ",
@@ -341,9 +429,7 @@ export const de: Dictionary = {
     "pause": "Pause",
     "replay": "Erneut abspielen",
     "progress": "Tokenfluss",
-    "ready": "Bereit",
     "done": "Nächstes Token dekodiert",
-    "flowStatus": "Fortschritt des Tokenflusses",
     "loopPass": "Kern-Durchläufe abgeschlossen",
     "largePass": "Stapel-Durchläufe abgeschlossen",
     "cotTitle": "Latente Updates oder eine wachsende Chain of Thought",
@@ -366,8 +452,7 @@ export const de: Dictionary = {
     ],
     "cotEmpty": "Zwischentext erscheint während der Generierung.",
     "cotExample": "Beispielrechnung: (17 × 6) + 8. Die latenten Farben sind keine ausgelesenen Rechenschritte.",
-    "monitorExplanation": "Wiederholte Updates können Informationen im latenten Zustand umformen und vermischen, ohne lesbaren Zwischentext zu hinterlassen. Ein Textmonitor sieht diese Updates deshalb nicht. Explizite CoT liefert eine zusätzliche Spur, aber keine vollständige oder garantiert getreue Erklärung. Aktivierungsanalysen müssen Schicht und Schleifenposition berücksichtigen.",
-    "astraNews": "Astra-Berichte rückten Looped Transformers ins Rampenlicht."
+    "monitorExplanation": "Wiederholte Updates können Informationen im latenten Zustand umformen und vermischen, ohne lesbaren Zwischentext zu hinterlassen. Ein Textmonitor sieht diese Updates deshalb nicht. Explizite CoT liefert eine zusätzliche Spur, aber keine vollständige oder garantiert getreue Erklärung. Aktivierungsanalysen müssen Schicht und Schleifenposition berücksichtigen."
 },
 
   // Common UI
@@ -5771,102 +5856,177 @@ export const de: Dictionary = {
 
   // Nested Learning page
   nestedLearning: {
-    title: 'Verschachteltes Lernen',
-    description: "Ein Forschungsrahmen für zusammenwirkende Lernprozesse mit unterschiedlichen Updatefrequenzen, einschließlich des HOPE-Konzeptnachweises.",
+    title: 'Nested Learning',
+    description: "Wie Nested Learning Architekturen und Optimierer als assoziative Speicher mit unterschiedlichen Updatefrequenzen liest – und wie HOPE darauf aufbaut.",
 
-    // Research disclaimer
-    researchDisclaimer: 'Forschungsvorschau',
-    researchDisclaimerDesc: "Nested Learning wurde von Google Research auf der NeurIPS 2025 vorgestellt. Dieser Artikel erklärt die Forschung und die HOPE-Experimente. Die Illustrationen sind konzeptuell; sie belegen weder universellen Wissenserhalt noch allgemeine Einsatzreife.",
+    statusLabel: 'Forschungsstand',
+    statusBody: "Nested Learning ist ein Framework von Ali Behrouz, Meisam Razaviyayn, Peilin Zhong und Vahab Mirrokni (Google Research, NeurIPS 2025). HOPE ist die Proof-of-Concept-Architektur der Autoren; ein Produktiv-Sprachmodell, das sie nutzt, ist nicht bekannt.",
 
-    // Analogy intro
-    analogyTitle: 'Das Vergessens-Problem',
-    analogyDesc: "Das Lernen einer neuen Fähigkeit kann eine frühere beeinträchtigen, wenn beide gemeinsame Mechanismen nutzen. In neuronalen Netzen kann sequenzielle Optimierung entsprechend Parameter verändern, die für frühere Aufgaben nützlich waren. Das Ausmaß hängt von Aufgaben und Training ab.",
-    analogyQuote: "Kann sich ein System an neue Informationen anpassen und zugleich nützliches früheres Verhalten erhalten?",
-    analogyPunchline: "Nested Learning untersucht zusammenwirkende Optimierungsprozesse mit unterschiedlichen Updatefrequenzen. Die Analogie zum menschlichen Lernen liefert eine Intuition, keinen Nachweis einer Nachbildung biologischer Gehirne.",
+    heroTitle: 'Eine Idee für Architektur und Optimierer',
+    heroBody: "Ein tiefes Netz wird meist als Stapel von Schichten beschrieben, den ein Optimierer trainiert. Nested Learning beschreibt beide Teile gleich: als assoziative Speicher, von denen jeder ein eigenes kleines Optimierungsproblem auf seinem eigenen Eingabestrom löst – mit eigener Updatefrequenz. Attention, eine MLP-Gewichtsmatrix und sogar das Momentum des Optimierers werden zu „Ebenen“ eines verschachtelten Systems. Katastrophales Vergessen bekommt damit eine konkrete Ursache: Mehrere Wissensstücke werden in denselben begrenzten Speicher geschrieben.",
 
-    // The Problem
-    problemTitle: 'Sieh selbst: Katastrophales Vergessen',
-    problemDesc: "Änderungen gemeinsamer Parameter können ein neues Ziel verbessern und zugleich ein früheres verschlechtern. Das skalare Beispiel unten macht den Konflikt sichtbar und berechnet beide Losses. Es simuliert weder HOPE noch behauptet es, jedes Modell müsse vergessen.",
+    memoryTitle: 'Der Baustein: assoziativer Speicher',
+    memoryBody: "Ein assoziativer Speicher M lernt, Keys k auf Values v abzubilden. Lernen heißt dabei, ein inneres Ziel zu minimieren, etwa den Regressionsfehler ½‖M·k − v‖². Ein Gradientenschritt auf diesem Ziel ist die Delta-Regel: Sie schreibt nur den Teil von v, den M noch nicht zurückgibt. Die einfachere Hebb-Regel folgt aus einem Skalarprodukt-Ziel und addiert v·kᵀ, ohne zu prüfen, was schon gespeichert ist.",
+    memoryFormula: 'Delta-Regel:  M ← M − η (M·k − v) kᵀ',
+    memoryFormulaHebbian: 'Hebb-Regel:  M ← M + η · v kᵀ',
+    memoryLens: "So betrachtet speichert Softmax-Attention jedes Key-Value-Paar des Kontexts unkomprimiert, lineare Attention presst alle in eine einzige Matrix, und eine MLP-Gewichtsmatrix enthält, was das Pretraining hineingeschrieben hat.",
 
-    // Forgetting demo
-    forgettingDemoTitle: 'Probier es: Trainieren und Vergessen beobachten',
-    forgettingTaskA: 'Aufgabe A Wissen',
-    forgettingTaskB: 'Aufgabe B Wissen',
-    forgettingTrainA: '1. Aufgabe A trainieren',
-    forgettingTrainB: '2. Jetzt Aufgabe B trainieren',
-    forgettingReset: 'Zurücksetzen',
-    forgettingKnowledge: 'Wissen',
-    forgettingStep: 'Schritt',
-    forgettingWarning: 'Katastrophales Vergessen! Das Wissen von Aufgabe A wurde beim Lernen von Aufgabe B zerstört.',
+    memoryDemo: {
+      title: 'In einen 2×2-Speicher schreiben',
+      description: "Echte Rechnung, keine Animation: Drei Key-Value-Paare teilen sich eine 2×2-Matrix M. Jeder Klick führt einen Gradientenschritt auf ½‖M·k − v‖² mit η = 0,5 aus.",
+      angleLabel: 'Winkel zwischen Key A und Key B',
+      ruleLabel: 'Lernregel',
+      delta: 'Delta-Regel',
+      hebbian: 'Hebb-Regel',
+      write: 'Schreibe',
+      reset: 'Zurücksetzen',
+      steps: 'Schreibschritte',
+      errorLabel: 'Abruffehler ‖M·k − v‖',
+      keysPlot: 'Keys (Eingaberaum)',
+      valuesPlot: 'Values (Ausgaberaum)',
+      targetLegend: 'Ring: Zielwert v',
+      recallLegend: 'Punkt: Abruf M·k',
+      matrixLabel: 'Speicher M',
+      hintsTitle: 'Probier das aus',
+      hints: [
+        "Schreibe dreimal A, dann dreimal B. Bei 90° behält A seinen Wert; bei 20° wächst sein Fehler mit jedem Schreiben von B.",
+        "Wechsle bei überlappenden Keys zur Hebb-Regel: Übersprechen sammelt sich an und nichts korrigiert es, weil die Regel M·k nie mit v vergleicht.",
+        "Nimm jetzt C dazu: Zwei Dimensionen fassen höchstens zwei unabhängige Keys, also konkurriert C immer mit A oder B.",
+      ],
+    },
 
-    // Solution
-    solutionTitle: "Der vorgeschlagene Rahmen",
-    solutionDesc: "Modell und Optimizer werden als zusammenwirkende Lernprozesse mit unterschiedlichen Updatefrequenzen beschrieben. Ebenen können eigene Kontexte und Ziele haben. Die Wahl von Frequenzen allein garantiert nicht das Verschwinden von Interferenz.",
-    speedSlow: '🐢 Langsam',
-    speedSlowDesc: "Seltener aktualisierte Parameter",
-    speedMedium: '🚶 Mittel',
-    speedMediumDesc: "Ein mittlerer Update-Rhythmus",
-    speedFast: '⚡ Schnell',
-    speedFastDesc: "Häufiger aktualisierter Zustand",
-    solutionAnalogy: "Unterschiedliche Update-Rhythmen können Änderungen auf verschiedene Zustands- oder Parametergruppen verteilen. Der Rhythmus allein belegt nicht, dass diese Gruppen einander nicht beeinflussen. Dafür braucht es ein definiertes Ziel und eine Evaluation.",
+    forgettingTitle: 'Warum Vergessen aus geteilter Kapazität folgt',
+    forgettingBody: "Die Demo zeigt katastrophales Vergessen in seiner kleinsten Form. Ein neuer Schreibvorgang verändert M entlang der Richtung des neuen Keys. Jeder ältere Key, der damit überlappt, wird danach anders ausgelesen. Mit orthogonalen Keys und freien Dimensionen geht nichts verloren; sobald Keys überlappen oder die Kapazität erschöpft ist, überschreibt neues Wissen altes. In einem großen Netz passiert dasselbe mit Gewichten, die viele Eingaben gleichzeitig bedienen.",
 
-    // Nested loops
-    loopsTitle: 'Die Schleifen in Aktion',
-    loopsDesc: "Konzeptanimation mit drei Updatefrequenzen. Drehung und Timing sind zur Veranschaulichung gewählt. Sie messen weder Trainingsgeschwindigkeit noch Wissen oder eine konkrete HOPE-Konfiguration.",
-    loopsDemoTitle: 'Verschachtelte Lernschleifen',
-    outerLoop: 'Außen',
-    middleLoop: 'Mitte',
-    innerLoop: 'Innen',
-    outerLoopDesc: "Langsamer Update-Rhythmus",
-    middleLoopDesc: "Mittlerer Update-Rhythmus",
-    innerLoopDesc: "Schneller Update-Rhythmus",
-    loopsRunning: 'Läuft...',
-    loopsPaused: 'Pausiert',
-    loopsPlay: '▶ Abspielen',
-    loopsPause: '⏸ Pause',
+    optimizerTitle: 'Auch Optimierer sind Speicher',
+    optimizerBody: "Die Arbeit wendet dieselbe Sicht auf das Training selbst an. Für eine Schicht mit Eingabe x und lokalem Fehlersignal δ lautet Gradientenabstieg mit Momentum:",
+    optimizerFormula: 'm ← α·m − η·δ·xᵀ        W ← W + m',
+    optimizerPoints: [
+      {
+        title: 'Momentum ist ein Gedächtnis für Gradienten',
+        body: "m löst ein eigenes inneres Ziel: Keys sind die Schichteingaben x, Values die negierten Fehlersignale −δ. Es komprimiert die Gradientenhistorie in eine Matrix; α < 1 wirkt wie ein Zerfall, der alte Gradienten verblassen lässt.",
+      },
+      {
+        title: 'Zwei verschachtelte Ebenen',
+        body: "Die innere Ebene schreibt Gradienten in m, die äußere nutzt m, um die Gewichte W zu verändern. Training ist also schon ein verschachtelter Lernprozess mit zwei Updatefrequenzen.",
+      },
+      {
+        title: 'Besserer Speicher, besserer Optimierer',
+        body: "Normales Momentum nutzt ein Skalarprodukt-Ziel und ignoriert, wie Beispiele zueinander stehen. Ersetzt man es durch ein L2-Regressionsziel, entsteht ein Momentum nach der Delta-Regel; laut den Autoren erreicht es in einem Spielproblem schneller die Lösung und ist robuster gegenüber unsauberen Daten.",
+      },
+    ],
 
-    // Comparison
-    comparisonTitle: "Fortlaufendes Lernen evaluieren",
-    comparisonDesc: "Ein Leistungsvergleich braucht einen definierten Benchmark und vergleichbare Bedingungen. Im Folgenden steht ein Evaluationsprotokoll, keine erfundenen Prozentsätze für traditionelles und verschachteltes Lernen.",
-    comparisonDemoTitle: 'Training mit 3 aufeinanderfolgenden Aufgaben',
-    traditionalTitle: '❌ Traditionell',
-    nestedTitle: '✅ Verschachtelt',
-    compTaskA: 'Aufgabe A',
-    compTaskB: 'Aufgabe B',
-    compTaskC: 'Aufgabe C',
-    compRun: '▶ Vergleich starten',
-    compReset: 'Zurücksetzen',
+    levelsTitle: 'Ebenen sind nach Updatefrequenz geordnet',
+    levelsBody: "Jede Komponente bekommt eine Frequenz: wie oft sie pro Datenpunkt aktualisiert wird. Komponenten mit gleicher Frequenz bilden eine Ebene; je höher die Ebene, desto niedriger ihre Frequenz. Ein Transformer kennt nur zwei Extreme: Attention passt sich bei jedem Token an, vergisst aber alles, wenn der Kontext endet, während sich die MLP-Gewichte nach dem Training nicht mehr ändern. Nested Learning fragt nach den Ebenen dazwischen.",
 
-    // Hope Architecture
-    hopeTitle: 'Die Hope-Architektur',
-    hopeDesc: "HOPE ist die Konzeptarchitektur der Autoren. Sie kombiniert selbstmodifizierenden rekurrenten Speicher mit einem Kontinuum von Speicher-Updatefrequenzen. Die berichteten Experimente betreffen konkrete Konfigurationen und Aufgaben.",
-    hopeDiagramTitle: 'Wie Hope funktioniert',
-    hopeInput: 'Eingabe',
-    hopeSelfMod: 'Selbst-Mod.',
-    hopeMemory: 'Speicher',
-    hopeOutput: 'Ausgabe',
-    hopeLearnRules: 'lernt Regeln',
-    hopeStoreRecall: 'speichern & abrufen',
-    hopePoint1: "Berichtete Sprachmodellierungsvergleiche mit benannten Baselines",
-    hopePoint2: "Langkontext- und Speicheraufgaben in der berichteten Evaluation",
-    hopePoint3: "Experimente zu fortlaufendem Lernen, keine Garantie für null Vergessen",
+    comparison: {
+      title: 'Spektrum der Updatefrequenzen dreier Architekturen',
+      description: "Jeder Chip ist ein Speicher. Seine Position zeigt, wie oft er beschrieben wird, während das Modell einen Datenstrom verarbeitet.",
+      axis: ['Jedes Token', 'Jeder Chunk', 'Selten', 'Nach dem Training nie'],
+      rows: [
+        {
+          name: 'Transformer',
+          note: "Zwei Extreme, nichts dazwischen: Kontextspeicher, der verworfen wird, und eingefrorene Gewichte.",
+          items: [
+            { label: 'Attention / KV-Cache', pos: '0' },
+            { label: 'MLP-Gewichte', pos: '3' },
+          ],
+        },
+        {
+          name: 'Titans',
+          note: "Ergänzt einen neuronalen Langzeitspeicher, der zur Laufzeit per Gradientenschritt aktualisiert wird; die Autoren sprechen von zwei Ebenen von Parameter-Updates.",
+          items: [
+            { label: 'Attention (Kurzzeit)', pos: '0' },
+            { label: 'Neuronaler Langzeitspeicher', pos: '0' },
+            { label: 'Persistenter Speicher', pos: '3' },
+          ],
+        },
+        {
+          name: 'HOPE',
+          note: "Selbstmodifizierende Speicher mit Token-Frequenz plus eine Kette von MLP-Blöcken mit zunehmend größeren Update-Intervallen.",
+          items: [
+            { label: 'Selbstmodifizierende Speicher', pos: '0' },
+            { label: 'CMS schnell', pos: '1' },
+            { label: 'CMS mittel', pos: '1' },
+            { label: 'CMS langsam', pos: '2' },
+          ],
+        },
+      ],
+    },
 
-    // Why it matters
-    mattersTitle: 'Warum das wichtig ist',
-    mattersDesc: "Der Rahmen wirft Forschungsfragen zu Anpassung und Speicher auf:",
-    matter1Title: 'Immer Lernend',
-    matter1Desc: "Kann ein Modell neue Informationen aufnehmen und frühere Aufgabenleistung erhalten?",
-    matter2Title: 'Effizienter',
-    matter2Desc: "Welche Update-Rhythmen funktionieren innerhalb eines gemessenen Rechen- und Speicherbudgets?",
-    matter3Title: 'Gehirn-ähnlich',
-    matter3Desc: "Unterschiedliche Zeitskalen liefern eine Modellierungsperspektive; Ähnlichkeiten zum Gehirn benötigen eigene Evidenz.",
+    cmsTitle: 'Continuum Memory System (CMS)',
+    cmsBody: "Das CMS ersetzt das einzelne MLP eines Blocks durch eine Kette von MLP-Blöcken. Block ℓ hat eine eigene Chunk-Größe C⁽ℓ⁾: Er sammelt die Gradienten von C⁽ℓ⁾ Schritten und aktualisiert erst dann seine Parameter. Schnelle Blöcke folgen dem aktuellen Kontext, langsame verdichten eine lange Vorgeschichte.",
+    cmsFormula: 'yₜ = MLP⁽ᶠᵏ⁾( … MLP⁽ᶠ¹⁾(xₜ) )',
+    cmsUpdate: 'θ⁽ℓ⁾ ← θ⁽ℓ⁾ − Σ η⁽ℓ⁾ ∇L(θ⁽ℓ⁾; xₜ)   (Summe über die letzten C⁽ℓ⁾ Schritte, nur wenn i ≡ 0 mod C⁽ℓ⁾)',
+    cmsSpecial: "Ein normaler Transformer-Block ist der Spezialfall k = 1 mit Updatefrequenz null. Überschreibt ein schneller Block etwas, kann es in einem langsameren Block weiterleben; laut der Arbeit können meta-gelernte Anfangszustände es zurückführen – eine Schleife durch die Zeit statt eines endgültigen Verlusts.",
 
-    // Key Takeaways
-    keyTakeaways: 'Wichtige Erkenntnisse',
-    takeaway1: "Sequenzielles Training kann frühere Aufgaben beeinträchtigen. Den Effekt messen, statt ihn pauschal anzunehmen.",
-    takeaway2: "Nested Learning beschreibt zusammenwirkende Lernprozesse mit verschiedenen Updatefrequenzen.",
-    takeaway3: "HOPE ist eine Forschungsarchitektur mit Evaluation auf benannten Aufgaben. Ihre Ergebnisse belegen keinen universellen Wissenserhalt.",
-    takeaway4: "Konzeptdiagramme, numerische Spielmodelle und experimentelle Benchmark-Ergebnisse sichtbar unterscheiden.",
+    cmsDemo: {
+      title: 'Drei Updatefrequenzen auf einem Datenstrom',
+      description: "Jede Ebene hält eine einzige Zahl w und minimiert ½(w − y)² auf demselben Strom: Regime A (y = +1), dann B (y = −1), dann wieder A. Die Kurven werden live mit der CMS-Update-Regel berechnet.",
+      target: 'Zielwert y',
+      levels: ['Schnell · C = 1', 'Mittel · C = 8', 'Langsam · C = 32'],
+      updates: 'Update-Zeitpunkte',
+      step: 'Schritt',
+      play: 'Abspielen',
+      pause: 'Pause',
+      reset: 'Zurücksetzen',
+      regimeA: 'Regime A',
+      regimeB: 'Regime B',
+      errorA: 'Abstand zu A',
+      errorB: 'Abstand zu B',
+      note: "Vereinfachung: Hier liest jede Ebene den Strom direkt; in HOPE sind die MLP-Blöcke hintereinandergeschaltet. Was das Spielmodell zeigt, ist der Zielkonflikt: Die schnelle Ebene passt sich in wenigen Schritten an und vergisst A vollständig, die langsame reagiert spät und liegt am Ende von Regime B noch zwischen A und B – sie hat A nicht vollständig überschrieben. Der Preis: Sie lernt keines der beiden Regime ganz.",
+    },
+
+    hopeTitle: 'HOPE: selbstmodifizierende Titans plus CMS',
+    hopeBody: "Titans (Behrouz, Zhong, Mirrokni 2024) ergänzt einen neuronalen Langzeitspeicher, der zur Laufzeit lernt: Je überraschender ein Token, desto größer der Gradientenschritt, mit dem es in den Speicher geschrieben wird. HOPE geht einen Schritt weiter: Der Speicher erzeugt auch die Größen, die sein eigenes Update steuern.",
+    hopeFormula: 'M ← M (αₜ I − ηₜ kₜ kₜᵀ) − ηₜ ∇L(M; kₜ, v̂ₜ)',
+    hopeDiagram: {
+      title: 'Datenfluss in HOPE',
+      input: 'Token xₜ',
+      query: 'Feste Projektion: qₜ = xₜ W_q',
+      memories: 'Speicher M_k, M_v, M_η, M_α',
+      generates: 'erzeugen kₜ, vₜ, ηₜ, αₜ und Zielwerte v̂ₜ',
+      update: 'Update nach Delta-Regel mit Behaltens-Gate',
+      selfLoop: 'Die Speicher aktualisieren sich selbst',
+      cms: 'CMS: MLP-Blöcke mit wachsender Chunk-Größe',
+      output: 'Ausgabe yₜ',
+    },
+    hopeParts: [
+      {
+        title: 'Selbst erzeugte Keys, Values und Schrittweiten',
+        body: "kₜ, vₜ, die Lernrate ηₜ und das Behaltens-Gate αₜ entstehen jeweils durch einen Speicher aus xₜ. Nur die Query-Projektion ist eine feste Gewichtsmatrix.",
+      },
+      {
+        title: 'Selbst erzeugte Zielwerte',
+        body: "Jeder Speicher berechnet seinen eigenen Zielwert v̂ₜ = M(vₜ). Das Modell lernt damit, wie es sich selbst verändern soll – nicht nur, was es speichert.",
+      },
+      {
+        title: 'Delta-Regel statt Hebb-Regel',
+        body: "Das Update zieht ab, was entlang kₜ bereits gespeichert ist – genau der Mechanismus aus der 2×2-Demo –, und αₜ entscheidet, wie viel vom alten Speicher erhalten bleibt.",
+      },
+    ],
+
+    evidenceTitle: 'Was die Experimente zeigen',
+    evidence: [
+      "Sprachmodellierung und Common-Sense-Reasoning: Im Vergleich zu Titans, Samba und einer Transformer-Baseline berichtet der Google-Blog für HOPE niedrigere Perplexität und höhere Genauigkeit.",
+      "Needle in a Haystack (Pass-Key, Zahl, Wort): HOPE und Titans schlagen TTT und Mamba2 durchgehend.",
+      "Die Arbeit berichtet außerdem Experimente zu fortlaufendem Lernen und zur Aufnahme neuen Wissens; das sind Modelle im Forschungsmaßstab, kein ausgeliefertes System.",
+    ],
+
+    keyTakeaways: 'Das Wichtigste',
+    takeaways: [
+      "Nested Learning behandelt Schichten, Attention und Optimierer als assoziative Speicher, die eigene innere Optimierungsprobleme lösen.",
+      "Vergessen entsteht, wenn neue Keys in einem Speicher begrenzter Kapazität mit alten überlappen; die Delta-Regel begrenzt den Schaden, schafft aber keine Kapazität.",
+      "Ebenen sind nach Updatefrequenz geordnet. Das Continuum Memory System füllt die Lücke zwischen Attention pro Token und eingefrorenen Gewichten mit MLP-Blöcken unterschiedlicher Chunk-Größe.",
+      "HOPE kombiniert einen selbstmodifizierenden Titans-Speicher, der eigene Keys, Values, Lernraten und Zielwerte erzeugt, mit einem CMS.",
+    ],
+
+    sourcesTitle: 'Quellen',
+    sources: [
+      { label: 'Behrouz et al. (2025): Nested Learning: The Illusion of Deep Learning Architectures', url: 'https://arxiv.org/abs/2512.24695' },
+      { label: 'Google Research (2025): Introducing Nested Learning', url: 'https://research.google/blog/introducing-nested-learning-a-new-ml-paradigm-for-continual-learning/' },
+      { label: 'Behrouz, Zhong, Mirrokni (2024): Titans: Learning to Memorize at Test Time', url: 'https://arxiv.org/abs/2501.00663' },
+    ],
   },
 
   distillation: {
@@ -9369,110 +9529,196 @@ export const de: Dictionary = {
 
   nGramEmbeddings: {
   "title": "N-Gramm-Embeddings",
-  "description": "Sieh, wie gelernte Vektoren für lokale Muster die Generierung lenken, ohne das Sprachmodell zu ersetzen.",
+  "description": "Wie gehashte N-Gramm-Tabellen einem Sprachmodell Speicherkapazität fast ohne zusätzlichen Rechenaufwand geben – Mechanismus, Training, Vorläufer und die Umsetzungen von Qwen und DeepSeek.",
   "whatTitle": "Lokales Gedächtnis, kein Token-Shortcut",
-  "whatBody": "Eine N-Gramm-Tabelle ordnet kurzen Tokenfolgen gelernte Vektoren zu. Ein geladener Vektor wird nahe dem Embedding oder einem frühen Hidden Layer zur aktuellen Tokenrepräsentation addiert; das Backbone berechnet weiterhin Hidden State und Next-Token-Logits.",
-  "trainingBody": "Tabelle und Backbone lernen gemeinsam. Häufige lokale Regelmäßigkeiten können Tabellenkapazität belegen und wenig Dense Compute ergänzen – doch ein Lookup gibt weder das nächste Token aus noch garantiert es dieses.",
+  "whatBody": "Eine N-Gramm-Embedding-Schicht schlägt an jeder Position einen gelernten Vektor für die letzten zwei oder drei Tokens nach. Ein Gate entscheidet, wie viel davon zum Hidden State einer frühen Schicht addiert wird; den Rest – bis zur Verteilung über das nächste Token – berechnet weiterhin das Netz. Die Tabelle hat Milliarden Parameter, aber jedes Token liest nur eine Handvoll Zeilen.",
+  "trainingBody": "Die Motivation aus DeepSeeks Engram-Arbeit: Ein Transformer hat keinen eingebauten Nachschlagemechanismus und verbraucht deshalb frühe Schichten, um statische Muster wie Namen, Wendungen und Syntax zu rekonstruieren. Eine Tabelle kann diese Muster direkt speichern und die Schichten für andere Arbeit freimachen.",
   "generation": {
-    "title": "Generieren mit und ohne N-Gramm-Gedächtnis",
-    "description": "Beide Pfade starten mit denselben Tokens, derselben Basisrepräsentation und denselben Logits vor dem Lookup. Wechsle das Beispiel und sieh, wann lokales Gedächtnis hilft – und wann nicht.",
+    "title": "Generieren mit vs. ohne N-Gramm-Speicher",
+    "description": "Beide Wege starten mit denselben Tokens und demselben Zustand der frühen Schicht. Wechsle die Beispiele, um zu sehen, wann ein Lookup mit Gate hilft – und wann sich das Gate schließen sollte. Die Werte sind illustrativ, nicht gemessen.",
     "scenarioLabel": "Szenario",
-    "sharedInput": "Derselbe Kontext in beiden Pfaden",
-    "baseRepresentation": "Dieselbe Basis-Tokenrepräsentation",
-    "baseLogits": "Dieselben beispielhaften Ausgangsscores",
+    "sharedInput": "Gleicher Kontext auf beiden Wegen",
+    "baseRepresentation": "Gleicher Hidden State der frühen Schicht",
+    "baseLogits": "Illustrative Werte ohne zusätzliche Evidenz",
     "withoutTitle": "Ohne N-Gramm-Embeddings",
     "withTitle": "Mit N-Gramm-Embeddings",
-    "backboneOnly": "Normaler Modellpfad",
-    "lookup": "Bigramm-/Trigramm-Lookup",
-    "addVector": "Geladenen Vektor addieren",
-    "downstream": "Beispielhafte spätere Logits",
-    "important": "Der Vektor verändert die Hidden-Repräsentation, nicht direkt die Antwort. Backbone und LM Head erzeugen und sampeln weiterhin die Next-Token-Verteilung; ein Lookup ist ein gelernter Bias, nie eine garantierte Fortsetzung.",
+    "backboneOnly": "Restliche Schichten",
+    "lookup": "Gehashter Bigramm-/Trigramm-Lookup",
+    "addVector": "Gaten und addieren",
+    "downstream": "Illustrative nachgelagerte Logits",
+    "important": "Der Vektor verändert die Hidden-Repräsentation, nicht direkt die Antwort. Die restlichen Schichten und der LM-Head erzeugen weiterhin die Verteilung über das nächste Token; ein Lookup ist gelernte Evidenz, niemals eine garantierte Fortsetzung.",
     "scenarios": [
       {
         "id": "phrase",
-        "tab": "Nützliche Phrase",
+        "tab": "Nützliche Wendung",
         "badge": "Häufiger lokaler Treffer",
-        "context": "The capital of France is",
-        "key": "[France · is] + [of · France · is]",
-        "lookupResult": "gelernte Zeilen gefunden",
+        "context": "Die Hauptstadt von Frankreich ist",
+        "key": "[frankreich · ist] + [von · frankreich · ist]",
+        "lookupResult": "gut trainierte Zeilen",
         "vector": "e_phrase",
-        "baseLogits": [{"token":"Paris","score":"4.2"},{"token":"the","score":"3.8"},{"token":"located","score":"2.9"}],
-        "withoutLogits": [{"token":"Paris","score":"6.1"},{"token":"the","score":"4.0"},{"token":"located","score":"3.1"}],
-        "withLogits": [{"token":"Paris","score":"7.8"},{"token":"the","score":"3.5"},{"token":"located","score":"2.7"}],
-        "withoutNote": "Das Backbone muss die vertraute Fortsetzung aus seinem normalen Hidden State ableiten.",
-        "withNote": "Die passenden lokalen Muster laden einen trainierten Vektor. Nach der Addition geben spätere Layer der passenden Fortsetzung mehr Gewicht.",
+        "gate": "α ≈ 0,9",
+        "baseLogits": [{"token":"Paris","score":"4.2"},{"token":"die","score":"3.8"},{"token":"bekannt","score":"2.9"}],
+        "withoutLogits": [{"token":"Paris","score":"6.1"},{"token":"die","score":"4.0"},{"token":"bekannt","score":"3.1"}],
+        "withLogits": [{"token":"Paris","score":"7.8"},{"token":"die","score":"3.5"},{"token":"bekannt","score":"2.7"}],
+        "withoutNote": "Die Schichten müssen die vertraute Wendung aus dem gewöhnlichen Hidden State rekonstruieren.",
+        "withNote": "Das lokale Muster liefert einen trainierten Vektor, der Hidden State passt dazu, also öffnet sich das Gate. Spätere Schichten geben der passenden Fortsetzung mehr Gewicht.",
         "useful": "true"
       },
       {
         "id": "code",
-        "tab": "Nützliches Codemuster",
+        "tab": "Nützliches Code-Muster",
         "badge": "Syntax-Regelmäßigkeit",
         "context": "for (const item of items) {\n  console.log(item",
         "key": "[log · ( · item]",
-        "lookupResult": "gelernte Syntaxzeile gefunden",
+        "lookupResult": "gut trainierte Syntax-Zeile",
         "vector": "e_syntax",
+        "gate": "α ≈ 0,7",
         "baseLogits": [{"token":")","score":"4.0"},{"token":".","score":"3.7"},{"token":",","score":"3.1"}],
         "withoutLogits": [{"token":")","score":"5.9"},{"token":".","score":"4.0"},{"token":",","score":"3.4"}],
         "withLogits": [{"token":")","score":"7.4"},{"token":".","score":"3.6"},{"token":",","score":"3.0"}],
-        "withoutNote": "Attention und gelernte Syntax im Backbone können den Aufruf selbst schließen.",
-        "withNote": "Ein wiederkehrendes lokales Syntaxmuster liefert zusätzliche Evidenz für die schließende Klammer, gibt sie aber nicht selbst aus.",
+        "withoutNote": "Attention und gelernte Syntax im Backbone können den Aufruf auch allein schließen.",
+        "withNote": "Ein wiederkehrendes lokales Syntaxmuster liefert zusätzliche Evidenz für die schließende Klammer; ausgeben wird sie dadurch trotzdem nicht.",
         "useful": "true"
       },
       {
         "id": "useless",
-        "tab": "Kein nützlicher Gewinn",
-        "badge": "Ungesehen / Ferninformation",
-        "context": "Nutze den Projektnamen von vor 8.000 Tokens:",
-        "key": "[Tokens · ago · : ]",
-        "lookupResult": "Miss oder nutzlose Kollision",
-        "vector": "0 oder verrauschtes e_collision",
+        "tab": "Kein Nutzen",
+        "badge": "Weit entfernte Information",
+        "context": "Nutze den Projektcodenamen von vor 8.000 Tokens:",
+        "key": "[8.000 · tokens · :]",
+        "lookupResult": "Zeilen existieren, enthalten aber nichts zum Codenamen",
+        "vector": "e_generisch",
+        "gate": "α ≈ 0,1",
         "baseLogits": [{"token":"Orion","score":"3.4"},{"token":"Atlas","score":"3.3"},{"token":"Nova","score":"3.2"}],
         "withoutLogits": [{"token":"Atlas","score":"5.1"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.2"}],
         "withLogits": [{"token":"Atlas","score":"5.0"},{"token":"Orion","score":"4.9"},{"token":"Nova","score":"4.3"}],
-        "withoutNote": "Nur das normale Modell kann den fernen Kontext abrufen und darüber schlussfolgern.",
-        "withNote": "Das lokale N-Gramm enthält keinen Projektnamen. Ein Miss addiert nichts, eine Kollision womöglich Rauschen – das Backbone erledigt weiter die Arbeit.",
+        "withoutNote": "Nur Attention über den langen Kontext kann den Codenamen finden.",
+        "withNote": "Eine gehashte Tabelle hat nie einen Fehltreffer – jedes N-Gramm landet in irgendeiner Zeile. Hier ist diese Zeile generisch oder mit fremden N-Grammen geteilt. Das Gate vergleicht sie mit dem Hidden State und schließt sich weitgehend, also erledigt das Backbone die Arbeit.",
         "useful": "false"
       }
     ]
   },
+  "mechanismTitle": "Der Mechanismus in fünf Schritten",
+  "mechanismIntro": "Das ist das Engram-Design von DeepSeek (Cheng et al. 2026), die ausführlichste veröffentlichte Beschreibung. Qwen3.8-Flash-Next baut darauf auf.",
+  "mechanismSteps": [
+    {
+      "title": "Token-IDs kanonisieren",
+      "body": "Tokens, die sich nur in Groß-/Kleinschreibung oder Unicode-Form unterscheiden („The“, „the“, „ the“), werden auf eine kanonische ID abgebildet. Bei einem 128k-Tokenizer schrumpft das effektive Vokabular dadurch um 23 %, und N-Gramme werden wiederverwendbar.",
+      "formula": "x′ₜ = canon(xₜ)"
+    },
+    {
+      "title": "Suffix-N-Gramme bilden",
+      "body": "An Position t sind die N-Gramme, die bei t enden, die Keys: (x′ₜ₋₁, x′ₜ) für n = 2 und (x′ₜ₋₂, x′ₜ₋₁, x′ₜ) für n = 3. Sie hängen nur von Token-IDs ab, nie von Hidden States.",
+      "formula": "gₜ,ₙ = (x′ₜ₋ₙ₊₁, …, x′ₜ)"
+    },
+    {
+      "title": "Mit mehreren Köpfen hashen",
+      "body": "Keine Tabelle fasst jedes mögliche Trigramm, deshalb wird jedes N-Gramm gehasht. Jede Ordnung n hat K Köpfe, jeder mit eigener Hashfunktion und eigener Tabelle mit Primzahl-Größe. Zwei N-Gramme, die in einem Kopf kollidieren, kollidieren fast nie in allen. Die geladenen Zeilen werden aneinandergehängt.",
+      "formula": "eₜ = ‖ₙ,ₖ Eₙ,ₖ[ hashₙ,ₖ(gₜ,ₙ) mod Mₙ,ₖ ]"
+    },
+    {
+      "title": "Kontextabhängiges Gate",
+      "body": "Der aktuelle Hidden State hₜ dient als Query gegen eine Key-Projektion des geladenen Speichers. Passt der Speicher zum Kontext, geht α gegen 1; bei einer Kollision oder einem irrelevanten Muster gegen 0.",
+      "formula": "αₜ = σ( RMSNorm(hₜ)ᵀ RMSNorm(W_K eₜ) / √d ),   ṽₜ = αₜ · W_V eₜ"
+    },
+    {
+      "title": "Kurze Faltung, Addition in den Residual Stream",
+      "body": "Eine Depthwise-Faltung mit Kernelgröße 4 mischt benachbarte Positionen; sie ist mit null initialisiert, das Training startet also bei der Identität. Das Ergebnis wird zum Residual Stream der Schicht addiert.",
+      "formula": "hₜ ← hₜ + SiLU(Conv1D(RMSNorm(ṽ)))ₜ + ṽₜ"
+    }
+  ],
   "keyExplorer": {
-    "title": "Schlüssel und Werte untersuchen",
-    "description": "Eine kompakte Ansicht, wie lokale Tokenfolgen gelernte Zeilen adressieren.",
+    "title": "Hash-Keys und Kollisionen",
+    "description": "Gib eine Tokenfolge ein (Wörter stehen stellvertretend für Tokens). Die Demo kanonisiert, bildet Suffix-N-Gramme und hasht jedes in zwei Köpfe mit absichtlich winzigen Tabellen, damit Kollisionen sichtbar werden.",
     "tokensLabel": "Tokenfolge",
     "orderLabel": "N-Gramm-Ordnung",
     "position": "Position",
-    "key": "Lokaler Schlüssel",
-    "slot": "Beispiel-Slot",
-    "value": "Gelernter Wertvektor",
-    "illustrative": "Hash und Vektorwerte sind Beispiele; produktive Systeme wählen eigene Adressierungs- und Kollisionsstrategien.",
-    "empty": "Füge genug Tokens für dieses N-Gramm hinzu."
+    "key": "Kanonischer Key",
+    "head": "Kopf",
+    "rows": "Zeilen",
+    "collisionHead": "Kollision in diesem Kopf",
+    "collisionAll": "Kollision in beiden Köpfen",
+    "summary": "Kollisionen",
+    "summaryHead": "Kopf",
+    "summaryBoth": "beide Köpfe",
+    "illustrative": "Tabellen mit 13 und 17 Zeilen dienen nur der Sichtbarkeit; echte Tabellen haben Millionen Zeilen mit Primzahl-Größe. Der Hash ist ein echter Multiplikations-XOR-Hash, aber nicht der aus der Produktion.",
+    "empty": "Gib genug Tokens ein, um dieses N-Gramm zu bilden."
   },
-  "whyTitle": "Woher Gewinne kommen",
+  "trainingTitle": "Wie die Tabelle trainiert wird",
+  "trainingPoints": [
+    "Durchgängig mit dem restlichen Modell: Der Gradient des Loss fließt über das Gate und die Projektionen genau in die Zeilen, die gelesen wurden. Zeilen, die ein Batch nie berührt, bekommen keinen Gradienten.",
+    "Engram trainiert die Tabelle mit Adam bei fünffacher Basis-Lernrate und ohne Weight Decay; auch Qwen nutzt für die Tabelle Adam ohne Weight Decay, während die Key- und Value-Projektionen mit Muon laufen.",
+    "Das Gate wird mittrainiert. Es lernt, wann es einer Zeile trauen kann – das macht Kollisionen und selten gesehene N-Gramme verkraftbar.",
+    "Weil die Zeilenindizes nur von den Eingabetokens abhängen, stehen sie vor dem Forward-Pass fest. Im Training werden die Tabellen über GPUs verteilt und per All-to-All-Austausch eingesammelt; bei der Inferenz lassen sich die benötigten Zeilen aus dem Hauptspeicher vorab laden."
+  ],
+  "whyTitle": "Woher der Gewinn kommt",
   "benefits": [
-    "Häufige Phrasen und Syntaxmuster werden zu wiederverwendbaren lokalen Vektoren, statt vollständig von Dense Layers rekonstruiert zu werden.",
-    "Große Lookup-Tabellen ergänzen Parameterkapazität, während jedes Token nur wenige Zeilen liest; die zusätzlichen FLOPs können klein bleiben.",
-    "Deterministische Adressierung ist günstig und lässt sich vorladen; nützliche Vektoren verändern spätere Logits über das normale Backbone."
+    "Häufige Wendungen, Namen und Syntaxmuster werden zu gespeicherten Vektoren, statt von den ersten Schichten rekonstruiert zu werden. Die Engram-Analyse berichtet, dass dadurch frühe Schichten frei werden – als wäre das Netz tiefer.",
+    "Große Tabellen ergänzen Parameterkapazität, während jedes Token nur wenige Zeilen liest; die zusätzlichen FLOPs bleiben klein.",
+    "Deterministische Adressierung erlaubt Auslagern: Mit einer Tabelle von 100 Mrd. Parametern im Host-DRAM maß Engram einen Durchsatzverlust von 1,9 % (4B-Modell) bzw. 2,8 % (8B-Modell)."
   ],
   "limitsTitle": "Wo der Lookup nutzlos ist",
   "limits": [
-    "Neue Kombinationen sowie seltene oder ungesehene N-Gramme haben keine gut trainierte lokale Zeile.",
-    "Fernbezüge, semantisches Schlussfolgern und Fakten außerhalb des lokalen Fensters bleiben Aufgabe des Backbones.",
-    "Hash-Kollisionen können fremde Muster mischen; Bandbreite, Cache-Lokalität, Host-Transfers und Batching können Latenzgewinne aufheben.",
-    "Mehr Kapazität garantiert keine Downstream-Genauigkeit: Ein unpassender Vektor kann wirkungslos bleiben oder Rauschen addieren."
+    "Neue Kombinationen und seltene N-Gramme landen in Zeilen, die schlecht trainiert oder mit anderen N-Grammen geteilt sind.",
+    "Weitreichende Abhängigkeiten, Reasoning und Fakten außerhalb des lokalen Fensters brauchen weiterhin Attention und den Rest des Backbones.",
+    "Niedrigerer Loss heißt nicht automatisch bessere Ergebnisse: In Qwens Ablationen senkten größere Tabellen den Loss weiter, während die Benchmark-Genauigkeit stagnierte.",
+    "Das Kapazitätsbudget ist ein Zielkonflikt: Engram findet ein U-förmiges Optimum, wenn etwa 20–25 % des sparsen Parameterbudgets in die Tabelle und der Rest in MoE-Experten fließt."
   ],
-  "caseTitle": "Praxisbeispiel: Qwen3.8-Flash-Next",
-  "caseBody": "Qwen nutzt Bigramm- und Trigramm-Tabellen als eine Komponente eines veröffentlichten experimentellen Sparse-Modells. Systemweite Benchmark-Gewinne lassen sich nicht allein dieser Komponente zuschreiben.",
-  "facts": ["+51B Lookup-Parameter", "20 Mio. Bigramm- und Trigramm-Einträge", "Einfügung an Layer 2", "Prefetch aus Host-Speicher"],
-  "activeCaveat": "Das sind Parameter für Lookup-Kapazität, nicht 51B Dense Parameter pro Token. Nur adressierte Zeilen werden geladen.",
-  "notTitle": "Mechanismen nicht verwechseln",
-  "specTitle": "Kein N-Gramm Speculative Decoding",
-  "specBody": "Speculative Decoding entwirft und prüft zukünftige Tokens. N-Gramm-Embeddings laden einen Vektor für die aktuelle Repräsentation; sie entwerfen nichts.",
+  "lineageTitle": "Vorläufer",
+  "lineageIntro": "Gehashte N-Gramm-Embeddings beginnen nicht mit Engram. Jede dieser Arbeiten hat einen Baustein beigetragen:",
+  "lineage": [
+    {
+      "year": "2022",
+      "name": "N-Grammer",
+      "body": "Roy et al. ergänzen die Eingabe eines Transformers um Embeddings latenter N-Gramme, die in eine Tabelle gehasht werden.",
+      "url": "https://arxiv.org/abs/2207.06366"
+    },
+    {
+      "year": "2024",
+      "name": "Byte Latent Transformer (BLT)",
+      "body": "Pagnoni et al. reichern Byte-Embeddings mit gehashten Embeddings von Byte-N-Grammen (n = 3 bis 8) an – derselbe Trick auf Byte-Ebene.",
+      "url": "https://arxiv.org/abs/2412.09871"
+    },
+    {
+      "year": "2025",
+      "name": "Over-Tokenized Transformer",
+      "body": "Huang et al. entkoppeln Eingabe- und Ausgabevokabular und skalieren die Eingabeseite mit hierarchischen N-Gramm-Tokens. Ein exponentiell größeres Eingabevokabular senkte den Loss ungefähr linear.",
+      "url": "https://arxiv.org/abs/2501.16975"
+    },
+    {
+      "year": "2025",
+      "name": "SCONE",
+      "body": "Yu et al. (Google) ergänzen Embeddings für häufige N-Gramme, die im Training ein separates kleines Modell berechnet; bei der Inferenz sind sie vorberechnet und liegen außerhalb des Beschleunigers.",
+      "url": "https://arxiv.org/abs/2502.01637"
+    },
+    {
+      "year": "2026",
+      "name": "Engram",
+      "body": "Cheng et al. (DeepSeek, Universität Peking) kombinieren Kanonisierung, Multi-Head-Hashing, kontextabhängiges Gating und Auslagerung. Engram-27B ersetzt bei gleicher Gesamtgröße 17 von 72 gerouteten Experten durch eine Tabelle mit 5,7 Mrd. Parametern und berichtet Gewinne gegenüber der MoE-Baseline, etwa +5,0 bei BBH und +3,0 bei MMLU.",
+      "url": "https://arxiv.org/abs/2601.07372"
+    }
+  ],
+  "caseTitle": "Fallstudie: Qwen3.8-Flash-Next",
+  "caseBody": "Qwens sparses MoE-Modell (August 2026) ergänzt sein Backbone mit 125 Mrd. Parametern um eine einzige N-Gramm-Embedding-Schicht an Schicht 2. Schicht 2 wurde gewählt, damit das Vorabladen der Zeilen aus dem Hauptspeicher parallel zur Berechnung der ersten Schicht läuft.",
+  "facts": ["125B MoE · 6B aktiv pro Token", "+51B N-Gramm-Parameter", "Bigramme und Trigramme an Schicht 2", "Zeilen aus dem Hauptspeicher vorab geladen"],
+  "ablationTitle": "Was die Ablationen im technischen Report zeigen",
+  "ablation": [
+    "Platzierung (feste Tabellengröße): ohne N-Gramm-Embeddings Loss 1,585 und Benchmark-Mittel 45,44; mit der Schicht an Position 2 Loss 1,541 und Mittel 47,94. Eine zweite Schicht an Position 15 oder 25 brachte keinen durchgängigen Vorteil.",
+    "Tabellengröße: Ein N-Gramm-Vokabular vom 20- bis 200-Fachen des Tokenizer-Vokabulars senkte den Loss stetig (1,553 → 1,526), die Benchmarks stagnierten oder schwankten jedoch; nur chinesische Benchmarks verbesserten sich weiter.",
+    "Festes Gesamtbudget: Wurden MoE-Experten entfernt, um die Tabelle zu bezahlen, zeigten die Benchmarks keine klare Verbesserung gegenüber der reinen MoE-Baseline – Tabelle und Experten skalieren offenbar Verschiedenes."
+  ],
+  "activeCaveat": "Die 51 Mrd. sind Lookup-Parameter, keine dichten Parameter, die für jedes Token ausgewertet werden. Das finale Modell ändert außerdem Attention, Residual Stream und Optimierer, daher lassen sich seine Gesamt-Benchmarks nicht der N-Gramm-Schicht zuschreiben; nur die Ablationen oben isolieren sie.",
+  "notTitle": "Den Mechanismus nicht verwechseln",
+  "specTitle": "Kein N-Gramm-Speculative-Decoding",
+  "specBody": "Speculative Decoding entwirft und prüft zukünftige Tokens. N-Gramm-Embeddings holen einen Vektor für die aktuelle Repräsentation; sie entwerfen nichts.",
   "mtpTitle": "Keine Multi-Token Prediction (MTP)",
-  "mtpBody": "MTP trainiert mehrere zukünftige Abstände. N-Gramm-Embeddings sind adressiertes Gedächtnis für bereits beobachtete lokale Folgen.",
+  "mtpBody": "MTP trainiert mehrere zukünftige Offsets. N-Gramm-Embeddings sind ein adressierter Speicher für bereits beobachtete lokale Folgen.",
+  "sourcesTitle": "Quellen",
   "sources": [
-    {"label":"Offizieller Qwen-Blog","url":"https://qwen.ai/blog?id=qwen3.8-flash-next"},
-    {"label":"Modellkarte","url":"https://huggingface.co/Qwen/Qwen3.8-Flash-Next"},
-    {"label":"Technischer Report","url":"https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"}
+    {"label":"Cheng et al. (2026): Conditional Memory via Scalable Lookup (Engram)","url":"https://arxiv.org/abs/2601.07372"},
+    {"label":"Qwen Team (2026): On the Design of Qwen3.8-Next Architecture (technischer Report)","url":"https://github.com/QwenLM/Qwen3.8-Flash-Next/blob/main/tech_report.pdf"},
+    {"label":"Modellkarte Qwen3.8-Flash-Next","url":"https://huggingface.co/Qwen/Qwen3.8-Flash-Next"},
+    {"label":"vLLM-Rezept: Qwen3.8-Flash-Next (Auslagerung)","url":"https://recipes.vllm.ai/Qwen/Qwen3.8-Flash-Next"}
   ]
 },
   positionalEncoding: {
