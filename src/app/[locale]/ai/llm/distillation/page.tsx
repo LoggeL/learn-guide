@@ -1,11 +1,13 @@
 'use client'
 
 import { TopicLayout } from '@/components/layout/TopicLayout'
-import { DistillationVisualizer } from '@/components/interactive'
+import { ExternalLink } from 'lucide-react'
+import { DistillationVisualizer } from '@/components/interactive/DistillationVisualizer'
+import { DistillationKlDirectionDemo } from '@/components/interactive/DistillationKlDirectionDemo'
 import { useTranslation } from '@/lib/i18n/context'
 
 export default function DistillationPage() {
-  const { t, locale } = useTranslation()
+  const { t } = useTranslation()
 
   const benefits = [
     { num: 1, title: t.distillation.benefit1Title, desc: t.distillation.benefit1Desc, color: 'purple' },
@@ -21,6 +23,13 @@ export default function DistillationPage() {
     { id: 'online', title: t.distillation.typeOnlineTitle, desc: t.distillation.typeOnlineDesc, color: 'orange' },
   ]
 
+  const llmRecipes = [
+    { id: 'seq', title: t.distillation.llmSeqTitle, desc: t.distillation.llmSeqDesc, card: 'bg-purple-500/5 border border-purple-500/20', text: 'text-purple-400' },
+    { id: 'logit', title: t.distillation.llmLogitTitle, desc: t.distillation.llmLogitDesc, card: 'bg-cyan-500/5 border border-cyan-500/20', text: 'text-cyan-400' },
+    { id: 'onpolicy', title: t.distillation.llmOnPolicyTitle, desc: t.distillation.llmOnPolicyDesc, card: 'bg-emerald-500/5 border border-emerald-500/20', text: 'text-emerald-400' },
+    { id: 'reverse', title: t.distillation.llmReverseTitle, desc: t.distillation.llmReverseDesc, card: 'bg-orange-500/5 border border-orange-500/20', text: 'text-orange-400' },
+  ]
+
   return (
     <TopicLayout topicId="distillation"
       title={t.distillation.title}
@@ -30,7 +39,6 @@ export default function DistillationPage() {
         { label: t.categories.llm, href: '/ai/llm' },
         { label: t.distillation.title },
       ]}
-      prevTopic={{ label: t.topicNames['nested-learning'], href: '/ai/llm/nested-learning' }}
     >
       {/* Introduction */}
       <section className="rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
@@ -180,6 +188,24 @@ export default function DistillationPage() {
           <div className="mt-4 p-4 rounded-lg bg-purple-500/10 border border-purple-500/20">
             <p className="text-sm text-muted">{t.distillation.lossInsight}</p>
           </div>
+          <p className="mt-4 text-sm leading-relaxed text-muted">{t.distillation.lossLlm}</p>
+        </div>
+      </section>
+
+      {/* Distillation for LLMs today */}
+      <section>
+        <h2 className="text-2xl font-bold font-heading text-gradient mb-6">{t.distillation.llmTitle}</h2>
+        <p className="text-muted mb-6">{t.distillation.llmDesc}</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {llmRecipes.map((recipe) => (
+            <div key={recipe.id} className={`p-5 rounded-xl ${recipe.card}`}>
+              <h3 className={`${recipe.text} font-semibold font-heading mb-2`}>{recipe.title}</h3>
+              <p className="text-muted text-sm leading-relaxed">{recipe.desc}</p>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 rounded-2xl bg-surface/50 border border-border p-6 md:p-8">
+          <DistillationKlDirectionDemo />
         </div>
       </section>
 
@@ -239,7 +265,20 @@ export default function DistillationPage() {
           </ul>
         </div>
       </section>
-<section><h2 className="mb-3 text-xl font-semibold">{locale === 'de' ? 'Primärquellen' : 'Primary sources'}</h2><ul className="space-y-2"><li><a className="text-cyan-300 underline" href="https://arxiv.org/abs/1910.01108">DistilBERT</a></li><li><a className="text-cyan-300 underline" href="https://arxiv.org/html/2501.12948v1">DeepSeek-R1</a></li></ul></section>
+      {/* Sources */}
+      <section>
+        <h2 className="font-heading text-xl font-bold text-text">{t.distillation.sourcesTitle}</h2>
+        <ul className="mt-4 space-y-3">
+          {t.distillation.sources.map((source) => (
+            <li key={source.url}>
+              <a href={source.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-primary-light hover:underline">
+                {source.label}
+                <ExternalLink size={14} className="shrink-0" aria-hidden="true" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </TopicLayout>
   )
 }
