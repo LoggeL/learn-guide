@@ -6963,69 +6963,6 @@ export const de: Dictionary = {
 
   // Visual Challenges Demo Komponente
 
-  // Skill Composer Demo
-  skillComposer: {
-    // Tab-Namen
-    triggerTab: 'Skill-Auslösung',
-    manifestTab: 'Skill-Manifest',
-    chainingTab: 'Skill-Verkettung',
-
-    // Trigger-Tab
-    userInput: 'Benutzereingabe',
-    userInputDesc: 'Gib eine Nachricht ein, um zu sehen, welcher Skill ausgelöst wird',
-    inputPlaceholder: 'Versuche: "Kannst du diesen Code auf Fehler überprüfen?"',
-    tryExamples: 'Probiere diese Beispiele:',
-    exampleReview: 'Überprüfe diesen Code auf Fehler',
-    exampleDocs: 'Schreibe Dokumentation für diese API',
-    exampleGit: 'Erstelle einen Pull Request',
-    exampleExplain: 'Erkläre, wie diese Funktion funktioniert',
-
-    // Ergebnis
-    matchResult: 'Skill-Treffer',
-    matchResultDesc: 'Der Skill, der ausgelöst werden würde',
-    analyzing: 'Analysiere Eingabe...',
-    confidence: 'Konfidenz',
-    matchedTrigger: 'Gematchter Trigger',
-    canChainWith: 'Kann verketten mit:',
-    noMatch: 'Gib eine Nachricht ein, um Skill-Matching in Aktion zu sehen',
-
-    // Skills
-    codeReviewSkill: 'Code Review',
-    codeReviewDesc: 'Führt gründliche Code-Reviews nach Team-Standards durch',
-    documentationSkill: 'Dokumentation',
-    documentationDesc: 'Erstellt umfassende Dokumentation für Code und APIs',
-    gitWorkflowSkill: 'Git Workflow',
-    gitWorkflowDesc: 'Verwaltet Git-Operationen und Pull-Request-Workflows',
-    explainSkill: 'Code erklären',
-    explainDesc: 'Erklärt Code-Funktionalität und Konzepte verständlich',
-
-    availableSkills: 'Verfügbare Skills',
-
-    // Manifest-Tab
-    skillManifest: 'Skill-Manifest',
-    skillManifestDesc: 'Die SKILL.md-Datei definiert die Metadaten und Anweisungen eines Skills',
-    manifestInstructions: 'Detaillierte Anweisungen zur Ausführung dieses Skills kommen hier hin...',
-
-    // Manifest-Felder
-    nameField: 'name',
-    nameFieldDesc: 'Eindeutiger Bezeichner für den Skill',
-    triggersField: 'triggers',
-    triggersFieldDesc: 'Schlüsselwörter und Phrasen, die diesen Skill aktivieren',
-    descriptionField: 'description',
-    descriptionFieldDesc: 'Kurze Zusammenfassung dessen, was der Skill tut',
-    chainsWithField: 'chains_with',
-    chainsWithFieldDesc: 'Andere Skills, die dieser Skill aufrufen kann',
-
-    // Verkettungs-Tab
-    skillChaining: 'Skill-Verkettung',
-    skillChainingDesc: 'Skills können andere Skills aufrufen, um komplexe Aufgaben zu erledigen',
-    selectToSeeChain: 'Klicke auf einen Skill, um zu sehen, womit er verkettet werden kann:',
-    noChains: 'Dieser Skill hat keine Verkettungsziele',
-    chainingExample: 'Beispiel: Code Review + Git Workflow',
-    chainingStep1: 'Benutzer fragt: "Überprüfe und merge diesen PR"',
-    chainingStep2: 'Code Review Skill führt die Überprüfung durch',
-    chainingStep3: 'Git Workflow Skill wird verkettet, um den Merge zu handhaben',
-  },
 
   // Logges Lieblingsmodell (Claude Fable 5)
   favModels: {

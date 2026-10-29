@@ -1,8 +1,4 @@
-export { TokenCounter } from './TokenCounter'
-export { ScaleCalculator } from './ScaleCalculator'
-export { MemoryFadeVisualizer } from './MemoryFadeVisualizer'
 export { TemperatureDemo } from './TemperatureDemo'
-export { TemperatureVisualizer } from './TemperatureVisualizer'
 export { AttentionVisualizer } from './AttentionVisualizer'
 export { AgentLoopVisualizer } from './AgentLoopVisualizer'
 export { ContextAnatomyVisualizer } from './ContextAnatomyVisualizer'
@@ -42,17 +38,11 @@ export { MoEVisualizer } from './MoEVisualizer'
 export { VisualChallengesDemo } from './VisualChallengesDemo'
 export { AgenticVisionDemo } from './AgenticVisionDemo'
 
-// Agent Skills components
-export { SkillComposerDemo } from './SkillComposerDemo'
-
 // Quantization components
 export { QuantizationVisualizer } from './QuantizationVisualizer'
 
 // KV Cache components
 export { KVCacheVisualizer } from './KVCacheVisualizer'
-
-// Multimodality components
-export { MultimodalityVisualizer } from './MultimodalityVisualizer'
 
 // Distillation components
 export { DistillationVisualizer } from './DistillationVisualizer'
@@ -82,12 +72,6 @@ export { LearningPath } from './LearningPath'
 // Training Pipeline components
 export { TrainingPipelineVisualizer } from './TrainingPipelineVisualizer'
 
-// World Model components
-export { WorldModelPipeline, SimToRealToggle, TrainingLoopViz } from './WorldModelVisualizer'
-
-// Training Data components
-export { DataSourceExplorer } from './DataSourceExplorer'
-
 // Diffusion components
 export { DiffusionNoiseVisualizer } from './DiffusionNoiseVisualizer'
 export { TextDiffusionDemo } from './TextDiffusionDemo'
@@ -97,9 +81,6 @@ export { CacheHitMissAnimation } from './CacheHitMissAnimation'
 export { PrefixMatchingDemo } from './PrefixMatchingDemo'
 export { CostSavingsCalculator } from './CostSavingsCalculator'
 export { CacheTTLVisualization } from './CacheTTLVisualization'
-
-// Custom chips components
-export { ChipTradeoffSimulator } from './ChipTradeoffSimulator'
 
 // Reinforcement Learning components
 export { ReinforcementLearningPlayground } from './ReinforcementLearningPlayground'
@@ -117,3 +98,48 @@ export { NextTokenPredictionVisualizer } from './NextTokenPredictionVisualizer'
 export { InferenceBudgetVisualizer } from './InferenceBudgetVisualizer'
 
 export { LoopedTransformerVisualizer } from './LoopedTransformerVisualizer'
+
+// Content overhaul (2026-10)
+export { RefusalDirectionDemo } from './RefusalDirectionDemo'
+export { PretrainingLossDemo } from './PretrainingLossDemo'
+export { TrainingDataPipelineDemo } from './TrainingDataPipelineDemo'
+export { AiActObligationsExplorer } from './AiActObligationsExplorer'
+export { LostInTheMiddleChart } from './LostInTheMiddleChart'
+export { EffectiveContextChart } from './EffectiveContextChart'
+export { RopeScalingVisualizer } from './RopeScalingVisualizer'
+export { AgentTrajectoryEvalDemo } from './AgentTrajectoryEvalDemo'
+export { PassKExplorer } from './PassKExplorer'
+export { ChipRooflineCalculator } from './ChipRooflineCalculator'
+export { ChipSpecTable } from './ChipSpecTable'
+export { ToolOutputShaper } from './ToolOutputShaper'
+export { DiscountedReturnDemo } from './DiscountedReturnDemo'
+export { WorldModelPlanningDemo } from './WorldModelPlanningDemo'
+export { OffloadBandwidthDemo } from './OffloadBandwidthDemo'
+export { MiniBpeDemo } from './MiniBpeDemo'
+export { MatryoshkaDemo } from './MatryoshkaDemo'
+export { AgentLoopContextCost } from './AgentLoopContextCost'
+export { GrpoAdvantageDemo } from './GrpoAdvantageDemo'
+export { VerifiableRewardsGrpoDemo } from './VerifiableRewardsGrpoDemo'
+export { ReasoningGrpoDemo } from './ReasoningGrpoDemo'
+export { FfnParameterShare } from './FfnParameterShare'
+export { MoeLoadBalancingDemo } from './MoeLoadBalancingDemo'
+export { NeuralNetDiagram221, NeuralNetForwardPassWalkthrough } from './NeuralNetForwardPassWalkthrough'
+export { NeuralNetPlayground } from './NeuralNetPlayground'
+export { MediaTokenBudget } from './MediaTokenBudget'
+export { FusionArchitectureExplorer } from './FusionArchitectureExplorer'
+export { AttentionLogitGrowthDemo } from './AttentionLogitGrowthDemo'
+export { McpIntegrationMathDemo } from './McpIntegrationMathDemo'
+export { McpMessageFlowDemo } from './McpMessageFlowDemo'
+export { SkillProgressiveLoadingDemo } from './SkillProgressiveLoadingDemo'
+export { ErrorCompoundingDemo } from './ErrorCompoundingDemo'
+export { LethalTrifectaDemo } from './LethalTrifectaDemo'
+export { MtpArchitectureDiagram } from './MtpArchitectureDiagram'
+export { MtpDepthCalculator, MtpSelfSpeculationDemo } from './MtpSelfSpeculationDemo'
+export { SpeculativeSamplingDemo } from './SpeculativeSamplingDemo'
+export { LoraTrainingDynamicsDemo } from './LoraTrainingDynamicsDemo'
+export { DistillationKlDirectionDemo } from './DistillationKlDirectionDemo'
+export { OpennessLadder } from './OpennessLadder'
+export { OpenLicenseChecker } from './OpenLicenseChecker'
+export { SelfHostDecision } from './SelfHostDecision'
+export { MegaKernelTimelineDemo } from './MegaKernelTimelineDemo'
+export { BatchingChunkedPrefillDemo } from './BatchingChunkedPrefillDemo'

@@ -1,21 +1,10 @@
 import assert from 'node:assert/strict'
-import { matchSkill, retrieveNotes, validateTool, generateToolSchema, formatToolDefinition, rewardCases, checkReward, biasGroups, groupCounts, type DemoTool } from '../src/lib/agent-demo-models'
+import { retrieveNotes, validateTool, generateToolSchema, formatToolDefinition, rewardCases, checkReward, biasGroups, groupCounts, type DemoTool } from '../src/lib/agent-demo-models'
 import { trialScripts, runTrial, combinedVerdict, summarize as summarizeEval, binomial, passAtK, passHatK, type GraderId } from '../src/lib/agent-eval-math'
 import { en } from '../src/lib/i18n/dictionaries/en'
 import { de } from '../src/lib/i18n/dictionaries/de'
 const Ajv = require('ajv')
 const ajv = new Ajv({ allErrors: true })
-
-for (const dictionary of [en, de]) {
-  const c = dictionary.skillComposer
-  for (const [text, id] of [[c.exampleReview,'code-review'],[c.exampleDocs,'documentation'],[c.exampleGit,'git-workflow'],[c.exampleExplain,'explain']]) {
-    assert.equal(matchSkill(text)[0]?.id,id,text)
-  }
-}
-assert.equal(matchSkill('Überprüfe diesen Code auf Fehler').some(m=>m.id==='git-workflow'),false)
-assert.deepEqual(matchSkill('The product is ready'),[])
-assert.equal(matchSkill('Create a PR.')[0]?.id,'git-workflow')
-assert.equal(matchSkill('documentation and git').length,2)
 
 const empty:DemoTool={name:'current_time',description:'Read the current time.',parameters:[]}
 assert.equal(validateTool(empty).valid,true)

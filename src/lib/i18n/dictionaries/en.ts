@@ -6968,69 +6968,6 @@ export const en = {
     tipGuidelines: 'Include formatting preferences, tone requirements, and domain-specific rules.',
   },
 
-  // Skill Composer Demo
-  skillComposer: {
-    // Tab names
-    triggerTab: 'Skill Triggering',
-    manifestTab: 'Skill Manifest',
-    chainingTab: 'Skill Chaining',
-
-    // Trigger tab
-    userInput: 'User Input',
-    userInputDesc: 'Type a message to see which skill would be triggered',
-    inputPlaceholder: 'Try: "Can you review this code for bugs?"',
-    tryExamples: 'Try these examples:',
-    exampleReview: 'Review this code for bugs',
-    exampleDocs: 'Write documentation for this API',
-    exampleGit: 'Create a pull request',
-    exampleExplain: 'Explain how this function works',
-
-    // Match result
-    matchResult: 'Skill Match',
-    matchResultDesc: 'The skill that would be triggered',
-    analyzing: 'Analyzing input...',
-    confidence: 'confidence',
-    matchedTrigger: 'Matched trigger',
-    canChainWith: 'Can chain with:',
-    noMatch: 'Type a message to see skill matching in action',
-
-    // Skills
-    codeReviewSkill: 'Code Review',
-    codeReviewDesc: 'Performs thorough code reviews following team standards',
-    documentationSkill: 'Documentation',
-    documentationDesc: 'Generates comprehensive documentation for code and APIs',
-    gitWorkflowSkill: 'Git Workflow',
-    gitWorkflowDesc: 'Handles Git operations and pull request workflows',
-    explainSkill: 'Explain Code',
-    explainDesc: 'Explains code functionality and concepts clearly',
-
-    availableSkills: 'Available Skills',
-
-    // Manifest tab
-    skillManifest: 'Skill Manifest',
-    skillManifestDesc: 'The SKILL.md file defines a skill\'s metadata and instructions',
-    manifestInstructions: 'Detailed instructions for how to perform this skill go here...',
-
-    // Manifest fields
-    nameField: 'name',
-    nameFieldDesc: 'Unique identifier for the skill',
-    descriptionField: 'description',
-    descriptionFieldDesc: 'Brief summary of what the skill does',
-    triggersField: 'triggers',
-    triggersFieldDesc: 'Keywords and phrases that activate this skill',
-    chainsWithField: 'chains_with',
-    chainsWithFieldDesc: 'Other skills this skill can invoke',
-
-    // Chaining tab
-    skillChaining: 'Skill Chaining',
-    skillChainingDesc: 'Skills can invoke other skills to complete complex tasks',
-    selectToSeeChain: 'Click a skill to see what it can chain to:',
-    noChains: 'This skill has no chain targets',
-    chainingExample: 'Example: Code Review + Git Workflow',
-    chainingStep1: 'User asks: "Review and merge this PR"',
-    chainingStep2: 'Code Review skill performs the review',
-    chainingStep3: 'Git Workflow skill is chained to handle the merge',
-  },
 
   // Logge's Favourite Model page (Claude Fable 5)
   favModels: {

@@ -1,20 +1,5 @@
 // Pure, inspectable teaching models. No external model calls or inferred confidence.
-export const skillRules = [
-  { id: 'code-review', words: ['review', 'überprüfe', 'prüfe', 'bugs', 'fehler'] },
-  { id: 'documentation', words: ['document', 'documentation', 'dokumentation', 'dokumentiere', 'docs', 'readme'] },
-  { id: 'git-workflow', words: ['commit', 'git', 'push', 'branch', 'merge', 'pr', 'pull request'] },
-  { id: 'explain', words: ['explain', 'erkläre', 'erklären', 'how does', 'what is'] },
-] as const
-
 export const words = (text: string): string[] => text.toLocaleLowerCase().normalize('NFC').match(new RegExp('[\\p{L}\\p{N}]+', 'gu')) ?? []
-
-export function matchSkill(text: string) {
-  const input = ` ${words(text).join(' ')} `
-  return skillRules.flatMap((rule, index) => {
-    const matched = rule.words.find(word => input.includes(` ${word} `))
-    return matched ? [{ index, id: rule.id, matched }] : []
-  })
-}
 
 export function retrieveNotes(notes: { id: number; text: string }[], query: string) {
   const terms = Array.from(new Set(words(query)))
