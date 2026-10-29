@@ -28,8 +28,6 @@ import {
   quantizeVector,
   normalNoise,
   noisySample,
-  maskCandidates,
-  unmaskStep,
   polyTrainSet,
   polyValidationSet,
   fitPolynomial,
@@ -37,6 +35,19 @@ import {
   predictPoly,
   worldRollout,
 } from '../src/lib/learning-math'
+import {
+  diffusionAlphaBars,
+  diffusionBetas,
+  diffusionIdealX0,
+  diffusionSampleTrajectories,
+  diffusionBuildToyLm,
+  diffusionTokenDistribution,
+  diffusionRunTextSampler,
+  diffusionClassifySentence,
+  diffusionUniform,
+  DIFFUSION_EOS,
+  type DiffusionVec2,
+} from '../src/lib/diffusion-math'
 
 const close = (actual: number, expected: number, tolerance = 1e-10) =>
   assert.ok(Math.abs(actual - expected) < tolerance, `${actual} ≠ ${expected}`)
@@ -304,29 +315,82 @@ assert.ok(
   ) < 0.04,
 )
 
-let visible = Array<boolean>(10).fill(false)
-assert.deepEqual(
-  maskCandidates(visible, 8)
-    .slice(0, 2)
-    .map((item) => item.index),
-  [0, 4],
+// Diffusion schedules: DDPM linear β and Improved-DDPM cosine ᾱ
+const linearAB = diffusionAlphaBars('linear'),
+  cosineAB = diffusionAlphaBars('cosine')
+assert.equal(linearAB.length, 1001)
+assert.equal(linearAB[0], 1)
+close(diffusionBetas(linearAB)[1], 1e-4, 1e-12)
+close(diffusionBetas(linearAB)[1000], 0.02, 1e-12)
+assert.ok(linearAB[500] > 0.07 && linearAB[500] < 0.09, 'linear β leaves ~8 % signal at t=500')
+assert.ok(cosineAB[500] > 0.45 && cosineAB[500] < 0.55, 'cosine leaves ~half the signal at t=500')
+for (let t = 1; t <= 1000; t++) {
+  assert.ok(linearAB[t] < linearAB[t - 1] && cosineAB[t] <= cosineAB[t - 1], 'ᾱ is monotone')
+}
+assert.ok(cosineAB[1000] < 1e-6 && linearAB[1000] < 1e-4, 'both end near pure noise')
+
+// Exact denoiser of a finite dataset
+const ring: DiffusionVec2[] = Array.from({ length: 12 }, (_, i) => [
+  0.9 * Math.cos((2 * Math.PI * i) / 12),
+  0.9 * Math.sin((2 * Math.PI * i) / 12),
+])
+const nearlyClean = diffusionIdealX0([0.9, 0.01], 0.999, ring)
+close(nearlyClean[0], 0.9, 1e-6)
+const pureNoise = diffusionIdealX0([0.5, -0.3], 1e-8, ring)
+close(pureNoise[0], 0, 1e-3)
+close(pureNoise[1], 0, 1e-3)
+const g = normalNoise(2024)
+const starts: DiffusionVec2[] = Array.from({ length: 20 }, () => [g(), g()])
+const nearest = (p: DiffusionVec2) => Math.min(...ring.map((d) => Math.hypot(p[0] - d[0], p[1] - d[1])))
+const oneStep = diffusionSampleTrajectories(ring, starts, 1, 0, 'cosine', normalNoise(1))
+oneStep.forEach((path) => assert.ok(Math.hypot(...path[1]) < 1e-3, 'one step collapses onto the data mean'))
+const manySteps = diffusionSampleTrajectories(ring, starts, 50, 0, 'cosine', normalNoise(1))
+manySteps.forEach((path) => assert.ok(nearest(path[50]) < 1e-3, 'DDIM with 50 steps lands on data'))
+const ddimAgain = diffusionSampleTrajectories(ring, starts, 50, 0, 'cosine', normalNoise(99))
+assert.deepEqual(ddimAgain, manySteps, 'η = 0 is deterministic')
+
+// Toy masked diffusion LM
+const corpus = [
+  'the cat sits on the mat',
+  'the cat sleeps on the warm mat',
+  'the cat sits in the sun',
+  'a dog barks at the cat',
+  'a dog barks at the bird',
+  'the dog barks at the door',
+  'a bird sings on the roof',
+  'the cat sleeps in the sun',
+]
+const lm = diffusionBuildToyLm(corpus, 8)
+assert.ok(lm.vocab.includes(DIFFUSION_EOS), '[EOS] padding is part of the vocabulary')
+const dist = diffusionTokenDistribution(lm, Array(8).fill(null), 3)
+close(
+  dist.reduce((sum, p) => sum + p, 0),
+  1,
 )
-visible = unmaskStep(visible, 8)
-assert.deepEqual(
-  visible.flatMap((value, index) => (value ? [index] : [])),
-  [0, 4],
+const sequential = diffusionRunTextSampler(lm, 1, 'confidence', diffusionUniform(7))
+assert.equal(sequential.length - 1, 8, 'one kept prediction per step needs 8 passes')
+assert.ok(
+  sequential.slice(1).every((step) => step.proposals.filter((p) => p.kept).length === 1),
 )
+assert.equal(sequential[1].proposals.length, 8, 'first step predicts every masked position')
+const firstKept = sequential.slice(1).map((step) => step.proposals.find((p) => p.kept)!.index)
+assert.ok(firstKept.indexOf(7) < firstKept.indexOf(5), '[EOS] tail is committed before content')
+const wrongGuess = sequential
+  .slice(1)
+  .some((step) => step.proposals.some((p) => !p.kept && p.token !== sequential[8].canvas[p.index]))
+assert.ok(wrongGuess, 'some remasked predictions were wrong')
+assert.notEqual(
+  diffusionClassifySentence(lm, sequential[8].canvas as string[]),
+  'broken',
+)
+const parallel = diffusionRunTextSampler(lm, 8, 'confidence', diffusionUniform(7))
+assert.equal(parallel.length - 1, 1)
 assert.equal(
-  maskCandidates(visible, 8)[0].index,
-  3,
-  'visible neighbors affect the next supplied confidence',
+  diffusionClassifySentence(lm, parallel[1].canvas as string[]),
+  'broken',
+  'committing all positions at once produces an unseen word pair',
 )
-for (let i = 0; i < 3; i++) visible = unmaskStep(visible, 8)
-assert.deepEqual(
-  visible,
-  [true, true, true, true, true, true, true, true, false, false],
-  'PAD never becomes a candidate',
-)
+assert.equal(diffusionClassifySentence(lm, [...corpus[0].split(' '), DIFFUSION_EOS, DIFFUSION_EOS]), 'corpus')
 
 const exactWorld = worldRollout(2, 0.5, 0.5, 10)
 exactWorld.forEach((point) => assert.equal(point.actual, point.predicted))
@@ -403,5 +467,5 @@ chipSpecs.forEach((chip) => {
 })
 
 console.log(
-  'PASS: memory, preset history, GQA, MoE storage, batching, caching, rotation, quantization, gradient descent, fitted training, Gaussian noise, mask selection/PAD, world rollout and 15 subjective ranks.',
+  'PASS: memory, preset history, GQA, MoE storage, batching, caching, rotation, quantization, gradient descent, fitted training, Gaussian noise, diffusion schedules/DDIM/masked-diffusion sampler, world rollout and 15 subjective ranks.',
 )

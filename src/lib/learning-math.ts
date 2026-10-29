@@ -143,31 +143,6 @@ export function normalNoise(seed: number) {
 export const noisySample = (signal: number, noise: number, alphaBar: number) =>
   Math.sqrt(alphaBar) * signal + Math.sqrt(1 - alphaBar) * noise
 
-/** Supplied toy candidate model. Visible neighbors increase confidence. */
-export function maskCandidates(visible: boolean[], length: number) {
-  const priors = [0.92, 0.59, 0.62, 0.88, 0.91, 0.56, 0.53, 0.6]
-  return Array.from({ length }, (_, index) => ({
-    index,
-    probability: Math.min(
-      0.99,
-      priors[index % priors.length] +
-        (visible[index - 1] ? 0.12 : 0) +
-        (visible[index + 1] ? 0.12 : 0),
-    ),
-  }))
-    .filter((item) => !visible[item.index])
-    .sort((a, b) => b.probability - a.probability || a.index - b.index)
-}
-export function unmaskStep(visible: boolean[], length: number) {
-  const next = [...visible]
-  maskCandidates(visible, length)
-    .slice(0, 2)
-    .forEach((item) => {
-      next[item.index] = true
-    })
-  return next
-}
-
 /* ---------- Polynomial fit (training / generalization article) ---------- */
 export interface Point {
   x: number
